@@ -1,0 +1,41 @@
+---
+import { blogService } from "@/features/blog/services/blog.service";
+import AdminLayout from "@/layouts/AdminLayout.astro";
+
+const { id } = Astro.params;
+const posts = await blogService.listAllPosts();
+const post = posts.find((entry) => entry.slug === id);
+---
+
+<AdminLayout title="Edit blog post | Ikar admin">
+  <div class="card" style="padding: 1.5rem;">
+    {
+      post ? (
+        <div class="page-grid">
+          <h2 style="margin: 0;">{post.title}</h2>
+          <p class="section-copy">
+            Ovaj ekran je namerno postavljen kao edit placeholder. Sledeci korak je uvodjenje
+            write-capable blog repository implementacije, bez menjanja admin rute ili page
+            kompozicije.
+          </p>
+          <dl style="display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 1rem;">
+            <div class="card" style="padding: 1rem;">
+              <dt>Status</dt>
+              <dd style="margin: 0.4rem 0 0;">{post.status}</dd>
+            </div>
+            <div class="card" style="padding: 1rem;">
+              <dt>Locale</dt>
+              <dd style="margin: 0.4rem 0 0;">{post.locale}</dd>
+            </div>
+            <div class="card" style="padding: 1rem;">
+              <dt>Objavljeno</dt>
+              <dd style="margin: 0.4rem 0 0;">{post.publishedAt.toLocaleDateString("sr-RS")}</dd>
+            </div>
+          </dl>
+        </div>
+      ) : (
+        <p style="margin: 0;">Post nije pronadjen.</p>
+      )
+    }
+  </div>
+</AdminLayout>

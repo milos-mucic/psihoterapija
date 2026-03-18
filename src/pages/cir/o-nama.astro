@@ -1,0 +1,19 @@
+---
+export const prerender = true;
+
+import HeroSection from "@/components/astro/sections/HeroSection.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getDictionary } from "@/features/i18n/translate";
+
+const locale = "sr-cyrl";
+const dictionary = getDictionary(locale);
+---
+
+<BaseLayout
+  title="О нама | Психотерапијски кабинет Икар"
+  description={dictionary.about.description}
+  locale={locale}
+  canonicalPath="/cir/o-nama/"
+>
+  <HeroSection title={dictionary.about.title} description={dictionary.about.description} />
+</BaseLayout>

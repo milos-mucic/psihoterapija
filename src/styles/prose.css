@@ -1,0 +1,28 @@
+.prose-shell {
+  font-size: 1.05rem;
+  line-height: 1.85;
+  color: var(--foreground);
+}
+
+.prose-shell h2,
+.prose-shell h3,
+.prose-shell h4 {
+  color: var(--foreground);
+  font-family: var(--font-display);
+  line-height: 1.1;
+}
+
+.prose-shell p,
+.prose-shell ul,
+.prose-shell ol {
+  color: var(--muted);
+}
+
+.prose-shell blockquote {
+  margin: 2rem 0;
+  padding: 1.4rem 1.5rem;
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius-lg);
+  background: var(--surface-soft);
+  color: var(--foreground);
+}

@@ -1,0 +1,29 @@
+---
+export const prerender = true;
+
+import HomeHeroSection from "@/components/astro/sections/HomeHeroSection.astro";
+import HomePageContent from "@/components/astro/sections/HomePageContent.astro";
+import { getHomePageData } from "@/data/fixtures/home";
+import { blogService } from "@/features/blog/services/blog.service";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const locale = "sr-latn";
+const content = getHomePageData(locale);
+const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
+---
+
+<BaseLayout
+  title="Pocetna | Psihoterapijski kabinet Ikar"
+  description={content.hero.description}
+  locale={locale}
+  canonicalPath="/"
+>
+  <HomeHeroSection
+    titleHtml={content.hero.titleHtml}
+    description={content.hero.description}
+    primaryAction={content.hero.primaryAction}
+    secondaryAction={content.hero.secondaryAction}
+  />
+
+  <HomePageContent locale={locale} posts={posts} />
+</BaseLayout>

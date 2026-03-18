@@ -1,0 +1,58 @@
+---
+import { getNavigation } from "@/data/fixtures/navigation";
+import { getLocalePrefix, localizePath } from "@/features/i18n/locale";
+import { getDictionary } from "@/features/i18n/translate";
+import { siteConfig, type SiteLocale } from "@/lib/config/site";
+
+type Props = {
+  locale: SiteLocale;
+  pathname: string;
+};
+
+const { locale, pathname } = Astro.props;
+const dictionary = getDictionary(locale);
+const navigation = getNavigation(locale);
+const alternateLocale = locale === "sr-cyrl" ? "sr-latn" : "sr-cyrl";
+const currentWithoutPrefix =
+  locale === "sr-cyrl" ? pathname.replace(/^\/cir/, "") || "/" : pathname || "/";
+const localeSwitcherHref =
+  alternateLocale === "sr-cyrl"
+    ? `${getLocalePrefix(alternateLocale)}${currentWithoutPrefix}`.replace("//", "/")
+    : currentWithoutPrefix;
+const isActivePath = (href: string) => (href === "/" ? pathname === href : pathname.startsWith(href));
+---
+
+<header class="section site-header">
+  <div class="container">
+    <div class="card site-header__inner">
+      <a class="site-brand" href={localizePath(locale, "/")} aria-label={siteConfig.name}>
+        <img class="site-brand__logo" src="/legacy/images/Logo-Dark.svg" alt={siteConfig.name} />
+        <span>
+          <span class="site-brand__title">Ikar</span>
+          <span class="site-brand__meta">Psihoterapijski kabinet</span>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="Primary">
+        {navigation.map((item) => (
+          <a
+            class:list={{ "is-active": isActivePath(item.href) }}
+            href={item.href}
+            aria-current={isActivePath(item.href) ? "page" : undefined}
+          >
+            {item.label}
+          </a>
+        ))}
+      </nav>
+
+      <div class="site-header__actions">
+        <a class="button-secondary" href={localizePath(locale, "/zakazivanje/")}>
+          {dictionary.nav.appointment}
+        </a>
+        <a class="button-ghost site-locale-switcher" href={localeSwitcherHref}>
+          {getDictionary(alternateLocale).localeLabel}
+        </a>
+      </div>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,29 @@
+---
+export const prerender = true;
+
+import HeroSection from "@/components/astro/sections/HeroSection.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getDictionary } from "@/features/i18n/translate";
+
+const locale = "sr-latn";
+const dictionary = getDictionary(locale);
+---
+
+<BaseLayout
+  title="O nama | Psihoterapijski kabinet Ikar"
+  description={dictionary.about.description}
+  locale={locale}
+  canonicalPath="/o-nama/"
+>
+  <HeroSection title={dictionary.about.title} description={dictionary.about.description} />
+  <section class="section">
+    <div class="container">
+      <div class="card" style="padding: 1.5rem;">
+        <p class="section-copy">
+          Ova stranica je spremna da primi 1:1 sadrzaj i raspored iz postojeceg Webflow izvoza,
+          ali kroz cistije Astro sekcije i reusable komponente.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

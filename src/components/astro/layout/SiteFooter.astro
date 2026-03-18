@@ -1,0 +1,59 @@
+---
+import { getNavigation } from "@/data/fixtures/navigation";
+import { localizePath } from "@/features/i18n/locale";
+import { getDictionary } from "@/features/i18n/translate";
+import { siteConfig, type SiteLocale } from "@/lib/config/site";
+
+type Props = {
+  locale: SiteLocale;
+};
+
+const { locale } = Astro.props;
+const dictionary = getDictionary(locale);
+const navigation = getNavigation(locale);
+const galleryImages = [
+  "/legacy/images/1_11.webp",
+  "/legacy/images/2_12.webp",
+  "/legacy/images/3_13.webp",
+];
+---
+
+<footer class="section site-footer">
+  <div class="container">
+    <div class="card footer-shell">
+      <div class="footer-cta">
+        <div class="footer-brand">
+          <p class="eyebrow footer-eyebrow">Kontakt</p>
+          <h2>{siteConfig.name}</h2>
+          <p>{dictionary.footer.tagline}</p>
+        </div>
+        <a class="button-secondary" href={localizePath(locale, "/kontakt/")}>
+          {dictionary.nav.contact}
+        </a>
+      </div>
+
+      <div class="footer-main">
+        <div class="footer-brand">
+          <img class="footer-brand__logo" src="/legacy/images/Logo-White.svg" alt={siteConfig.name} />
+          <p>{dictionary.footer.tagline}</p>
+          <div class="footer-contact-list">
+            <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>
+            <a href={`tel:${siteConfig.contactPhone.replace(/\s+/g, "")}`}>{siteConfig.contactPhone}</a>
+          </div>
+        </div>
+
+        <nav class="footer-nav" aria-label="Footer">
+          {navigation.map((item) => (
+            <a href={item.href}>{item.label}</a>
+          ))}
+        </nav>
+
+        <div class="footer-gallery" aria-hidden="true">
+          {galleryImages.map((image) => (
+            <img src={image} alt="" loading="lazy" />
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

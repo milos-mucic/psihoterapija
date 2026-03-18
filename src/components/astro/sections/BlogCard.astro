@@ -1,0 +1,27 @@
+---
+import { localizePath } from "@/features/i18n/locale";
+import type { BlogListItem } from "@/features/blog/types/blog.types";
+import type { SiteLocale } from "@/lib/config/site";
+
+type Props = {
+  locale: SiteLocale;
+  post: BlogListItem;
+};
+
+const { locale, post } = Astro.props;
+---
+
+<article class="card" style="padding: 1.4rem;">
+  <div class="page-grid">
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; color: var(--muted); font-size: 0.9rem;">
+      <span>{post.publishedAt.toLocaleDateString("sr-RS")}</span>
+      <span>&bull;</span>
+      <span>{post.tags.join(", ") || "Psihoterapija"}</span>
+    </div>
+    <h3 style="margin: 0; font-size: 1.5rem;">{post.title}</h3>
+    <p style="margin: 0; color: var(--muted);">{post.excerpt}</p>
+    <a class="button-secondary" href={localizePath(locale, `/blog/${post.slug}/`)}>
+      Procitaj tekst
+    </a>
+  </div>
+</article>

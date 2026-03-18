@@ -1,0 +1,33 @@
+---
+import AppBar from "@/components/astro/layout/AppBar.astro";
+import SiteFooter from "@/components/astro/layout/SiteFooter.astro";
+import SeoHead from "@/components/astro/seo/SeoHead.astro";
+import type { SiteLocale } from "@/lib/config/site";
+import "@/styles/global.css";
+
+type Props = {
+  title: string;
+  description: string;
+  locale: SiteLocale;
+  canonicalPath: string;
+};
+
+const { title, description, locale, canonicalPath } = Astro.props;
+const isHome = Astro.url.pathname === "/" || Astro.url.pathname === "/cir/";
+---
+
+<!doctype html>
+<html lang={locale === "sr-cyrl" ? "sr-Cyrl-RS" : "sr-Latn-RS"}>
+  <head>
+    <SeoHead title={title} description={description} canonicalPath={canonicalPath} />
+  </head>
+  <body class:list={{ "home-route": isHome }}>
+    <div class="site-shell">
+      <AppBar locale={locale} pathname={Astro.url.pathname} />
+      <main>
+        <slot />
+      </main>
+      <SiteFooter locale={locale} />
+    </div>
+  </body>
+</html>

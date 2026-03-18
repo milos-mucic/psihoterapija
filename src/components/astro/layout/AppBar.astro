@@ -1,0 +1,173 @@
+---
+import { getLocalePrefix, localizePath } from "@/features/i18n/locale";
+import { getDictionary } from "@/features/i18n/translate";
+import { siteConfig, type SiteLocale } from "@/lib/config/site";
+
+type Props = {
+  locale: SiteLocale;
+  pathname: string;
+};
+
+const { locale, pathname } = Astro.props;
+const dictionary = getDictionary(locale);
+const alternateLocale = locale === "sr-cyrl" ? "sr-latn" : "sr-cyrl";
+const currentWithoutPrefix =
+  locale === "sr-cyrl" ? pathname.replace(/^\/cir/, "") || "/" : pathname || "/";
+const localeSwitcherHref =
+  alternateLocale === "sr-cyrl"
+    ? `${getLocalePrefix(alternateLocale)}${currentWithoutPrefix}`.replace("//", "/")
+    : currentWithoutPrefix;
+const isHome = pathname === "/" || pathname === "/cir/";
+const isActivePath = (href: string) => (href === "/" ? pathname === href : pathname.startsWith(href));
+
+const aboutLinks = [
+  { label: locale === "sr-cyrl" ? "О нама" : "O nama", href: localizePath(locale, "/o-nama/") },
+  { label: locale === "sr-cyrl" ? "Контакт" : "Kontakt", href: localizePath(locale, "/kontakt/") },
+];
+
+const therapyLinks = [
+  { label: locale === "sr-cyrl" ? "Приступ" : "Pristup", href: localizePath(locale, "/psihoterapija/") },
+  { label: locale === "sr-cyrl" ? "Заказивање" : "Zakazivanje", href: localizePath(locale, "/zakazivanje/") },
+  { label: "FAQ", href: localizePath(locale, "/faq/") },
+];
+---
+
+<header
+  class:list={["appbar", isHome && "appbar--overlay", !isHome && "appbar--solid"]}
+  data-appbar-root
+>
+  <div class="container">
+    <div class="appbar__panel">
+      <a class="appbar__brand" href={localizePath(locale, "/")} aria-label={siteConfig.name}>
+        <img
+          class="appbar__brand-logo"
+          src={isHome ? "/legacy/images/Logo-White.svg" : "/legacy/images/Logo-Dark.svg"}
+          alt={siteConfig.name}
+        />
+      </a>
+
+      <div class="appbar__desktop">
+        <nav class="appbar__nav" aria-label="Primary">
+          <a class:list={["appbar__link", isActivePath(localizePath(locale, "/")) && "is-active"]} href={localizePath(locale, "/")}>
+            {dictionary.nav.home}
+          </a>
+
+          <details class="appbar__dropdown">
+            <summary class="appbar__link">
+              <span>{dictionary.nav.about}</span>
+              <span class="appbar__chevron">+</span>
+            </summary>
+            <div class="appbar__dropdown-menu">
+              {aboutLinks.map((item) => (
+                <a class:list={["appbar__dropdown-link", isActivePath(item.href) && "is-active"]} href={item.href}>
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          </details>
+
+          <details class="appbar__dropdown">
+            <summary class="appbar__link">
+              <span>{dictionary.nav.psychotherapy}</span>
+              <span class="appbar__chevron">+</span>
+            </summary>
+            <div class="appbar__dropdown-menu">
+              {therapyLinks.map((item) => (
+                <a class:list={["appbar__dropdown-link", isActivePath(item.href) && "is-active"]} href={item.href}>
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          </details>
+
+          <a class:list={["appbar__link", isActivePath(localizePath(locale, "/blog/")) && "is-active"]} href={localizePath(locale, "/blog/")}>
+            {dictionary.nav.blog}
+          </a>
+          <a class:list={["appbar__link", isActivePath(localizePath(locale, "/faq/")) && "is-active"]} href={localizePath(locale, "/faq/")}>
+            {dictionary.nav.faq}
+          </a>
+        </nav>
+
+        <div class="appbar__actions">
+          <a class="appbar__locale" href={localeSwitcherHref}>
+            {getDictionary(alternateLocale).localeLabel}
+          </a>
+          <a class="appbar__cta" href={localizePath(locale, "/kontakt/")}>
+            {dictionary.nav.contact}
+          </a>
+        </div>
+      </div>
+
+      <details class="appbar__mobile">
+        <summary class="appbar__toggle" aria-label="Toggle navigation">
+          <img
+            class:list={["appbar__toggle-icon", isHome && "is-light"]}
+            src="/legacy/images/menu-btn.svg"
+            alt=""
+          />
+        </summary>
+
+        <div class="appbar__drawer">
+          <a class:list={["appbar__drawer-link", isActivePath(localizePath(locale, "/")) && "is-active"]} href={localizePath(locale, "/")}>
+            {dictionary.nav.home}
+          </a>
+
+          <details class="appbar__drawer-group">
+            <summary>{dictionary.nav.about}</summary>
+            <div class="appbar__drawer-group-links">
+              {aboutLinks.map((item) => (
+                <a class:list={["appbar__drawer-sublink", isActivePath(item.href) && "is-active"]} href={item.href}>
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          </details>
+
+          <details class="appbar__drawer-group">
+            <summary>{dictionary.nav.psychotherapy}</summary>
+            <div class="appbar__drawer-group-links">
+              {therapyLinks.map((item) => (
+                <a class:list={["appbar__drawer-sublink", isActivePath(item.href) && "is-active"]} href={item.href}>
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          </details>
+
+          <a class:list={["appbar__drawer-link", isActivePath(localizePath(locale, "/blog/")) && "is-active"]} href={localizePath(locale, "/blog/")}>
+            {dictionary.nav.blog}
+          </a>
+          <a class:list={["appbar__drawer-link", isActivePath(localizePath(locale, "/faq/")) && "is-active"]} href={localizePath(locale, "/faq/")}>
+            {dictionary.nav.faq}
+          </a>
+          <a class:list={["appbar__drawer-link", isActivePath(localizePath(locale, "/kontakt/")) && "is-active"]} href={localizePath(locale, "/kontakt/")}>
+            {dictionary.nav.contact}
+          </a>
+
+          <div class="appbar__drawer-actions">
+            <a class="appbar__locale" href={localeSwitcherHref}>
+              {getDictionary(alternateLocale).localeLabel}
+            </a>
+            <a class="appbar__cta" href={localizePath(locale, "/zakazivanje/")}>
+              {dictionary.nav.appointment}
+            </a>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+</header>
+
+<script is:inline>
+  (() => {
+    const appBar = document.querySelector("[data-appbar-root]");
+    if (!appBar) return;
+
+    const updateScrolledState = () => {
+      appBar.classList.toggle("is-scrolled", window.scrollY > 24);
+    };
+
+    updateScrolledState();
+    window.addEventListener("scroll", updateScrolledState, { passive: true });
+  })();
+</script>

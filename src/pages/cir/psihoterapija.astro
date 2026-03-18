@@ -1,0 +1,19 @@
+---
+export const prerender = true;
+
+import HeroSection from "@/components/astro/sections/HeroSection.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getDictionary } from "@/features/i18n/translate";
+
+const locale = "sr-cyrl";
+const dictionary = getDictionary(locale);
+---
+
+<BaseLayout
+  title="Психотерапија | Психотерапијски кабинет Икар"
+  description={dictionary.psychotherapy.description}
+  locale={locale}
+  canonicalPath="/cir/psihoterapija/"
+>
+  <HeroSection title={dictionary.psychotherapy.title} description={dictionary.psychotherapy.description} />
+</BaseLayout>

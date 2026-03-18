@@ -1,0 +1,31 @@
+---
+type Action = {
+  href: string;
+  label: string;
+};
+
+type Props = {
+  titleHtml: string;
+  description: string;
+  primaryAction: Action;
+  secondaryAction: Action;
+};
+
+const { titleHtml, description, primaryAction, secondaryAction } = Astro.props;
+---
+
+<section class="home-hero">
+  <div class="container home-hero__container">
+    <div class="home-hero__content">
+      <h1 class="home-hero__title" set:html={titleHtml} />
+      <p class="home-hero__description">{description}</p>
+      <div class="home-hero__actions">
+        <a class="home-hero__button" href={primaryAction.href}>{primaryAction.label}</a>
+        <a class="home-hero__text-link" href={secondaryAction.href}>
+          <span>{secondaryAction.label}</span>
+          <span aria-hidden="true">+</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

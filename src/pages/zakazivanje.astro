@@ -1,0 +1,25 @@
+---
+export const prerender = true;
+
+import HeroSection from "@/components/astro/sections/HeroSection.astro";
+import { AppointmentForm } from "@/components/react/forms/AppointmentForm";
+import { getDictionary } from "@/features/i18n/translate";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const locale = "sr-latn";
+const dictionary = getDictionary(locale);
+---
+
+<BaseLayout
+  title="Zakazivanje | Psihoterapijski kabinet Ikar"
+  description={dictionary.appointment.description}
+  locale={locale}
+  canonicalPath="/zakazivanje/"
+>
+  <HeroSection title={dictionary.appointment.title} description={dictionary.appointment.description} />
+  <section class="section">
+    <div class="container">
+      <AppointmentForm client:load locale={locale} labels={dictionary.forms} />
+    </div>
+  </section>
+</BaseLayout>

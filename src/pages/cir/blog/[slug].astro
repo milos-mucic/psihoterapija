@@ -1,0 +1,39 @@
+---
+export async function getStaticPaths() {
+  const posts = await blogService.listPublishedPosts("sr-cyrl");
+
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+  }));
+}
+
+export const prerender = true;
+
+import { render } from "astro:content";
+import { blogService } from "@/features/blog/services/blog.service";
+import BlogPostLayout from "@/layouts/BlogPostLayout.astro";
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  throw new Error("Missing blog slug.");
+}
+
+const post = await blogService.getPostBySlug("sr-cyrl", slug);
+
+if (!post) {
+  return Astro.redirect("/cir/blog/");
+}
+
+const { Content } = await render(post);
+---
+
+<BlogPostLayout
+  title={post.data.title}
+  description={post.data.excerpt}
+  locale="sr-cyrl"
+  canonicalPath={`/cir/blog/${post.slug}/`}
+  publishedAt={post.data.publishedAt}
+>
+  <Content />
+</BlogPostLayout>

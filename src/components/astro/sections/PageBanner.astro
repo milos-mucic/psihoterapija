@@ -1,0 +1,22 @@
+---
+import type { BannerData } from "@/data/fixtures/public-pages";
+
+type Props = BannerData;
+
+const { title, description, theme = "light", backgroundImage } = Astro.props;
+const backgroundStyle = backgroundImage
+  ? `--page-banner-image: linear-gradient(rgba(0, 0, 0, ${theme === "dark" ? 0.45 : 0.18}), rgba(0, 0, 0, ${theme === "dark" ? 0.45 : 0.18})), url("${backgroundImage}")`
+  : undefined;
+---
+
+<section
+  class:list={["page-banner", theme === "dark" && "page-banner--dark", backgroundImage && "page-banner--with-image"]}
+  style={backgroundStyle}
+>
+  <div class="container">
+    <div class="page-banner__content">
+      <h1>{title}</h1>
+      {description && <p>{description}</p>}
+    </div>
+  </div>
+</section>

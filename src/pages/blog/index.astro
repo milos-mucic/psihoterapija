@@ -1,0 +1,29 @@
+---
+export const prerender = true;
+
+import BlogCard from "@/components/astro/sections/BlogCard.astro";
+import HeroSection from "@/components/astro/sections/HeroSection.astro";
+import { blogService } from "@/features/blog/services/blog.service";
+import { getDictionary } from "@/features/i18n/translate";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const locale = "sr-latn";
+const dictionary = getDictionary(locale);
+const posts = await blogService.listPublishedPosts(locale);
+---
+
+<BaseLayout
+  title="Blog | Psihoterapijski kabinet Ikar"
+  description={dictionary.blog.description}
+  locale={locale}
+  canonicalPath="/blog/"
+>
+  <HeroSection title={dictionary.blog.title} description={dictionary.blog.description} />
+  <section class="section">
+    <div class="container">
+      <div class="page-grid">
+        {posts.map((post) => <BlogCard locale={locale} post={post} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

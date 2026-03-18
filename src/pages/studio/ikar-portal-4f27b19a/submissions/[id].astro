@@ -1,0 +1,43 @@
+---
+import { submissionService } from "@/features/forms/services/submission.service";
+import AdminLayout from "@/layouts/AdminLayout.astro";
+
+const { id } = Astro.params;
+const submission = id ? await submissionService.getSubmission(id) : undefined;
+---
+
+<AdminLayout title="Submission details | Ikar admin">
+  <div class="card" style="padding: 1.5rem;">
+    {
+      submission ? (
+        <div class="page-grid">
+          <h2 style="margin: 0;">{submission.name}</h2>
+          <dl style="display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem;">
+            <div class="card" style="padding: 1rem;">
+              <dt>Tip</dt>
+              <dd style="margin: 0.4rem 0 0;">{submission.type}</dd>
+            </div>
+            <div class="card" style="padding: 1rem;">
+              <dt>Email</dt>
+              <dd style="margin: 0.4rem 0 0;">{submission.email}</dd>
+            </div>
+            <div class="card" style="padding: 1rem;">
+              <dt>Telefon</dt>
+              <dd style="margin: 0.4rem 0 0;">{submission.phone ?? "-"}</dd>
+            </div>
+            <div class="card" style="padding: 1rem;">
+              <dt>Kreirano</dt>
+              <dd style="margin: 0.4rem 0 0;">{new Date(submission.createdAt).toLocaleString("sr-RS")}</dd>
+            </div>
+          </dl>
+          <div class="card" style="padding: 1rem;">
+            <h3 style="margin-top: 0;">Poruka</h3>
+            <p style="margin: 0; white-space: pre-wrap; color: var(--muted);">{submission.message}</p>
+          </div>
+        </div>
+      ) : (
+        <p style="margin: 0;">Prijava nije pronadjena.</p>
+      )
+    }
+  </div>
+</AdminLayout>

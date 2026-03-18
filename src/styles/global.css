@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+@import "./tokens.css";
+@import "./base.css";
+@import "./home.css";
+@import "./marketing-pages.css";
+@import "./prose.css";
+@import "./admin.css";

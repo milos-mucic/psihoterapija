@@ -1,0 +1,37 @@
+---
+export const prerender = true;
+
+import HeroSection from "@/components/astro/sections/HeroSection.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getDictionary } from "@/features/i18n/translate";
+
+const locale = "sr-latn";
+const dictionary = getDictionary(locale);
+---
+
+<BaseLayout
+  title="Psihoterapija | Psihoterapijski kabinet Ikar"
+  description={dictionary.psychotherapy.description}
+  locale={locale}
+  canonicalPath="/psihoterapija/"
+>
+  <HeroSection title={dictionary.psychotherapy.title} description={dictionary.psychotherapy.description} />
+  <section class="section">
+    <div class="container">
+      <div class="page-grid" style="grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));">
+        <article class="card" style="padding: 1.4rem;">
+          <h2>Pristup</h2>
+          <p class="section-copy">Sekcija za psihodinamski pristup i dugorocniji rad.</p>
+        </article>
+        <article class="card" style="padding: 1.4rem;">
+          <h2>Oblast rada</h2>
+          <p class="section-copy">Prostor za teme, indikacije i tipove rada koje vec postoje u starom sajtu.</p>
+        </article>
+        <article class="card" style="padding: 1.4rem;">
+          <h2>Zakazivanje</h2>
+          <p class="section-copy">Jasna CTA putanja ka prijavi i kontaktu, bez nepotrebnog kompleksiranja.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

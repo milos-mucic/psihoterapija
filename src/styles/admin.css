@@ -1,0 +1,21 @@
+.admin-shell {
+  background: linear-gradient(180deg, #f5efe4 0%, #ece6db 100%);
+}
+
+.admin-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+  border-bottom: 1px solid var(--line);
+  padding: 0.9rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}

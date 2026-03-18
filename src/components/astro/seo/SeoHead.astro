@@ -1,0 +1,30 @@
+---
+type Props = {
+  title: string;
+  description: string;
+  canonicalPath: string;
+};
+
+const { title, description, canonicalPath } = Astro.props;
+const siteUrl = new URL(canonicalPath, Astro.site);
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="generator" content={Astro.generator} />
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:type" content="website" />
+<meta property="og:url" content={siteUrl.toString()} />
+<link rel="canonical" href={siteUrl.toString()} />
+<meta name="theme-color" content="#163c3d" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Castoro:ital@0;1&family=Lexend:wght@300;400;500;600;700&display=swap"
+/>
+<link rel="icon" href="/legacy/images/favicon.png" type="image/png" />
+<link rel="apple-touch-icon" href="/legacy/images/webclip.png" />

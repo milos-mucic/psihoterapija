@@ -1,0 +1,34 @@
+---
+import type { FaqAccordionItem } from "@/data/fixtures/public-pages";
+
+type Props = {
+  title?: string;
+  intro?: string;
+  items: FaqAccordionItem[];
+  image?: string;
+};
+
+const { title, intro, items, image } = Astro.props;
+---
+
+<section class="page-section">
+  <div class="container">
+    <div class="faq-accordion">
+      {image && <img class="faq-accordion__image" src={image} alt="" loading="lazy" />}
+
+      <div class="faq-accordion__content">
+        {title && <h2>{title}</h2>}
+        {intro && <p>{intro}</p>}
+
+        <div class="faq-accordion__items">
+          {items.map((item, index) => (
+            <details class="faq-item" open={index === 0}>
+              <summary>{item.question}</summary>
+              <p>{item.answer}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

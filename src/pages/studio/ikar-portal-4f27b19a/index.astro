@@ -1,0 +1,39 @@
+---
+import { AdminPasswordModal } from "@/components/react/admin/AdminPasswordModal";
+import { adminAuthService } from "@/features/admin/auth/admin-auth.service";
+import { adminConfig } from "@/lib/config/admin";
+import AdminLayout from "@/layouts/AdminLayout.astro";
+
+const authenticated = adminAuthService.isAuthenticated(Astro.cookies);
+---
+
+<AdminLayout title="Ikar admin dashboard">
+  {
+    authenticated ? (
+      <div class="admin-grid">
+        <div class="card" style="padding: 1.5rem;">
+          <h2>Dashboard</h2>
+          <p class="section-copy">Osnova je spremna: prijave se cuvaju lokalno, blog koristi content collections, a sledeci korak je uredjivanje i Webflow port.</p>
+        </div>
+        <div class="page-grid" style="grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));">
+          <a class="card" href={`${adminConfig.basePath}/blog/`} style="padding: 1.4rem;">
+            <h3>Blog management</h3>
+            <p style="margin: 0; color: var(--muted);">Pregled postova i priprema edit toka.</p>
+          </a>
+          <a class="card" href={`${adminConfig.basePath}/submissions/`} style="padding: 1.4rem;">
+            <h3>Submissions</h3>
+            <p style="margin: 0; color: var(--muted);">Pregled poslatih kontakt i appointment prijava.</p>
+          </a>
+        </div>
+      </div>
+    ) : (
+      <div class="page-grid">
+        <div class="card" style="padding: 1.5rem;">
+          <h2>Skriveni admin ulaz</h2>
+          <p class="section-copy">Ovaj ulaz nije javno linkovan. Nakon validne sifre postavlja se HttpOnly cookie za dalji pristup admin rutama.</p>
+        </div>
+        <AdminPasswordModal client:load returnPath={adminConfig.basePath + "/"} />
+      </div>
+    )
+  }
+</AdminLayout>

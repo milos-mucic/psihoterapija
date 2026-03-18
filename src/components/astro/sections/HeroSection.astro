@@ -1,0 +1,53 @@
+---
+type Action = {
+  href: string;
+  label: string;
+  variant?: "primary" | "secondary";
+};
+
+type Props = {
+  eyebrow?: string;
+  title: string;
+  description: string;
+  actions?: Action[];
+};
+
+const { eyebrow, title, description, actions = [] } = Astro.props;
+const heroImage = "/legacy/images/Banner-Home-3-1_1-p-1080.jpg";
+const portraitImage = "/legacy/images/Doctor--1_1-p-500.jpg";
+---
+
+<section class="section hero-section">
+  <div class="container">
+    <div class="card hero-panel" style={`--hero-image: url('${heroImage}')`}>
+      <div class="hero-grid">
+        <div class="hero-copy">
+          {eyebrow && <p class="eyebrow hero-eyebrow">{eyebrow}</p>}
+          <h1 class="section-title hero-title">{title}</h1>
+          <p class="section-copy hero-description">{description}</p>
+          {
+            actions.length > 0 && (
+              <div class="hero-actions">
+                {actions.map((action) => (
+                  <a
+                    class={action.variant === "secondary" ? "button-secondary" : "button-primary"}
+                    href={action.href}
+                  >
+                    {action.label}
+                  </a>
+                ))}
+              </div>
+            )
+          }
+        </div>
+
+        <div class="hero-figure" aria-hidden="true">
+          <div class="hero-figure__tag">IKAR</div>
+          <div class="hero-figure__frame">
+            <img src={portraitImage} alt="" loading="eager" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
