@@ -11,6 +11,7 @@ const toListItem = (entry: BlogEntry): BlogListItem => ({
   locale: entry.data.locale,
   title: entry.data.title,
   excerpt: entry.data.excerpt,
+  coverImage: entry.data.coverImage,
   publishedAt: entry.data.publishedAt,
   updatedAt: entry.data.updatedAt,
   status: entry.data.status,

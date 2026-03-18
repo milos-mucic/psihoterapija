@@ -90,11 +90,18 @@
   "common": {
     "noItemsFound": "No items found.",
     "play": "Play",
+    "close": "Затвори",
     "officeRoom": "Просторија"
   },
   "footer": {
     "contactEyebrow": "Контакт",
-    "tagline": "Смирена, премијум и одржива основа за психотерапијски сајт."
+    "tagline": "Смирена, премијум и одржива основа за психотерапијски сајт.",
+    "sitemapTitle": "Ситемап",
+    "navigationTitle": "Навигација",
+    "supportTitle": "Подршка",
+    "socialTitle": "Друштвене мреже",
+    "instagramLabel": "Instagram",
+    "instagramPlaceholder": "Профил ускоро"
   },
   "homePage": {
     "hero": {

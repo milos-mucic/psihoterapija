@@ -14,6 +14,10 @@ type Props = {
 const { locale, posts } = Astro.props;
 const dictionary = getDictionary(locale);
 const content = getHomePageData(locale);
+const videoIdMatch = content.reasons.videoHref.match(/[?&]v=([^&]+)/);
+const homeVideoEmbedSrc = videoIdMatch
+  ? `https://www.youtube.com/embed/${videoIdMatch[1]}?autoplay=1&rel=0`
+  : content.reasons.videoHref;
 ---
 
 <section class="home-section">
@@ -163,20 +167,99 @@ const content = getHomePageData(locale);
           }
         </div>
 
-        <a
+        <button
+          type="button"
           class="home-video-card"
-          href={content.reasons.videoHref}
-          target="_blank"
-          rel="noreferrer"
+          data-home-video-open
+          data-video-src={homeVideoEmbedSrc}
+          aria-label={content.reasons.videoLabel}
         >
           <img src={content.reasons.videoImage} alt="" loading="lazy" />
           <span class="home-video-card__badge">{dictionary.common.play}</span>
           <span class="home-video-card__label">{content.reasons.videoLabel}</span>
-        </a>
+        </button>
       </div>
     </div>
   </div>
 </section>
+
+<dialog class="home-video-dialog" data-home-video-dialog>
+  <div class="home-video-dialog__surface">
+    <button
+      type="button"
+      class="home-video-dialog__close"
+      data-home-video-close
+      aria-label={dictionary.common.close}>
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+        <path
+          d="M6 6L18 18M18 6L6 18"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"></path>
+      </svg>
+    </button>
+    <div class="home-video-dialog__frame">
+      <iframe
+        data-home-video-iframe
+        title={content.reasons.videoLabel}
+        allow="autoplay; fullscreen; picture-in-picture"
+        allowfullscreen></iframe>
+    </div>
+  </div>
+</dialog>
+
+<script is:inline>
+  (() => {
+    const setupHomeVideo = () => {
+      const dialog = document.querySelector("[data-home-video-dialog]");
+      const openButton = document.querySelector("[data-home-video-open]");
+      const closeButton = document.querySelector("[data-home-video-close]");
+      const iframe = document.querySelector("[data-home-video-iframe]");
+
+      if (
+        !(dialog instanceof HTMLDialogElement) ||
+        !(openButton instanceof HTMLElement) ||
+        !(closeButton instanceof HTMLElement) ||
+        !(iframe instanceof HTMLIFrameElement) ||
+        dialog.dataset.bound === "true"
+      ) {
+        return;
+      }
+
+      const closeDialog = () => {
+        dialog.close();
+      };
+
+      openButton.addEventListener("click", () => {
+        const src = openButton.dataset.videoSrc;
+        if (!src) {
+          return;
+        }
+
+        iframe.src = src;
+        dialog.showModal();
+      });
+
+      closeButton.addEventListener("click", closeDialog);
+
+      dialog.addEventListener("click", (event) => {
+        if (event.target === dialog) {
+          closeDialog();
+        }
+      });
+
+      dialog.addEventListener("close", () => {
+        iframe.src = "";
+      });
+
+      dialog.dataset.bound = "true";
+    };
+
+    setupHomeVideo();
+    document.addEventListener("astro:page-load", setupHomeVideo);
+  })();
+</script>
 
 <section class="home-section home-section--tight">
   <div class="container">
@@ -202,7 +285,7 @@ const content = getHomePageData(locale);
 
 <section class="home-section">
   <div class="container">
-    <div class="home-heading-row">
+    <div class="home-heading-row home-heading-row--blog">
       <div class="home-heading-copy">
         <h2>{content.recent.title}</h2>
         <p>{content.recent.copy}</p>
@@ -212,23 +295,45 @@ const content = getHomePageData(locale);
 
     {
       posts.length > 0 ? (
-        <div class="home-card-grid">
+        <div class="home-card-grid home-card-grid--blog">
           {posts.map((post) => (
-            <article class="home-card">
-              <div class="home-post-meta">
-                <span>
-                  {post.publishedAt.toLocaleDateString(
-                    locale === "sr-cyrl" ? "sr-Cyrl-RS" : "sr-RS",
-                  )}
-                </span>
-                <span>&bull;</span>
-                <span>{post.tags.join(", ") || dictionary.blog.defaultTag}</span>
-              </div>
-              <h3>{post.title}</h3>
-              <p>{post.excerpt}</p>
-              <a class="home-inline-link" href={localizePath(locale, `/blog/${post.slug}/`)}>
-                {dictionary.blog.readMoreLabel}
+            <article class="home-blog-card">
+              <a class="home-blog-card__media" href={localizePath(locale, `/blog/${post.slug}/`)}>
+                <img
+                  src={post.coverImage ?? "/legacy/images/Blog-1_1Blog 1.webp"}
+                  alt={post.title}
+                  loading="lazy"
+                />
               </a>
+              <div class="home-blog-card__body">
+                <div class="home-post-meta">
+                  <span>
+                    {post.publishedAt.toLocaleDateString(
+                      locale === "sr-cyrl" ? "sr-Cyrl-RS" : "sr-RS",
+                    )}
+                  </span>
+                  <span>&bull;</span>
+                  <span>{post.tags.join(", ") || dictionary.blog.defaultTag}</span>
+                </div>
+                <div class="home-blog-card__copy">
+                  <h3>{post.title}</h3>
+                  <p>{post.excerpt}</p>
+                </div>
+                <a
+                  class="home-blog-card__action"
+                  href={localizePath(locale, `/blog/${post.slug}/`)}
+                >
+                  <span>{dictionary.blog.readMoreLabel}</span>
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M7 17L17 7M9 7H17V15"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1.9"></path>
+                  </svg>
+                </a>
+              </div>
             </article>
           ))}
         </div>

@@ -334,6 +334,8 @@
 
 .page-form-shell {
   width: 100%;
+  display: grid;
+  gap: 1.5rem;
 }
 
 .page-form-shell--booking,
@@ -355,48 +357,50 @@
 
 .page-form-title h2,
 .page-form-shell h2 {
-  margin-bottom: 1.35rem;
+  margin: 0;
 }
 
 .stack-form {
   display: grid;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .stack-form__grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
-}
-
-.stack-form--appointment .stack-form__grid label:nth-of-type(4) {
-  grid-column: 1 / -1;
 }
 
 .stack-form--contact .stack-form__grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.stack-form__field {
+  display: grid;
+  gap: 0.45rem;
+}
+
 .stack-form__field--full {
   grid-column: 1 / -1;
 }
 
-.page-form-shell label span {
+.page-form-shell .stack-form__label {
   color: var(--foreground);
-  font-weight: 400;
+  font-size: 0.95rem;
+  font-weight: 500;
 }
 
 .page-form-shell .input-control {
   border: 1px solid rgba(83, 91, 83, 0.35);
-  border-radius: 8px;
-  min-height: 46px;
-  padding: 16px 15px;
+  border-radius: 0.95rem;
+  min-height: 3.4rem;
+  padding: 0.95rem 1rem;
   background: var(--white);
   box-shadow: none;
 }
 
 .page-form-shell .input-control--textarea {
-  min-height: 8.8rem;
+  min-height: 11rem;
   resize: vertical;
 }
 
@@ -415,14 +419,31 @@
 }
 
 .page-form-shell .button-primary {
-  width: 100%;
-  border-radius: 8px;
-  padding: 0.9rem 1.25rem;
+  width: auto;
+  min-width: 12rem;
+  border-radius: 0.6rem;
+  padding: 0.88rem 1.35rem;
   top: 0;
+  justify-self: end;
+}
+
+.stack-form__actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(83, 91, 83, 0.16);
+}
+
+.stack-form__feedback {
+  min-height: 1.5rem;
+  display: flex;
+  align-items: center;
 }
 
 .page-form-shell .form-status {
-  grid-column: 1 / -1;
+  margin: 0;
 }
 
 .contact-layout {
@@ -615,6 +636,15 @@
   .stack-form--contact .stack-form__grid,
   .contact-details__grid {
     grid-template-columns: 1fr;
+  }
+
+  .stack-form__actions {
+    grid-template-columns: 1fr;
+  }
+
+  .page-form-shell .button-primary {
+    width: 100%;
+    justify-self: stretch;
   }
 }
 

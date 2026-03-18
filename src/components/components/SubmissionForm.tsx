@@ -79,26 +79,26 @@ export function SubmissionForm({
       }}
     >
       <div className="stack-form__grid">
-        <label>
-          <span>{labels.name}</span>
-          <input className="input-control" name="name" required />
+        <label className="stack-form__field">
+          <span className="stack-form__label">{labels.name}</span>
+          <input className="input-control" name="name" autoComplete="name" required />
         </label>
 
         {type === "appointment" ? (
-          <label>
-            <span>{labels.phone}</span>
-            <input className="input-control" name="phone" type="tel" required />
+          <label className="stack-form__field">
+            <span className="stack-form__label">{labels.phone}</span>
+            <input className="input-control" name="phone" type="tel" autoComplete="tel" required />
           </label>
         ) : null}
 
-        <label>
-          <span>{labels.email}</span>
-          <input className="input-control" name="email" type="email" required />
+        <label className="stack-form__field">
+          <span className="stack-form__label">{labels.email}</span>
+          <input className="input-control" name="email" type="email" autoComplete="email" required />
         </label>
 
         {type === "appointment" ? (
-          <label>
-            <span>{formatLabel ?? labels.formatLabel}</span>
+          <label className="stack-form__field">
+            <span className="stack-form__label">{formatLabel ?? labels.formatLabel}</span>
             <select className="input-control" name="format" required defaultValue="">
               <option value="" disabled>
                 {labels.chooseOption}
@@ -111,8 +111,8 @@ export function SubmissionForm({
             </select>
           </label>
         ) : (
-          <label className="stack-form__field stack-form__field--full">
-            <span>{labels.message}</span>
+          <label className="stack-form__field stack-form__field--full stack-form__field--message">
+            <span className="stack-form__label">{labels.message}</span>
             <textarea
               className="input-control input-control--textarea"
               name="message"
@@ -123,20 +123,25 @@ export function SubmissionForm({
         )}
 
         {type === "contact" ? null : <input name="message" type="hidden" value="" readOnly />}
+      </div>
 
-        <button className="button-primary" disabled={state === "submitting"} type="submit">
+      <div className="stack-form__actions">
+        <div className="stack-form__feedback" aria-live="polite">
+          {state === "success" && (
+            <p className="form-status" data-tone="success">
+              {labels.success}
+            </p>
+          )}
+          {state === "error" && (
+            <p className="form-status" data-tone="error">
+              {errorText}
+            </p>
+          )}
+        </div>
+
+        <button className="button-primary stack-form__submit" disabled={state === "submitting"} type="submit">
           {state === "submitting" ? "..." : submitLabel}
         </button>
-        {state === "success" && (
-          <p className="form-status" data-tone="success">
-            {labels.success}
-          </p>
-        )}
-        {state === "error" && (
-          <p className="form-status" data-tone="error">
-            {errorText}
-          </p>
-        )}
       </div>
     </form>
   );

@@ -9,6 +9,7 @@ export type BlogListItem = {
   locale: SiteLocale;
   title: string;
   excerpt: string;
+  coverImage?: string;
   publishedAt: Date;
   updatedAt?: Date;
   status: "draft" | "published";
