@@ -2,6 +2,8 @@ import { SubmissionForm } from "@/components/react/forms/SubmissionForm";
 
 type Props = {
   locale: "sr-latn" | "sr-cyrl";
+  formatLabel: string;
+  formats: string[];
   labels: {
     name: string;
     email: string;
@@ -13,12 +15,14 @@ type Props = {
   };
 };
 
-export function AppointmentForm({ locale, labels }: Props) {
+export function AppointmentForm({ locale, labels, formatLabel, formats }: Props) {
   return (
     <SubmissionForm
       locale={locale}
       type="appointment"
       submitLabel={labels.submitAppointment}
+      formatLabel={formatLabel}
+      appointmentFormats={formats}
       labels={labels}
     />
   );

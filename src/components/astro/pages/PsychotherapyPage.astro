@@ -1,0 +1,60 @@
+---
+import FaqAccordionSection from "@/components/astro/sections/FaqAccordionSection.astro";
+import PageBanner from "@/components/astro/sections/PageBanner.astro";
+import { AppointmentForm } from "@/components/react/forms/AppointmentForm";
+import { getPsychotherapyPageData } from "@/data/fixtures/public-pages";
+import { getDictionary } from "@/features/i18n/translate";
+import type { SiteLocale } from "@/lib/config/site";
+
+type Props = {
+  locale: SiteLocale;
+};
+
+const { locale } = Astro.props;
+const content = getPsychotherapyPageData(locale);
+const dictionary = getDictionary(locale);
+---
+
+<PageBanner {...content.banner} />
+
+<section class="page-section">
+  <div class="container container--narrow">
+    <div class="page-list-panel page-list-panel--centered" data-reveal="up">
+      <h2>{content.scopeTitle}</h2>
+      <ul>
+        {content.scopeItems.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="page-section page-section--dark">
+  <div class="container">
+    <div class="page-empty-state page-empty-state--dark" data-reveal="up">
+      <p>{content.servicesEmptyLabel}</p>
+    </div>
+  </div>
+</section>
+
+<section class="page-section">
+  <div class="container">
+    <div class="page-form-layout" data-reveal="up">
+      <div class="page-form-shell page-form-shell--booking">
+        <div class="page-form-title" set:html={`<h2>${content.bookingTitleHtml}</h2>`} />
+        <AppointmentForm
+          client:load
+          locale={locale}
+          labels={dictionary.forms}
+          formatLabel={content.formatLabel}
+          formats={content.formats}
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page-section page-section--soft">
+  <FaqAccordionSection items={content.faqs} image={content.faqImage} />
+</section>

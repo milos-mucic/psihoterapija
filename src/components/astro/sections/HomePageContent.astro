@@ -149,7 +149,13 @@ const content = getHomePageData(locale);
         </div>
       </div>
 
-      <AppointmentForm client:load locale={locale} labels={dictionary.forms} />
+      <AppointmentForm
+        client:load
+        locale={locale}
+        labels={dictionary.forms}
+        formatLabel={locale === "sr-cyrl" ? "Изаберите формат рада" : "Izaberite format rada"}
+        formats={content.booking.formats}
+      />
     </div>
   </div>
 </section>

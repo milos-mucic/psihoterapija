@@ -9,7 +9,8 @@ export type SubmissionInput = {
   name: string;
   email: string;
   phone?: string;
-  message: string;
+  format?: string;
+  message?: string;
 };
 
 export type SubmissionRecord = SubmissionInput & {

@@ -26,14 +26,22 @@ const submission = id ? await submissionService.getSubmission(id) : undefined;
               <dd style="margin: 0.4rem 0 0;">{submission.phone ?? "-"}</dd>
             </div>
             <div class="card" style="padding: 1rem;">
+              <dt>Format</dt>
+              <dd style="margin: 0.4rem 0 0;">{submission.format ?? "-"}</dd>
+            </div>
+            <div class="card" style="padding: 1rem;">
               <dt>Kreirano</dt>
               <dd style="margin: 0.4rem 0 0;">{new Date(submission.createdAt).toLocaleString("sr-RS")}</dd>
             </div>
           </dl>
-          <div class="card" style="padding: 1rem;">
-            <h3 style="margin-top: 0;">Poruka</h3>
-            <p style="margin: 0; white-space: pre-wrap; color: var(--muted);">{submission.message}</p>
-          </div>
+          {
+            submission.message ? (
+              <div class="card" style="padding: 1rem;">
+                <h3 style="margin-top: 0;">Poruka</h3>
+                <p style="margin: 0; white-space: pre-wrap; color: var(--muted);">{submission.message}</p>
+              </div>
+            ) : null
+          }
         </div>
       ) : (
         <p style="margin: 0;">Prijava nije pronadjena.</p>

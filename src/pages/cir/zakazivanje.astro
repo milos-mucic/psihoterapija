@@ -1,25 +1,19 @@
 ---
 export const prerender = true;
 
-import HeroSection from "@/components/astro/sections/HeroSection.astro";
-import { AppointmentForm } from "@/components/react/forms/AppointmentForm";
-import { getDictionary } from "@/features/i18n/translate";
+import AppointmentPage from "@/components/astro/pages/AppointmentPage.astro";
+import { getAppointmentPageData } from "@/data/fixtures/public-pages";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
 const locale = "sr-cyrl";
-const dictionary = getDictionary(locale);
+const content = getAppointmentPageData(locale);
 ---
 
 <BaseLayout
   title="Заказивање | Психотерапијски кабинет Икар"
-  description={dictionary.appointment.description}
+  description={content.banner.description ?? "Закажите термин у Психотерапијском кабинету Икар."}
   locale={locale}
   canonicalPath="/cir/zakazivanje/"
 >
-  <HeroSection title={dictionary.appointment.title} description={dictionary.appointment.description} />
-  <section class="section">
-    <div class="container">
-      <AppointmentForm client:load locale={locale} labels={dictionary.forms} />
-    </div>
-  </section>
+  <AppointmentPage locale={locale} />
 </BaseLayout>

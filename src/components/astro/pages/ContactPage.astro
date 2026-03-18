@@ -1,0 +1,90 @@
+---
+import PageBanner from "@/components/astro/sections/PageBanner.astro";
+import { ContactForm } from "@/components/react/forms/ContactForm";
+import { getContactPageData, officeGallery } from "@/data/fixtures/public-pages";
+import { getDictionary } from "@/features/i18n/translate";
+import { siteConfig, type SiteLocale } from "@/lib/config/site";
+
+type Props = {
+  locale: SiteLocale;
+};
+
+const { locale } = Astro.props;
+const content = getContactPageData(locale);
+const dictionary = getDictionary(locale);
+
+const socialLinks = [
+  { href: "https://www.facebook.com/", value: "", label: "Facebook" },
+  { href: "https://www.instagram.com/", value: "", label: "Instagram" },
+  { href: "https://www.linkedin.com/", value: "", label: "LinkedIn" },
+];
+---
+
+<PageBanner {...content.banner} />
+
+<section class="page-section">
+  <div class="container">
+    <div class="contact-layout">
+      <div class="contact-details">
+        <h2>{content.introTitle}</h2>
+        <p>{content.introCopy}</p>
+
+        <div class="contact-details__grid">
+          <article class="contact-details__card" data-reveal="up">
+            <h4>{content.contactLabels.phone}</h4>
+            <a class="page-inline-link page-inline-link--plain" href={`tel:${siteConfig.contactPhone.replace(/\s+/g, "")}`}>
+              {siteConfig.contactPhone}
+            </a>
+          </article>
+
+          <article class="contact-details__card" data-reveal="up" style="--reveal-delay: 80ms;">
+            <h4>{content.contactLabels.email}</h4>
+            <a class="page-inline-link page-inline-link--plain" href={`mailto:${siteConfig.contactEmail}`}>
+              {siteConfig.contactEmail}
+            </a>
+          </article>
+        </div>
+
+        <div class="contact-socials" data-reveal="up" style="--reveal-delay: 140ms;">
+          <h5>{content.contactLabels.socials}</h5>
+          <div class="contact-socials__icons">
+            {socialLinks.map((link) => (
+              <a href={link.href} target="_blank" rel="noreferrer" aria-label={link.label}>
+                {link.value}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div class="page-form-shell page-form-shell--contact" data-reveal="right">
+        <h2>{content.formTitle}</h2>
+        <ContactForm client:load locale={locale} labels={dictionary.forms} />
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page-section page-section--soft">
+  <div class="container">
+    <div class="page-section__header">
+      <h2>{content.officesTitle}</h2>
+      <p>{content.officesCopy}</p>
+    </div>
+
+    <div class="office-gallery">
+      {officeGallery.map((image, index) => (
+        <article class="office-gallery__card" data-reveal="up" style={`--reveal-delay: ${index * 90}ms;`}>
+          <img
+            src={image}
+            alt={locale === "sr-cyrl" ? `Просторија ${index + 1}` : `Prostorija ${index + 1}`}
+            loading="lazy"
+          />
+          <div class="office-gallery__meta">
+            <h4>{locale === "sr-cyrl" ? `Просторија ${index + 1}` : `Prostorija ${index + 1}`}</h4>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

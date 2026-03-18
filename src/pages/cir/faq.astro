@@ -1,22 +1,19 @@
 ---
 export const prerender = true;
 
-import FaqSection from "@/components/astro/sections/FaqSection.astro";
-import HeroSection from "@/components/astro/sections/HeroSection.astro";
-import { getFaqItems } from "@/data/fixtures/faq";
-import { getDictionary } from "@/features/i18n/translate";
+import FaqPage from "@/components/astro/pages/FaqPage.astro";
+import { getFaqPageData } from "@/data/fixtures/public-pages";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
 const locale = "sr-cyrl";
-const dictionary = getDictionary(locale);
+const content = getFaqPageData(locale);
 ---
 
 <BaseLayout
   title="Честа питања | Психотерапијски кабинет Икар"
-  description={dictionary.faq.description}
+  description={content.banner.description ?? "Најчешћа питања о психотерапији и раду кабинета Икар."}
   locale={locale}
   canonicalPath="/cir/faq/"
 >
-  <HeroSection title={dictionary.faq.title} description={dictionary.faq.description} />
-  <FaqSection title={dictionary.faq.title} items={getFaqItems(locale)} />
+  <FaqPage locale={locale} />
 </BaseLayout>

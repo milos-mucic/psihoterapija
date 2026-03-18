@@ -1,0 +1,113 @@
+<script is:inline>
+  (() => {
+    const prefersReducedMotion = () =>
+      typeof window !== "undefined" &&
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const getRevealObserver = () => {
+      if (prefersReducedMotion()) {
+        return null;
+      }
+
+      if (!window.__ikarRevealObserver) {
+        window.__ikarRevealObserver = new IntersectionObserver(
+          (entries, observer) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              entry.target.classList.add("is-visible");
+              observer.unobserve(entry.target);
+            });
+          },
+          {
+            threshold: 0.18,
+            rootMargin: "0px 0px -10% 0px",
+          },
+        );
+      }
+
+      return window.__ikarRevealObserver;
+    };
+
+    const initReveals = () => {
+      const observer = getRevealObserver();
+      document.querySelectorAll("[data-reveal]").forEach((element) => {
+        if (element.dataset.revealReady === "true") return;
+        element.dataset.revealReady = "true";
+
+        if (!observer) {
+          element.classList.add("is-visible");
+          return;
+        }
+
+        observer.observe(element);
+      });
+    };
+
+    const syncAccordion = (item, immediate = false) => {
+      const trigger = item.querySelector("[data-accordion-trigger]");
+      const body = item.querySelector("[data-accordion-body]");
+      const expanded = item.dataset.open === "true";
+
+      if (!trigger || !body) return;
+
+      trigger.setAttribute("aria-expanded", String(expanded));
+      item.classList.toggle("is-open", expanded);
+
+      if (expanded) {
+        body.hidden = false;
+        body.style.height = immediate ? "auto" : "0px";
+        const nextHeight = `${body.scrollHeight}px`;
+        requestAnimationFrame(() => {
+          body.style.height = immediate ? "auto" : nextHeight;
+        });
+      } else {
+        const currentHeight = body.scrollHeight;
+        body.hidden = false;
+        body.style.height = `${currentHeight}px`;
+        requestAnimationFrame(() => {
+          body.style.height = "0px";
+        });
+      }
+    };
+
+    const initAccordions = () => {
+      document.querySelectorAll("[data-accordion-item]").forEach((item) => {
+        if (item.dataset.accordionReady === "true") return;
+        item.dataset.accordionReady = "true";
+
+        const trigger = item.querySelector("[data-accordion-trigger]");
+        const body = item.querySelector("[data-accordion-body]");
+        if (!trigger || !body) return;
+
+        syncAccordion(item, true);
+
+        trigger.addEventListener("click", () => {
+          item.dataset.open = item.dataset.open === "true" ? "false" : "true";
+          syncAccordion(item);
+        });
+
+        body.addEventListener("transitionend", () => {
+          if (item.dataset.open === "true") {
+            body.style.height = "auto";
+          } else {
+            body.hidden = true;
+          }
+        });
+      });
+    };
+
+    const init = () => {
+      initReveals();
+      initAccordions();
+    };
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init, { once: true });
+    } else {
+      init();
+    }
+
+    document.addEventListener("astro:page-load", init);
+  })();
+</script>

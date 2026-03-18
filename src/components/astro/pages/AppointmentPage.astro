@@ -1,0 +1,40 @@
+---
+import FaqAccordionSection from "@/components/astro/sections/FaqAccordionSection.astro";
+import PageBanner from "@/components/astro/sections/PageBanner.astro";
+import { AppointmentForm } from "@/components/react/forms/AppointmentForm";
+import { getAppointmentPageData } from "@/data/fixtures/public-pages";
+import { getDictionary } from "@/features/i18n/translate";
+import type { SiteLocale } from "@/lib/config/site";
+
+type Props = {
+  locale: SiteLocale;
+};
+
+const { locale } = Astro.props;
+const content = getAppointmentPageData(locale);
+const dictionary = getDictionary(locale);
+---
+
+<PageBanner {...content.banner} />
+
+<section class="page-section">
+  <div class="container">
+    <div class="page-form-layout" data-reveal="up">
+      <div class="page-form-shell page-form-shell--booking">
+        <h2>{content.formTitle}</h2>
+        <AppointmentForm
+          client:load
+          locale={locale}
+          labels={dictionary.forms}
+          formatLabel={content.formatLabel}
+          formats={content.formats}
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+<FaqAccordionSection
+  items={content.faqs}
+  image={content.faqImage}
+/>

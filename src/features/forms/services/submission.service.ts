@@ -15,6 +15,8 @@ export const submissionService = {
     return submissionRepository.create({
       ...parsed,
       phone: parsed.phone || undefined,
+      format: parsed.format || undefined,
+      message: parsed.message || undefined,
     });
   },
 };

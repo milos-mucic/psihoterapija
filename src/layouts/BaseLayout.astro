@@ -1,5 +1,6 @@
 ---
 import AppBar from "@/components/astro/layout/AppBar.astro";
+import PageMotion from "@/components/astro/layout/PageMotion.astro";
 import SiteFooter from "@/components/astro/layout/SiteFooter.astro";
 import SeoHead from "@/components/astro/seo/SeoHead.astro";
 import type { SiteLocale } from "@/lib/config/site";
@@ -29,5 +30,6 @@ const isHome = Astro.url.pathname === "/" || Astro.url.pathname === "/cir/";
       </main>
       <SiteFooter locale={locale} />
     </div>
+    <PageMotion />
   </body>
 </html>

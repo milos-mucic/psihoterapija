@@ -1,25 +1,19 @@
 ---
 export const prerender = true;
 
-import HeroSection from "@/components/astro/sections/HeroSection.astro";
-import { ContactForm } from "@/components/react/forms/ContactForm";
-import { getDictionary } from "@/features/i18n/translate";
+import ContactPage from "@/components/astro/pages/ContactPage.astro";
+import { getContactPageData } from "@/data/fixtures/public-pages";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
 const locale = "sr-latn";
-const dictionary = getDictionary(locale);
+const content = getContactPageData(locale);
 ---
 
 <BaseLayout
   title="Kontakt | Psihoterapijski kabinet Ikar"
-  description={dictionary.contact.description}
+  description={content.introCopy}
   locale={locale}
   canonicalPath="/kontakt/"
 >
-  <HeroSection title={dictionary.contact.title} description={dictionary.contact.description} />
-  <section class="section">
-    <div class="container">
-      <ContactForm client:load locale={locale} labels={dictionary.forms} />
-    </div>
-  </section>
+  <ContactPage locale={locale} />
 </BaseLayout>

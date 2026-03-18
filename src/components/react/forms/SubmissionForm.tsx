@@ -4,6 +4,8 @@ type Props = {
   locale: "sr-latn" | "sr-cyrl";
   type: "contact" | "appointment";
   submitLabel: string;
+  formatLabel?: string;
+  appointmentFormats?: string[];
   labels: {
     name: string;
     email: string;
@@ -16,7 +18,14 @@ type Props = {
 
 type State = "idle" | "submitting" | "success" | "error";
 
-export function SubmissionForm({ locale, type, submitLabel, labels }: Props) {
+export function SubmissionForm({
+  locale,
+  type,
+  submitLabel,
+  labels,
+  formatLabel,
+  appointmentFormats,
+}: Props) {
   const [state, setState] = useState<State>("idle");
   const [errorText, setErrorText] = useState<string>("");
 
@@ -31,7 +40,11 @@ export function SubmissionForm({ locale, type, submitLabel, labels }: Props) {
       name: String(formData.get("name") ?? ""),
       email: String(formData.get("email") ?? ""),
       phone: String(formData.get("phone") ?? ""),
-      message: String(formData.get("message") ?? ""),
+      format: String(formData.get("format") ?? ""),
+      message:
+        type === "appointment"
+          ? String(formData.get("message") ?? "")
+          : String(formData.get("message") ?? ""),
     };
 
     try {
@@ -60,30 +73,53 @@ export function SubmissionForm({ locale, type, submitLabel, labels }: Props) {
 
   return (
     <form
-      className="card stack-form"
-      style={{ padding: "1.4rem" }}
+      className={`stack-form stack-form--${type}`}
       onSubmit={(event) => {
         event.preventDefault();
         void handleSubmit(event.currentTarget);
       }}
     >
-      <div className="page-grid">
+      <div className="stack-form__grid">
         <label>
           <span>{labels.name}</span>
           <input className="input-control" name="name" required />
         </label>
+
+        {type === "appointment" ? (
+          <label>
+            <span>{labels.phone}</span>
+            <input className="input-control" name="phone" type="tel" required />
+          </label>
+        ) : null}
+
         <label>
           <span>{labels.email}</span>
           <input className="input-control" name="email" type="email" required />
         </label>
-        <label>
-          <span>{labels.phone}</span>
-          <input className="input-control" name="phone" />
-        </label>
-        <label>
-          <span>{labels.message}</span>
-          <textarea className="input-control" name="message" required rows={5} />
-        </label>
+
+        {type === "appointment" ? (
+          <label>
+            <span>{formatLabel ?? (locale === "sr-cyrl" ? "Формат рада" : "Format rada")}</span>
+            <select className="input-control" name="format" required defaultValue="">
+              <option value="" disabled>
+                {locale === "sr-cyrl" ? "Изаберите" : "Izaberite"}
+              </option>
+              {(appointmentFormats ?? []).map((format) => (
+                <option key={format} value={format}>
+                  {format}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : (
+          <label className="stack-form__field stack-form__field--full">
+            <span>{labels.message}</span>
+            <textarea className="input-control input-control--textarea" name="message" required rows={5} />
+          </label>
+        )}
+
+        {type === "contact" ? null : <input name="message" type="hidden" value="" readOnly />}
+
         <button className="button-primary" disabled={state === "submitting"} type="submit">
           {state === "submitting" ? "..." : submitLabel}
         </button>

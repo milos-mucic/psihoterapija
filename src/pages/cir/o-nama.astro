@@ -1,19 +1,19 @@
 ---
 export const prerender = true;
 
-import HeroSection from "@/components/astro/sections/HeroSection.astro";
+import AboutPage from "@/components/astro/pages/AboutPage.astro";
+import { getAboutPageData } from "@/data/fixtures/public-pages";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { getDictionary } from "@/features/i18n/translate";
 
 const locale = "sr-cyrl";
-const dictionary = getDictionary(locale);
+const content = getAboutPageData(locale);
 ---
 
 <BaseLayout
   title="О нама | Психотерапијски кабинет Икар"
-  description={dictionary.about.description}
+  description={content.banner.description ?? "Сазнајте више о Психотерапијском кабинету Икар."}
   locale={locale}
   canonicalPath="/cir/o-nama/"
 >
-  <HeroSection title={dictionary.about.title} description={dictionary.about.description} />
+  <AboutPage locale={locale} />
 </BaseLayout>

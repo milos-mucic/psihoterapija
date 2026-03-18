@@ -1,0 +1,97 @@
+---
+import PageBanner from "@/components/astro/sections/PageBanner.astro";
+import { getAboutPageData } from "@/data/fixtures/public-pages";
+import { localizePath } from "@/features/i18n/locale";
+import { blogService } from "@/features/blog/services/blog.service";
+import type { SiteLocale } from "@/lib/config/site";
+
+type Props = {
+  locale: SiteLocale;
+};
+
+const { locale } = Astro.props;
+const content = getAboutPageData(locale);
+const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
+---
+
+<PageBanner {...content.banner} />
+
+<section class="page-section page-section--soft page-section--webflow-light">
+  <div class="container">
+    <div class="page-section__header page-section__header--center" data-reveal="up">
+      <h2>{content.showcaseTitle}</h2>
+    </div>
+
+    <div class="page-showcase page-showcase--single">
+      <a class="page-video-card page-video-card--lightbox" href={content.showcaseVideoHref} target="_blank" rel="noreferrer" data-reveal="grow">
+        <img src={content.showcaseVideoImage} alt={content.showcaseTitle} loading="lazy" />
+        <span class="page-video-card__play"></span>
+        <span class="page-video-card__ring"></span>
+        <span class="page-video-card__hover"></span>
+      </a>
+
+      <div class="page-empty-state" data-reveal="up" style="--reveal-delay: 120ms;">
+        <p>{content.showcaseEmptyLabel}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page-section">
+  <div class="container">
+    <div class="page-grid-two page-grid-two--about">
+      <div class="page-rich-copy" data-reveal="up">
+        <h2>{content.ideaTitle}</h2>
+        <div class="page-rich-copy__html" set:html={content.ideaHtml} />
+      </div>
+
+      <aside class="page-list-panel" data-reveal="right">
+        <h3>{content.focusTitle}</h3>
+        <ul>
+          {content.focusItems.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="page-section page-section--soft">
+  <div class="container">
+    <div class="page-heading-row" data-reveal="up">
+      <div class="page-heading-copy">
+        <h2>{content.recentTitle}</h2>
+        <p>{content.recentCopy}</p>
+      </div>
+      <a class="button-secondary" href={content.recentHref}>
+        {content.recentLabel}
+      </a>
+    </div>
+
+    {
+      posts.length > 0 ? (
+        <div class="page-card-grid">
+          {posts.map((post, index) => (
+            <article class="page-card page-card--post" data-reveal="up" style={`--reveal-delay: ${index * 90}ms;`}>
+              <div class="page-post-meta">
+                <span>{post.publishedAt.toLocaleDateString(locale === "sr-cyrl" ? "sr-Cyrl-RS" : "sr-RS")}</span>
+                <span>&bull;</span>
+                <span>{post.tags.join(", ") || "Psihoterapija"}</span>
+              </div>
+              <h3>{post.title}</h3>
+              <p>{post.excerpt}</p>
+              <a class="page-inline-link" href={localizePath(locale, `/blog/${post.slug}/`)}>
+                {content.recentReadMoreLabel}
+              </a>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <article class="page-empty-state">
+          <p>No items found.</p>
+        </article>
+      )
+    }
+  </div>
+</section>
