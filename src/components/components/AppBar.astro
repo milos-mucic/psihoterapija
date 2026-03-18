@@ -10,14 +10,12 @@ type Props = {
 
 const { locale, pathname } = Astro.props;
 const dictionary = getDictionary(locale);
-const alternateLocale = locale === "sr-cyrl" ? "sr-latn" : "sr-cyrl";
+const latnDictionary = getDictionary("sr-latn");
+const cyrlDictionary = getDictionary("sr-cyrl");
 const currentWithoutPrefix =
   locale === "sr-cyrl" ? pathname.replace(/^\/cir/, "") || "/" : pathname || "/";
-const localeSwitcherHref =
-  alternateLocale === "sr-cyrl"
-    ? `${getLocalePrefix(alternateLocale)}${currentWithoutPrefix}`.replace("//", "/")
-    : currentWithoutPrefix;
-const isHome = pathname === "/" || pathname === "/cir/";
+const latnHref = currentWithoutPrefix;
+const cyrlHref = `${getLocalePrefix("sr-cyrl")}${currentWithoutPrefix}`.replace("//", "/");
 const isActivePath = (href: string) =>
   href === "/" ? pathname === href : pathname.startsWith(href);
 
@@ -33,16 +31,13 @@ const therapyLinks = [
 ];
 ---
 
-<header
-  class:list={["appbar", isHome && "appbar--overlay", !isHome && "appbar--solid"]}
-  data-appbar-root
->
+<header class="appbar appbar--solid" data-appbar-root>
   <div class="container">
     <div class="appbar__panel">
       <a class="appbar__brand" href={localizePath(locale, "/")} aria-label={siteConfig.name}>
         <img
           class="appbar__brand-logo"
-          src={isHome ? "/legacy/images/Logo-White.svg" : "/legacy/images/Logo-Dark.svg"}
+          src="/legacy/images/Logo-White.svg"
           alt={siteConfig.name}
         />
       </a>
@@ -56,10 +51,10 @@ const therapyLinks = [
             {dictionary.nav.home}
           </a>
 
-          <details class="appbar__dropdown">
+          <details class="appbar__dropdown" data-appbar-dropdown>
             <summary class="appbar__link">
               <span>{dictionary.nav.about}</span>
-              <span class="appbar__chevron">+</span>
+              <span class="appbar__chevron" aria-hidden="true"></span>
             </summary>
             <div class="appbar__dropdown-menu">
               {
@@ -75,10 +70,10 @@ const therapyLinks = [
             </div>
           </details>
 
-          <details class="appbar__dropdown">
+          <details class="appbar__dropdown" data-appbar-dropdown>
             <summary class="appbar__link">
               <span>{dictionary.nav.psychotherapy}</span>
-              <span class="appbar__chevron">+</span>
+              <span class="appbar__chevron" aria-hidden="true"></span>
             </summary>
             <div class="appbar__dropdown-menu">
               {
@@ -115,99 +110,187 @@ const therapyLinks = [
         </nav>
 
         <div class="appbar__actions">
-          <a class="appbar__locale" href={localeSwitcherHref}>
-            {getDictionary(alternateLocale).localeLabel}
-          </a>
+          <div
+            class="appbar__locale-toggle"
+            aria-label={dictionary.a11y.localeSwitch}
+            data-locale-toggle
+            data-active-locale={locale}
+          >
+            {
+              locale === "sr-latn" ? (
+                <span class="appbar__locale-chip" aria-current="page" data-locale-chip-id="sr-latn">
+                  {latnDictionary.localeShortLabel}
+                </span>
+              ) : (
+                <a
+                  class="appbar__locale-chip"
+                  href={latnHref}
+                  data-astro-prefetch
+                  data-locale-chip-target
+                  data-next-locale="sr-latn"
+                  data-locale-chip-id="sr-latn"
+                >
+                  {latnDictionary.localeShortLabel}
+                </a>
+              )
+            }
+            {
+              locale === "sr-cyrl" ? (
+                <span class="appbar__locale-chip" aria-current="page" data-locale-chip-id="sr-cyrl">
+                  {cyrlDictionary.localeShortLabel}
+                </span>
+              ) : (
+                <a
+                  class="appbar__locale-chip"
+                  href={cyrlHref}
+                  data-astro-prefetch
+                  data-locale-chip-target
+                  data-next-locale="sr-cyrl"
+                  data-locale-chip-id="sr-cyrl"
+                >
+                  {cyrlDictionary.localeShortLabel}
+                </a>
+              )
+            }
+          </div>
           <a class="appbar__cta" href={localizePath(locale, "/kontakt/")}>
             {dictionary.nav.contact}
           </a>
         </div>
       </div>
 
-      <details class="appbar__mobile">
+      <details class="appbar__mobile" data-appbar-mobile>
         <summary class="appbar__toggle" aria-label={dictionary.a11y.toggleNavigation}>
-          <img
-            class:list={["appbar__toggle-icon", isHome && "is-light"]}
-            src="/legacy/images/menu-btn.svg"
-            alt=""
-          />
+          <img class="appbar__toggle-icon" src="/legacy/images/menu-btn.svg" alt="" />
         </summary>
 
+        <button class="appbar__backdrop" type="button" aria-label={dictionary.a11y.toggleNavigation}></button>
+
         <div class="appbar__drawer">
-          <a
-            class:list={[
-              "appbar__drawer-link",
-              isActivePath(localizePath(locale, "/")) && "is-active",
-            ]}
-            href={localizePath(locale, "/")}
-          >
-            {dictionary.nav.home}
-          </a>
+          <div class="appbar__drawer-header">
+            <img class="appbar__drawer-logo" src="/legacy/images/Logo-Dark.svg" alt={siteConfig.name} />
+            <button class="appbar__drawer-close" type="button" aria-label={dictionary.a11y.toggleNavigation}>
+              <span></span>
+              <span></span>
+            </button>
+          </div>
 
-          <details class="appbar__drawer-group">
-            <summary>{dictionary.nav.about}</summary>
-            <div class="appbar__drawer-group-links">
-              {
-                aboutLinks.map((item) => (
-                  <a
-                    class:list={["appbar__drawer-sublink", isActivePath(item.href) && "is-active"]}
-                    href={item.href}
-                  >
-                    {item.label}
-                  </a>
-                ))
-              }
-            </div>
-          </details>
+          <div class="appbar__drawer-body">
+            <a
+              class:list={[
+                "appbar__drawer-link",
+                isActivePath(localizePath(locale, "/")) && "is-active",
+              ]}
+              href={localizePath(locale, "/")}
+            >
+              {dictionary.nav.home}
+            </a>
 
-          <details class="appbar__drawer-group">
-            <summary>{dictionary.nav.psychotherapy}</summary>
-            <div class="appbar__drawer-group-links">
-              {
-                therapyLinks.map((item) => (
-                  <a
-                    class:list={["appbar__drawer-sublink", isActivePath(item.href) && "is-active"]}
-                    href={item.href}
-                  >
-                    {item.label}
-                  </a>
-                ))
-              }
-            </div>
-          </details>
+            <details class="appbar__drawer-group">
+              <summary>{dictionary.nav.about}</summary>
+              <div class="appbar__drawer-group-links">
+                {
+                  aboutLinks.map((item) => (
+                    <a
+                      class:list={["appbar__drawer-sublink", isActivePath(item.href) && "is-active"]}
+                      href={item.href}
+                    >
+                      {item.label}
+                    </a>
+                  ))
+                }
+              </div>
+            </details>
 
-          <a
-            class:list={[
-              "appbar__drawer-link",
-              isActivePath(localizePath(locale, "/blog/")) && "is-active",
-            ]}
-            href={localizePath(locale, "/blog/")}
-          >
-            {dictionary.nav.blog}
-          </a>
-          <a
-            class:list={[
-              "appbar__drawer-link",
-              isActivePath(localizePath(locale, "/faq/")) && "is-active",
-            ]}
-            href={localizePath(locale, "/faq/")}
-          >
-            {dictionary.nav.faq}
-          </a>
-          <a
-            class:list={[
-              "appbar__drawer-link",
-              isActivePath(localizePath(locale, "/kontakt/")) && "is-active",
-            ]}
-            href={localizePath(locale, "/kontakt/")}
-          >
-            {dictionary.nav.contact}
-          </a>
+            <details class="appbar__drawer-group">
+              <summary>{dictionary.nav.psychotherapy}</summary>
+              <div class="appbar__drawer-group-links">
+                {
+                  therapyLinks.map((item) => (
+                    <a
+                      class:list={["appbar__drawer-sublink", isActivePath(item.href) && "is-active"]}
+                      href={item.href}
+                    >
+                      {item.label}
+                    </a>
+                  ))
+                }
+              </div>
+            </details>
+
+            <a
+              class:list={[
+                "appbar__drawer-link",
+                isActivePath(localizePath(locale, "/blog/")) && "is-active",
+              ]}
+              href={localizePath(locale, "/blog/")}
+            >
+              {dictionary.nav.blog}
+            </a>
+            <a
+              class:list={[
+                "appbar__drawer-link",
+                isActivePath(localizePath(locale, "/faq/")) && "is-active",
+              ]}
+              href={localizePath(locale, "/faq/")}
+            >
+              {dictionary.nav.faq}
+            </a>
+            <a
+              class:list={[
+                "appbar__drawer-link",
+                isActivePath(localizePath(locale, "/kontakt/")) && "is-active",
+              ]}
+              href={localizePath(locale, "/kontakt/")}
+            >
+              {dictionary.nav.contact}
+            </a>
+          </div>
 
           <div class="appbar__drawer-actions">
-            <a class="appbar__locale" href={localeSwitcherHref}>
-              {getDictionary(alternateLocale).localeLabel}
-            </a>
+            <div
+              class="appbar__locale-toggle appbar__locale-toggle--drawer"
+              aria-label={dictionary.a11y.localeSwitch}
+              data-locale-toggle
+              data-active-locale={locale}
+            >
+              {
+                locale === "sr-latn" ? (
+                  <span class="appbar__locale-chip" aria-current="page" data-locale-chip-id="sr-latn">
+                    {latnDictionary.localeShortLabel}
+                  </span>
+                ) : (
+                  <a
+                    class="appbar__locale-chip"
+                    href={latnHref}
+                    data-astro-prefetch
+                    data-locale-chip-target
+                    data-next-locale="sr-latn"
+                    data-locale-chip-id="sr-latn"
+                  >
+                    {latnDictionary.localeShortLabel}
+                  </a>
+                )
+              }
+              {
+                locale === "sr-cyrl" ? (
+                  <span class="appbar__locale-chip" aria-current="page" data-locale-chip-id="sr-cyrl">
+                    {cyrlDictionary.localeShortLabel}
+                  </span>
+                ) : (
+                  <a
+                    class="appbar__locale-chip"
+                    href={cyrlHref}
+                    data-astro-prefetch
+                    data-locale-chip-target
+                    data-next-locale="sr-cyrl"
+                    data-locale-chip-id="sr-cyrl"
+                  >
+                    {cyrlDictionary.localeShortLabel}
+                  </a>
+                )
+              }
+            </div>
             <a class="appbar__cta" href={localizePath(locale, "/zakazivanje/")}>
               {dictionary.nav.appointment}
             </a>
@@ -220,14 +303,197 @@ const therapyLinks = [
 
 <script is:inline>
   (() => {
-    const appBar = document.querySelector("[data-appbar-root]");
-    if (!appBar) return;
+    const switchTimers = new WeakMap();
 
-    const updateScrolledState = () => {
-      appBar.classList.toggle("is-scrolled", window.scrollY > 24);
+    const syncScrolledState = () => {
+      document.querySelectorAll("[data-appbar-root]").forEach((root) => {
+        root.classList.toggle("is-scrolled", window.scrollY > 24);
+      });
     };
 
-    updateScrolledState();
-    window.addEventListener("scroll", updateScrolledState, { passive: true });
+    const initLocaleToggles = (appBar) => {
+      appBar.querySelectorAll("[data-locale-toggle]").forEach((toggle) => {
+        if (toggle.dataset.localeReady === "true") return;
+        toggle.dataset.localeReady = "true";
+
+        toggle.querySelectorAll("[data-locale-chip-target]").forEach((target) => {
+          if (!(target instanceof HTMLAnchorElement)) return;
+
+          target.addEventListener("click", () => {
+            const nextLocale = target.dataset.nextLocale;
+            if (nextLocale) {
+              toggle.dataset.activeLocale = nextLocale;
+            }
+
+            if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+
+            toggle.classList.add("is-switching");
+            const previousTimer = switchTimers.get(toggle);
+            if (previousTimer) {
+              window.clearTimeout(previousTimer);
+            }
+
+            const nextTimer = window.setTimeout(() => {
+              toggle.classList.remove("is-switching");
+            }, 520);
+
+            switchTimers.set(toggle, nextTimer);
+          });
+        });
+      });
+    };
+
+    const initDesktopDropdowns = (appBar) => {
+      const closeDropdown = (dropdown) => {
+        if (!(dropdown instanceof HTMLDetailsElement)) return;
+        dropdown.open = false;
+        dropdown.dataset.dropdownPinned = "false";
+      };
+
+      const closeOtherDropdowns = (currentDropdown) => {
+        appBar.querySelectorAll("[data-appbar-dropdown]").forEach((dropdown) => {
+          if (!(dropdown instanceof HTMLDetailsElement)) return;
+          if (dropdown === currentDropdown) return;
+          closeDropdown(dropdown);
+        });
+      };
+
+      const hasPinnedDropdown = () => {
+        return Array.from(appBar.querySelectorAll("[data-appbar-dropdown]")).some(
+          (dropdown) =>
+            dropdown instanceof HTMLDetailsElement && dropdown.dataset.dropdownPinned === "true",
+        );
+      };
+
+      if (appBar.dataset.dropdownDismissReady !== "true") {
+        appBar.dataset.dropdownDismissReady = "true";
+
+        document.addEventListener("pointerdown", (event) => {
+          if (appBar.contains(event.target)) return;
+          appBar.querySelectorAll("[data-appbar-dropdown]").forEach((dropdown) => {
+            closeDropdown(dropdown);
+          });
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key !== "Escape") return;
+          appBar.querySelectorAll("[data-appbar-dropdown]").forEach((dropdown) => {
+            closeDropdown(dropdown);
+          });
+        });
+      };
+
+      appBar.querySelectorAll("[data-appbar-dropdown]").forEach((dropdown) => {
+        if (!(dropdown instanceof HTMLDetailsElement)) return;
+        if (dropdown.dataset.dropdownReady === "true") return;
+        dropdown.dataset.dropdownReady = "true";
+
+        const summary = dropdown.querySelector("summary");
+        if (!(summary instanceof HTMLElement)) return;
+
+        const isDesktop = () => window.matchMedia("(min-width: 1101px)").matches;
+        let closeTimer;
+
+        const openDropdown = () => {
+          if (!isDesktop()) return;
+          if (hasPinnedDropdown() && dropdown.dataset.dropdownPinned !== "true") return;
+          window.clearTimeout(closeTimer);
+          closeOtherDropdowns(dropdown);
+          dropdown.open = true;
+        };
+
+        const scheduleCloseDropdown = () => {
+          if (!isDesktop()) return;
+          if (dropdown.dataset.dropdownPinned === "true") return;
+          window.clearTimeout(closeTimer);
+          closeTimer = window.setTimeout(() => {
+            if (dropdown.dataset.dropdownPinned === "true") return;
+            dropdown.open = false;
+          }, 120);
+        };
+
+        dropdown.addEventListener("mouseenter", openDropdown);
+        dropdown.addEventListener("mouseleave", scheduleCloseDropdown);
+
+        dropdown.addEventListener("focusin", () => {
+          if (hasPinnedDropdown() && dropdown.dataset.dropdownPinned !== "true") return;
+          closeOtherDropdowns(dropdown);
+          dropdown.open = true;
+        });
+
+        dropdown.addEventListener("focusout", (event) => {
+          if (dropdown.contains(event.relatedTarget)) return;
+          if (dropdown.dataset.dropdownPinned === "true") return;
+          dropdown.open = false;
+        });
+
+        summary.addEventListener("click", (event) => {
+          if (!isDesktop()) return;
+          event.preventDefault();
+          window.clearTimeout(closeTimer);
+          const shouldPinOpen = dropdown.dataset.dropdownPinned !== "true";
+          closeOtherDropdowns(dropdown);
+          dropdown.dataset.dropdownPinned = shouldPinOpen ? "true" : "false";
+          dropdown.open = shouldPinOpen;
+        });
+      });
+    };
+
+    const initAppBar = (appBar) => {
+      if (!(appBar instanceof HTMLElement)) return;
+      if (appBar.dataset.appbarReady === "true") {
+        syncScrolledState();
+        return;
+      }
+
+      appBar.dataset.appbarReady = "true";
+      const mobile = appBar.querySelector("[data-appbar-mobile]");
+
+      const closeDrawer = () => {
+        if (!(mobile instanceof HTMLDetailsElement)) return;
+        mobile.open = false;
+        document.body.classList.remove("appbar-drawer-open");
+      };
+
+      const syncDrawerState = () => {
+        if (!(mobile instanceof HTMLDetailsElement)) return;
+        document.body.classList.toggle("appbar-drawer-open", mobile.open);
+      };
+
+      initLocaleToggles(appBar);
+      initDesktopDropdowns(appBar);
+      syncScrolledState();
+
+      if (mobile instanceof HTMLDetailsElement) {
+        mobile.addEventListener("toggle", syncDrawerState);
+
+        mobile.querySelector(".appbar__backdrop")?.addEventListener("click", closeDrawer);
+        mobile.querySelector(".appbar__drawer-close")?.addEventListener("click", closeDrawer);
+        mobile.querySelectorAll(".appbar__drawer a").forEach((link) => {
+          link.addEventListener("click", closeDrawer);
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") {
+            closeDrawer();
+          }
+        });
+      }
+    };
+
+    const initCurrentAppBar = () => {
+      const appBar = document.querySelector("[data-appbar-root]");
+      if (!appBar) return;
+      initAppBar(appBar);
+    };
+
+    if (!window.__ikarAppBarScrollReady) {
+      window.__ikarAppBarScrollReady = true;
+      window.addEventListener("scroll", syncScrolledState, { passive: true });
+    }
+
+    initCurrentAppBar();
+    document.addEventListener("astro:after-swap", syncScrolledState);
+    document.addEventListener("astro:page-load", initCurrentAppBar);
   })();
 </script>

@@ -1,7 +1,9 @@
 {
   "localeLabel": "Latinica",
+  "localeShortLabel": "LAT",
   "a11y": {
     "appbarPrimaryNav": "Glavna navigacija",
+    "localeSwitch": "Prebacivanje pisma",
     "toggleNavigation": "Otvori navigaciju",
     "footerNav": "Navigacija u podnožju"
   },

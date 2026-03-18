@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from "astro:transitions";
 import AppBar from "@/components/components/AppBar.astro";
 import PageMotion from "@/components/components/PageMotion.astro";
 import SiteFooter from "@/components/components/SiteFooter.astro";
@@ -21,6 +22,7 @@ const isHome = Astro.url.pathname === "/" || Astro.url.pathname === "/cir/";
 <html lang={locale === "sr-cyrl" ? "sr-Cyrl-RS" : "sr-Latn-RS"}>
   <head>
     <SeoHead title={title} description={description} canonicalPath={canonicalPath} />
+    <ClientRouter />
   </head>
   <body class:list={{ "home-route": isHome }}>
     <div class="site-shell">

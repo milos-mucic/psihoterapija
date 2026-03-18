@@ -1,7 +1,9 @@
 {
   "localeLabel": "Ћирилица",
+  "localeShortLabel": "ЋИР",
   "a11y": {
     "appbarPrimaryNav": "Главна навигација",
+    "localeSwitch": "Пребацивање писма",
     "toggleNavigation": "Отвори навигацију",
     "footerNav": "Навигација у подножју"
   },
