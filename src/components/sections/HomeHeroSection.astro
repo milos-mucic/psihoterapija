@@ -23,7 +23,14 @@ const { titleHtml, description, primaryAction, secondaryAction } = Astro.props;
         <a class="home-hero__button" href={primaryAction.href}>{primaryAction.label}</a>
         <a class="home-hero__text-link" href={secondaryAction.href}>
           <span>{secondaryAction.label}</span>
-          <span aria-hidden="true">+</span>
+          <svg class="home-hero__text-link-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M7 17L17 7M9 7H17V15"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.9"></path>
+          </svg>
         </a>
       </div>
     </div>
