@@ -1,0 +1,207 @@
+---
+import PageBanner from "@/components/sections/PageBanner.astro";
+import { getScopeDetailPageData } from "@/data/fixtures/public-pages";
+import type { SiteLocale } from "@/lib/config/site";
+
+type Props = {
+  locale: SiteLocale;
+  slug: string;
+};
+
+const { locale, slug } = Astro.props;
+const content = getScopeDetailPageData(locale, slug);
+
+if (!content) {
+  throw new Error(`Missing scope detail data for slug: ${slug}`);
+}
+---
+
+<div class="scope-detail-page__banner">
+  <PageBanner {...content.banner} />
+</div>
+
+<section class="page-section scope-detail-page__intro-section">
+  <div class="container">
+    <div class="scope-detail-page__intro-grid">
+      <div class="scope-detail-page__intro-copy" data-reveal="left">
+        <p class="scope-detail-page__eyebrow">{content.eyebrow}</p>
+        <p class="scope-detail-page__lead">{content.lead}</p>
+        <div class="scope-detail-page__actions">
+          <a class="button-ghost" href={content.backHref}>{content.backLabel}</a>
+          <a class="home-button" href={content.ctaHref}>{content.ctaLabel}</a>
+        </div>
+      </div>
+
+      <div class="scope-detail-page__media" data-reveal="right" style="--reveal-delay: 90ms;">
+        <img src={content.image} alt="" loading="lazy" class="scope-detail-page__image" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page-section scope-detail-page__points-section">
+  <div class="container">
+    <div class="scope-detail-page__points-grid">
+      {content.items.map((item, index) => (
+        <article
+          class="scope-detail-page__point"
+          data-reveal="up"
+          style={`--reveal-delay: ${index * 80}ms;`}
+        >
+          <h2>{item.title}</h2>
+          <p>{item.copy}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="home-section home-section--tight">
+  <div class="container">
+    <div class="home-heading-row" data-reveal="up">
+      <div class="home-heading-copy">
+        <h2>{content.relatedTitle}</h2>
+      </div>
+      <a class="home-button" href={content.backHref}>{content.backLabel}</a>
+    </div>
+
+    <div class="scope-detail-page__related-grid">
+      {content.relatedTabs.map((tab, index) => (
+        <a
+          class="scope-detail-page__related-card"
+          href={tab.href}
+          data-reveal="up"
+          style={`--reveal-delay: ${index * 70}ms;`}
+        >
+          <img src={tab.icon} alt="" loading="lazy" />
+          <h3>{tab.label}</h3>
+          <p>{tab.cardCopy}</p>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .scope-detail-page__banner :global(.page-banner) {
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+      linear-gradient(rgba(22, 60, 61, 0.1), rgba(22, 60, 61, 0.1)),
+      url("https://cdn.prod.website-files.com/689b44011832e2b57d692055/689b44011832e2b57d6921fd_Session%20Banner%20(1).webp");
+    background-position:
+      0 0,
+      0 0,
+      50%;
+    background-repeat: repeat, repeat, no-repeat;
+    background-size: auto, auto, cover;
+  }
+
+  .scope-detail-page__intro-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(1.5rem, 5vw, 3.8rem);
+    align-items: center;
+  }
+
+  .scope-detail-page__eyebrow {
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .scope-detail-page__lead {
+    color: var(--foreground);
+    font-size: clamp(1.02rem, 2vw, 1.2rem);
+    line-height: 1.7;
+  }
+
+  .scope-detail-page__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.45rem;
+  }
+
+  .scope-detail-page__media {
+    border-radius: 12px;
+    background: linear-gradient(145deg, #e9f1e4 0%, #dce8d7 100%);
+    border: 1px solid rgba(15, 60, 61, 0.1);
+    box-shadow: 0 18px 44px rgba(16, 47, 48, 0.1);
+    padding: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .scope-detail-page__image {
+    width: 100%;
+    max-height: 16rem;
+    object-fit: contain;
+  }
+
+  .scope-detail-page__points-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .scope-detail-page__point {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 14px 34px rgba(16, 47, 48, 0.08);
+    padding: 1.2rem 1.25rem;
+  }
+
+  .scope-detail-page__point h2 {
+    font-size: clamp(1.2rem, 2.2vw, 1.6rem);
+    color: var(--primary);
+    margin-bottom: 0.55rem;
+  }
+
+  .scope-detail-page__point p {
+    color: var(--foreground);
+    line-height: 1.62;
+  }
+
+  .scope-detail-page__related-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .scope-detail-page__related-card {
+    display: grid;
+    gap: 0.65rem;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--primary-light);
+    padding: 1rem;
+  }
+
+  .scope-detail-page__related-card:hover {
+    color: inherit;
+    transform: translateY(-2px);
+  }
+
+  .scope-detail-page__related-card img {
+    width: 2rem;
+    height: 2rem;
+    object-fit: contain;
+  }
+
+  .scope-detail-page__related-card h3 {
+    font-size: 1.2rem;
+    color: var(--primary);
+  }
+
+  .scope-detail-page__related-card p {
+    color: var(--foreground);
+    line-height: 1.55;
+  }
+
+  @media (max-width: 980px) {
+    .scope-detail-page__intro-grid,
+    .scope-detail-page__points-grid,
+    .scope-detail-page__related-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,41 @@
+---
+export const prerender = true;
+
+import BaseLayout from "@/components/components/BaseLayout.astro";
+import ScopeDetailPage from "@/components/pages/ScopeDetailPage.astro";
+import { getScopeDetailPageData, getScopeDetailSlugs } from "@/data/fixtures/public-pages";
+import { getDictionary } from "@/features/i18n/translate";
+import { siteConfig } from "@/lib/config/site";
+
+export async function getStaticPaths() {
+  return getScopeDetailSlugs("sr-cyrl").map((slug) => ({
+    params: { slug },
+  }));
+}
+
+const locale = "sr-cyrl";
+const { slug } = Astro.params;
+
+if (!slug) {
+  throw new Error("Missing scope detail slug.");
+}
+
+const content = getScopeDetailPageData(locale, slug);
+const dictionary = getDictionary(locale);
+
+if (!content) {
+  return Astro.redirect("/cir/oblast-rada/");
+}
+---
+
+<BaseLayout
+  title={`${content.banner.title} | ${siteConfig.name}`}
+  description={content.banner.description ?? dictionary.meta.psychotherapy.description}
+  locale={locale}
+  canonicalPath={`/cir/oblast-rada/${slug}/`}
+  appBarTone="dark"
+  appBarOverlay={true}
+  bodyClass="therapy-subpage-route"
+>
+  <ScopeDetailPage locale={locale} slug={slug} />
+</BaseLayout>

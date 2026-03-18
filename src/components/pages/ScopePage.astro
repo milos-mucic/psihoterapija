@@ -1,0 +1,393 @@
+---
+import PageBanner from "@/components/sections/PageBanner.astro";
+import { getScopePageData } from "@/data/fixtures/public-pages";
+import { localizePath } from "@/features/i18n/locale";
+import { getDictionary } from "@/features/i18n/translate";
+import { blogService } from "@/features/blog/services/blog.service";
+import type { SiteLocale } from "@/lib/config/site";
+
+type Props = {
+  locale: SiteLocale;
+};
+
+const { locale } = Astro.props;
+const content = getScopePageData(locale);
+const dictionary = getDictionary(locale);
+const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
+const detailCardLabel = locale === "sr-cyrl" ? "Погледај страницу" : "Pogledaj stranicu";
+---
+
+<div class="scope-page__banner">
+  <PageBanner {...content.banner} />
+</div>
+
+<section class="page-section scope-page__tabs-section">
+  <div class="container">
+    <div class="scope-page__tabs" data-scope-tabs>
+      <div class="scope-page__tabs-menu" role="tablist" aria-label={content.scopeTitle}>
+        {
+          content.tabs.map((tab, index) => (
+            <button
+              type="button"
+              class:list={["scope-page__tab", index === 0 && "is-active"]}
+              role="tab"
+              id={`scope-tab-${tab.id}`}
+              aria-controls={`scope-panel-${tab.id}`}
+              aria-selected={index === 0 ? "true" : "false"}
+              tabindex={index === 0 ? "0" : "-1"}
+              data-scope-tab-trigger
+              data-tab-id={tab.id}
+              data-reveal="up"
+              style={`--reveal-delay: ${index * 70}ms;`}
+            >
+              {tab.label}
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="scope-page__tab-panels">
+        {
+          content.tabs.map((tab, tabIndex) => (
+            <section
+              class="scope-page__tab-panel"
+              role="tabpanel"
+              id={`scope-panel-${tab.id}`}
+              aria-labelledby={`scope-tab-${tab.id}`}
+              hidden={tabIndex !== 0}
+              data-scope-tab-panel
+              data-tab-id={tab.id}
+            >
+              <article class="scope-page__tab-item" data-reveal="up">
+                <a class="scope-page__tab-link" href={tab.href}>
+                  <div class="scope-page__tab-item-head">
+                    <img class="scope-page__tab-item-icon" src={tab.icon} alt="" loading="lazy" />
+                    <h3 class="scope-page__tab-item-title">{tab.cardTitle}</h3>
+                  </div>
+                  <p class="scope-page__tab-item-copy">{tab.cardCopy}</p>
+                  <span class="scope-page__tab-item-link">
+                    {detailCardLabel}
+                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M7 17L17 7M9 7H17V15"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.9"
+                      />
+                    </svg>
+                  </span>
+                </a>
+              </article>
+            </section>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page-section scope-page__focus-section">
+  <div class="container">
+    <div class="scope-page__focus-grid">
+      <img src={content.focusImage} alt="" class="scope-page__focus-image" data-reveal="left" />
+      <div class="scope-page__focus-content" data-reveal="right" style="--reveal-delay: 90ms;">
+        <h2>{content.focusTitle}</h2>
+        <p>{content.focusCopy}</p>
+        <p class="scope-page__focus-secondary">{content.focusSecondaryCopy}</p>
+        <a class="home-button" href={content.focusCtaHref}>
+          {content.focusCtaLabel}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="home-section home-section--tight">
+  <div class="container">
+    <div class="home-heading-row home-heading-row--blog" data-reveal="up">
+      <div class="home-heading-copy">
+        <h2>{content.recentTitle}</h2>
+        <p>{content.recentCopy}</p>
+      </div>
+      <a class="home-button" href={content.recentHref}>{content.recentLabel}</a>
+    </div>
+
+    {
+      posts.length > 0 ? (
+        <div class="home-card-grid home-card-grid--blog">
+          {posts.map((post, index) => (
+            <article
+              class="home-blog-card"
+              data-reveal="up"
+              style={`--reveal-delay: ${index * 90}ms;`}
+            >
+              <a class="home-blog-card__media" href={localizePath(locale, `/blog/${post.slug}/`)}>
+                <img
+                  src={post.coverImage ?? "/legacy/images/Blog-1_1Blog 1.webp"}
+                  alt={post.title}
+                  loading="lazy"
+                />
+              </a>
+              <div class="home-blog-card__body">
+                <div class="home-post-meta">
+                  <span>
+                    {post.publishedAt.toLocaleDateString(
+                      locale === "sr-cyrl" ? "sr-Cyrl-RS" : "sr-RS",
+                    )}
+                  </span>
+                  <span>&bull;</span>
+                  <span>{post.tags.join(", ") || dictionary.blog.defaultTag}</span>
+                </div>
+                <div class="home-blog-card__copy">
+                  <h3>{post.title}</h3>
+                  <p>{post.excerpt}</p>
+                </div>
+                <a
+                  class="home-blog-card__action"
+                  href={localizePath(locale, `/blog/${post.slug}/`)}
+                >
+                  <span>{dictionary.blog.readMoreLabel}</span>
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M7 17L17 7M9 7H17V15"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1.9"
+                    />
+                  </svg>
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="home-card" data-reveal="up">
+          <p>{content.recentEmpty}</p>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<script is:inline>
+  (() => {
+    const setupScopeTabs = () => {
+      document.querySelectorAll("[data-scope-tabs]").forEach((tabsRoot) => {
+        if (!(tabsRoot instanceof HTMLElement) || tabsRoot.dataset.bound === "true") {
+          return;
+        }
+
+        const triggers = Array.from(tabsRoot.querySelectorAll("[data-scope-tab-trigger]"));
+        const panels = Array.from(tabsRoot.querySelectorAll("[data-scope-tab-panel]"));
+
+        const setActiveTab = (tabId) => {
+          triggers.forEach((trigger) => {
+            if (!(trigger instanceof HTMLElement)) return;
+
+            const isActive = trigger.dataset.tabId === tabId;
+            trigger.classList.toggle("is-active", isActive);
+            trigger.setAttribute("aria-selected", isActive ? "true" : "false");
+            trigger.setAttribute("tabindex", isActive ? "0" : "-1");
+          });
+
+          panels.forEach((panel) => {
+            if (!(panel instanceof HTMLElement)) return;
+            panel.hidden = panel.dataset.tabId !== tabId;
+          });
+        };
+
+        triggers.forEach((trigger) => {
+          if (!(trigger instanceof HTMLElement)) return;
+
+          trigger.addEventListener("click", () => {
+            const tabId = trigger.dataset.tabId;
+            if (!tabId) return;
+            setActiveTab(tabId);
+          });
+        });
+
+        const firstTab = triggers[0];
+        if (firstTab instanceof HTMLElement && firstTab.dataset.tabId) {
+          setActiveTab(firstTab.dataset.tabId);
+        }
+
+        tabsRoot.dataset.bound = "true";
+      });
+    };
+
+    setupScopeTabs();
+    document.addEventListener("astro:page-load", setupScopeTabs);
+  })();
+</script>
+
+<style>
+  .scope-page__banner :global(.page-banner) {
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+      linear-gradient(rgba(22, 60, 61, 0.1), rgba(22, 60, 61, 0.1)),
+      url("https://cdn.prod.website-files.com/689b44011832e2b57d692055/689b44011832e2b57d6921fd_Session%20Banner%20(1).webp");
+    background-position:
+      0 0,
+      0 0,
+      50%;
+    background-repeat: repeat, repeat, no-repeat;
+    background-size: auto, auto, cover;
+  }
+
+  .scope-page__tabs {
+    width: 100%;
+  }
+
+  .scope-page__tabs-menu {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2.5rem;
+    margin-bottom: 3.1rem;
+  }
+
+  .scope-page__tab {
+    border: none;
+    background: transparent;
+    color: rgba(83, 91, 83, 0.8);
+    padding: 0;
+    font-size: 1.125rem;
+    line-height: 1.3;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      color 180ms ease,
+      opacity 180ms ease;
+  }
+
+  .scope-page__tab.is-active {
+    color: var(--primary);
+  }
+
+  .scope-page__tab:hover {
+    opacity: 0.8;
+  }
+
+  .scope-page__tab-item {
+    width: 100%;
+    border-radius: 12px;
+    background: var(--primary-light);
+    border: 1px solid rgba(15, 60, 61, 0.08);
+    box-shadow: 0 16px 40px rgba(16, 47, 48, 0.08);
+    overflow: hidden;
+  }
+
+  .scope-page__tab-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.9rem;
+    padding: 2rem 2.5rem;
+    width: 100%;
+  }
+
+  .scope-page__tab-link:hover {
+    color: inherit;
+    background: rgba(255, 255, 255, 0.35);
+  }
+
+  .scope-page__tab-item-head {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    width: 40%;
+    min-width: 0;
+  }
+
+  .scope-page__tab-item-icon {
+    width: 2.2rem;
+    height: 2.2rem;
+    object-fit: contain;
+    flex: 0 0 auto;
+  }
+
+  .scope-page__tab-item-title {
+    color: var(--primary);
+    font-size: clamp(1.2rem, 2.5vw, 1.62rem);
+    line-height: 1.2;
+  }
+
+  .scope-page__tab-item-copy {
+    width: 44%;
+    color: var(--foreground);
+    line-height: 1.56;
+  }
+
+  .scope-page__tab-item-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--primary);
+    white-space: nowrap;
+  }
+
+  .scope-page__tab-item-link svg {
+    width: 1rem;
+    height: 1rem;
+    flex: 0 0 auto;
+  }
+
+  .scope-page__focus-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(1.5rem, 5vw, 3.75rem);
+    align-items: center;
+  }
+
+  .scope-page__focus-image {
+    width: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+  }
+
+  .scope-page__focus-content {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .scope-page__focus-content h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.08;
+  }
+
+  .scope-page__focus-secondary {
+    margin-top: -0.2rem;
+  }
+
+  @media (max-width: 960px) {
+    .scope-page__tabs-menu {
+      gap: 1rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .scope-page__tab-item {
+      overflow: visible;
+    }
+
+    .scope-page__tab-link {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 1.2rem;
+    }
+
+    .scope-page__tab-item-head,
+    .scope-page__tab-item-title,
+    .scope-page__tab-item-copy,
+    .scope-page__tab-item-link {
+      width: 100%;
+    }
+
+    .scope-page__focus-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

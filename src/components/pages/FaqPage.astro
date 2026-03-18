@@ -15,17 +15,28 @@ const content = getFaqPageData(locale);
 const dictionary = getDictionary(locale);
 ---
 
-<PageBanner {...content.banner} />
+<div class="faq-page__banner">
+  <PageBanner {...content.banner} />
+</div>
 
-<section class="page-section page-section--soft">
-  <FaqAccordionSection items={content.items} />
-</section>
+<FaqAccordionSection
+  items={content.items}
+  image={content.faqImage}
+  sectionClass="page-section--soft faq-page__accordion-section"
+/>
 
-<section class="page-section">
+<section class="home-section home-section--tight faq-page__booking">
   <div class="container">
-    <div class="page-form-layout" data-reveal="up">
-      <div class="page-form-shell page-form-shell--booking">
+    <div class="home-booking faq-page__booking-grid">
+      <div class="home-booking__intro" data-reveal="up">
         <h2>{content.bookingTitle}</h2>
+        <p>{content.bookingCopy}</p>
+        <div class="home-booking__formats">
+          {content.formats.map((format) => <span class="home-pill">{format}</span>)}
+        </div>
+      </div>
+
+      <div data-reveal="up" style="--reveal-delay: 90ms;">
         <AppointmentForm
           client:load
           locale={locale}
@@ -37,3 +48,43 @@ const dictionary = getDictionary(locale);
     </div>
   </div>
 </section>
+
+<style>
+  .faq-page__banner :global(.page-banner) {
+    min-height: clamp(20rem, 52vh, 30rem);
+    display: grid;
+    align-items: center;
+    padding: clamp(5rem, 10vh, 7rem) 0 clamp(2.4rem, 5vh, 3.6rem);
+  }
+
+  .faq-page__banner :global(.page-banner__content) {
+    align-items: center;
+    transform: translateY(-0.9rem);
+  }
+
+  .faq-page__booking {
+    padding-top: 2.35rem;
+  }
+
+  .faq-page__booking-grid {
+    gap: clamp(1.4rem, 4vw, 2.1rem);
+  }
+
+  .faq-page__booking :global(.stack-form) {
+    padding: 1.9rem;
+    border-radius: 1rem;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 18px 44px rgba(16, 47, 48, 0.08);
+  }
+
+  @media (max-width: 720px) {
+    .faq-page__banner :global(.page-banner__content) {
+      transform: none;
+    }
+
+    .faq-page__booking :global(.stack-form) {
+      padding: 1.2rem;
+    }
+  }
+</style>

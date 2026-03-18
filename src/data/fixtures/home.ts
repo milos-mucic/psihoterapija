@@ -153,7 +153,7 @@ export const getHomePageData = (locale: SiteLocale): HomePageData => {
       copy: content.reasons.copy,
       items: [
         { ...content.reasons.items[0], href: localizePath(locale, "/psihoterapija/") },
-        { ...content.reasons.items[1], href: localizePath(locale, "/faq/") },
+        { ...content.reasons.items[1], href: localizePath(locale, "/pitanja/") },
         { ...content.reasons.items[2], href: localizePath(locale, "/kontakt/") },
       ],
       videoHref: "https://www.youtube.com/watch?v=KGg5cIjHQiw",

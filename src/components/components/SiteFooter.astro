@@ -21,7 +21,7 @@ const footerPrimaryLinks = [
   { label: dictionary.nav.blog, href: localizePath(locale, "/blog/") },
 ];
 const footerSupportLinks = [
-  { label: dictionary.nav.faq, href: localizePath(locale, "/faq/") },
+  { label: dictionary.nav.faq, href: localizePath(locale, "/pitanja/") },
   { label: dictionary.nav.contact, href: localizePath(locale, "/kontakt/") },
   { label: dictionary.nav.appointment, href: localizePath(locale, "/zakazivanje/") },
 ];
@@ -34,9 +34,8 @@ const footerSupportLinks = [
         <div class="footer-brand">
           <p class="eyebrow footer-eyebrow">{dictionary.footer.contactEyebrow}</p>
           <h2>{siteConfig.name}</h2>
-          <p>{dictionary.footer.tagline}</p>
         </div>
-        <a class="button-secondary" href={localizePath(locale, "/kontakt/")}>
+        <a class="appbar__cta" href={localizePath(locale, "/kontakt/")}>
           {dictionary.nav.contact}
         </a>
       </div>
@@ -48,7 +47,6 @@ const footerSupportLinks = [
             src="/legacy/images/Logo-White.svg"
             alt={siteConfig.name}
           />
-          <p>{dictionary.footer.tagline}</p>
           <div class="footer-contact-list">
             <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>
             <a href={`tel:${siteConfig.contactPhone.replace(/\s+/g, "")}`}
@@ -102,3 +100,219 @@ const footerSupportLinks = [
     </div>
   </div>
 </footer>
+
+<style>
+  .site-footer {
+    display: block;
+    padding: 0;
+    margin-top: 1rem;
+  }
+
+  .container {
+    width: min(calc(100% - 1.875rem), var(--container, 90rem));
+    margin: 0 auto;
+  }
+
+  .footer-shell {
+    width: 100%;
+    padding: clamp(2rem, 4vw, 2.5rem) 0 0;
+    color: rgba(255, 255, 255, 0.86);
+    background:
+      linear-gradient(145deg, rgba(9, 31, 32, 0.98), rgba(22, 60, 61, 0.92)),
+      url("/legacy/images/6_1-p-800.jpeg") center / cover no-repeat;
+    border: none;
+    border-radius: 0;
+  }
+
+  .footer-shell :is(h2, p, strong, span) {
+    color: inherit;
+  }
+
+  .footer-shell img {
+    display: block;
+    max-width: 100%;
+  }
+
+  .footer-brand h2 {
+    margin: 0;
+    color: #fff;
+    font-family: "Castoro", Georgia, serif;
+    font-size: clamp(2.2rem, 4vw, 3.35rem);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+  }
+
+  .footer-brand p,
+  .footer-nav a,
+  .footer-contact-list a,
+  .footer-social-link__copy span {
+    margin: 0;
+    font-family: "Lexend", "Segoe UI", sans-serif;
+    line-height: 1.6;
+  }
+
+  .footer-shell a:not(.appbar__cta) {
+    text-decoration: none;
+    transition:
+      color 180ms ease,
+      opacity 180ms ease,
+      transform 180ms ease,
+      box-shadow 200ms ease-in-out,
+      filter 200ms ease-in-out;
+  }
+
+  .eyebrow {
+    margin: 0 0 0.85rem;
+    font-family: "Lexend", "Segoe UI", sans-serif;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 0.74rem;
+  }
+
+  .footer-cta,
+  .footer-main {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .footer-cta {
+    align-items: center;
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .footer-cta .appbar__cta {
+    align-self: center;
+    text-decoration: none;
+  }
+
+  .footer-eyebrow {
+    color: rgba(255, 255, 255, 0.62);
+  }
+
+  .footer-main {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(17rem, 0.95fr);
+    padding-top: 1.5rem;
+    padding-bottom: 10px;
+    align-items: start;
+  }
+
+  .footer-brand {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .footer-brand__logo {
+    height: 2.1rem;
+    width: auto;
+  }
+
+  .footer-contact-list,
+  .footer-nav {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .footer-sitemap,
+  .footer-aside,
+  .footer-social,
+  .footer-link-group,
+  .footer-social-link__copy {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .footer-sitemap__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.1rem;
+  }
+
+  .footer-section-title,
+  .footer-link-group__title {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: "Lexend", "Segoe UI", sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .footer-link-group__title {
+    font-size: 0.74rem;
+  }
+
+  .footer-nav a,
+  .footer-contact-list a {
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .footer-nav a:hover,
+  .footer-contact-list a:hover {
+    color: #fff;
+  }
+
+  .footer-gallery {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .footer-social-link {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.9rem;
+    align-items: center;
+    padding: 1rem 1.05rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .footer-social-link__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.9rem;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+  }
+
+  .footer-social-link__icon svg {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+
+  .footer-social-link__copy {
+    gap: 0.2rem;
+  }
+
+  .footer-social-link__copy strong {
+    font-family: "Lexend", "Segoe UI", sans-serif;
+    font-weight: 600;
+  }
+
+  .footer-gallery img {
+    aspect-ratio: 1;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  @media (max-width: 720px) {
+    .site-footer {
+      margin-top: 0;
+    }
+
+    .footer-main,
+    .footer-cta {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

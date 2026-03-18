@@ -13,11 +13,15 @@ type Props = {
   locale: SiteLocale;
   canonicalPath: string;
   appBarTone?: "light" | "dark";
+  appBarOverlay?: boolean;
+  bodyClass?: string;
 };
 
-const { title, description, locale, canonicalPath, appBarTone } = Astro.props;
+const { title, description, locale, canonicalPath, appBarTone, appBarOverlay, bodyClass } =
+  Astro.props;
 const isHome = Astro.url.pathname === "/" || Astro.url.pathname === "/cir/";
-const isAppBarOverlayRoute = canonicalPath === "/o-nama/" || canonicalPath === "/cir/o-nama/";
+const isAppBarOverlayRoute =
+  appBarOverlay ?? (canonicalPath === "/o-nama/" || canonicalPath === "/cir/o-nama/");
 const derivedAppBarTone =
   canonicalPath === "/" ||
   canonicalPath === "/cir/" ||
@@ -37,8 +41,11 @@ const initialAppBarTone = appBarTone ?? derivedAppBarTone;
   <head>
     <SeoHead title={title} description={description} canonicalPath={canonicalPath} />
     <ClientRouter />
+    <slot name="head" />
   </head>
-  <body class:list={{ "home-route": isHome, "appbar-overlay-route": isAppBarOverlayRoute }}>
+  <body
+    class:list={[bodyClass, { "home-route": isHome, "appbar-overlay-route": isAppBarOverlayRoute }]}
+  >
     <div class="site-shell">
       <AppBar locale={locale} pathname={Astro.url.pathname} initialTone={initialAppBarTone} />
       <main>

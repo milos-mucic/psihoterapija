@@ -1,0 +1,207 @@
+---
+import BaseLayout from "@/components/components/BaseLayout.astro";
+import PageBanner from "@/components/sections/PageBanner.astro";
+import { getBiographyPageData } from "@/data/fixtures/public-pages";
+import { localizePath } from "@/features/i18n/locale";
+import { getDictionary } from "@/features/i18n/translate";
+import type { SiteLocale } from "@/lib/config/site";
+
+type Props = {
+  locale: SiteLocale;
+};
+
+const { locale } = Astro.props;
+const dictionary = getDictionary(locale);
+const canonicalPath = localizePath(locale, "/biografija/");
+const content = getBiographyPageData(locale);
+---
+
+<BaseLayout
+  title={dictionary.meta.biography.title}
+  description={dictionary.meta.biography.description}
+  locale={locale}
+  canonicalPath={canonicalPath}
+  appBarTone="dark"
+  appBarOverlay={true}
+>
+  <PageBanner {...content.banner} />
+
+  <section class="page-section">
+    <div class="container">
+      <header class="page-section__header biography-page__header" data-reveal="up">
+        <h2>{content.cardsTitle}</h2>
+        <p>{content.cardsCopy}</p>
+      </header>
+
+      <div class="biography-page__cards">
+        {
+          content.cards.map((card, index) => (
+            <article
+              class="biography-page__card"
+              data-reveal="up"
+              style={`--reveal-delay: ${index * 90}ms;`}
+            >
+              <div class="biography-page__card-media">
+                <img src={card.image} alt={card.title} loading="lazy" />
+              </div>
+              <div class="biography-page__card-body">
+                <p class="biography-page__role">{card.role}</p>
+                <h3>{card.title}</h3>
+                <p>{card.summary}</p>
+                <ul class="biography-page__tags">
+                  {card.highlights.map((tag) => (
+                    <li>{tag}</li>
+                  ))}
+                </ul>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="page-section page-section--soft">
+    <div class="container">
+      <div class="biography-page__approach">
+        <img
+          class="biography-page__approach-image"
+          src={content.approachImage}
+          alt={content.approachTitle}
+          loading="lazy"
+          data-reveal="left"
+        />
+        <div
+          class="biography-page__approach-copy"
+          data-reveal="right"
+          style="--reveal-delay: 90ms;"
+        >
+          <h2>{content.approachTitle}</h2>
+          <p>{content.approachCopy}</p>
+          <ul class="home-list biography-page__list">
+            {content.approachPoints.map((point) => <li>{point}</li>)}
+          </ul>
+          <a class="home-button" href={content.ctaHref}>
+            {content.ctaLabel}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .biography-page__header {
+      max-width: 46rem;
+      margin-bottom: 1.85rem;
+    }
+
+    .biography-page__cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.5rem;
+    }
+
+    .biography-page__card {
+      border-radius: 1rem;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 18px 44px rgba(16, 47, 48, 0.08);
+      overflow: hidden;
+    }
+
+    .biography-page__card-media {
+      aspect-ratio: 16 / 11;
+      overflow: hidden;
+    }
+
+    .biography-page__card-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 500ms ease;
+    }
+
+    .biography-page__card:hover .biography-page__card-media img {
+      transform: scale(1.04);
+    }
+
+    .biography-page__card-body {
+      display: grid;
+      gap: 0.85rem;
+      padding: 1.25rem 1.2rem 1.35rem;
+    }
+
+    .biography-page__role {
+      margin: 0;
+      color: var(--primary);
+      font-size: 0.86rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .biography-page__card h3 {
+      font-size: 1.4rem;
+      line-height: 1.15;
+    }
+
+    .biography-page__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .biography-page__tags li {
+      padding: 0.35rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(22, 60, 61, 0.12);
+      background: rgba(22, 60, 61, 0.04);
+      color: var(--foreground);
+      font-size: 0.82rem;
+      line-height: 1.3;
+    }
+
+    .biography-page__approach {
+      display: grid;
+      grid-template-columns: minmax(18rem, 34rem) minmax(0, 1fr);
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .biography-page__approach-image {
+      width: 100%;
+      border-radius: 1rem;
+      object-fit: cover;
+      box-shadow: 0 22px 52px rgba(16, 47, 48, 0.12);
+    }
+
+    .biography-page__approach-copy {
+      display: grid;
+      gap: 1rem;
+      max-width: 38rem;
+    }
+
+    .biography-page__approach-copy h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.08;
+    }
+
+    .biography-page__list {
+      margin: 0;
+    }
+
+    .biography-page__approach-copy .home-button {
+      width: fit-content;
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 960px) {
+      .biography-page__cards,
+      .biography-page__approach {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</BaseLayout>

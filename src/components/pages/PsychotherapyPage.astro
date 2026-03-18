@@ -2,6 +2,7 @@
 import FaqAccordionSection from "@/components/sections/FaqAccordionSection.astro";
 import PageBanner from "@/components/sections/PageBanner.astro";
 import { AppointmentForm } from "@/components/components/AppointmentForm";
+import { getHomePageData } from "@/data/fixtures/home";
 import { getPsychotherapyPageData } from "@/data/fixtures/public-pages";
 import { getDictionary } from "@/features/i18n/translate";
 import type { SiteLocale } from "@/lib/config/site";
@@ -12,47 +13,180 @@ type Props = {
 
 const { locale } = Astro.props;
 const content = getPsychotherapyPageData(locale);
+const homeContent = getHomePageData(locale);
 const dictionary = getDictionary(locale);
 ---
 
-<PageBanner {...content.banner} />
+<div class="psychotherapy-page__banner">
+  <PageBanner {...content.banner} />
+</div>
 
-<section class="page-section">
+<section class="page-section psychotherapy-page__scope-section">
   <div class="container container--narrow">
-    <div class="page-list-panel page-list-panel--centered" data-reveal="up">
+    <div class="psychotherapy-page__scope-panel" data-reveal="up">
       <h2>{content.scopeTitle}</h2>
-      <ul>
+      <ul class="psychotherapy-page__scope-list">
         {content.scopeItems.map((item) => <li>{item}</li>)}
       </ul>
     </div>
   </div>
 </section>
 
-<section class="page-section page-section--dark">
+<section class="page-section page-section--dark psychotherapy-page__services-section">
   <div class="container">
-    <div class="page-empty-state page-empty-state--dark" data-reveal="up">
-      <p>{content.servicesEmptyLabel}</p>
+    <div class="collection-list-wrapper-w-100">
+      <div role="list" class="collection-list-session-home-3 psychotherapy-page__services-grid">
+        {
+          content.serviceCards.map((item, index) => (
+            <article
+              role="listitem"
+              class="collection-item-session-home-3 psychotherapy-page__service-card"
+              data-reveal="up"
+              style={`--reveal-delay: ${index * 90}ms;`}
+            >
+              <div class="link-block psychotherapy-page__service-media">
+                <img
+                  class="service-img psychotherapy-page__service-img"
+                  src={item.image}
+                  alt={item.title}
+                />
+              </div>
+            </article>
+          ))
+        }
+      </div>
     </div>
   </div>
 </section>
 
-<section class="page-section">
+<section class="home-section home-section--tight psychotherapy-page__booking-section">
   <div class="container">
-    <div class="page-form-layout" data-reveal="up">
-      <div class="page-form-shell page-form-shell--booking">
-        <div class="page-form-title" set:html={`<h2>${content.bookingTitleHtml}</h2>`} />
+    <div class="home-booking psychotherapy-page__booking-grid">
+      <div class="home-booking__intro" data-reveal="up">
+        <h2>{homeContent.booking.title}</h2>
+        <p>{homeContent.booking.copy}</p>
+        <div class="home-booking__formats">
+          {homeContent.booking.formats.map((format) => <span class="home-pill">{format}</span>)}
+        </div>
+      </div>
+
+      <div data-reveal="up" style="--reveal-delay: 90ms;">
         <AppointmentForm
           client:load
           locale={locale}
           labels={dictionary.forms}
-          formatLabel={content.formatLabel}
-          formats={content.formats}
+          formatLabel={homeContent.booking.formatLabel}
+          formats={homeContent.booking.formats}
         />
       </div>
     </div>
   </div>
 </section>
 
-<section class="page-section page-section--soft">
-  <FaqAccordionSection items={content.faqs} image={content.faqImage} />
-</section>
+<FaqAccordionSection
+  items={content.faqs}
+  image={content.faqImage}
+  sectionClass="page-section--soft psychotherapy-page__faq-section"
+/>
+
+<style>
+  .psychotherapy-page__banner :global(.page-banner) {
+    background: none;
+    padding: 10px 0 clamp(1.9rem, 4vw, 2.5rem);
+  }
+
+  .psychotherapy-page__banner :global(.page-banner__content) {
+    align-items: center;
+    gap: 0.85rem 1.7rem;
+  }
+
+  .psychotherapy-page__banner :global(.page-banner h1) {
+    font-size: clamp(2.15rem, 4vw, 3.35rem);
+  }
+
+  .psychotherapy-page__scope-section {
+    padding-top: 0.3rem;
+  }
+
+  .psychotherapy-page__scope-panel {
+    padding: clamp(1.35rem, 2.8vw, 1.9rem);
+    border-radius: 0.95rem;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 18px 44px rgba(16, 47, 48, 0.08);
+    text-align: center;
+  }
+
+  .psychotherapy-page__scope-panel h2 {
+    font-size: clamp(1.95rem, 4vw, 3rem);
+    line-height: 1.08;
+  }
+
+  .psychotherapy-page__scope-list {
+    margin: 1.05rem 0 0;
+    padding: 0;
+    list-style: disc;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.72rem 2.2rem;
+  }
+
+  .psychotherapy-page__scope-list li {
+    flex: 0 1 calc((100% - 4.4rem) / 3);
+    max-width: 23rem;
+    padding-left: 0;
+    color: var(--foreground);
+    line-height: 1.58;
+    text-align: center;
+    list-style-position: inside;
+  }
+
+  .psychotherapy-page__services-section {
+    padding-top: 2.35rem;
+    padding-bottom: 2.6rem;
+  }
+
+  .psychotherapy-page__service-card {
+    width: calc((100% - 3.75rem) / 3);
+  }
+
+  .psychotherapy-page__service-img {
+    height: 16.5rem;
+  }
+
+  .psychotherapy-page__service-media {
+    border-radius: 0.75rem;
+    overflow: hidden;
+  }
+
+  .psychotherapy-page__booking-section {
+    padding-top: 1.9rem;
+    padding-bottom: 1.4rem;
+  }
+
+  @media (max-width: 960px) {
+    .psychotherapy-page__scope-list {
+      gap: 0.65rem 1.4rem;
+    }
+
+    .psychotherapy-page__scope-list li {
+      flex-basis: calc((100% - 1.4rem) / 2);
+    }
+
+    .psychotherapy-page__service-card {
+      width: 100%;
+    }
+
+    .psychotherapy-page__service-img {
+      height: 14rem;
+    }
+
+  }
+
+  @media (max-width: 640px) {
+    .psychotherapy-page__scope-list li {
+      flex-basis: 100%;
+    }
+  }
+</style>

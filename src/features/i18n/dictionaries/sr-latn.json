@@ -12,18 +12,21 @@
     "about": "O nama",
     "psychotherapy": "Psihoterapija",
     "blog": "Blog",
-    "faq": "FAQ",
+    "faq": "Pitanja",
+    "biography": "Biografija",
     "contact": "Kontakt",
     "appointment": "Zakazivanje",
     "admin": "Admin",
     "aboutLinks": {
       "about": "O nama",
-      "contact": "Kontakt"
+      "biography": "Biografija"
     },
     "therapyLinks": {
       "approach": "Pristup",
+      "scope": "Oblast rada",
+      "pricing": "Cena",
       "appointment": "Zakazivanje",
-      "faq": "FAQ"
+      "faq": "Pitanja"
     }
   },
   "meta": {
@@ -40,12 +43,16 @@
       "description": "U našem kabinetu bavimo se psihodinamskom psihoterapijom, koja je dubinski orijentisana na razumevanje i razrešavanje uzroka, a ne samo posledica psiholoških teškoća."
     },
     "faq": {
-      "title": "FAQ | Psihoterapijski kabinet Ikar",
+      "title": "Pitanja | Psihoterapijski kabinet Ikar",
       "description": "Ovde možete pronaći odgovore na najčešće postavljena pitanja."
     },
     "contact": {
       "title": "Kontakt | Psihoterapijski kabinet Ikar",
       "description": "Ova stranica namenjena je prvom kontaktu, informisanju i postavljanju pitanja u cilju razjašnjavanja nedoumica koje imate."
+    },
+    "biography": {
+      "title": "Biografija | Psihoterapijski kabinet Ikar",
+      "description": "Profesionalna biografija, pristup radu i vrednosti Psihoterapijskog kabineta Ikar."
     },
     "appointment": {
       "title": "Zakazivanje | Psihoterapijski kabinet Ikar",
@@ -283,12 +290,12 @@
           "answer": "Kada osetite da se napetost, tuga, strahovi ili problemi u odnosima ponavljaju i počinju da oblikuju svakodnevni život, vredi razmisliti o razgovoru sa stručnim licem."
         },
         {
-          "question": "Šta je psihodinamska terapija?",
-          "answer": "To je pristup koji nastoji da simptome razume kroz njihove uzroke, unutrašnje konflikte, ličnu istoriju i odnose, a ne samo kroz površinsko ublažavanje teškoća."
+          "question": "Šta je kognitivno-bihejvioralna terapija (KBT) i kako funkcioniše?",
+          "answer": "KBT je terapijski pravac koji povezuje misli, emocije i ponašanje. Kroz strukturisan rad pomaže da prepoznate obrasce koji održavaju teškoće i da razvijete funkcionalnije načine reagovanja."
         },
         {
-          "question": "Kako izgleda prvi susret?",
-          "answer": "Prvi susret služi da dobijete prostor da opišete razloge dolaska, a da mi predložimo okvir daljeg rada i odgovorimo na nedoumice koje imate."
+          "question": "Kako mogu efikasno upravljati stresom?",
+          "answer": "Upravljanje stresom podrazumeva kombinaciju navika: redovan san, fizičku aktivnost, jasnije granice, tehnike regulacije disanja i pravovremeno traženje stručne podrške kada opterećenje postane preveliko."
         }
       ],
       "bookingTitle": "Unesite neophodne informacije kako biste zakazali termin",
@@ -325,15 +332,15 @@
         },
         {
           "question": "Da li se psihoterapija odvija uživo ili online?",
-          "answer": "Psihoterapija se može odvijati i uživo i online, u zavisnosti od Vaših potreba i preferencija. U određenim slučajevima koristimo oba formata kako bismo održali kontinuitet terapijskog rada, a izbor pravimo zajedno u skladu sa Vašom situacijom i mogućnostima."
+          "answer": "Psihoterapija se može odvijati i uživo i online, u zavisnosti od Vaših potreba i preferencija. U određenim slučajevima koristimo oba formata kako bi održali kontinuitet terapijskog rada, a izbor pravimo zajedno u skladu sa Vašom situacijom i mogućnostima."
         },
         {
-          "question": "Da li psihoterapijska seansa ima strukturu i plan ili samo pratimo tok razgovora?",
-          "answer": "Seansa psihodinamske psihoterapije nema jasnu i konkretnu strukturu koju prati. Vi donosite temu za razgovor ili pitanja na koja želite odgovor, i razgovor se postepeno razvija. Psihoterapeut je tu da Vam pomogne i da Vas usmeri kako biste zajedno došli do potrebnog zaključka."
+          "question": "Da li psihoterapijska seansa ima strukturu i plan ili samo pratimo tok konverzacije?",
+          "answer": "Seansa psihodinamske psihoterapije nema jasnu i konkretnu strukturu koju prati. Vi donosite temu za razgovor ili pitanja na koja želite odgovor, i razgovor se postepeno razvija. Psihoterapeut je tu da Vam pomogne i da Vas usmeri, kako bi zajedno došli do potrebnog zaključka. U početku psihoterapije, psihoterapeut je aktivniji učesnik, ali kako vreme odmiče i klijent bolje počinje da razume prirodu procesa, on preuzima vođstvo u njemu."
         },
         {
           "question": "Da li mogu da prekinem terapijski proces kada god poželim?",
-          "answer": "Da, terapiju možete prekinuti u svakom trenutku. Ipak, preporučljivo je da o toj odluci razgovaramo tokom seanse, kako bismo razumeli razloge i proces završili na način koji je za Vas jasan i zaokružen."
+          "answer": "Da, terapiju možete prekinuti u svakom trenutku. Ipak, preporučljivo je da o toj odluci razgovaramo tokom seanse, kako bismo razumeli razloge i proces završili na način koji je za Vas jasan i zaokružen. Završetak terapije je takođe deo terapijskog procesa i važno je da bude promišljen."
         }
       ]
     }

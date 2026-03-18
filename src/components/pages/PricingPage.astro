@@ -1,0 +1,168 @@
+---
+import { getPricingPageData } from "@/data/fixtures/public-pages";
+import type { SiteLocale } from "@/lib/config/site";
+
+type Props = {
+  locale: SiteLocale;
+};
+
+const { locale } = Astro.props;
+const content = getPricingPageData(locale);
+---
+
+<section class="page-section pricing-page__plans-section">
+  <div class="container">
+    <div class="pricing-page__grid">
+      {
+        content.plans.map((plan, index) => (
+          <article
+            class="pricing-page__card"
+            data-reveal="up"
+            style={`--reveal-delay: ${index * 90}ms;`}
+          >
+            <h3>{plan.title}</h3>
+            <p class="pricing-page__price">{plan.price}</p>
+            <p class="pricing-page__outside">{plan.outsideSerbiaPrice}</p>
+            <a class="pricing-page__cta" href={plan.ctaHref}>
+              <span>{plan.ctaLabel}</span>
+              <span aria-hidden="true">→</span>
+            </a>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<section class="page-section pricing-page__info-section">
+  <div class="container">
+    <div class="pricing-page__info-grid">
+      {
+        content.infoCards.map((card, index) => (
+          <article
+            class="pricing-page__info-card"
+            data-reveal="up"
+            style={`--reveal-delay: ${index * 85}ms;`}
+          >
+            <h4>{card.title}</h4>
+            <p>{card.copy}</p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .pricing-page__plans-section {
+    padding-top: 0.6rem;
+    padding-bottom: 1rem;
+  }
+
+  .pricing-page__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .pricing-page__card {
+    display: grid;
+    gap: 0.95rem;
+    padding: 1.55rem 1.4rem;
+    border-radius: 12px;
+    border: 1px solid rgba(15, 60, 61, 0.12);
+    background: #f9f8f5;
+    box-shadow: 0 14px 34px rgba(16, 47, 48, 0.08);
+  }
+
+  .pricing-page__card h3 {
+    font-size: clamp(1.4rem, 2.8vw, 1.9rem);
+    line-height: 1.15;
+    color: var(--primary);
+  }
+
+  .pricing-page__price {
+    color: var(--primary);
+    font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+    font-family: var(--font-display);
+    line-height: 1;
+    margin-top: 0.25rem;
+  }
+
+  .pricing-page__outside {
+    color: var(--foreground);
+    line-height: 1.6;
+  }
+
+  .pricing-page__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 0.15rem;
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  .pricing-page__cta:hover {
+    color: var(--accent-strong);
+  }
+
+  .pricing-page__info-section {
+    padding-top: 0.2rem;
+  }
+
+  .pricing-page__info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .pricing-page__info-card {
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: #fff;
+    box-shadow: 0 12px 30px rgba(16, 47, 48, 0.07);
+    padding: 1.2rem 1.2rem;
+  }
+
+  .pricing-page__info-card h4 {
+    color: var(--primary);
+    font-size: clamp(1.2rem, 2.2vw, 1.65rem);
+    line-height: 1.2;
+    margin-bottom: 0.55rem;
+  }
+
+  .pricing-page__info-card p {
+    color: var(--foreground);
+    line-height: 1.62;
+  }
+
+  @media (max-width: 1100px) {
+    .pricing-page__grid,
+    .pricing-page__info-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .pricing-page__plans-section {
+      padding-top: 0;
+    }
+
+    .pricing-page__grid,
+    .pricing-page__info-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .pricing-page__card,
+    .pricing-page__info-card {
+      padding: 1rem;
+    }
+  }
+
+  @media (max-width: 960px) {
+    .pricing-page__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

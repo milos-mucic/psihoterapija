@@ -1,0 +1,22 @@
+---
+export const prerender = true;
+
+import BaseLayout from "@/components/components/BaseLayout.astro";
+import PricingPage from "@/components/pages/PricingPage.astro";
+import { getPricingPageData } from "@/data/fixtures/public-pages";
+import { getDictionary } from "@/features/i18n/translate";
+import { siteConfig } from "@/lib/config/site";
+
+const locale = "sr-cyrl";
+const dictionary = getDictionary(locale);
+const content = getPricingPageData(locale);
+---
+
+<BaseLayout
+  title={`${dictionary.nav.therapyLinks.pricing} | ${siteConfig.name}`}
+  description={content.banner.description ?? dictionary.meta.appointment.description}
+  locale={locale}
+  canonicalPath="/cir/cena/"
+>
+  <PricingPage locale={locale} />
+</BaseLayout>

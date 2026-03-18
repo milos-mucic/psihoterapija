@@ -38,6 +38,18 @@ body.appbar-overlay-route main {
   padding-top: 0;
 }
 
+body.therapy-subpage-route .page-banner {
+  min-height: clamp(20rem, 52vh, 30rem);
+  display: grid;
+  align-items: center;
+  padding: clamp(5rem, 10vh, 7rem) 0 clamp(2.4rem, 5vh, 3.6rem);
+}
+
+body.therapy-subpage-route .page-banner__content {
+  align-items: center;
+  transform: translateY(-0.9rem);
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -415,7 +427,24 @@ img {
 .appbar__dropdown-link.is-active,
 .appbar__drawer-link.is-active,
 .appbar__drawer-sublink.is-active {
-  color: var(--primary-light);
+  color: var(--primary);
+  background: var(--primary-light);
+  border-color: rgb(255 255 255 / 0.32);
+  box-shadow: 0 10px 20px rgb(9 31 32 / 0.12);
+}
+
+.appbar__dropdown:has(.appbar__dropdown-link.is-active) > summary,
+.appbar__drawer-group:has(.appbar__drawer-sublink.is-active) > summary {
+  color: var(--primary);
+  background: var(--primary-light);
+  border-color: rgb(255 255 255 / 0.32);
+  box-shadow: 0 10px 20px rgb(9 31 32 / 0.12);
+}
+
+.appbar.is-scrolled .appbar__link.is-active,
+.appbar.is-scrolled .appbar__dropdown-link.is-active,
+.appbar.is-scrolled .appbar__dropdown:has(.appbar__dropdown-link.is-active) > summary {
+  color: var(--primary);
 }
 
 .appbar__dropdown {
@@ -1090,6 +1119,14 @@ body.appbar-drawer-open {
 .appbar__drawer-link.is-active,
 .appbar__drawer-sublink.is-active {
   color: var(--primary);
+  background: var(--primary-light);
+  border-radius: 0.7rem;
+}
+
+.appbar__drawer-group:has(.appbar__drawer-sublink.is-active) summary {
+  color: var(--primary);
+  background: var(--primary-light);
+  border-radius: 0.7rem;
 }
 
 .appbar__drawer-group[open] .appbar__drawer-chevron {
@@ -1513,7 +1550,7 @@ body.appbar-drawer-open {
 
 .footer-shell h2,
 .footer-shell p,
-.footer-shell a {
+.footer-shell a:not(.appbar__cta) {
   color: inherit;
 }
 
@@ -1686,6 +1723,10 @@ body.appbar-drawer-open {
 }
 
 @media (max-width: 720px) {
+  body.therapy-subpage-route .page-banner__content {
+    transform: none;
+  }
+
   main {
     padding-bottom: 0;
   }

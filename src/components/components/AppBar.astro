@@ -22,13 +22,14 @@ const isActivePath = (href: string) =>
 
 const aboutLinks = [
   { label: dictionary.nav.aboutLinks.about, href: localizePath(locale, "/o-nama/") },
-  { label: dictionary.nav.aboutLinks.contact, href: localizePath(locale, "/kontakt/") },
+  { label: dictionary.nav.aboutLinks.biography, href: localizePath(locale, "/biografija/") },
 ];
 
 const therapyLinks = [
   { label: dictionary.nav.therapyLinks.approach, href: localizePath(locale, "/psihoterapija/") },
+  { label: dictionary.nav.therapyLinks.scope, href: localizePath(locale, "/oblast-rada/") },
+  { label: dictionary.nav.therapyLinks.pricing, href: localizePath(locale, "/cena/") },
   { label: dictionary.nav.therapyLinks.appointment, href: localizePath(locale, "/zakazivanje/") },
-  { label: dictionary.nav.therapyLinks.faq, href: localizePath(locale, "/faq/") },
 ];
 ---
 
@@ -107,9 +108,9 @@ const therapyLinks = [
           <a
             class:list={[
               "appbar__link",
-              isActivePath(localizePath(locale, "/faq/")) && "is-active",
+              isActivePath(localizePath(locale, "/pitanja/")) && "is-active",
             ]}
-            href={localizePath(locale, "/faq/")}
+            href={localizePath(locale, "/pitanja/")}
           >
             {dictionary.nav.faq}
           </a>
@@ -170,12 +171,21 @@ const therapyLinks = [
           <img class="appbar__toggle-icon" src="/legacy/images/menu-btn.svg" alt="" />
         </summary>
 
-        <button class="appbar__backdrop" type="button" aria-label={dictionary.a11y.toggleNavigation}></button>
+        <button class="appbar__backdrop" type="button" aria-label={dictionary.a11y.toggleNavigation}
+        ></button>
 
         <div class="appbar__drawer">
           <div class="appbar__drawer-header">
-            <img class="appbar__drawer-logo" src="/legacy/images/Logo-Dark.svg" alt={siteConfig.name} />
-            <button class="appbar__drawer-close" type="button" aria-label={dictionary.a11y.toggleNavigation}>
+            <img
+              class="appbar__drawer-logo"
+              src="/legacy/images/Logo-Dark.svg"
+              alt={siteConfig.name}
+            />
+            <button
+              class="appbar__drawer-close"
+              type="button"
+              aria-label={dictionary.a11y.toggleNavigation}
+            >
               <span></span>
               <span></span>
             </button>
@@ -201,7 +211,10 @@ const therapyLinks = [
                 {
                   aboutLinks.map((item) => (
                     <a
-                      class:list={["appbar__drawer-sublink", isActivePath(item.href) && "is-active"]}
+                      class:list={[
+                        "appbar__drawer-sublink",
+                        isActivePath(item.href) && "is-active",
+                      ]}
                       href={item.href}
                     >
                       {item.label}
@@ -220,7 +233,10 @@ const therapyLinks = [
                 {
                   therapyLinks.map((item) => (
                     <a
-                      class:list={["appbar__drawer-sublink", isActivePath(item.href) && "is-active"]}
+                      class:list={[
+                        "appbar__drawer-sublink",
+                        isActivePath(item.href) && "is-active",
+                      ]}
                       href={item.href}
                     >
                       {item.label}
@@ -242,20 +258,20 @@ const therapyLinks = [
             <a
               class:list={[
                 "appbar__drawer-link",
-                isActivePath(localizePath(locale, "/faq/")) && "is-active",
+                isActivePath(localizePath(locale, "/pitanja/")) && "is-active",
               ]}
-              href={localizePath(locale, "/faq/")}
+              href={localizePath(locale, "/pitanja/")}
             >
               {dictionary.nav.faq}
             </a>
             <a
               class:list={[
                 "appbar__drawer-link",
-                isActivePath(localizePath(locale, "/kontakt/")) && "is-active",
+                isActivePath(localizePath(locale, "/biografija/")) && "is-active",
               ]}
-              href={localizePath(locale, "/kontakt/")}
+              href={localizePath(locale, "/biografija/")}
             >
-              {dictionary.nav.contact}
+              {dictionary.nav.biography}
             </a>
           </div>
 
@@ -268,7 +284,11 @@ const therapyLinks = [
             >
               {
                 locale === "sr-latn" ? (
-                  <span class="appbar__locale-chip" aria-current="page" data-locale-chip-id="sr-latn">
+                  <span
+                    class="appbar__locale-chip"
+                    aria-current="page"
+                    data-locale-chip-id="sr-latn"
+                  >
                     {latnDictionary.localeShortLabel}
                   </span>
                 ) : (
@@ -286,7 +306,11 @@ const therapyLinks = [
               }
               {
                 locale === "sr-cyrl" ? (
-                  <span class="appbar__locale-chip" aria-current="page" data-locale-chip-id="sr-cyrl">
+                  <span
+                    class="appbar__locale-chip"
+                    aria-current="page"
+                    data-locale-chip-id="sr-cyrl"
+                  >
                     {cyrlDictionary.localeShortLabel}
                   </span>
                 ) : (
@@ -393,7 +417,7 @@ const therapyLinks = [
             closeDropdown(dropdown);
           });
         });
-      };
+      }
 
       appBar.querySelectorAll("[data-appbar-dropdown]").forEach((dropdown) => {
         if (!(dropdown instanceof HTMLDetailsElement)) return;

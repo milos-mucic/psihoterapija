@@ -1,0 +1,25 @@
+---
+export const prerender = true;
+
+import BaseLayout from "@/components/components/BaseLayout.astro";
+import ScopePage from "@/components/pages/ScopePage.astro";
+import { getScopePageData } from "@/data/fixtures/public-pages";
+import { getDictionary } from "@/features/i18n/translate";
+import { siteConfig } from "@/lib/config/site";
+
+const locale = "sr-latn";
+const dictionary = getDictionary(locale);
+const content = getScopePageData(locale);
+---
+
+<BaseLayout
+  title={`${dictionary.nav.therapyLinks.scope} | ${siteConfig.name}`}
+  description={content.banner.description ?? dictionary.meta.psychotherapy.description}
+  locale={locale}
+  canonicalPath="/oblast-rada/"
+  appBarTone="dark"
+  appBarOverlay={true}
+  bodyClass="therapy-subpage-route"
+>
+  <ScopePage locale={locale} />
+</BaseLayout>

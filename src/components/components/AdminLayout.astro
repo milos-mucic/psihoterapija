@@ -1,8 +1,7 @@
 ---
-import SeoHead from "@/components/components/SeoHead.astro";
+import BaseLayout from "@/components/components/BaseLayout.astro";
 import { getDictionary } from "@/features/i18n/translate";
 import { adminConfig } from "@/lib/config/admin";
-import "@/styles/global.css";
 
 type Props = {
   title: string;
@@ -13,38 +12,37 @@ const dictionary = getDictionary("sr-latn");
 const { title, description = dictionary.meta.admin.layoutDescription } = Astro.props;
 ---
 
-<!doctype html>
-<html lang="sr-Latn-RS">
-  <head>
-    <SeoHead title={title} description={description} canonicalPath={Astro.url.pathname} />
-  </head>
-  <body class="admin-shell">
-    <main class="section">
-      <div class="container">
-        <div class="page-grid">
-          <div class="card" style="padding: 1.2rem;">
-            <div
-              style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;"
-            >
-              <div>
-                <p class="eyebrow">{dictionary.admin.layout.eyebrow}</p>
-                <h1 style="margin: 0; font-size: 1.8rem;">{dictionary.admin.layout.title}</h1>
-              </div>
-              <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-                <a class="button-secondary" href={`${adminConfig.basePath}/`}>
-                  {dictionary.admin.layout.dashboard}
-                </a>
-                <form action="/api/admin/logout" method="post">
-                  <button class="button-ghost" type="submit"
-                    >{dictionary.admin.layout.logout}</button
-                  >
-                </form>
-              </div>
+<BaseLayout
+  title={title}
+  description={description}
+  locale="sr-latn"
+  canonicalPath={Astro.url.pathname}
+  appBarTone="light"
+  bodyClass="admin-shell"
+>
+  <section class="section">
+    <div class="container">
+      <div class="page-grid">
+        <div class="card" style="padding: 1.2rem;">
+          <div
+            style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;"
+          >
+            <div>
+              <p class="eyebrow">{dictionary.admin.layout.eyebrow}</p>
+              <h1 style="margin: 0; font-size: 1.8rem;">{dictionary.admin.layout.title}</h1>
+            </div>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+              <a class="button-secondary" href={`${adminConfig.basePath}/`}>
+                {dictionary.admin.layout.dashboard}
+              </a>
+              <form action="/api/admin/logout" method="post">
+                <button class="button-ghost" type="submit">{dictionary.admin.layout.logout}</button>
+              </form>
             </div>
           </div>
-          <slot />
         </div>
+        <slot />
       </div>
-    </main>
-  </body>
-</html>
+    </div>
+  </section>
+</BaseLayout>
