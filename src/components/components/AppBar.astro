@@ -6,9 +6,10 @@ import { siteConfig, type SiteLocale } from "@/lib/config/site";
 type Props = {
   locale: SiteLocale;
   pathname: string;
+  initialTone?: "light" | "dark";
 };
 
-const { locale, pathname } = Astro.props;
+const { locale, pathname, initialTone = "light" } = Astro.props;
 const dictionary = getDictionary(locale);
 const latnDictionary = getDictionary("sr-latn");
 const cyrlDictionary = getDictionary("sr-cyrl");
@@ -31,13 +32,18 @@ const therapyLinks = [
 ];
 ---
 
-<header class="appbar appbar--solid" data-appbar-root>
+<header class="appbar appbar--solid" data-appbar-root data-initial-tone={initialTone}>
   <div class="container">
     <div class="appbar__panel">
       <a class="appbar__brand" href={localizePath(locale, "/")} aria-label={siteConfig.name}>
         <img
-          class="appbar__brand-logo"
+          class="appbar__brand-logo appbar__brand-logo--light"
           src="/legacy/images/Logo-White.svg"
+          alt={siteConfig.name}
+        />
+        <img
+          class="appbar__brand-logo appbar__brand-logo--dark"
+          src="/legacy/images/Logo-Dark.svg"
           alt={siteConfig.name}
         />
       </a>
@@ -187,7 +193,10 @@ const therapyLinks = [
             </a>
 
             <details class="appbar__drawer-group">
-              <summary>{dictionary.nav.about}</summary>
+              <summary>
+                <span>{dictionary.nav.about}</span>
+                <span class="appbar__drawer-chevron" aria-hidden="true"></span>
+              </summary>
               <div class="appbar__drawer-group-links">
                 {
                   aboutLinks.map((item) => (
@@ -203,7 +212,10 @@ const therapyLinks = [
             </details>
 
             <details class="appbar__drawer-group">
-              <summary>{dictionary.nav.psychotherapy}</summary>
+              <summary>
+                <span>{dictionary.nav.psychotherapy}</span>
+                <span class="appbar__drawer-chevron" aria-hidden="true"></span>
+              </summary>
               <div class="appbar__drawer-group-links">
                 {
                   therapyLinks.map((item) => (
@@ -448,15 +460,29 @@ const therapyLinks = [
 
       appBar.dataset.appbarReady = "true";
       const mobile = appBar.querySelector("[data-appbar-mobile]");
+      let closeDrawerTimer;
 
       const closeDrawer = () => {
         if (!(mobile instanceof HTMLDetailsElement)) return;
-        mobile.open = false;
+        if (mobile.dataset.closing === "true") return;
+        mobile.dataset.closing = "true";
+        mobile.classList.add("is-closing");
         document.body.classList.remove("appbar-drawer-open");
+        window.clearTimeout(closeDrawerTimer);
+        closeDrawerTimer = window.setTimeout(() => {
+          mobile.open = false;
+          mobile.classList.remove("is-closing");
+          mobile.dataset.closing = "false";
+        }, 320);
       };
 
       const syncDrawerState = () => {
         if (!(mobile instanceof HTMLDetailsElement)) return;
+        if (mobile.open) {
+          window.clearTimeout(closeDrawerTimer);
+          mobile.classList.remove("is-closing");
+          mobile.dataset.closing = "false";
+        }
         document.body.classList.toggle("appbar-drawer-open", mobile.open);
       };
 

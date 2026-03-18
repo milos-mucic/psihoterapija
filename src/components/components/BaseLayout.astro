@@ -12,10 +12,23 @@ type Props = {
   description: string;
   locale: SiteLocale;
   canonicalPath: string;
+  appBarTone?: "light" | "dark";
 };
 
-const { title, description, locale, canonicalPath } = Astro.props;
+const { title, description, locale, canonicalPath, appBarTone } = Astro.props;
 const isHome = Astro.url.pathname === "/" || Astro.url.pathname === "/cir/";
+const derivedAppBarTone =
+  canonicalPath === "/" ||
+  canonicalPath === "/cir/" ||
+  canonicalPath === "/o-nama/" ||
+  canonicalPath === "/cir/o-nama/" ||
+  canonicalPath === "/kontakt/" ||
+  canonicalPath === "/cir/kontakt/" ||
+  canonicalPath === "/zakazivanje/" ||
+  canonicalPath === "/cir/zakazivanje/"
+    ? "dark"
+    : "light";
+const initialAppBarTone = appBarTone ?? derivedAppBarTone;
 ---
 
 <!doctype html>
@@ -26,7 +39,7 @@ const isHome = Astro.url.pathname === "/" || Astro.url.pathname === "/cir/";
   </head>
   <body class:list={{ "home-route": isHome }}>
     <div class="site-shell">
-      <AppBar locale={locale} pathname={Astro.url.pathname} />
+      <AppBar locale={locale} pathname={Astro.url.pathname} initialTone={initialAppBarTone} />
       <main>
         <slot />
       </main>
