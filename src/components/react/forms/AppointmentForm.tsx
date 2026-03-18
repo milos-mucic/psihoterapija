@@ -9,6 +9,8 @@ type Props = {
     email: string;
     phone: string;
     message: string;
+    formatLabel: string;
+    chooseOption: string;
     submitAppointment: string;
     success: string;
     error: string;

@@ -1,14 +1,16 @@
 import { localizePath } from "@/features/i18n/locale";
+import { getDictionary } from "@/features/i18n/translate";
 import type { SiteLocale } from "@/lib/config/site";
 
-export const getNavigation = (locale: SiteLocale) => [
-  { label: "Pocetna", href: localizePath(locale, "/") },
-  { label: locale === "sr-cyrl" ? "О нама" : "O nama", href: localizePath(locale, "/o-nama/") },
-  {
-    label: locale === "sr-cyrl" ? "Психотерапија" : "Psihoterapija",
-    href: localizePath(locale, "/psihoterapija/"),
-  },
-  { label: locale === "sr-cyrl" ? "Блог" : "Blog", href: localizePath(locale, "/blog/") },
-  { label: "FAQ", href: localizePath(locale, "/faq/") },
-  { label: locale === "sr-cyrl" ? "Контакт" : "Kontakt", href: localizePath(locale, "/kontakt/") },
-];
+export const getNavigation = (locale: SiteLocale) => {
+  const dictionary = getDictionary(locale);
+
+  return [
+    { label: dictionary.nav.home, href: localizePath(locale, "/") },
+    { label: dictionary.nav.about, href: localizePath(locale, "/o-nama/") },
+    { label: dictionary.nav.psychotherapy, href: localizePath(locale, "/psihoterapija/") },
+    { label: dictionary.nav.blog, href: localizePath(locale, "/blog/") },
+    { label: dictionary.nav.faq, href: localizePath(locale, "/faq/") },
+    { label: dictionary.nav.contact, href: localizePath(locale, "/kontakt/") },
+  ];
+};

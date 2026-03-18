@@ -1,5 +1,6 @@
 ---
 import SeoHead from "@/components/astro/seo/SeoHead.astro";
+import { getDictionary } from "@/features/i18n/translate";
 import { adminConfig } from "@/lib/config/admin";
 import "@/styles/global.css";
 
@@ -8,7 +9,8 @@ type Props = {
   description?: string;
 };
 
-const { title, description = "Skriveni admin segment za blog i prijave." } = Astro.props;
+const dictionary = getDictionary("sr-latn");
+const { title, description = dictionary.meta.admin.layoutDescription } = Astro.props;
 ---
 
 <!doctype html>
@@ -25,15 +27,15 @@ const { title, description = "Skriveni admin segment za blog i prijave." } = Ast
               style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;"
             >
               <div>
-                <p class="eyebrow">Hidden admin</p>
-                <h1 style="margin: 0; font-size: 1.8rem;">Ikar admin</h1>
+                <p class="eyebrow">{dictionary.admin.layout.eyebrow}</p>
+                <h1 style="margin: 0; font-size: 1.8rem;">{dictionary.admin.layout.title}</h1>
               </div>
               <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
                 <a class="button-secondary" href={`${adminConfig.basePath}/`}>
-                  Dashboard
+                  {dictionary.admin.layout.dashboard}
                 </a>
                 <form action="/api/admin/logout" method="post">
-                  <button class="button-ghost" type="submit">Odjava</button>
+                  <button class="button-ghost" type="submit">{dictionary.admin.layout.logout}</button>
                 </form>
               </div>
             </div>

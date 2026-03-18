@@ -1,12 +1,14 @@
 ---
+import { getDictionary } from "@/features/i18n/translate";
 import { submissionService } from "@/features/forms/services/submission.service";
 import AdminLayout from "@/layouts/AdminLayout.astro";
 
+const dictionary = getDictionary("sr-latn");
 const { id } = Astro.params;
 const submission = id ? await submissionService.getSubmission(id) : undefined;
 ---
 
-<AdminLayout title="Submission details | Ikar admin">
+<AdminLayout title={dictionary.meta.admin.submissionDetailsTitle}>
   <div class="card" style="padding: 1.5rem;">
     {
       submission ? (
@@ -14,37 +16,37 @@ const submission = id ? await submissionService.getSubmission(id) : undefined;
           <h2 style="margin: 0;">{submission.name}</h2>
           <dl style="display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem;">
             <div class="card" style="padding: 1rem;">
-              <dt>Tip</dt>
+              <dt>{dictionary.admin.submissionDetails.labels.type}</dt>
               <dd style="margin: 0.4rem 0 0;">{submission.type}</dd>
             </div>
             <div class="card" style="padding: 1rem;">
-              <dt>Email</dt>
+              <dt>{dictionary.admin.submissionDetails.labels.email}</dt>
               <dd style="margin: 0.4rem 0 0;">{submission.email}</dd>
             </div>
             <div class="card" style="padding: 1rem;">
-              <dt>Telefon</dt>
+              <dt>{dictionary.admin.submissionDetails.labels.phone}</dt>
               <dd style="margin: 0.4rem 0 0;">{submission.phone ?? "-"}</dd>
             </div>
             <div class="card" style="padding: 1rem;">
-              <dt>Format</dt>
+              <dt>{dictionary.admin.submissionDetails.labels.format}</dt>
               <dd style="margin: 0.4rem 0 0;">{submission.format ?? "-"}</dd>
             </div>
             <div class="card" style="padding: 1rem;">
-              <dt>Kreirano</dt>
+              <dt>{dictionary.admin.submissionDetails.labels.created}</dt>
               <dd style="margin: 0.4rem 0 0;">{new Date(submission.createdAt).toLocaleString("sr-RS")}</dd>
             </div>
           </dl>
           {
             submission.message ? (
               <div class="card" style="padding: 1rem;">
-                <h3 style="margin-top: 0;">Poruka</h3>
+                <h3 style="margin-top: 0;">{dictionary.admin.submissionDetails.labels.message}</h3>
                 <p style="margin: 0; white-space: pre-wrap; color: var(--muted);">{submission.message}</p>
               </div>
             ) : null
           }
         </div>
       ) : (
-        <p style="margin: 0;">Prijava nije pronadjena.</p>
+        <p style="margin: 0;">{dictionary.admin.submissionDetails.notFound}</p>
       )
     }
   </div>

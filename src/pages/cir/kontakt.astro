@@ -2,16 +2,16 @@
 export const prerender = true;
 
 import ContactPage from "@/components/astro/pages/ContactPage.astro";
-import { getContactPageData } from "@/data/fixtures/public-pages";
+import { getDictionary } from "@/features/i18n/translate";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
 const locale = "sr-cyrl";
-const content = getContactPageData(locale);
+const dictionary = getDictionary(locale);
 ---
 
 <BaseLayout
-  title="Контакт | Психотерапијски кабинет Икар"
-  description={content.introCopy}
+  title={dictionary.meta.contact.title}
+  description={dictionary.meta.contact.description}
   locale={locale}
   canonicalPath="/cir/kontakt/"
 >

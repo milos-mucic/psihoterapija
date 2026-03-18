@@ -21,14 +21,14 @@ const isHome = pathname === "/" || pathname === "/cir/";
 const isActivePath = (href: string) => (href === "/" ? pathname === href : pathname.startsWith(href));
 
 const aboutLinks = [
-  { label: locale === "sr-cyrl" ? "О нама" : "O nama", href: localizePath(locale, "/o-nama/") },
-  { label: locale === "sr-cyrl" ? "Контакт" : "Kontakt", href: localizePath(locale, "/kontakt/") },
+  { label: dictionary.nav.aboutLinks.about, href: localizePath(locale, "/o-nama/") },
+  { label: dictionary.nav.aboutLinks.contact, href: localizePath(locale, "/kontakt/") },
 ];
 
 const therapyLinks = [
-  { label: locale === "sr-cyrl" ? "Приступ" : "Pristup", href: localizePath(locale, "/psihoterapija/") },
-  { label: locale === "sr-cyrl" ? "Заказивање" : "Zakazivanje", href: localizePath(locale, "/zakazivanje/") },
-  { label: "FAQ", href: localizePath(locale, "/faq/") },
+  { label: dictionary.nav.therapyLinks.approach, href: localizePath(locale, "/psihoterapija/") },
+  { label: dictionary.nav.therapyLinks.appointment, href: localizePath(locale, "/zakazivanje/") },
+  { label: dictionary.nav.therapyLinks.faq, href: localizePath(locale, "/faq/") },
 ];
 ---
 
@@ -47,7 +47,7 @@ const therapyLinks = [
       </a>
 
       <div class="appbar__desktop">
-        <nav class="appbar__nav" aria-label="Primary">
+        <nav class="appbar__nav" aria-label={dictionary.a11y.appbarPrimaryNav}>
           <a class:list={["appbar__link", isActivePath(localizePath(locale, "/")) && "is-active"]} href={localizePath(locale, "/")}>
             {dictionary.nav.home}
           </a>
@@ -99,7 +99,7 @@ const therapyLinks = [
       </div>
 
       <details class="appbar__mobile">
-        <summary class="appbar__toggle" aria-label="Toggle navigation">
+        <summary class="appbar__toggle" aria-label={dictionary.a11y.toggleNavigation}>
           <img
             class:list={["appbar__toggle-icon", isHome && "is-light"]}
             src="/legacy/images/menu-btn.svg"

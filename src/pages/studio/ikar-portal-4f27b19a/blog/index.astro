@@ -1,20 +1,22 @@
 ---
+import { getDictionary } from "@/features/i18n/translate";
 import { blogService } from "@/features/blog/services/blog.service";
 import { adminConfig } from "@/lib/config/admin";
 import AdminLayout from "@/layouts/AdminLayout.astro";
 
+const dictionary = getDictionary("sr-latn");
 const posts = await blogService.listAllPosts();
 ---
 
-<AdminLayout title="Blog management | Ikar admin">
+<AdminLayout title={dictionary.admin.dashboard.blogManagementTitle}>
   <div class="admin-grid">
     <div class="card" style="padding: 1.5rem;">
       <div style="display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; align-items: center;">
         <div>
-          <h2 style="margin: 0;">Blog postovi</h2>
-          <p style="margin: 0.5rem 0 0; color: var(--muted);">Lista trenutno seedovanih tekstova iz content collections sistema.</p>
+          <h2 style="margin: 0;">{dictionary.admin.blogIndex.title}</h2>
+          <p style="margin: 0.5rem 0 0; color: var(--muted);">{dictionary.admin.blogIndex.copy}</p>
         </div>
-        <a class="button-primary" href={`${adminConfig.basePath}/blog/new/`}>Novi post</a>
+        <a class="button-primary" href={`${adminConfig.basePath}/blog/new/`}>{dictionary.admin.blogIndex.newPost}</a>
       </div>
     </div>
 
@@ -22,10 +24,10 @@ const posts = await blogService.listAllPosts();
       <table class="admin-table">
         <thead>
           <tr>
-            <th>Naslov</th>
-            <th>Locale</th>
-            <th>Status</th>
-            <th>Datum</th>
+            <th>{dictionary.admin.blogIndex.headers.title}</th>
+            <th>{dictionary.admin.blogIndex.headers.locale}</th>
+            <th>{dictionary.admin.blogIndex.headers.status}</th>
+            <th>{dictionary.admin.blogIndex.headers.date}</th>
             <th></th>
           </tr>
         </thead>
@@ -37,7 +39,7 @@ const posts = await blogService.listAllPosts();
               <td>{post.status}</td>
               <td>{post.publishedAt.toLocaleDateString("sr-RS")}</td>
               <td>
-                <a href={`${adminConfig.basePath}/blog/${post.slug}/edit/`}>Otvori</a>
+                <a href={`${adminConfig.basePath}/blog/${post.slug}/edit/`}>{dictionary.admin.blogIndex.headers.open}</a>
               </td>
             </tr>
           ))}

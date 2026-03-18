@@ -1,5 +1,6 @@
 ---
 import { localizePath } from "@/features/i18n/locale";
+import { getDictionary } from "@/features/i18n/translate";
 import type { BlogListItem } from "@/features/blog/types/blog.types";
 import type { SiteLocale } from "@/lib/config/site";
 
@@ -9,6 +10,7 @@ type Props = {
 };
 
 const { locale, post } = Astro.props;
+const dictionary = getDictionary(locale);
 ---
 
 <article class="card" style="padding: 1.4rem;">
@@ -16,12 +18,12 @@ const { locale, post } = Astro.props;
     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; color: var(--muted); font-size: 0.9rem;">
       <span>{post.publishedAt.toLocaleDateString("sr-RS")}</span>
       <span>&bull;</span>
-      <span>{post.tags.join(", ") || "Psihoterapija"}</span>
+      <span>{post.tags.join(", ") || dictionary.blog.defaultTag}</span>
     </div>
     <h3 style="margin: 0; font-size: 1.5rem;">{post.title}</h3>
     <p style="margin: 0; color: var(--muted);">{post.excerpt}</p>
     <a class="button-secondary" href={localizePath(locale, `/blog/${post.slug}/`)}>
-      Procitaj tekst
+      {dictionary.blog.readMoreLabel}
     </a>
   </div>
 </article>

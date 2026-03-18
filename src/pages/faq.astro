@@ -2,16 +2,16 @@
 export const prerender = true;
 
 import FaqPage from "@/components/astro/pages/FaqPage.astro";
-import { getFaqPageData } from "@/data/fixtures/public-pages";
+import { getDictionary } from "@/features/i18n/translate";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
 const locale = "sr-latn";
-const content = getFaqPageData(locale);
+const dictionary = getDictionary(locale);
 ---
 
 <BaseLayout
-  title="FAQ | Psihoterapijski kabinet Ikar"
-  description={content.banner.description ?? "Najcesca pitanja o psihoterapiji i radu kabineta Ikar."}
+  title={dictionary.meta.faq.title}
+  description={dictionary.meta.faq.description}
   locale={locale}
   canonicalPath="/faq/"
 >

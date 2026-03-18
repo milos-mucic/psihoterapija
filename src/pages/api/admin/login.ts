@@ -1,13 +1,15 @@
 import type { APIRoute } from "astro";
+import { getDictionary } from "@/features/i18n/translate";
 import { adminAuthService } from "@/features/admin/auth/admin-auth.service";
 import { adminConfig } from "@/lib/config/admin";
 
 export const POST: APIRoute = async ({ request, cookies }) => {
+  const dictionary = getDictionary("sr-latn");
   const body = await request.json().catch(() => null);
   const password = typeof body?.password === "string" ? body.password : "";
 
   if (!adminAuthService.validatePassword(password)) {
-    return new Response(JSON.stringify({ message: "Pogresna sifra." }), {
+    return new Response(JSON.stringify({ message: dictionary.api.adminWrongPassword }), {
       status: 401,
       headers: { "Content-Type": "application/json" },
     });

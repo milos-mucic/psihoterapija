@@ -1,10 +1,10 @@
 ---
 import { AppointmentForm } from "@/components/react/forms/AppointmentForm";
 import { getHomePageData } from "@/data/fixtures/home";
+import { localizePath } from "@/features/i18n/locale";
+import { getDictionary } from "@/features/i18n/translate";
 import type { BlogListItem } from "@/features/blog/types/blog.types";
 import type { SiteLocale } from "@/lib/config/site";
-import { getDictionary } from "@/features/i18n/translate";
-import { localizePath } from "@/features/i18n/locale";
 
 type Props = {
   locale: SiteLocale;
@@ -128,7 +128,7 @@ const content = getHomePageData(locale);
 
         <a class="home-video-card" href={content.reasons.videoHref} target="_blank" rel="noreferrer">
           <img src={content.reasons.videoImage} alt="" loading="lazy" />
-          <span class="home-video-card__badge">Play</span>
+          <span class="home-video-card__badge">{dictionary.common.play}</span>
           <span class="home-video-card__label">{content.reasons.videoLabel}</span>
         </a>
       </div>
@@ -153,7 +153,7 @@ const content = getHomePageData(locale);
         client:load
         locale={locale}
         labels={dictionary.forms}
-        formatLabel={locale === "sr-cyrl" ? "Изаберите формат рада" : "Izaberite format rada"}
+        formatLabel={content.booking.formatLabel}
         formats={content.booking.formats}
       />
     </div>
@@ -178,12 +178,12 @@ const content = getHomePageData(locale);
               <div class="home-post-meta">
                 <span>{post.publishedAt.toLocaleDateString(locale === "sr-cyrl" ? "sr-Cyrl-RS" : "sr-RS")}</span>
                 <span>&bull;</span>
-                <span>{post.tags.join(", ") || "Psihoterapija"}</span>
+                <span>{post.tags.join(", ") || dictionary.blog.defaultTag}</span>
               </div>
               <h3>{post.title}</h3>
               <p>{post.excerpt}</p>
               <a class="home-inline-link" href={localizePath(locale, `/blog/${post.slug}/`)}>
-                {locale === "sr-cyrl" ? "Прочитајте текст" : "Procitajte tekst"}
+                {dictionary.blog.readMoreLabel}
               </a>
             </article>
           ))}

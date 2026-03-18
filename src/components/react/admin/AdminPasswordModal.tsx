@@ -1,8 +1,11 @@
+import { getDictionary } from "@/features/i18n/translate";
 import { useState } from "react";
 
 type Props = {
   returnPath: string;
 };
+
+const dictionary = getDictionary("sr-latn");
 
 export function AdminPasswordModal({ returnPath }: Props) {
   const [password, setPassword] = useState("");
@@ -24,7 +27,7 @@ export function AdminPasswordModal({ returnPath }: Props) {
     if (!response.ok) {
       const data = await response.json().catch(() => null);
       setStatus("error");
-      setErrorText(data?.message ?? "Pristup nije odobren.");
+      setErrorText(data?.message ?? dictionary.api.adminAccessDenied);
       return;
     }
 
@@ -35,11 +38,9 @@ export function AdminPasswordModal({ returnPath }: Props) {
     <div className="card" style={{ padding: "1.5rem", maxWidth: "34rem" }}>
       <div className="page-grid">
         <div>
-          <p className="eyebrow">Admin pristup</p>
-          <h2 style={{ margin: "0 0 0.5rem" }}>Unesite sifru</h2>
-          <p style={{ margin: 0, color: "var(--muted)" }}>
-            Ovo je jednostavan, pragmatcan gate za skriveni admin segment.
-          </p>
+          <p className="eyebrow">{dictionary.admin.login.eyebrow}</p>
+          <h2 style={{ margin: "0 0 0.5rem" }}>{dictionary.admin.login.title}</h2>
+          <p style={{ margin: 0, color: "var(--muted)" }}>{dictionary.admin.login.copy}</p>
         </div>
         <form
           className="page-grid"
@@ -52,13 +53,13 @@ export function AdminPasswordModal({ returnPath }: Props) {
             className="input-control"
             name="password"
             onChange={(event) => setPassword(event.target.value)}
-            placeholder="Admin sifra"
+            placeholder={dictionary.admin.login.placeholder}
             required
             type="password"
             value={password}
           />
           <button className="button-primary" disabled={status === "submitting"} type="submit">
-            {status === "submitting" ? "..." : "Otvori admin"}
+            {status === "submitting" ? "..." : dictionary.admin.login.submit}
           </button>
           {status === "error" && (
             <p className="form-status" data-tone="error">

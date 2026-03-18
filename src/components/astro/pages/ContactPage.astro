@@ -14,9 +14,9 @@ const content = getContactPageData(locale);
 const dictionary = getDictionary(locale);
 
 const socialLinks = [
-  { href: "https://www.facebook.com/", value: "", label: "Facebook" },
-  { href: "https://www.instagram.com/", value: "", label: "Instagram" },
-  { href: "https://www.linkedin.com/", value: "", label: "LinkedIn" },
+  { href: "https://www.facebook.com/", value: "ïŽž", label: "Facebook" },
+  { href: "https://www.instagram.com/", value: "ï…­", label: "Instagram" },
+  { href: "https://www.linkedin.com/", value: "ï‚Œ", label: "LinkedIn" },
 ];
 ---
 
@@ -77,11 +77,11 @@ const socialLinks = [
         <article class="office-gallery__card" data-reveal="up" style={`--reveal-delay: ${index * 90}ms;`}>
           <img
             src={image}
-            alt={locale === "sr-cyrl" ? `Просторија ${index + 1}` : `Prostorija ${index + 1}`}
+            alt={`${dictionary.common.officeRoom} ${index + 1}`}
             loading="lazy"
           />
           <div class="office-gallery__meta">
-            <h4>{locale === "sr-cyrl" ? `Просторија ${index + 1}` : `Prostorija ${index + 1}`}</h4>
+            <h4>{dictionary.common.officeRoom} {index + 1}</h4>
           </div>
         </article>
       ))}

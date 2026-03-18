@@ -1,0 +1,424 @@
+{
+  "localeLabel": "Latinica",
+  "a11y": {
+    "appbarPrimaryNav": "Glavna navigacija",
+    "toggleNavigation": "Otvori navigaciju",
+    "footerNav": "Navigacija u podnožju"
+  },
+  "nav": {
+    "home": "Početna",
+    "about": "O nama",
+    "psychotherapy": "Psihoterapija",
+    "blog": "Blog",
+    "faq": "FAQ",
+    "contact": "Kontakt",
+    "appointment": "Zakazivanje",
+    "admin": "Admin",
+    "aboutLinks": {
+      "about": "O nama",
+      "contact": "Kontakt"
+    },
+    "therapyLinks": {
+      "approach": "Pristup",
+      "appointment": "Zakazivanje",
+      "faq": "FAQ"
+    }
+  },
+  "meta": {
+    "home": {
+      "title": "Početna | Psihoterapijski kabinet Ikar",
+      "description": "Centar posvećen psihodinamskoj psihoterapiji, usmeren ka razumevanju dubljih uzroka emocionalnih poteškoća i postizanju trajnih psiholoških promena."
+    },
+    "about": {
+      "title": "O nama | Psihoterapijski kabinet Ikar",
+      "description": "Na stranici ispod možete naći dodatne informacije o našem kabinetu."
+    },
+    "psychotherapy": {
+      "title": "Psihoterapija | Psihoterapijski kabinet Ikar",
+      "description": "U našem kabinetu bavimo se psihodinamskom psihoterapijom, koja je dubinski orijentisana na razumevanje i razrešavanje uzroka, a ne samo posledica psiholoških teškoća."
+    },
+    "faq": {
+      "title": "FAQ | Psihoterapijski kabinet Ikar",
+      "description": "Ovde možete pronaći odgovore na najčešće postavljena pitanja."
+    },
+    "contact": {
+      "title": "Kontakt | Psihoterapijski kabinet Ikar",
+      "description": "Ova stranica namenjena je prvom kontaktu, informisanju i postavljanju pitanja u cilju razjašnjavanja nedoumica koje imate."
+    },
+    "appointment": {
+      "title": "Zakazivanje | Psihoterapijski kabinet Ikar",
+      "description": "Ovde možete poslati upit za savetodavni, psihoterapijski ili konsultativni termin, a naš tim će Vam se javiti u najkraćem mogućem roku."
+    },
+    "blog": {
+      "title": "Blog | Psihoterapijski kabinet Ikar",
+      "description": "Tekstovi iz oblasti psihologije i psihoterapije dostupni su kroz naš blog."
+    },
+    "admin": {
+      "layoutDescription": "Skriveni admin segment za blog i prijave.",
+      "dashboardTitle": "Ikar admin dashboard",
+      "submissionsTitle": "Prijave | Ikar admin",
+      "submissionDetailsTitle": "Detalji prijave | Ikar admin"
+    }
+  },
+  "blog": {
+    "title": "Blog",
+    "description": "Tekstovi iz oblasti psihologije i psihoterapije dostupni su kroz naš blog.",
+    "recentLabel": "Najnoviji tekstovi",
+    "readMoreLabel": "Pročitajte tekst",
+    "defaultTag": "Psihoterapija"
+  },
+  "forms": {
+    "name": "Ime i prezime",
+    "email": "Email",
+    "phone": "Telefon",
+    "message": "Poruka",
+    "formatLabel": "Izaberite format rada",
+    "chooseOption": "Izaberite",
+    "submitContact": "Pošalji poruku",
+    "submitAppointment": "Pošalji prijavu",
+    "success": "Poruka je uspešno poslata.",
+    "error": "Došlo je do greške. Pokušajte ponovo."
+  },
+  "api": {
+    "invalidSubmission": "Podaci nisu validni.",
+    "submissionSaveFailed": "Neuspešno čuvanje prijave.",
+    "adminAccessDenied": "Pristup nije odobren.",
+    "adminWrongPassword": "Pogrešna šifra."
+  },
+  "common": {
+    "noItemsFound": "No items found.",
+    "play": "Play",
+    "officeRoom": "Prostorija"
+  },
+  "footer": {
+    "contactEyebrow": "Kontakt",
+    "tagline": "Smirena, premium i održiva osnova za psihoterapijski sajt."
+  },
+  "homePage": {
+    "hero": {
+      "titleHtml": "Psihoterapijski centar<br /><em>Ikar</em>",
+      "description": "Centar posvećen psihodinamskoj psihoterapiji, usmeren ka razumevanju dubljih uzroka emocionalnih poteškoća i postizanju trajnih psiholoških promena.",
+      "primaryActionLabel": "Zakazivanje",
+      "secondaryActionLabel": "O nama"
+    },
+    "prompt": {
+      "title": "Kako možemo da Vam pomognemo?",
+      "copy": "Za bilo kakva pitanja ili nedoumice, pošaljite nam poruku.",
+      "label": "Kontakt"
+    },
+    "about": {
+      "title": "Ja sam Nemanja Zajkešković, psihodinamski psihoterapeut",
+      "paragraphs": [
+        "Master psiholog i psihodinamski psihoterapeut sa višegodišnjim iskustvom u radu sa anksioznim i depresivnim stanjima, opsesivnim stanjima, poremećajima ličnosti, krizama identiteta, ponavljanjem destruktivnih životnih obrazaca i hroničnim problemima u odnosima sa drugima."
+      ],
+      "bullets": [
+        "U radu fokusiran na dugotrajan psihoterapijski proces u cilju dubinskih promena i restrukturacije ličnosti.",
+        "Koristimo terapijski odnos kao centralni instrument promene i razumevanja lične istorije, unutrašnjih konflikata i pogleda na svet."
+      ],
+      "label": "Biografija"
+    },
+    "services": {
+      "title": "Psihodinamska psihoterapija i psihološko savetovanje",
+      "copy": "U našem centru, pored psihološkog savetovanja i psihodinamske psihoterapije, možete zakazati i konsultativne termine.",
+      "items": [
+        {
+          "title": "Psihodinamska psihoterapija",
+          "copy": "Dugoročni rad na dubljem razumevanju unutrašnjih konflikata, obrazaca i odnosa.",
+          "label": "Saznajte više"
+        },
+        {
+          "title": "Psihološko savetovanje",
+          "copy": "Podrška u kriznim periodima, donošenju odluka i jasnijem uvidu u trenutnu situaciju.",
+          "label": "Kontaktirajte nas"
+        },
+        {
+          "title": "Konsultacije",
+          "copy": "Uvodni susreti i procena formata rada koji najbolje odgovara Vašim potrebama.",
+          "label": "Zakažite termin"
+        }
+      ]
+    },
+    "promo": {
+      "title": "Zakažite besplatan uvodni Zoom ili Skype razgovor od 15 minuta",
+      "label": "Kontakt"
+    },
+    "themes": {
+      "title": "Učestale teme sa kojima se susrećemo u radu",
+      "items": [
+        {
+          "title": "Anksioznost i depresivna stanja",
+          "copy": "Kada se napetost, strah ili osećaj bezvoljnosti ponavljaju i počinju da oblikuju svakodnevicu.",
+          "label": "Pročitajte više"
+        },
+        {
+          "title": "Problemi u odnosima",
+          "copy": "Ponavljajući konflikti, distanca, strah od bliskosti ili teškoće u postavljanju granica.",
+          "label": "Javite nam se"
+        },
+        {
+          "title": "Krize identiteta i životni prelazi",
+          "copy": "Trenuci u kojima stari obrasci više ne funkcionišu, a novi još nisu dobili jasan oblik.",
+          "label": "Zakažite susret"
+        }
+      ]
+    },
+    "reasons": {
+      "title": "Zašto izabrati baš naš centar?",
+      "copy": "Psihoterapijski centar Ikar u svom radu je primarno usmeren na dugoročnu psihoterapiju, jer verujemo da se dubinske i trajne promene ne postižu kroz brze intervencije, već kroz kontinuiran proces.",
+      "items": [
+        {
+          "title": "Naš pristup",
+          "copy": "Psihodinamski pristup omogućava rad sa širokim spektrom emocionalnih stanja i ponavljajućih obrazaca koji otežavaju svakodnevno funkcionisanje.",
+          "label": "Više o pristupu"
+        },
+        {
+          "title": "Profesionalni okvir i jasnoća",
+          "copy": "Rad se odvija u jasno definisanom i etički utemeljenom okviru, sa stabilnim pravilima i doslednošću.",
+          "label": "Česta pitanja"
+        },
+        {
+          "title": "Transparentnost i otvorenost",
+          "copy": "Sam proces, ciljevi i dinamika terapije mogu se preispitivati radi jasnoće i usmeravanja rada.",
+          "label": "Postavite pitanje"
+        }
+      ],
+      "videoLabel": "Pogledajte kratko predstavljanje"
+    },
+    "booking": {
+      "title": "Unesite neophodne informacije kako biste zakazali termin",
+      "copy": "Prvi kontakt nam pomaže da razumemo kontekst, predložimo format rada i dogovorimo naredni korak.",
+      "formatLabel": "Izaberite format rada",
+      "formats": [
+        "Psihodinamska psihoterapija",
+        "Psihološko savetovanje",
+        "Konsultacije"
+      ]
+    },
+    "recent": {
+      "title": "Najnovije objave na našem sajtu",
+      "copy": "Budite u toku sa novim tekstovima iz oblasti psihologije i psihoterapije.",
+      "label": "Sve objave",
+      "empty": "Novi tekstovi stižu uskoro."
+    }
+  },
+  "pages": {
+    "about": {
+      "banner": {
+        "title": "Ko smo mi?",
+        "description": "Na stranici ispod možete naći dodatne informacije o našem kabinetu."
+      },
+      "showcaseTitle": "Psihoterapijski kabinet 'Ikar'",
+      "showcaseEmptyLabel": "No items found.",
+      "ideaTitle": "Glavna ideja našeg kabineta",
+      "ideaHtml": "U savremenoj psihološkoj praksi razvijenih zemalja, psihoterapija predstavlja pravno standardizovan i odgovoran vid pomoći, zasnovan na jasnim teorijskim okvirima, kliničkom iskustvu i etičkim principima<strong>. </strong>U našoj zemlji, međutim, ona je i dalje često praćena konfuzijom, mistikom i nejasnim očekivanjima, kao i različitim pristupima koji se predstavljaju kao terapijski, a koji neretko nemaju trajno ili stvarno dejstvo, najčešće na uštrb samih klijenata i pacijenata.<br><br>Naš rad je u širem smislu prevashodno usmeren ka osvetljavanju toga šta psihoterapija jeste, ali i šta ona nije. Smatramo da je edukacija javnosti sastavni deo svakog ozbiljnog terapijskog procesa, jer samo kroz razumevanje moguće je uspostaviti realna očekivanja, osećaj sigurnosti i poverenje u rad koji se odvija. Psihološko zdravlje se ne može posmatrati izdvojeno od društvenog konteksta, jer ne postoje psihološki zdrave osobe u sredini koja je u osnovi nezdrava.<br><br>U užem smislu, naš cilj se ogleda u profesionalnom i odgovornom psihoterapijskom radu, zasnovanom na intervencijama koje su klijentima zaista potrebne. U fokusu su individualnost, lične granice i kompleksnost svake psihološke pojave. Ne bavimo se „tretmanom bolesti“ u apstraktnom smislu koristeći tehnike ili alate, jer na psihoterapiju ne dolazi <em>dijagnoza</em>, već čovek. Upravo zato je naš pristup uvek prilagođen pojedincu i, što je najbitnije, on je pre svega ljudski.<br><br>Nijedan psihoterapijski proces nije identičan, jer nijedna osoba i nijedan životni put nisu isti.<br><br>Psihoterapiju razumemo kao proces koji zahteva vreme, kontinuitet i spremnost za susret sa sopstvenim emocijama, a ne kao mesto gde će psihoterapeut ponuditi brzo ili univerzalno rešenje.",
+      "focusTitle": "Bavimo se:",
+      "focusItems": [
+        "Poremećajima ličnosti",
+        "Anksioznim stanjima",
+        "Depresivnim stanjima",
+        "Hroničnim poteškoćama u odnosima i vezama",
+        "Krizama identiteta, traumama i gubicima"
+      ],
+      "recentTitle": "Najnovije objave na našem sajtu",
+      "recentCopy": "Budite u toku sa najnovijim istraživanjima u oblasti psihologije i psihoterapije.",
+      "recentLabel": "View all posts",
+      "recentReadMoreLabel": "Read more",
+      "recentEmptyLabel": "No items found."
+    },
+    "psychotherapy": {
+      "banner": {
+        "title": "Psihoterapijski pristup",
+        "description": "U našem kabinetu bavimo se psihodinamskom psihoterapijom, koja je dubinski orijentisana na razumevanje i razrešavanje uzroka, a ne samo posledica psiholoških teškoća. Ona omogućava rad sa širokim spektrom mentalnih bolesti i psiholoških problema."
+      },
+      "scopeTitle": "Opseg rada",
+      "scopeItems": [
+        "Anksiozna stanja i poremećaji",
+        "Depresivna stanja i poremećaji",
+        "Poremećaji ličnosti",
+        "Hronične poteškoće u odnosima i vezama",
+        "Psihotični poremećaji",
+        "Gubitak, trauma, krize identiteta",
+        "Ponavljanje destruktivnih životnih obrazaca"
+      ],
+      "servicesEmptyLabel": "No items found.",
+      "bookingTitleHtml": "Neophodne informacije <br>o zakazivanju termina",
+      "formatLabel": "Izaberite format rada",
+      "formats": [
+        "Psihodinamska psihoterapija",
+        "Psihološko savetovanje",
+        "Konsultacije"
+      ],
+      "faqs": [
+        {
+          "question": "Koja je razlika između psihologa i psihoterapeuta?",
+          "answer": "U Republici Srbiji, psiholog se postaje tako što osoba završi osnovne studije psihologije, dok je psihoterapeut onaj koji je i nakon završenih osnovnih studija završio dodatnu psihoterapijsku edukaciju u trajanju od minimum četiri do šest godina."
+        },
+        {
+          "question": "Kako da znam da mi je potrebna psihoterapija?",
+          "answer": "O psihoterapiji možete razmišljati ako doživljavate emocionalne poteškoće, imate dijagnostifikovani određeni mentalni poremećaj ili generalno prolazite kroz težak životni period. Takođe, psihoterapija može služiti ličnom razvoju, istraživanju i povećanju zadovoljstva životom."
+        },
+        {
+          "question": "Koliko traje psihoterapija?",
+          "answer": "Psihoterapija nema unapred definisano trajanje, jer napredak u terapijskom procesu ne zavisi od vremena, već od rada i truda koji se ulažu u sam proces. Okvirno, psihoterapija može trajati od nekoliko meseci pa sve do nekoliko godina."
+        },
+        {
+          "question": "Kako izgleda prvi susret sa psihoterapeutom?",
+          "answer": "U dogovoreno vreme i mesto dolazite na psihoterapijsku seansu gde će Vas psihoterapeut sačekati. Nije potrebna nikakva prethodna priprema, samo volja za razgovorom. Na prvoj seansi govorićete i o svim potrebnim tehničkim informacijama za dalji rad."
+        }
+      ]
+    },
+    "faq": {
+      "banner": {
+        "title": "Pitanja",
+        "description": "Ovde možete pronaći odgovore na najčešće postavljena pitanja."
+      },
+      "items": [
+        {
+          "question": "Da li je moguće „izlečiti se“ bez psihoterapije?",
+          "answer": "Neke životne krize moguće je prebroditi uz lične resurse i podršku bliskih ljudi, ali psihoterapija može značajno pomoći ako se teškoće ponavljaju ili postaju preopterećujuće."
+        },
+        {
+          "question": "Kako da znam da mi je potrebna terapija?",
+          "answer": "Kada osetite da se napetost, tuga, strahovi ili problemi u odnosima ponavljaju i počinju da oblikuju svakodnevni život, vredi razmisliti o razgovoru sa stručnim licem."
+        },
+        {
+          "question": "Šta je psihodinamska terapija?",
+          "answer": "To je pristup koji nastoji da simptome razume kroz njihove uzroke, unutrašnje konflikte, ličnu istoriju i odnose, a ne samo kroz površinsko ublažavanje teškoća."
+        },
+        {
+          "question": "Kako izgleda prvi susret?",
+          "answer": "Prvi susret služi da dobijete prostor da opišete razloge dolaska, a da mi predložimo okvir daljeg rada i odgovorimo na nedoumice koje imate."
+        }
+      ],
+      "bookingTitle": "Unesite neophodne informacije kako biste zakazali termin",
+      "formatLabel": "Izaberite format rada",
+      "formats": [
+        "Psihodinamska psihoterapija",
+        "Psihološko savetovanje",
+        "Konsultacije"
+      ]
+    },
+    "contact": {
+      "banner": {
+        "title": "Kontaktirajte nas"
+      },
+      "introTitle": "Psihološke poteškoće ne morate rešavati sami",
+      "introCopy": "Ova stranica namenjena je prvom kontaktu, informisanju i postavljanju pitanja, sve u cilju razjašnjavanja nedoumica koje imate.",
+      "formTitle": "Kako možemo da Vam pomognemo?",
+      "contactLabels": {
+        "phone": "Broj telefona:",
+        "email": "E-mail:",
+        "socials": "Društvene mreže:"
+      },
+      "officesTitle": "Naše prostorije",
+      "officesCopy": "Psihoterapijski prostor igra bitnu ulogu u psihoterapiji, te je kod nas osmišljen kako bi pružio neupadljivo, mirno, diskretno i sigurno okruženje za rad."
+    },
+    "appointment": {
+      "banner": {
+        "title": "Zakazivanje",
+        "description": "Ovde možete poslati upit za savetodavni, psihoterapijski ili konsultativni termin, a naš tim će Vam se javiti u najkraćem mogućem roku."
+      },
+      "formTitle": "Unesite svoje podatke",
+      "formatLabel": "Izaberite format rada",
+      "formats": [
+        "Psihodinamska psihoterapija",
+        "Psihološko savetovanje",
+        "Konsultacije"
+      ],
+      "faqs": [
+        {
+          "question": "Koja je razlika između psihološkog savetovanja, psihodinamske psihoterapije i stručnih konsultacija?",
+          "answer": "Razlika se ogleda u stepenu dubine rada i ciljevima koje želimo da postignemo. Stručne konsultacije služe za razjašnjavanje dilema i procenu oblika podrške koji je potreban. Psihološko savetovanje pruža konkretnu podršku u situacijama stresa i kriza i obično je kraćeg trajanja, dok je psihodinamska psihoterapija usmerena na razumevanje dubljih uzroka emocionalnih i ponašajnih poteškoća, u cilju trajnih psiholoških i strukturalnih promena."
+        },
+        {
+          "question": "Da li se psihoterapija odvija uživo ili online?",
+          "answer": "Psihoterapija se može odvijati i uživo i online, u zavisnosti od Vaših potreba i preferencija. U određenim slučajevima koristimo oba formata kako bismo održali kontinuitet terapijskog rada, a izbor pravimo zajedno u skladu sa Vašom situacijom i mogućnostima."
+        },
+        {
+          "question": "Da li psihoterapijska seansa ima strukturu i plan ili samo pratimo tok razgovora?",
+          "answer": "Seansa psihodinamske psihoterapije nema jasnu i konkretnu strukturu koju prati. Vi donosite temu za razgovor ili pitanja na koja želite odgovor, i razgovor se postepeno razvija. Psihoterapeut je tu da Vam pomogne i da Vas usmeri kako biste zajedno došli do potrebnog zaključka."
+        },
+        {
+          "question": "Da li mogu da prekinem terapijski proces kada god poželim?",
+          "answer": "Da, terapiju možete prekinuti u svakom trenutku. Ipak, preporučljivo je da o toj odluci razgovaramo tokom seanse, kako bismo razumeli razloge i proces završili na način koji je za Vas jasan i zaokružen."
+        }
+      ]
+    }
+  },
+  "admin": {
+    "layout": {
+      "eyebrow": "Skriveni admin",
+      "title": "Ikar admin",
+      "dashboard": "Kontrolna tabla",
+      "logout": "Odjava"
+    },
+    "entry": {
+      "title": "Skriveni admin ulaz",
+      "copy": "Ovaj ulaz nije javno linkovan. Nakon validne šifre postavlja se HttpOnly cookie za dalji pristup admin rutama."
+    },
+    "login": {
+      "eyebrow": "Admin pristup",
+      "title": "Unesite šifru",
+      "copy": "Ovo je jednostavan, pragmatičan gate za skriveni admin segment.",
+      "placeholder": "Admin šifra",
+      "submit": "Otvori admin"
+    },
+    "dashboard": {
+      "title": "Kontrolna tabla",
+      "copy": "Osnova je spremna: prijave se čuvaju lokalno, blog koristi content collections, a sledeći korak je uređivanje i Webflow port.",
+      "blogManagementTitle": "Upravljanje blogom",
+      "blogManagementCopy": "Pregled postova i priprema edit toka.",
+      "submissionsTitle": "Prijave",
+      "submissionsCopy": "Pregled poslatih kontakt i appointment prijava."
+    },
+    "blogIndex": {
+      "title": "Blog postovi",
+      "copy": "Lista trenutno seedovanih tekstova iz content collections sistema.",
+      "newPost": "Novi post",
+      "headers": {
+        "title": "Naslov",
+        "locale": "Locale",
+        "status": "Status",
+        "date": "Datum",
+        "open": "Otvori"
+      }
+    },
+    "blogNew": {
+      "title": "Novi blog post",
+      "copy": "Forma za runtime create/edit je sledeći korak kada prebacimo blog repository sa content collections na SQLite ili drugu bazu. Struktura admin rute je spremna da to primi bez promene URL arhitekture."
+    },
+    "blogEdit": {
+      "copy": "Ovaj ekran je namerno postavljen kao edit placeholder. Sledeći korak je uvođenje write-capable blog repository implementacije, bez menjanja admin rute ili page kompozicije.",
+      "labels": {
+        "status": "Status",
+        "locale": "Locale",
+        "published": "Objavljeno"
+      },
+      "notFound": "Post nije pronađen."
+    },
+    "submissions": {
+      "title": "Prijave i poruke",
+      "copy": "Ove stavke trenutno dolaze iz lokalnog JSON repozitorijuma i spremne su za kasniju migraciju na bazu.",
+      "headers": {
+        "type": "Tip",
+        "name": "Ime",
+        "email": "Email",
+        "status": "Status",
+        "date": "Datum",
+        "details": "Detalji"
+      },
+      "empty": "Još nema prijava."
+    },
+    "submissionDetails": {
+      "labels": {
+        "type": "Tip",
+        "email": "Email",
+        "phone": "Telefon",
+        "format": "Format",
+        "created": "Kreirano",
+        "message": "Poruka"
+      },
+      "notFound": "Prijava nije pronađena."
+    }
+  }
+}

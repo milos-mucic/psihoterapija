@@ -5,16 +5,18 @@ import HomeHeroSection from "@/components/astro/sections/HomeHeroSection.astro";
 import HomePageContent from "@/components/astro/sections/HomePageContent.astro";
 import { getHomePageData } from "@/data/fixtures/home";
 import { blogService } from "@/features/blog/services/blog.service";
+import { getDictionary } from "@/features/i18n/translate";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
 const locale = "sr-latn";
+const dictionary = getDictionary(locale);
 const content = getHomePageData(locale);
 const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
 ---
 
 <BaseLayout
-  title="Pocetna | Psihoterapijski kabinet Ikar"
-  description={content.hero.description}
+  title={dictionary.meta.home.title}
+  description={dictionary.meta.home.description}
   locale={locale}
   canonicalPath="/"
 >

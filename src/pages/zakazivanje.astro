@@ -2,16 +2,16 @@
 export const prerender = true;
 
 import AppointmentPage from "@/components/astro/pages/AppointmentPage.astro";
-import { getAppointmentPageData } from "@/data/fixtures/public-pages";
+import { getDictionary } from "@/features/i18n/translate";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
 const locale = "sr-latn";
-const content = getAppointmentPageData(locale);
+const dictionary = getDictionary(locale);
 ---
 
 <BaseLayout
-  title="Zakazivanje | Psihoterapijski kabinet Ikar"
-  description={content.banner.description ?? "Zakazite termin u Psihoterapijskom kabinetu Ikar."}
+  title={dictionary.meta.appointment.title}
+  description={dictionary.meta.appointment.description}
   locale={locale}
   canonicalPath="/zakazivanje/"
 >

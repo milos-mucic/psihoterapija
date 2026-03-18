@@ -2,16 +2,16 @@
 export const prerender = true;
 
 import PsychotherapyPage from "@/components/astro/pages/PsychotherapyPage.astro";
-import { getPsychotherapyPageData } from "@/data/fixtures/public-pages";
+import { getDictionary } from "@/features/i18n/translate";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
 const locale = "sr-latn";
-const content = getPsychotherapyPageData(locale);
+const dictionary = getDictionary(locale);
 ---
 
 <BaseLayout
-  title="Psihoterapija | Psihoterapijski kabinet Ikar"
-  description={content.banner.description ?? "Psihoterapijski pristup i opseg rada kabineta Ikar."}
+  title={dictionary.meta.psychotherapy.title}
+  description={dictionary.meta.psychotherapy.description}
   locale={locale}
   canonicalPath="/psihoterapija/"
 >

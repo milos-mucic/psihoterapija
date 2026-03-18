@@ -2,6 +2,7 @@
 import PageBanner from "@/components/astro/sections/PageBanner.astro";
 import { getAboutPageData } from "@/data/fixtures/public-pages";
 import { localizePath } from "@/features/i18n/locale";
+import { getDictionary } from "@/features/i18n/translate";
 import { blogService } from "@/features/blog/services/blog.service";
 import type { SiteLocale } from "@/lib/config/site";
 
@@ -10,6 +11,7 @@ type Props = {
 };
 
 const { locale } = Astro.props;
+const dictionary = getDictionary(locale);
 const content = getAboutPageData(locale);
 const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
 ---
@@ -25,7 +27,7 @@ const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
     <div class="page-showcase page-showcase--single">
       <a class="page-video-card page-video-card--lightbox" href={content.showcaseVideoHref} target="_blank" rel="noreferrer" data-reveal="grow">
         <img src={content.showcaseVideoImage} alt={content.showcaseTitle} loading="lazy" />
-        <span class="page-video-card__play"></span>
+        <span class="page-video-card__play">ï‹</span>
         <span class="page-video-card__ring"></span>
         <span class="page-video-card__hover"></span>
       </a>
@@ -77,7 +79,7 @@ const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
               <div class="page-post-meta">
                 <span>{post.publishedAt.toLocaleDateString(locale === "sr-cyrl" ? "sr-Cyrl-RS" : "sr-RS")}</span>
                 <span>&bull;</span>
-                <span>{post.tags.join(", ") || "Psihoterapija"}</span>
+                <span>{post.tags.join(", ") || dictionary.blog.defaultTag}</span>
               </div>
               <h3>{post.title}</h3>
               <p>{post.excerpt}</p>
@@ -89,7 +91,7 @@ const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
         </div>
       ) : (
         <article class="page-empty-state">
-          <p>No items found.</p>
+          <p>{content.recentEmptyLabel}</p>
         </article>
       )
     }

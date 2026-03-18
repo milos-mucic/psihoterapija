@@ -1,16 +1,15 @@
 ---
+import { getDictionary } from "@/features/i18n/translate";
 import AdminLayout from "@/layouts/AdminLayout.astro";
+
+const dictionary = getDictionary("sr-latn");
 ---
 
-<AdminLayout title="Novi blog post | Ikar admin">
+<AdminLayout title={dictionary.admin.blogNew.title}>
   <div class="card" style="padding: 1.5rem;">
     <div class="page-grid">
-      <h2 style="margin: 0;">Novi blog post</h2>
-      <p class="section-copy">
-        Forma za runtime create/edit je sledeci korak kada prebacimo blog repository sa content
-        collections na SQLite ili drugu bazu. Struktura admin rute je spremna da to primi bez
-        promene URL arhitekture.
-      </p>
+      <h2 style="margin: 0;">{dictionary.admin.blogNew.title}</h2>
+      <p class="section-copy">{dictionary.admin.blogNew.copy}</p>
     </div>
   </div>
 </AdminLayout>

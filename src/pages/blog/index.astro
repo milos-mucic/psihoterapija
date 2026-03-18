@@ -13,8 +13,8 @@ const posts = await blogService.listPublishedPosts(locale);
 ---
 
 <BaseLayout
-  title="Blog | Psihoterapijski kabinet Ikar"
-  description={dictionary.blog.description}
+  title={dictionary.meta.blog.title}
+  description={dictionary.meta.blog.description}
   locale={locale}
   canonicalPath="/blog/"
 >

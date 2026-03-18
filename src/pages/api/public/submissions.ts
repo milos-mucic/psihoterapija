@@ -1,10 +1,14 @@
 import type { APIRoute } from "astro";
 import { ZodError } from "zod";
+import { getDictionary } from "@/features/i18n/translate";
 import { submissionService } from "@/features/forms/services/submission.service";
 
 export const POST: APIRoute = async ({ request }) => {
+  const body = await request.json().catch(() => null);
+  const locale = body?.locale === "sr-cyrl" ? "sr-cyrl" : "sr-latn";
+  const dictionary = getDictionary(locale);
+
   try {
-    const body = await request.json();
     const submission = await submissionService.createSubmission(body);
 
     return new Response(JSON.stringify({ success: true, submission }), {
@@ -15,7 +19,7 @@ export const POST: APIRoute = async ({ request }) => {
     if (error instanceof ZodError) {
       return new Response(
         JSON.stringify({
-          message: "Podaci nisu validni.",
+          message: dictionary.api.invalidSubmission,
           issues: error.issues,
         }),
         {
@@ -25,7 +29,7 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    return new Response(JSON.stringify({ message: "Neuspesno cuvanje prijave." }), {
+    return new Response(JSON.stringify({ message: dictionary.api.submissionSaveFailed }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });

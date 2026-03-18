@@ -23,7 +23,7 @@ const galleryImages = [
     <div class="card footer-shell">
       <div class="footer-cta">
         <div class="footer-brand">
-          <p class="eyebrow footer-eyebrow">Kontakt</p>
+          <p class="eyebrow footer-eyebrow">{dictionary.footer.contactEyebrow}</p>
           <h2>{siteConfig.name}</h2>
           <p>{dictionary.footer.tagline}</p>
         </div>
@@ -42,7 +42,7 @@ const galleryImages = [
           </div>
         </div>
 
-        <nav class="footer-nav" aria-label="Footer">
+        <nav class="footer-nav" aria-label={dictionary.a11y.footerNav}>
           {navigation.map((item) => (
             <a href={item.href}>{item.label}</a>
           ))}

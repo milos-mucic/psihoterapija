@@ -7,6 +7,8 @@ type Props = {
     email: string;
     phone: string;
     message: string;
+    formatLabel: string;
+    chooseOption: string;
     submitContact: string;
     success: string;
     error: string;

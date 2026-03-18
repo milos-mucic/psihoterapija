@@ -11,6 +11,8 @@ type Props = {
     email: string;
     phone: string;
     message: string;
+    formatLabel: string;
+    chooseOption: string;
     success: string;
     error: string;
   };
@@ -41,10 +43,7 @@ export function SubmissionForm({
       email: String(formData.get("email") ?? ""),
       phone: String(formData.get("phone") ?? ""),
       format: String(formData.get("format") ?? ""),
-      message:
-        type === "appointment"
-          ? String(formData.get("message") ?? "")
-          : String(formData.get("message") ?? ""),
+      message: String(formData.get("message") ?? ""),
     };
 
     try {
@@ -99,10 +98,10 @@ export function SubmissionForm({
 
         {type === "appointment" ? (
           <label>
-            <span>{formatLabel ?? (locale === "sr-cyrl" ? "Формат рада" : "Format rada")}</span>
+            <span>{formatLabel ?? labels.formatLabel}</span>
             <select className="input-control" name="format" required defaultValue="">
               <option value="" disabled>
-                {locale === "sr-cyrl" ? "Изаберите" : "Izaberite"}
+                {labels.chooseOption}
               </option>
               {(appointmentFormats ?? []).map((format) => (
                 <option key={format} value={format}>

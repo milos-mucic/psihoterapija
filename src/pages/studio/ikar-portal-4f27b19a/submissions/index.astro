@@ -1,34 +1,36 @@
 ---
+import { getDictionary } from "@/features/i18n/translate";
 import { submissionService } from "@/features/forms/services/submission.service";
 import { adminConfig } from "@/lib/config/admin";
 import AdminLayout from "@/layouts/AdminLayout.astro";
 
+const dictionary = getDictionary("sr-latn");
 const submissions = await submissionService.listSubmissions();
 ---
 
-<AdminLayout title="Submissions | Ikar admin">
+<AdminLayout title={dictionary.meta.admin.submissionsTitle}>
   <div class="admin-grid">
     <div class="card" style="padding: 1.5rem;">
-      <h2 style="margin: 0;">Prijave i poruke</h2>
-      <p style="margin: 0.5rem 0 0; color: var(--muted);">Ove stavke trenutno dolaze iz lokalnog JSON repozitorijuma i spremne su za kasniju migraciju na bazu.</p>
+      <h2 style="margin: 0;">{dictionary.admin.submissions.title}</h2>
+      <p style="margin: 0.5rem 0 0; color: var(--muted);">{dictionary.admin.submissions.copy}</p>
     </div>
 
     <div class="card" style="padding: 1.2rem;">
       <table class="admin-table">
         <thead>
           <tr>
-            <th>Tip</th>
-            <th>Ime</th>
-            <th>Email</th>
-            <th>Status</th>
-            <th>Datum</th>
+            <th>{dictionary.admin.submissions.headers.type}</th>
+            <th>{dictionary.admin.submissions.headers.name}</th>
+            <th>{dictionary.admin.submissions.headers.email}</th>
+            <th>{dictionary.admin.submissions.headers.status}</th>
+            <th>{dictionary.admin.submissions.headers.date}</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           {submissions.length === 0 ? (
             <tr>
-              <td colspan="6">Jos nema prijava.</td>
+              <td colspan="6">{dictionary.admin.submissions.empty}</td>
             </tr>
           ) : (
             submissions.map((submission) => (
@@ -39,7 +41,9 @@ const submissions = await submissionService.listSubmissions();
                 <td>{submission.status}</td>
                 <td>{new Date(submission.createdAt).toLocaleString("sr-RS")}</td>
                 <td>
-                  <a href={`${adminConfig.basePath}/submissions/${submission.id}/`}>Detalji</a>
+                  <a href={`${adminConfig.basePath}/submissions/${submission.id}/`}>
+                    {dictionary.admin.submissions.headers.details}
+                  </a>
                 </td>
               </tr>
             ))
