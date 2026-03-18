@@ -124,18 +124,18 @@
       "copy": "U našem centru, pored psihološkog savetovanja i psihodinamske psihoterapije, možete zakazati i konsultativne termine.",
       "items": [
         {
-          "title": "Psihodinamska psihoterapija",
-          "copy": "Dugoročni rad na dubljem razumevanju unutrašnjih konflikata, obrazaca i odnosa.",
-          "label": "Saznajte više"
+          "title": "Psihoterapijske seanse",
+          "copy": "Psihoterapija se bavi dubljim uzrocima emocionalnih i ponašajnih problema, u cilju stvaranja trajnih psiholoških promena.",
+          "label": "Zakažite termin"
         },
         {
           "title": "Psihološko savetovanje",
-          "copy": "Podrška u kriznim periodima, donošenju odluka i jasnijem uvidu u trenutnu situaciju.",
-          "label": "Kontaktirajte nas"
+          "copy": "Psihološko savetovanje pruža konkretnu podršku u trenucima stresa, kriza ili dilema, bez ulaska u dublji psihološki rad. Kraćeg je trajanja.",
+          "label": "Zakažite termin"
         },
         {
           "title": "Konsultacije",
-          "copy": "Uvodni susreti i procena formata rada koji najbolje odgovara Vašim potrebama.",
+          "copy": "Konsultacije su namenjene onima koji žele da razjasne dileme, dobiju osnovne informacije o psihoterapiji ili procene koji oblik podrške im je potreban.",
           "label": "Zakažite termin"
         }
       ]

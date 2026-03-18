@@ -52,38 +52,32 @@ const content = getHomePageData(locale);
 <section class="home-section home-section--dark">
   <div class="container">
     <div class="home-services">
-      <div class="home-services__intro">
-        <h2>{content.services.title}</h2>
-        <p>{content.services.copy}</p>
-      </div>
+      <div class="home-services__layout">
+        <div class="home-services__intro">
+          <h2>{content.services.title}</h2>
+          <p>{content.services.copy}</p>
+        </div>
 
-      <div class="home-services__grid">
-        {
-          content.services.items.map((item) => (
-            <article class="home-dark-card">
-              <h3>{item.title}</h3>
-              <p>{item.copy}</p>
-              <a class="home-inline-link home-inline-link--light" href={item.href}>
-                {item.label}
-              </a>
-            </article>
-          ))
-        }
+        <div class="home-services__cards">
+          {
+            content.services.items.map((item) => (
+              <article class="home-service-card">
+                <img
+                  class="home-service-card__icon"
+                  src={item.image}
+                  alt=""
+                  loading="lazy"
+                  aria-hidden="true"
+                />
+                <div class="home-service-card__body">
+                  <h3 class="home-service-title">{item.title}</h3>
+                  <p class="home-service-copy">{item.copy}</p>
+                </div>
+              </article>
+            ))
+          }
+        </div>
       </div>
-    </div>
-  </div>
-</section>
-
-<section class="home-section home-section--tight">
-  <div class="container">
-    <div class="home-promo">
-      <div class="home-promo__content">
-        <h2>{content.promo.title}</h2>
-        <a class="home-inline-link" href={content.promo.href}>
-          {content.promo.label}
-        </a>
-      </div>
-      <img class="home-promo__image" src={content.promo.image} alt="" loading="lazy" />
     </div>
   </div>
 </section>

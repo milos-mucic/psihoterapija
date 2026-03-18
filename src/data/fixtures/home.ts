@@ -9,6 +9,10 @@ type LinkCard = {
   label: string;
 };
 
+type HomeServiceCard = LinkCard & {
+  image: string;
+};
+
 export type HomePageData = {
   hero: {
     titleHtml: string;
@@ -33,7 +37,7 @@ export type HomePageData = {
   services: {
     title: string;
     copy: string;
-    items: LinkCard[];
+    items: HomeServiceCard[];
   };
   promo: {
     title: string;
@@ -102,9 +106,16 @@ export const getHomePageData = (locale: SiteLocale): HomePageData => {
       title: content.services.title,
       copy: content.services.copy,
       items: [
-        { ...content.services.items[0], href: localizePath(locale, "/psihoterapija/") },
-        { ...content.services.items[1], href: localizePath(locale, "/kontakt/") },
-        { ...content.services.items[2], href: localizePath(locale, "/zakazivanje/") },
+        {
+          ...content.services.items[0],
+          href: localizePath(locale, "/psihoterapija/"),
+          image: "/legacy/images/White-Icon-2.png",
+        },
+        {
+          ...content.services.items[2],
+          href: localizePath(locale, "/zakazivanje/"),
+          image: "/legacy/images/White-Icon-1.png",
+        },
       ],
     },
     promo: {

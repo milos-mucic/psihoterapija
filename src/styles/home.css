@@ -119,6 +119,13 @@
   gap: 2rem;
 }
 
+.home-services__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(19rem, 0.95fr);
+  gap: clamp(2rem, 6vw, 4rem);
+  align-items: center;
+}
+
 .home-services__intro,
 .home-reasons__intro,
 .home-booking__intro {
@@ -127,12 +134,50 @@
   max-width: 50rem;
 }
 
-.home-services__grid,
 .home-card-grid,
 .home-reasons__cards {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1.5rem;
+}
+
+.home-services__intro {
+  max-width: 34rem;
+}
+
+.home-services__cards {
+  display: grid;
+  gap: 2.5rem;
+  align-content: center;
+}
+
+.home-service-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.9rem;
+}
+
+.home-service-card__icon {
+  width: auto;
+  height: 2.9rem;
+  flex: 0 0 auto;
+}
+
+.home-service-card__body {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.home-service-title {
+  color: var(--white);
+  font-size: clamp(1.2rem, 2vw, 1.45rem);
+  line-height: 1.2;
+}
+
+.home-service-copy {
+  max-width: 27rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.65;
 }
 
 .home-card,
@@ -302,13 +347,13 @@
 @media (max-width: 960px) {
   .home-heading-row,
   .home-about,
+  .home-services__layout,
   .home-promo,
   .home-reasons__grid,
   .home-booking {
     grid-template-columns: 1fr;
   }
 
-  .home-services__grid,
   .home-card-grid,
   .home-reasons__cards {
     grid-template-columns: 1fr;
@@ -322,6 +367,18 @@
 
   .home-heading-row {
     align-items: start;
+  }
+
+  .home-services__layout {
+    gap: 1.75rem;
+  }
+
+  .home-services__cards {
+    gap: 1.6rem;
+  }
+
+  .home-service-card {
+    gap: 1rem;
   }
 
   .home-card,
