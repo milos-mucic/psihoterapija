@@ -1,0 +1,52 @@
+---
+import { getDictionary } from "@/features/i18n/translate";
+import { adminConfig } from "@/lib/config/admin";
+
+type Props = {
+  pathname: string;
+};
+
+const { pathname } = Astro.props;
+const dictionary = getDictionary("sr-latn");
+const normalizedPath = pathname.replace(/\/$/, "") || "/";
+const normalizedBase = adminConfig.basePath.replace(/\/$/, "");
+
+const isActive = (href: string) => {
+  const normalizedHref = href.replace(/\/$/, "");
+
+  if (normalizedHref === normalizedBase) {
+    return normalizedPath === normalizedBase;
+  }
+
+  return normalizedPath.startsWith(normalizedHref);
+};
+
+const links = [
+  { label: dictionary.admin.layout.blog, href: `${adminConfig.basePath}/blog/` },
+  { label: dictionary.admin.layout.submissions, href: `${adminConfig.basePath}/submissions/` },
+];
+---
+
+<header class="admin-appbar">
+  <div class="container">
+    <div class="admin-appbar__panel">
+      <a class="admin-appbar__brand" href={`${adminConfig.basePath}/`}>
+        {dictionary.admin.layout.title}
+      </a>
+
+      <nav class="admin-appbar__nav" aria-label={dictionary.a11y.appbarPrimaryNav}>
+        {
+          links.map((link) => (
+            <a class:list={["admin-appbar__link", isActive(link.href) && "is-active"]} href={link.href}>
+              {link.label}
+            </a>
+          ))
+        }
+      </nav>
+
+      <form action="/api/admin/logout" method="post">
+        <button class="button-ghost" type="submit">{dictionary.admin.layout.logout}</button>
+      </form>
+    </div>
+  </div>
+</header>

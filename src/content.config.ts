@@ -11,7 +11,7 @@ const blog = defineCollection({
     seoTitle: z.string().optional(),
     seoDescription: z.string().optional(),
     tags: z.array(z.string()).default([]),
-    status: z.enum(["draft", "published"]).default("published"),
+    status: z.enum(["draft", "published", "archived"]).default("published"),
   }),
 });
 

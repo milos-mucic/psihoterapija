@@ -1,0 +1,159 @@
+---
+import { AdminRichTextField } from "@/components/components/AdminRichTextField";
+import type { BlogPostRecord } from "@/features/blog/types/blog.types";
+
+type Props = {
+  action: string;
+  submitLabel: string;
+  post?: BlogPostRecord;
+  labels: {
+    title: string;
+    slug: string;
+    locale: string;
+    status: string;
+    publishedAt: string;
+    excerpt: string;
+    coverImage: string;
+    tags: string;
+    seoTitle: string;
+    seoDescription: string;
+    body: string;
+  };
+  placeholders: {
+    slug: string;
+    coverImage: string;
+    tags: string;
+  };
+  options: {
+    latin: string;
+    cyrillic: string;
+    draft: string;
+    published: string;
+    archived: string;
+  };
+  richText: {
+    bold: string;
+    italic: string;
+    underline: string;
+    heading2: string;
+    heading3: string;
+    bulletList: string;
+    orderedList: string;
+    quote: string;
+    link: string;
+    image: string;
+    clear: string;
+    uploadFailed: string;
+  };
+};
+
+const { action, submitLabel, post, labels, placeholders, options, richText } = Astro.props;
+
+const padNumber = (value: number) => String(value).padStart(2, "0");
+
+const toDateTimeLocal = (value: Date) => {
+  return `${value.getFullYear()}-${padNumber(value.getMonth() + 1)}-${padNumber(value.getDate())}T${padNumber(value.getHours())}:${padNumber(value.getMinutes())}`;
+};
+
+const publishedAt = post?.publishedAt ?? new Date();
+const tagsValue = post?.tags.join(", ") ?? "";
+---
+
+<form class="admin-form" method="post" action={action}>
+  <div class="admin-form__grid">
+    <label class="admin-form__field admin-form__field--full">
+      <span>{labels.title}</span>
+      <input class="input-control" name="title" required value={post?.title ?? ""} />
+    </label>
+
+    <label class="admin-form__field">
+      <span>{labels.slug}</span>
+      <input class="input-control" name="slug" placeholder={placeholders.slug} value={post?.slug ?? ""} />
+    </label>
+
+    <label class="admin-form__field">
+      <span>{labels.locale}</span>
+      <select class="input-control" name="locale" required>
+        <option value="sr-latn" selected={(post?.locale ?? "sr-latn") === "sr-latn"}>
+          {options.latin}
+        </option>
+        <option value="sr-cyrl" selected={post?.locale === "sr-cyrl"}>
+          {options.cyrillic}
+        </option>
+      </select>
+    </label>
+
+    <label class="admin-form__field">
+      <span>{labels.status}</span>
+      <select class="input-control" name="status" required>
+        <option value="draft" selected={(post?.status ?? "draft") === "draft"}>
+          {options.draft}
+        </option>
+        <option value="published" selected={post?.status === "published"}>
+          {options.published}
+        </option>
+        <option value="archived" selected={post?.status === "archived"}>
+          {options.archived}
+        </option>
+      </select>
+    </label>
+
+    <label class="admin-form__field">
+      <span>{labels.publishedAt}</span>
+      <input
+        class="input-control"
+        name="publishedAt"
+        type="datetime-local"
+        required
+        value={toDateTimeLocal(publishedAt)}
+      />
+    </label>
+
+    <label class="admin-form__field admin-form__field--full">
+      <span>{labels.excerpt}</span>
+      <textarea class="input-control input-control--textarea" name="excerpt" rows={3}>{post?.excerpt ?? ""}</textarea>
+    </label>
+
+    <label class="admin-form__field admin-form__field--full">
+      <span>{labels.coverImage}</span>
+      <input
+        class="input-control"
+        name="coverImage"
+        placeholder={placeholders.coverImage}
+        value={post?.coverImage ?? ""}
+      />
+    </label>
+
+    <label class="admin-form__field admin-form__field--full">
+      <span>{labels.tags}</span>
+      <input class="input-control" name="tags" placeholder={placeholders.tags} value={tagsValue} />
+    </label>
+
+    <label class="admin-form__field admin-form__field--full">
+      <span>{labels.seoTitle}</span>
+      <input class="input-control" name="seoTitle" value={post?.seoTitle ?? ""} />
+    </label>
+
+    <label class="admin-form__field admin-form__field--full">
+      <span>{labels.seoDescription}</span>
+      <textarea class="input-control input-control--textarea" name="seoDescription" rows={3}
+        >{post?.seoDescription ?? ""}</textarea
+      >
+    </label>
+
+    <div class="admin-form__field admin-form__field--full">
+      <span>{labels.body}</span>
+      <AdminRichTextField
+        client:load
+        name="body"
+        initialValue={post?.body ?? ""}
+        uploadUrl="/api/admin/media/upload"
+        labels={richText}
+      />
+    </div>
+  </div>
+
+  <div class="admin-form__actions">
+    <button class="button-primary" type="submit">{submitLabel}</button>
+  </div>
+</form>

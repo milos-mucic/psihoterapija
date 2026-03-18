@@ -6,10 +6,25 @@ import AdminLayout from "@/components/components/AdminLayout.astro";
 
 const dictionary = getDictionary("sr-latn");
 const posts = await blogService.listAllPosts();
+const params = Astro.url.searchParams;
+const deleted = params.get("deleted") === "1";
+const error = params.get("error");
 ---
 
 <AdminLayout title={dictionary.admin.dashboard.blogManagementTitle}>
   <div class="admin-grid">
+    {
+      deleted ? (
+        <p class="admin-status" data-tone="success">
+          {dictionary.admin.blogMessages.deleted}
+        </p>
+      ) : error === "not-found" ? (
+        <p class="admin-status" data-tone="error">
+          {dictionary.admin.blogEdit.notFound}
+        </p>
+      ) : null
+    }
+
     <div class="card" style="padding: 1.5rem;">
       <div
         style="display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; align-items: center;"
@@ -37,19 +52,25 @@ const posts = await blogService.listAllPosts();
         </thead>
         <tbody>
           {
-            posts.map((post) => (
+            posts.length === 0 ? (
               <tr>
-                <td>{post.title}</td>
-                <td>{post.locale}</td>
-                <td>{post.status}</td>
-                <td>{post.publishedAt.toLocaleDateString("sr-RS")}</td>
-                <td>
-                  <a href={`${adminConfig.basePath}/blog/${post.slug}/edit/`}>
-                    {dictionary.admin.blogIndex.headers.open}
-                  </a>
-                </td>
+                <td colspan="5">{dictionary.admin.blogIndex.empty}</td>
               </tr>
-            ))
+            ) : (
+              posts.map((post) => (
+                <tr>
+                  <td>{post.title}</td>
+                  <td>{post.locale}</td>
+                  <td>{post.status}</td>
+                  <td>{post.publishedAt.toLocaleDateString("sr-RS")}</td>
+                  <td>
+                    <a href={`${adminConfig.basePath}/blog/${post.id}/edit/`}>
+                      {dictionary.admin.blogIndex.headers.open}
+                    </a>
+                  </td>
+                </tr>
+              ))
+            )
           }
         </tbody>
       </table>

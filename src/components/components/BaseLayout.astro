@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from "astro:transitions";
 import AppBar from "@/components/components/AppBar.astro";
+import AdminAppBar from "@/components/components/AdminAppBar.astro";
 import PageMotion from "@/components/components/PageMotion.astro";
 import SiteFooter from "@/components/components/SiteFooter.astro";
 import SeoHead from "@/components/components/SeoHead.astro";
@@ -14,11 +15,20 @@ type Props = {
   canonicalPath: string;
   appBarTone?: "light" | "dark";
   appBarOverlay?: boolean;
+  appBarVariant?: "site" | "admin";
   bodyClass?: string;
 };
 
-const { title, description, locale, canonicalPath, appBarTone, appBarOverlay, bodyClass } =
-  Astro.props;
+const {
+  title,
+  description,
+  locale,
+  canonicalPath,
+  appBarTone,
+  appBarOverlay,
+  appBarVariant = "site",
+  bodyClass,
+} = Astro.props;
 const isHome = Astro.url.pathname === "/" || Astro.url.pathname === "/cir/";
 const isAppBarOverlayRoute =
   appBarOverlay ?? (canonicalPath === "/o-nama/" || canonicalPath === "/cir/o-nama/");
@@ -47,7 +57,13 @@ const initialAppBarTone = appBarTone ?? derivedAppBarTone;
     class:list={[bodyClass, { "home-route": isHome, "appbar-overlay-route": isAppBarOverlayRoute }]}
   >
     <div class="site-shell">
-      <AppBar locale={locale} pathname={Astro.url.pathname} initialTone={initialAppBarTone} />
+      {
+        appBarVariant === "admin" ? (
+          <AdminAppBar pathname={Astro.url.pathname} />
+        ) : (
+          <AppBar locale={locale} pathname={Astro.url.pathname} initialTone={initialAppBarTone} />
+        )
+      }
       <main>
         <slot />
       </main>

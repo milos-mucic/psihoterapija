@@ -18,6 +18,21 @@
   color: var(--muted);
 }
 
+.prose-shell p,
+.prose-shell ul,
+.prose-shell ol,
+.prose-shell blockquote,
+.prose-shell h2,
+.prose-shell h3,
+.prose-shell h4 {
+  margin: 0 0 1.1rem;
+}
+
+.prose-shell ul,
+.prose-shell ol {
+  padding-left: 1.2rem;
+}
+
 .prose-shell blockquote {
   margin: 2rem 0;
   padding: 1.4rem 1.5rem;
@@ -25,4 +40,17 @@
   border-radius: var(--radius-lg);
   background: var(--surface-soft);
   color: var(--foreground);
+}
+
+.prose-shell a {
+  color: var(--accent-strong);
+  text-decoration: underline;
+}
+
+.prose-shell img {
+  width: 100%;
+  height: auto;
+  border-radius: 14px;
+  margin: 0 0 1.2rem;
+  border: 1px solid var(--line);
 }

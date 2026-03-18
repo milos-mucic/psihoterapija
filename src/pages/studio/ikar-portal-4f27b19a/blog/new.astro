@@ -1,15 +1,42 @@
 ---
 import { getDictionary } from "@/features/i18n/translate";
+import AdminBlogPostForm from "@/components/components/AdminBlogPostForm.astro";
 import AdminLayout from "@/components/components/AdminLayout.astro";
 
 const dictionary = getDictionary("sr-latn");
+const error = Astro.url.searchParams.get("error");
 ---
 
 <AdminLayout title={dictionary.admin.blogNew.title}>
-  <div class="card" style="padding: 1.5rem;">
-    <div class="page-grid">
-      <h2 style="margin: 0;">{dictionary.admin.blogNew.title}</h2>
-      <p class="section-copy">{dictionary.admin.blogNew.copy}</p>
+  <div class="admin-grid">
+    {
+      error === "validation" ? (
+        <p class="admin-status" data-tone="error">
+          {dictionary.admin.blogMessages.validationError}
+        </p>
+      ) : error === "slug-conflict" ? (
+        <p class="admin-status" data-tone="error">
+          {dictionary.admin.blogMessages.slugConflict}
+        </p>
+      ) : null
+    }
+
+    <div class="card" style="padding: 1.5rem;">
+      <div class="page-grid">
+        <h2 style="margin: 0;">{dictionary.admin.blogNew.title}</h2>
+        <p class="section-copy">{dictionary.admin.blogNew.copy}</p>
+      </div>
+    </div>
+
+    <div class="card" style="padding: 1.5rem;">
+      <AdminBlogPostForm
+        action="/api/admin/blog/"
+        submitLabel={dictionary.admin.blogNew.submit}
+        labels={dictionary.admin.blogForm.labels}
+        placeholders={dictionary.admin.blogForm.placeholders}
+        options={dictionary.admin.blogForm.options}
+        richText={dictionary.admin.blogForm.richText}
+      />
     </div>
   </div>
 </AdminLayout>

@@ -5,3 +5,7 @@ dist
 .env.*
 data/mock/*.local.json
 data/sqlite
+data/*.db
+data/*.db-wal
+data/*.db-shm
+public/uploads

@@ -350,6 +350,8 @@
       "eyebrow": "Skriveni admin",
       "title": "Ikar admin",
       "dashboard": "Kontrolna tabla",
+      "blog": "Blog",
+      "submissions": "Prijave",
       "logout": "Odjava"
     },
     "entry": {
@@ -365,16 +367,17 @@
     },
     "dashboard": {
       "title": "Kontrolna tabla",
-      "copy": "Osnova je spremna: prijave se čuvaju lokalno, blog koristi content collections, a sledeći korak je uređivanje i Webflow port.",
+      "copy": "Prijave i blog postovi se čuvaju u lokalnoj SQLite bazi. Blog je spreman za create, edit i delete iz admin panela.",
       "blogManagementTitle": "Upravljanje blogom",
-      "blogManagementCopy": "Pregled postova i priprema edit toka.",
+      "blogManagementCopy": "Kreiranje, uređivanje i brisanje blog postova.",
       "submissionsTitle": "Prijave",
       "submissionsCopy": "Pregled poslatih kontakt i appointment prijava."
     },
     "blogIndex": {
       "title": "Blog postovi",
-      "copy": "Lista trenutno seedovanih tekstova iz content collections sistema.",
+      "copy": "Lista svih blog postova iz SQLite baze.",
       "newPost": "Novi post",
+      "empty": "Nema postova.",
       "headers": {
         "title": "Naslov",
         "locale": "Locale",
@@ -385,10 +388,16 @@
     },
     "blogNew": {
       "title": "Novi blog post",
-      "copy": "Forma za runtime create/edit je sledeći korak kada prebacimo blog repository sa content collections na SQLite ili drugu bazu. Struktura admin rute je spremna da to primi bez promene URL arhitekture."
+      "copy": "Unesite sadržaj novog posta. Ako je slug prazan, biće automatski generisan iz naslova.",
+      "submit": "Sacuvaj post"
     },
     "blogEdit": {
-      "copy": "Ovaj ekran je namerno postavljen kao edit placeholder. Sledeći korak je uvođenje write-capable blog repository implementacije, bez menjanja admin rute ili page kompozicije.",
+      "copy": "Na ovoj stranici možete izmeniti sadržaj, metadata polja i status posta.",
+      "submit": "Sačuvaj izmene",
+      "delete": "Obriši post",
+      "backToList": "Nazad na listu postova",
+      "deleteConfirm": "Da li ste sigurni da želite da obrišete ovaj post?",
+      "deleteHint": "Brisanje je trajno i uklanja post iz javnog bloga.",
       "labels": {
         "status": "Status",
         "locale": "Locale",
@@ -396,9 +405,57 @@
       },
       "notFound": "Post nije pronađen."
     },
+    "blogForm": {
+      "labels": {
+        "title": "Naslov",
+        "slug": "Slug",
+        "locale": "Locale",
+        "status": "Status",
+        "publishedAt": "Datum objave",
+        "excerpt": "Kratak opis (excerpt)",
+        "coverImage": "Cover image URL",
+        "tags": "Tagovi (odvojeni zarezom)",
+        "seoTitle": "SEO title",
+        "seoDescription": "SEO description",
+        "body": "Sadrzaj posta"
+      },
+      "placeholders": {
+        "slug": "npr-kada-je-pravo-vreme",
+        "coverImage": "https://...",
+        "tags": "psihoterapija, proces"
+      },
+      "options": {
+        "latin": "Latinica",
+        "cyrillic": "Cirilica",
+        "draft": "Draft",
+        "published": "Published",
+        "archived": "Archived"
+      },
+      "richText": {
+        "bold": "Bold",
+        "italic": "Italic",
+        "underline": "Underline",
+        "heading2": "Heading 2",
+        "heading3": "Heading 3",
+        "bulletList": "Lista",
+        "orderedList": "Numerisana lista",
+        "quote": "Citat",
+        "link": "Link",
+        "image": "Slika",
+        "clear": "Ukloni format",
+        "uploadFailed": "Upload slike nije uspeo."
+      }
+    },
+    "blogMessages": {
+      "created": "Novi post je uspešno kreiran.",
+      "saved": "Izmene su sačuvane.",
+      "validationError": "Unos nije validan. Proveri obavezna polja.",
+      "slugConflict": "Vec postoji post sa istim slug-om za izabrani locale.",
+      "deleted": "Post je obrisan."
+    },
     "submissions": {
       "title": "Prijave i poruke",
-      "copy": "Ove stavke trenutno dolaze iz lokalnog JSON repozitorijuma i spremne su za kasniju migraciju na bazu.",
+      "copy": "Ove stavke se čuvaju u lokalnoj SQLite bazi i spremne su za kasniju migraciju na udaljenu bazu.",
       "headers": {
         "type": "Tip",
         "name": "Ime",
