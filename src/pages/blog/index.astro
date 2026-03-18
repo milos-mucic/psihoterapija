@@ -1,8 +1,7 @@
 ---
 export const prerender = true;
 
-import BlogCard from "@/components/sections/BlogCard.astro";
-import HeroSection from "@/components/sections/HeroSection.astro";
+import BlogIndexPage from "@/components/pages/BlogIndexPage.astro";
 import { blogService } from "@/features/blog/services/blog.service";
 import { getDictionary } from "@/features/i18n/translate";
 import BaseLayout from "@/components/components/BaseLayout.astro";
@@ -17,13 +16,8 @@ const posts = await blogService.listPublishedPosts(locale);
   description={dictionary.meta.blog.description}
   locale={locale}
   canonicalPath="/blog/"
+  appBarTone="dark"
+  appBarOverlay={true}
 >
-  <HeroSection title={dictionary.blog.title} description={dictionary.blog.description} />
-  <section class="section">
-    <div class="container">
-      <div class="page-grid">
-        {posts.map((post) => <BlogCard locale={locale} post={post} />)}
-      </div>
-    </div>
-  </section>
+  <BlogIndexPage locale={locale} posts={posts} />
 </BaseLayout>

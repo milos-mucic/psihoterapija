@@ -1,0 +1,579 @@
+---
+import PageBanner from "@/components/sections/PageBanner.astro";
+import { localizePath } from "@/features/i18n/locale";
+import { getDictionary } from "@/features/i18n/translate";
+import type { BlogListItem } from "@/features/blog/types/blog.types";
+import type { SiteLocale } from "@/lib/config/site";
+
+type Props = {
+  locale: SiteLocale;
+  posts: BlogListItem[];
+};
+
+const { locale, posts } = Astro.props;
+const dictionary = getDictionary(locale);
+const recentPosts = posts.slice(0, 3);
+const keywordSet = new Set<string>();
+
+posts.forEach((post) => {
+  post.tags.forEach((tag) => {
+    const normalizedTag = tag.trim();
+    if (normalizedTag) {
+      keywordSet.add(normalizedTag);
+    }
+  });
+});
+
+const keywords = Array.from(keywordSet);
+const bannerDescription =
+  locale === "sr-cyrl"
+    ? "У овој секцији можете пронаћи психолошке текстове о темама које су Вам интересантне, написане из наше перспективе."
+    : "U ovoj sekciji možete pronaći psihološke tekstove o temama koje su Vam interesantne, napisane iz naše perspektive.";
+
+const ui =
+  locale === "sr-cyrl"
+    ? {
+        allPosts: "Сви текстови",
+        postsLabel: "текста",
+        searchTitle: "Претрага",
+        searchPlaceholder: "Унесите кључну реч",
+        searchAction: "Претражи",
+        recentTitle: "Најскорији постови",
+        keywordsTitle: "Кључне речи",
+        allKeywords: "Све",
+        noResults: "Нема текстова за изабрани keyword.",
+      }
+    : {
+        allPosts: "Svi tekstovi",
+        postsLabel: "teksta",
+        searchTitle: "Pretraga",
+        searchPlaceholder: "Unesite ključnu reč",
+        searchAction: "Pretraži",
+        recentTitle: "Najskoriji postovi",
+        keywordsTitle: "Ključne reči",
+        allKeywords: "Sve",
+        noResults: "Nema tekstova za izabrani keyword.",
+      };
+---
+
+<div class="blog-index__banner">
+  <PageBanner title={dictionary.blog.title} description={bannerDescription} theme="dark" align="split" />
+</div>
+
+<section class="page-section blog-index" data-blog-index>
+  <div class="container">
+    <div class="blog-index__layout">
+      <div class="blog-index__main">
+        <div class="blog-index__main-head" data-reveal="up">
+          <h2>{ui.allPosts}</h2>
+          <p>
+            <span data-blog-count>{posts.length}</span> {ui.postsLabel}
+          </p>
+        </div>
+
+        <div class="blog-index__list">
+          {
+            posts.map((post, index) => {
+              const firstTag = post.tags[0] ?? dictionary.blog.defaultTag;
+              const normalizedSearch = `${post.title} ${post.excerpt} ${post.tags.join(" ")}`.toLowerCase();
+              const normalizedTags = post.tags.map((tag) => tag.toLowerCase()).join(",");
+
+              return (
+                <article
+                  class="blog-index__card"
+                  data-blog-card
+                  data-search={normalizedSearch}
+                  data-tags={normalizedTags}
+                  data-reveal="up"
+                  style={`--reveal-delay: ${index * 70}ms;`}
+                >
+                  <a class="blog-index__card-image-link" href={localizePath(locale, `/blog/${post.slug}/`)}>
+                    <img
+                      class="blog-index__card-image"
+                      src={post.coverImage ?? "/legacy/images/Blog-1_1Blog 1.webp"}
+                      alt={post.title}
+                      loading="lazy"
+                    />
+                  </a>
+
+                  <div class="blog-index__card-body">
+                    <span class="blog-index__card-category">{firstTag}</span>
+                    <a class="blog-index__card-title-link" href={localizePath(locale, `/blog/${post.slug}/`)}>
+                      <h3>{post.title}</h3>
+                    </a>
+                    <p>{post.excerpt}</p>
+
+                    <div class="blog-index__card-keywords">
+                      {post.tags.map((tag) => <span class="blog-index__keyword">{tag}</span>)}
+                    </div>
+
+                    <a class="blog-index__read-more" href={localizePath(locale, `/blog/${post.slug}/`)}>
+                      {dictionary.blog.readMoreLabel}
+                      <span aria-hidden="true">→</span>
+                    </a>
+                  </div>
+                </article>
+              );
+            })
+          }
+        </div>
+
+        <div class="blog-index__empty" data-blog-empty hidden>
+          {ui.noResults}
+        </div>
+      </div>
+
+      <aside class="blog-index__sidebar">
+        <div class="blog-index__panel" data-reveal="up">
+          <h4>{ui.searchTitle}</h4>
+          <form class="blog-index__search-form" data-blog-search-form>
+            <input
+              class="blog-index__search-input"
+              type="search"
+              data-blog-search-input
+              placeholder={ui.searchPlaceholder}
+              autocomplete="off"
+            />
+            <button class="button-primary blog-index__search-submit" type="submit">
+              {ui.searchAction}
+            </button>
+          </form>
+        </div>
+
+        <div class="blog-index__panel" data-reveal="up" style="--reveal-delay: 80ms;">
+          <h4>{ui.recentTitle}</h4>
+          <div class="blog-index__recent-list">
+            {
+              recentPosts.map((post) => (
+                <article class="blog-index__recent-item">
+                  <a class="blog-index__recent-image-link" href={localizePath(locale, `/blog/${post.slug}/`)}>
+                    <img
+                      class="blog-index__recent-image"
+                      src={post.coverImage ?? "/legacy/images/Blog-1_1Blog 1.webp"}
+                      alt={post.title}
+                      loading="lazy"
+                    />
+                  </a>
+                  <div class="blog-index__recent-copy">
+                    <a href={localizePath(locale, `/blog/${post.slug}/`)}>
+                      <h5>{post.title}</h5>
+                    </a>
+                    <p>
+                      {post.publishedAt.toLocaleDateString(
+                        locale === "sr-cyrl" ? "sr-Cyrl-RS" : "sr-RS",
+                      )}
+                    </p>
+                  </div>
+                </article>
+              ))
+            }
+          </div>
+        </div>
+
+        <div class="blog-index__panel" data-reveal="up" style="--reveal-delay: 140ms;">
+          <h4>{ui.keywordsTitle}</h4>
+          <div class="blog-index__keywords-list">
+            <button type="button" class="blog-index__keyword-chip is-active" data-blog-tag="">
+              {ui.allKeywords}
+            </button>
+            {
+              keywords.map((keyword) => (
+                <button type="button" class="blog-index__keyword-chip" data-blog-tag={keyword.toLowerCase()}>
+                  {keyword}
+                </button>
+              ))
+            }
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  (() => {
+    const normalize = (value) => value.toLowerCase().trim();
+
+    const initBlogFilters = () => {
+      document.querySelectorAll("[data-blog-index]").forEach((root) => {
+        if (!(root instanceof HTMLElement) || root.dataset.ready === "true") {
+          return;
+        }
+
+        const cards = Array.from(root.querySelectorAll("[data-blog-card]"));
+        const searchForm = root.querySelector("[data-blog-search-form]");
+        const searchInput = root.querySelector("[data-blog-search-input]");
+        const tagButtons = Array.from(root.querySelectorAll("[data-blog-tag]"));
+        const countNode = root.querySelector("[data-blog-count]");
+        const emptyNode = root.querySelector("[data-blog-empty]");
+        let activeTag = "";
+
+        const applyFilters = () => {
+          const term =
+            searchInput instanceof HTMLInputElement ? normalize(searchInput.value) : "";
+          let visibleCount = 0;
+
+          cards.forEach((card) => {
+            if (!(card instanceof HTMLElement)) return;
+
+            const haystack = normalize(card.dataset.search ?? "");
+            const tags = normalize(card.dataset.tags ?? "");
+            const termMatches = !term || haystack.includes(term);
+            const tagMatches = !activeTag || tags.split(",").includes(activeTag);
+            const isVisible = termMatches && tagMatches;
+
+            card.style.display = isVisible ? "" : "none";
+            if (isVisible) {
+              visibleCount += 1;
+            }
+          });
+
+          if (countNode instanceof HTMLElement) {
+            countNode.textContent = String(visibleCount);
+          }
+
+          if (emptyNode instanceof HTMLElement) {
+            emptyNode.hidden = visibleCount !== 0;
+          }
+        };
+
+        if (searchForm instanceof HTMLFormElement) {
+          searchForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            applyFilters();
+          });
+        }
+
+        if (searchInput instanceof HTMLInputElement) {
+          searchInput.addEventListener("input", applyFilters);
+        }
+
+        tagButtons.forEach((button) => {
+          if (!(button instanceof HTMLElement)) return;
+
+          button.addEventListener("click", () => {
+            activeTag = normalize(button.dataset.blogTag ?? "");
+
+            tagButtons.forEach((candidate) => {
+              if (!(candidate instanceof HTMLElement)) return;
+              candidate.classList.toggle(
+                "is-active",
+                normalize(candidate.dataset.blogTag ?? "") === activeTag,
+              );
+            });
+
+            applyFilters();
+          });
+        });
+
+        applyFilters();
+        root.dataset.ready = "true";
+      });
+    };
+
+    initBlogFilters();
+    document.addEventListener("astro:page-load", initBlogFilters);
+  })();
+</script>
+
+<style>
+  .blog-index__banner :global(.page-banner) {
+    min-height: clamp(20rem, 52vh, 30rem);
+    display: grid;
+    align-items: center;
+    padding: clamp(5rem, 10vh, 7rem) 0 clamp(2.4rem, 5vh, 3.6rem);
+  }
+
+  .blog-index__banner :global(.page-banner__content) {
+    align-items: center;
+    transform: translateY(-0.9rem);
+  }
+
+  .blog-index {
+    padding-top: 2.25rem;
+  }
+
+  .blog-index__layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.85rem;
+  }
+
+  .blog-index__main {
+    width: 64%;
+  }
+
+  .blog-index__sidebar {
+    width: 36%;
+    position: sticky;
+    top: 6.2rem;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .blog-index__main-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .blog-index__main-head h2 {
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    color: var(--primary);
+  }
+
+  .blog-index__main-head p {
+    color: var(--foreground);
+    font-weight: 500;
+  }
+
+  .blog-index__list {
+    column-count: 2;
+    column-gap: 1rem;
+  }
+
+  .blog-index__card {
+    margin: 0 0 1rem;
+    border-radius: 12px;
+    break-inside: avoid;
+    background: #fff;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+  }
+
+  .blog-index__card-image-link {
+    display: block;
+    height: 13.5rem;
+    overflow: hidden;
+  }
+
+  .blog-index__card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 320ms ease;
+  }
+
+  .blog-index__card:hover .blog-index__card-image {
+    transform: scale(1.04);
+  }
+
+  .blog-index__card-body {
+    display: grid;
+    gap: 0.7rem;
+    padding: 0.9rem 1rem 1rem;
+    background: var(--primary-light);
+  }
+
+  .blog-index__card-category {
+    display: inline-block;
+    width: fit-content;
+    border-radius: 8px;
+    border: 1px solid var(--primary);
+    background: var(--primary);
+    color: var(--white);
+    padding: 0.2rem 0.46rem;
+    font-size: 0.8rem;
+    line-height: 1;
+  }
+
+  .blog-index__card-title-link:hover {
+    color: inherit;
+  }
+
+  .blog-index__card-body h3 {
+    color: var(--foreground);
+    font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+    line-height: 1.22;
+  }
+
+  .blog-index__card-body p {
+    color: var(--foreground);
+    line-height: 1.55;
+  }
+
+  .blog-index__card-keywords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .blog-index__keyword {
+    border-radius: 999px;
+    border: 1px solid rgba(15, 60, 61, 0.25);
+    color: var(--primary);
+    padding: 0.16rem 0.55rem;
+    font-size: 0.76rem;
+    line-height: 1.1;
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  .blog-index__read-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    width: fit-content;
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .blog-index__panel {
+    background: var(--primary-light);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.06);
+  }
+
+  .blog-index__panel h4 {
+    color: var(--primary);
+    font-size: 1.35rem;
+    line-height: 1.2;
+  }
+
+  .blog-index__search-form {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-top: 0.85rem;
+  }
+
+  .blog-index__search-input {
+    width: 100%;
+    min-height: 46px;
+    border: 1px solid rgba(22, 60, 61, 0.5);
+    border-radius: 8px;
+    color: var(--primary);
+    margin: 0;
+    padding: 0.75rem 0.8rem;
+    background: #fff;
+  }
+
+  .blog-index__search-input:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+
+  .blog-index__search-submit {
+    min-height: 46px;
+    padding: 0.72rem 0.95rem;
+    white-space: nowrap;
+  }
+
+  .blog-index__recent-list {
+    display: grid;
+    gap: 0.95rem;
+    margin-top: 0.9rem;
+  }
+
+  .blog-index__recent-item {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 0.85rem;
+    align-items: center;
+  }
+
+  .blog-index__recent-image-link {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+  }
+
+  .blog-index__recent-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .blog-index__recent-copy h5 {
+    color: var(--foreground);
+    font-size: 1rem;
+    line-height: 1.28;
+  }
+
+  .blog-index__recent-copy p {
+    color: #969696;
+    font-size: 0.85rem;
+    margin-top: 0.2rem;
+  }
+
+  .blog-index__keywords-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.9rem;
+  }
+
+  .blog-index__keyword-chip {
+    border: 1px solid rgba(15, 60, 61, 0.24);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--primary);
+    padding: 0.35rem 0.62rem;
+    line-height: 1.1;
+    cursor: pointer;
+  }
+
+  .blog-index__keyword-chip.is-active {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: var(--white);
+  }
+
+  .blog-index__empty {
+    border: 1px dashed rgba(15, 60, 61, 0.3);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.75);
+    color: var(--foreground);
+    text-align: center;
+    padding: 1rem;
+  }
+
+  @media (max-width: 1100px) {
+    .blog-index__layout {
+      flex-wrap: wrap-reverse;
+    }
+
+    .blog-index__main,
+    .blog-index__sidebar {
+      width: 100%;
+    }
+
+    .blog-index__sidebar {
+      position: static;
+    }
+
+    .blog-index__recent-list {
+      column-count: 2;
+      column-gap: 0.75rem;
+    }
+
+    .blog-index__recent-item {
+      margin-bottom: 0.75rem;
+      break-inside: avoid;
+    }
+  }
+
+  @media (max-width: 780px) {
+    .blog-index__banner :global(.page-banner__content) {
+      transform: none;
+    }
+
+    .blog-index__list,
+    .blog-index__recent-list {
+      column-count: 1;
+    }
+
+    .blog-index__search-form {
+      flex-wrap: wrap;
+    }
+
+    .blog-index__search-submit {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
