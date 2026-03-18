@@ -84,22 +84,41 @@ const content = getHomePageData(locale);
 
 <section class="home-section">
   <div class="container">
-    <div class="home-center-heading">
-      <h2>{content.themes.title}</h2>
+    <div class="section-title-wrapper">
+      <h2 class="heading-12">{content.themes.title}</h2>
     </div>
 
-    <div class="home-card-grid">
-      {
-        content.themes.items.map((item) => (
-          <article class="home-card">
-            <h3>{item.title}</h3>
-            <p>{item.copy}</p>
-            <a class="home-inline-link" href={item.href}>
-              {item.label}
-            </a>
-          </article>
-        ))
-      }
+    <div class="collection-list-wrapper-w-100">
+      <div role="list" class="collection-list-session-home-3">
+        {
+          content.themes.items.map((item) => (
+            <div role="listitem" class="collection-item-session-home-3">
+              <a href={item.href} class="link-block">
+                <img class="service-img" src={item.image} alt={item.title} loading="lazy" />
+              </a>
+              <div class="info-collection-wrapper">
+                <a href={item.href}>
+                  <h5 class="service-name">{item.title}</h5>
+                </a>
+                <p class="mt-0">{item.copy}</p>
+                <div class="collection-link-wrapper">
+                  <a class="link-with-icon" href={item.href}>
+                    {item.label}
+                    <svg class="text-button-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M7 17L17 7M9 7H17V15"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.9"></path>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
     </div>
   </div>
 </section>
@@ -113,16 +132,33 @@ const content = getHomePageData(locale);
       </div>
 
       <div class="home-reasons__grid">
-        <div class="home-reasons__cards">
+        <div class="home-reason-list">
           {
-            content.reasons.items.map((item) => (
-              <article class="home-dark-card">
-                <h3>{item.title}</h3>
-                <p>{item.copy}</p>
-                <a class="home-inline-link home-inline-link--light" href={item.href}>
-                  {item.label}
-                </a>
-              </article>
+            content.reasons.items.map((item, index) => (
+              <a class="home-reason-panel" href={item.href}>
+                <span class="home-reason-panel__index">{String(index + 1).padStart(2, "0")}</span>
+                <div class="home-reason-panel__content">
+                  <div class="home-reason-panel__top">
+                    <h3>{item.title}</h3>
+                    <span class="home-inline-link home-inline-link--light home-inline-link--icon">
+                      <span>{item.label}</span>
+                      <svg
+                        class="home-inline-link__icon"
+                        aria-hidden="true"
+                        viewBox="0 0 24 24"
+                        fill="none">
+                        <path
+                          d="M7 17L17 7M9 7H17V15"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="1.9"></path>
+                      </svg>
+                    </span>
+                  </div>
+                  <p>{item.copy}</p>
+                </div>
+              </a>
             ))
           }
         </div>

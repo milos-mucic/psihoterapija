@@ -13,6 +13,10 @@ type HomeServiceCard = LinkCard & {
   image: string;
 };
 
+type HomeThemeCard = LinkCard & {
+  image: string;
+};
+
 export type HomePageData = {
   hero: {
     titleHtml: string;
@@ -47,7 +51,7 @@ export type HomePageData = {
   };
   themes: {
     title: string;
-    items: LinkCard[];
+    items: HomeThemeCard[];
   };
   reasons: {
     title: string;
@@ -127,9 +131,21 @@ export const getHomePageData = (locale: SiteLocale): HomePageData => {
     themes: {
       title: content.themes.title,
       items: [
-        { ...content.themes.items[0], href: localizePath(locale, "/psihoterapija/") },
-        { ...content.themes.items[1], href: localizePath(locale, "/kontakt/") },
-        { ...content.themes.items[2], href: localizePath(locale, "/zakazivanje/") },
+        {
+          ...content.themes.items[0],
+          href: localizePath(locale, "/psihoterapija/"),
+          image: "/legacy/images/Service-Img-2.png",
+        },
+        {
+          ...content.themes.items[1],
+          href: localizePath(locale, "/psihoterapija/"),
+          image: "/legacy/images/Session-Img-2.png",
+        },
+        {
+          ...content.themes.items[2],
+          href: localizePath(locale, "/psihoterapija/"),
+          image: "/legacy/images/Service-Img-3.png",
+        },
       ],
     },
     reasons: {
