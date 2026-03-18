@@ -20,6 +20,7 @@ const localeSwitcherHref =
     ? `${getLocalePrefix(alternateLocale)}${currentWithoutPrefix}`.replace("//", "/")
     : currentWithoutPrefix;
 const isActivePath = (href: string) => (href === "/" ? pathname === href : pathname.startsWith(href));
+const siteMeta = siteConfig.name.replace(" Ikar", "");
 ---
 
 <header class="section site-header">
@@ -29,11 +30,11 @@ const isActivePath = (href: string) => (href === "/" ? pathname === href : pathn
         <img class="site-brand__logo" src="/legacy/images/Logo-Dark.svg" alt={siteConfig.name} />
         <span>
           <span class="site-brand__title">Ikar</span>
-          <span class="site-brand__meta">Psihoterapijski kabinet</span>
+          <span class="site-brand__meta">{siteMeta}</span>
         </span>
       </a>
 
-      <nav class="site-nav" aria-label="Primary">
+      <nav class="site-nav" aria-label={dictionary.a11y.appbarPrimaryNav}>
         {navigation.map((item) => (
           <a
             class:list={{ "is-active": isActivePath(item.href) }}

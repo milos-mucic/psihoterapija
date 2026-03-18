@@ -1,9 +1,9 @@
 ---
 export const prerender = true;
 
-import FaqPage from "@/components/astro/pages/FaqPage.astro";
+import FaqPage from "@/components/pages/FaqPage.astro";
 import { getDictionary } from "@/features/i18n/translate";
-import BaseLayout from "@/layouts/BaseLayout.astro";
+import BaseLayout from "@/components/components/BaseLayout.astro";
 
 const locale = "sr-latn";
 const dictionary = getDictionary(locale);

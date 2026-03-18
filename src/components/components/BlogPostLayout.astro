@@ -1,5 +1,5 @@
 ---
-import BaseLayout from "@/layouts/BaseLayout.astro";
+import BaseLayout from "@/components/components/BaseLayout.astro";
 import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
@@ -23,7 +23,7 @@ const { title, description, locale, canonicalPath, publishedAt } = Astro.props;
     <div class="container">
       <div class="card" style="padding: clamp(1.5rem, 4vw, 3rem);">
         <div class="page-grid">
-          <p class="eyebrow">{publishedAt.toLocaleDateString("sr-RS")}</p>
+          <p class="eyebrow">{publishedAt.toLocaleDateString(locale === "sr-cyrl" ? "sr-Cyrl-RS" : "sr-RS")}</p>
           <h1 class="section-title">{title}</h1>
           <p class="section-copy">{description}</p>
           <div class="prose-shell">

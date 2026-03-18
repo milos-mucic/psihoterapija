@@ -1,9 +1,9 @@
 ---
-import { AdminPasswordModal } from "@/components/react/admin/AdminPasswordModal";
+import { AdminPasswordModal } from "@/components/components/AdminPasswordModal";
 import { getDictionary } from "@/features/i18n/translate";
 import { adminAuthService } from "@/features/admin/auth/admin-auth.service";
 import { adminConfig } from "@/lib/config/admin";
-import AdminLayout from "@/layouts/AdminLayout.astro";
+import AdminLayout from "@/components/components/AdminLayout.astro";
 
 const dictionary = getDictionary("sr-latn");
 const authenticated = adminAuthService.isAuthenticated(Astro.cookies);

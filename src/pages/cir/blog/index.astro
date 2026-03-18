@@ -1,11 +1,11 @@
 ---
 export const prerender = true;
 
-import BlogCard from "@/components/astro/sections/BlogCard.astro";
-import HeroSection from "@/components/astro/sections/HeroSection.astro";
+import BlogCard from "@/components/sections/BlogCard.astro";
+import HeroSection from "@/components/sections/HeroSection.astro";
 import { blogService } from "@/features/blog/services/blog.service";
 import { getDictionary } from "@/features/i18n/translate";
-import BaseLayout from "@/layouts/BaseLayout.astro";
+import BaseLayout from "@/components/components/BaseLayout.astro";
 
 const locale = "sr-cyrl";
 const dictionary = getDictionary(locale);

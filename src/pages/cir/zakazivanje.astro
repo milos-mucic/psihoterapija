@@ -1,9 +1,9 @@
 ---
 export const prerender = true;
 
-import AppointmentPage from "@/components/astro/pages/AppointmentPage.astro";
+import AppointmentPage from "@/components/pages/AppointmentPage.astro";
 import { getDictionary } from "@/features/i18n/translate";
-import BaseLayout from "@/layouts/BaseLayout.astro";
+import BaseLayout from "@/components/components/BaseLayout.astro";
 
 const locale = "sr-cyrl";
 const dictionary = getDictionary(locale);

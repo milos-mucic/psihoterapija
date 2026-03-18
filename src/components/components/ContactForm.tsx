@@ -1,4 +1,4 @@
-import { SubmissionForm } from "@/components/react/forms/SubmissionForm";
+import { SubmissionForm } from "@/components/components/SubmissionForm";
 
 type Props = {
   locale: "sr-latn" | "sr-cyrl";

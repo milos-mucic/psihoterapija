@@ -1,9 +1,9 @@
 ---
 export const prerender = true;
 
-import ContactPage from "@/components/astro/pages/ContactPage.astro";
+import ContactPage from "@/components/pages/ContactPage.astro";
 import { getDictionary } from "@/features/i18n/translate";
-import BaseLayout from "@/layouts/BaseLayout.astro";
+import BaseLayout from "@/components/components/BaseLayout.astro";
 
 const locale = "sr-cyrl";
 const dictionary = getDictionary(locale);

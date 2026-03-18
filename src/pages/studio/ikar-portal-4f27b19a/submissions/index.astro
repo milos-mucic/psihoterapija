@@ -2,7 +2,7 @@
 import { getDictionary } from "@/features/i18n/translate";
 import { submissionService } from "@/features/forms/services/submission.service";
 import { adminConfig } from "@/lib/config/admin";
-import AdminLayout from "@/layouts/AdminLayout.astro";
+import AdminLayout from "@/components/components/AdminLayout.astro";
 
 const dictionary = getDictionary("sr-latn");
 const submissions = await submissionService.listSubmissions();

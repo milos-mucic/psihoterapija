@@ -2,7 +2,7 @@
 import { getDictionary } from "@/features/i18n/translate";
 import { blogService } from "@/features/blog/services/blog.service";
 import { adminConfig } from "@/lib/config/admin";
-import AdminLayout from "@/layouts/AdminLayout.astro";
+import AdminLayout from "@/components/components/AdminLayout.astro";
 
 const dictionary = getDictionary("sr-latn");
 const posts = await blogService.listAllPosts();

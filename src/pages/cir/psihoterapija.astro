@@ -1,9 +1,9 @@
 ---
 export const prerender = true;
 
-import PsychotherapyPage from "@/components/astro/pages/PsychotherapyPage.astro";
+import PsychotherapyPage from "@/components/pages/PsychotherapyPage.astro";
 import { getDictionary } from "@/features/i18n/translate";
-import BaseLayout from "@/layouts/BaseLayout.astro";
+import BaseLayout from "@/components/components/BaseLayout.astro";
 
 const locale = "sr-cyrl";
 const dictionary = getDictionary(locale);

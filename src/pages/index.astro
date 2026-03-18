@@ -1,12 +1,12 @@
 ---
 export const prerender = true;
 
-import HomeHeroSection from "@/components/astro/sections/HomeHeroSection.astro";
-import HomePageContent from "@/components/astro/sections/HomePageContent.astro";
+import HomeHeroSection from "@/components/sections/HomeHeroSection.astro";
+import HomePageContent from "@/components/sections/HomePageContent.astro";
 import { getHomePageData } from "@/data/fixtures/home";
 import { blogService } from "@/features/blog/services/blog.service";
 import { getDictionary } from "@/features/i18n/translate";
-import BaseLayout from "@/layouts/BaseLayout.astro";
+import BaseLayout from "@/components/components/BaseLayout.astro";
 
 const locale = "sr-latn";
 const dictionary = getDictionary(locale);
