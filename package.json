@@ -6,6 +6,11 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
+    "lint:i18n": "node scripts/lint-translatables.mjs",
+    "lint": "npm run lint:i18n",
+    "format": "prettier --write \"**/*.{astro,ts,tsx,js,jsx,mjs,json,md,mdx,css}\"",
+    "format:check": "prettier --check \"**/*.{astro,ts,tsx,js,jsx,mjs,json,md,mdx,css}\"",
+    "check": "npm run lint && astro check",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
@@ -26,6 +31,8 @@
     "@astrojs/check": "^0.9.8",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
+    "prettier": "^3.8.1",
+    "prettier-plugin-astro": "^0.14.1",
     "typescript": "^5.9.0"
   }
 }

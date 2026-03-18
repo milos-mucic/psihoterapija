@@ -14,40 +14,51 @@ const { title, intro, items, image } = Astro.props;
 <section class="page-section">
   <div class="container">
     <div class:list={["faq-accordion", !image && "faq-accordion--single"]}>
-      {image && (
-        <div class="faq-accordion__media" data-reveal="left">
-          <img class="faq-accordion__image" src={image} alt="" loading="lazy" />
-        </div>
-      )}
+      {
+        image && (
+          <div class="faq-accordion__media" data-reveal="left">
+            <img class="faq-accordion__image" src={image} alt="" loading="lazy" />
+          </div>
+        )
+      }
 
       <div class="faq-accordion__content">
         {title && <h2 data-reveal="up">{title}</h2>}
-        {intro && (
-          <p data-reveal="up" style="--reveal-delay: 120ms;">
-            {intro}
-          </p>
-        )}
+        {
+          intro && (
+            <p data-reveal="up" style="--reveal-delay: 120ms;">
+              {intro}
+            </p>
+          )
+        }
 
         <div class="faq-accordion__items">
-          {items.map((item, index) => (
-            <article
-              class="faq-item"
-              data-accordion-item
-              data-open={index === 0 ? "true" : "false"}
-              data-reveal="up"
-              style={`--reveal-delay: ${index * 80}ms;`}
-            >
-              <button class="faq-item__trigger" type="button" data-accordion-trigger aria-expanded={index === 0 ? "true" : "false"}>
-                <span class="faq-item__title">{item.question}</span>
-                <span class="faq-item__icon"></span>
-              </button>
-              <div class="faq-item__body" data-accordion-body hidden={index !== 0}>
-                <div class="faq-item__body-inner">
-                  {item.answerHtml ? <p set:html={item.answerHtml} /> : <p>{item.answer}</p>}
+          {
+            items.map((item, index) => (
+              <article
+                class="faq-item"
+                data-accordion-item
+                data-open={index === 0 ? "true" : "false"}
+                data-reveal="up"
+                style={`--reveal-delay: ${index * 80}ms;`}
+              >
+                <button
+                  class="faq-item__trigger"
+                  type="button"
+                  data-accordion-trigger
+                  aria-expanded={index === 0 ? "true" : "false"}
+                >
+                  <span class="faq-item__title">{item.question}</span>
+                  <span class="faq-item__icon"></span>
+                </button>
+                <div class="faq-item__body" data-accordion-body hidden={index !== 0}>
+                  <div class="faq-item__body-inner">
+                    {item.answerHtml ? <p set:html={item.answerHtml} /> : <p>{item.answer}</p>}
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            ))
+          }
         </div>
       </div>
     </div>

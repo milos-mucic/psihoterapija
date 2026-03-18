@@ -35,7 +35,9 @@ const { title, description = dictionary.meta.admin.layoutDescription } = Astro.p
                   {dictionary.admin.layout.dashboard}
                 </a>
                 <form action="/api/admin/logout" method="post">
-                  <button class="button-ghost" type="submit">{dictionary.admin.layout.logout}</button>
+                  <button class="button-ghost" type="submit"
+                    >{dictionary.admin.layout.logout}</button
+                  >
                 </form>
               </div>
             </div>

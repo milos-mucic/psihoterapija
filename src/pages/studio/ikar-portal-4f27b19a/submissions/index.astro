@@ -28,26 +28,28 @@ const submissions = await submissionService.listSubmissions();
           </tr>
         </thead>
         <tbody>
-          {submissions.length === 0 ? (
-            <tr>
-              <td colspan="6">{dictionary.admin.submissions.empty}</td>
-            </tr>
-          ) : (
-            submissions.map((submission) => (
+          {
+            submissions.length === 0 ? (
               <tr>
-                <td>{submission.type}</td>
-                <td>{submission.name}</td>
-                <td>{submission.email}</td>
-                <td>{submission.status}</td>
-                <td>{new Date(submission.createdAt).toLocaleString("sr-RS")}</td>
-                <td>
-                  <a href={`${adminConfig.basePath}/submissions/${submission.id}/`}>
-                    {dictionary.admin.submissions.headers.details}
-                  </a>
-                </td>
+                <td colspan="6">{dictionary.admin.submissions.empty}</td>
               </tr>
-            ))
-          )}
+            ) : (
+              submissions.map((submission) => (
+                <tr>
+                  <td>{submission.type}</td>
+                  <td>{submission.name}</td>
+                  <td>{submission.email}</td>
+                  <td>{submission.status}</td>
+                  <td>{new Date(submission.createdAt).toLocaleString("sr-RS")}</td>
+                  <td>
+                    <a href={`${adminConfig.basePath}/submissions/${submission.id}/`}>
+                      {dictionary.admin.submissions.headers.details}
+                    </a>
+                  </td>
+                </tr>
+              ))
+            )
+          }
         </tbody>
       </table>
     </div>

@@ -3,7 +3,13 @@ import type { BannerData } from "@/data/fixtures/public-pages";
 
 type Props = BannerData;
 
-const { title, description, theme = "light", backgroundImage, align = description ? "split" : "center" } = Astro.props;
+const {
+  title,
+  description,
+  theme = "light",
+  backgroundImage,
+  align = description ? "split" : "center",
+} = Astro.props;
 const backgroundStyle = backgroundImage
   ? `--page-banner-image: linear-gradient(rgba(0, 0, 0, ${theme === "dark" ? 0.45 : 0.18}), rgba(0, 0, 0, ${theme === "dark" ? 0.45 : 0.18})), url("${backgroundImage}")`
   : undefined;
@@ -21,11 +27,13 @@ const backgroundStyle = backgroundImage
   <div class="container">
     <div class="page-banner__content">
       <h1 data-reveal="up">{title}</h1>
-      {description && (
-        <p data-reveal="up" style="--reveal-delay: 120ms;">
-          {description}
-        </p>
-      )}
+      {
+        description && (
+          <p data-reveal="up" style="--reveal-delay: 120ms;">
+            {description}
+          </p>
+        )
+      }
     </div>
   </div>
 </section>

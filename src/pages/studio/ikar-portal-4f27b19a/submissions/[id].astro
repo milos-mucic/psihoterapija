@@ -33,17 +33,19 @@ const submission = id ? await submissionService.getSubmission(id) : undefined;
             </div>
             <div class="card" style="padding: 1rem;">
               <dt>{dictionary.admin.submissionDetails.labels.created}</dt>
-              <dd style="margin: 0.4rem 0 0;">{new Date(submission.createdAt).toLocaleString("sr-RS")}</dd>
+              <dd style="margin: 0.4rem 0 0;">
+                {new Date(submission.createdAt).toLocaleString("sr-RS")}
+              </dd>
             </div>
           </dl>
-          {
-            submission.message ? (
-              <div class="card" style="padding: 1rem;">
-                <h3 style="margin-top: 0;">{dictionary.admin.submissionDetails.labels.message}</h3>
-                <p style="margin: 0; white-space: pre-wrap; color: var(--muted);">{submission.message}</p>
-              </div>
-            ) : null
-          }
+          {submission.message ? (
+            <div class="card" style="padding: 1rem;">
+              <h3 style="margin-top: 0;">{dictionary.admin.submissionDetails.labels.message}</h3>
+              <p style="margin: 0; white-space: pre-wrap; color: var(--muted);">
+                {submission.message}
+              </p>
+            </div>
+          ) : null}
         </div>
       ) : (
         <p style="margin: 0;">{dictionary.admin.submissionDetails.notFound}</p>

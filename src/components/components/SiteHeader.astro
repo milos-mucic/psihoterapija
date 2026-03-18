@@ -19,7 +19,8 @@ const localeSwitcherHref =
   alternateLocale === "sr-cyrl"
     ? `${getLocalePrefix(alternateLocale)}${currentWithoutPrefix}`.replace("//", "/")
     : currentWithoutPrefix;
-const isActivePath = (href: string) => (href === "/" ? pathname === href : pathname.startsWith(href));
+const isActivePath = (href: string) =>
+  href === "/" ? pathname === href : pathname.startsWith(href);
 const siteMeta = siteConfig.name.replace(" Ikar", "");
 ---
 
@@ -35,15 +36,17 @@ const siteMeta = siteConfig.name.replace(" Ikar", "");
       </a>
 
       <nav class="site-nav" aria-label={dictionary.a11y.appbarPrimaryNav}>
-        {navigation.map((item) => (
-          <a
-            class:list={{ "is-active": isActivePath(item.href) }}
-            href={item.href}
-            aria-current={isActivePath(item.href) ? "page" : undefined}
-          >
-            {item.label}
-          </a>
-        ))}
+        {
+          navigation.map((item) => (
+            <a
+              class:list={{ "is-active": isActivePath(item.href) }}
+              href={item.href}
+              aria-current={isActivePath(item.href) ? "page" : undefined}
+            >
+              {item.label}
+            </a>
+          ))
+        }
       </nav>
 
       <div class="site-header__actions">

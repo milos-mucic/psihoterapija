@@ -113,7 +113,12 @@ export function SubmissionForm({
         ) : (
           <label className="stack-form__field stack-form__field--full">
             <span>{labels.message}</span>
-            <textarea className="input-control input-control--textarea" name="message" required rows={5} />
+            <textarea
+              className="input-control input-control--textarea"
+              name="message"
+              required
+              rows={5}
+            />
           </label>
         )}
 

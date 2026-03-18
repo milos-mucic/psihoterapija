@@ -32,14 +32,20 @@ const socialLinks = [
         <div class="contact-details__grid">
           <article class="contact-details__card" data-reveal="up">
             <h4>{content.contactLabels.phone}</h4>
-            <a class="page-inline-link page-inline-link--plain" href={`tel:${siteConfig.contactPhone.replace(/\s+/g, "")}`}>
+            <a
+              class="page-inline-link page-inline-link--plain"
+              href={`tel:${siteConfig.contactPhone.replace(/\s+/g, "")}`}
+            >
               {siteConfig.contactPhone}
             </a>
           </article>
 
           <article class="contact-details__card" data-reveal="up" style="--reveal-delay: 80ms;">
             <h4>{content.contactLabels.email}</h4>
-            <a class="page-inline-link page-inline-link--plain" href={`mailto:${siteConfig.contactEmail}`}>
+            <a
+              class="page-inline-link page-inline-link--plain"
+              href={`mailto:${siteConfig.contactEmail}`}
+            >
               {siteConfig.contactEmail}
             </a>
           </article>
@@ -48,11 +54,13 @@ const socialLinks = [
         <div class="contact-socials" data-reveal="up" style="--reveal-delay: 140ms;">
           <h5>{content.contactLabels.socials}</h5>
           <div class="contact-socials__icons">
-            {socialLinks.map((link) => (
-              <a href={link.href} target="_blank" rel="noreferrer" aria-label={link.label}>
-                {link.value}
-              </a>
-            ))}
+            {
+              socialLinks.map((link) => (
+                <a href={link.href} target="_blank" rel="noreferrer" aria-label={link.label}>
+                  {link.value}
+                </a>
+              ))
+            }
           </div>
         </div>
       </div>
@@ -73,18 +81,22 @@ const socialLinks = [
     </div>
 
     <div class="office-gallery">
-      {officeGallery.map((image, index) => (
-        <article class="office-gallery__card" data-reveal="up" style={`--reveal-delay: ${index * 90}ms;`}>
-          <img
-            src={image}
-            alt={`${dictionary.common.officeRoom} ${index + 1}`}
-            loading="lazy"
-          />
-          <div class="office-gallery__meta">
-            <h4>{dictionary.common.officeRoom} {index + 1}</h4>
-          </div>
-        </article>
-      ))}
+      {
+        officeGallery.map((image, index) => (
+          <article
+            class="office-gallery__card"
+            data-reveal="up"
+            style={`--reveal-delay: ${index * 90}ms;`}
+          >
+            <img src={image} alt={`${dictionary.common.officeRoom} ${index + 1}`} loading="lazy" />
+            <div class="office-gallery__meta">
+              <h4>
+                {dictionary.common.officeRoom} {index + 1}
+              </h4>
+            </div>
+          </article>
+        ))
+      }
     </div>
   </div>
 </section>

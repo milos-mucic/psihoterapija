@@ -34,24 +34,26 @@ const galleryImages = [
 
       <div class="footer-main">
         <div class="footer-brand">
-          <img class="footer-brand__logo" src="/legacy/images/Logo-White.svg" alt={siteConfig.name} />
+          <img
+            class="footer-brand__logo"
+            src="/legacy/images/Logo-White.svg"
+            alt={siteConfig.name}
+          />
           <p>{dictionary.footer.tagline}</p>
           <div class="footer-contact-list">
             <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>
-            <a href={`tel:${siteConfig.contactPhone.replace(/\s+/g, "")}`}>{siteConfig.contactPhone}</a>
+            <a href={`tel:${siteConfig.contactPhone.replace(/\s+/g, "")}`}
+              >{siteConfig.contactPhone}</a
+            >
           </div>
         </div>
 
         <nav class="footer-nav" aria-label={dictionary.a11y.footerNav}>
-          {navigation.map((item) => (
-            <a href={item.href}>{item.label}</a>
-          ))}
+          {navigation.map((item) => <a href={item.href}>{item.label}</a>)}
         </nav>
 
         <div class="footer-gallery" aria-hidden="true">
-          {galleryImages.map((image) => (
-            <img src={image} alt="" loading="lazy" />
-          ))}
+          {galleryImages.map((image) => <img src={image} alt="" loading="lazy" />)}
         </div>
       </div>
     </div>

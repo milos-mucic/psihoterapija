@@ -31,16 +31,17 @@ const content = getHomePageData(locale);
 <section class="home-section home-section--tight">
   <div class="container">
     <div class="home-about">
-      <img class="home-about__image" src={content.about.image} alt={content.about.title} loading="lazy" />
+      <img
+        class="home-about__image"
+        src={content.about.image}
+        alt={content.about.title}
+        loading="lazy"
+      />
       <div class="home-about__content">
         <h2>{content.about.title}</h2>
-        {content.about.paragraphs.map((paragraph) => (
-          <p>{paragraph}</p>
-        ))}
+        {content.about.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
         <ul class="home-list">
-          {content.about.bullets.map((bullet) => (
-            <li>{bullet}</li>
-          ))}
+          {content.about.bullets.map((bullet) => <li>{bullet}</li>)}
         </ul>
         <a class="home-button" href={content.about.href}>{content.about.label}</a>
       </div>
@@ -57,15 +58,17 @@ const content = getHomePageData(locale);
       </div>
 
       <div class="home-services__grid">
-        {content.services.items.map((item) => (
-          <article class="home-dark-card">
-            <h3>{item.title}</h3>
-            <p>{item.copy}</p>
-            <a class="home-inline-link home-inline-link--light" href={item.href}>
-              {item.label}
-            </a>
-          </article>
-        ))}
+        {
+          content.services.items.map((item) => (
+            <article class="home-dark-card">
+              <h3>{item.title}</h3>
+              <p>{item.copy}</p>
+              <a class="home-inline-link home-inline-link--light" href={item.href}>
+                {item.label}
+              </a>
+            </article>
+          ))
+        }
       </div>
     </div>
   </div>
@@ -92,15 +95,17 @@ const content = getHomePageData(locale);
     </div>
 
     <div class="home-card-grid">
-      {content.themes.items.map((item) => (
-        <article class="home-card">
-          <h3>{item.title}</h3>
-          <p>{item.copy}</p>
-          <a class="home-inline-link" href={item.href}>
-            {item.label}
-          </a>
-        </article>
-      ))}
+      {
+        content.themes.items.map((item) => (
+          <article class="home-card">
+            <h3>{item.title}</h3>
+            <p>{item.copy}</p>
+            <a class="home-inline-link" href={item.href}>
+              {item.label}
+            </a>
+          </article>
+        ))
+      }
     </div>
   </div>
 </section>
@@ -115,18 +120,25 @@ const content = getHomePageData(locale);
 
       <div class="home-reasons__grid">
         <div class="home-reasons__cards">
-          {content.reasons.items.map((item) => (
-            <article class="home-dark-card">
-              <h3>{item.title}</h3>
-              <p>{item.copy}</p>
-              <a class="home-inline-link home-inline-link--light" href={item.href}>
-                {item.label}
-              </a>
-            </article>
-          ))}
+          {
+            content.reasons.items.map((item) => (
+              <article class="home-dark-card">
+                <h3>{item.title}</h3>
+                <p>{item.copy}</p>
+                <a class="home-inline-link home-inline-link--light" href={item.href}>
+                  {item.label}
+                </a>
+              </article>
+            ))
+          }
         </div>
 
-        <a class="home-video-card" href={content.reasons.videoHref} target="_blank" rel="noreferrer">
+        <a
+          class="home-video-card"
+          href={content.reasons.videoHref}
+          target="_blank"
+          rel="noreferrer"
+        >
           <img src={content.reasons.videoImage} alt="" loading="lazy" />
           <span class="home-video-card__badge">{dictionary.common.play}</span>
           <span class="home-video-card__label">{content.reasons.videoLabel}</span>
@@ -143,9 +155,7 @@ const content = getHomePageData(locale);
         <h2>{content.booking.title}</h2>
         <p>{content.booking.copy}</p>
         <div class="home-booking__formats">
-          {content.booking.formats.map((format) => (
-            <span class="home-pill">{format}</span>
-          ))}
+          {content.booking.formats.map((format) => <span class="home-pill">{format}</span>)}
         </div>
       </div>
 
@@ -176,7 +186,11 @@ const content = getHomePageData(locale);
           {posts.map((post) => (
             <article class="home-card">
               <div class="home-post-meta">
-                <span>{post.publishedAt.toLocaleDateString(locale === "sr-cyrl" ? "sr-Cyrl-RS" : "sr-RS")}</span>
+                <span>
+                  {post.publishedAt.toLocaleDateString(
+                    locale === "sr-cyrl" ? "sr-Cyrl-RS" : "sr-RS",
+                  )}
+                </span>
                 <span>&bull;</span>
                 <span>{post.tags.join(", ") || dictionary.blog.defaultTag}</span>
               </div>

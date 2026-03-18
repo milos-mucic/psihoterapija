@@ -188,11 +188,7 @@
       "title": "Unesite neophodne informacije kako biste zakazali termin",
       "copy": "Prvi kontakt nam pomaže da razumemo kontekst, predložimo format rada i dogovorimo naredni korak.",
       "formatLabel": "Izaberite format rada",
-      "formats": [
-        "Psihodinamska psihoterapija",
-        "Psihološko savetovanje",
-        "Konsultacije"
-      ]
+      "formats": ["Psihodinamska psihoterapija", "Psihološko savetovanje", "Konsultacije"]
     },
     "recent": {
       "title": "Najnovije objave na našem sajtu",
@@ -243,11 +239,7 @@
       "servicesEmptyLabel": "No items found.",
       "bookingTitleHtml": "Neophodne informacije <br>o zakazivanju termina",
       "formatLabel": "Izaberite format rada",
-      "formats": [
-        "Psihodinamska psihoterapija",
-        "Psihološko savetovanje",
-        "Konsultacije"
-      ],
+      "formats": ["Psihodinamska psihoterapija", "Psihološko savetovanje", "Konsultacije"],
       "faqs": [
         {
           "question": "Koja je razlika između psihologa i psihoterapeuta?",
@@ -292,11 +284,7 @@
       ],
       "bookingTitle": "Unesite neophodne informacije kako biste zakazali termin",
       "formatLabel": "Izaberite format rada",
-      "formats": [
-        "Psihodinamska psihoterapija",
-        "Psihološko savetovanje",
-        "Konsultacije"
-      ]
+      "formats": ["Psihodinamska psihoterapija", "Psihološko savetovanje", "Konsultacije"]
     },
     "contact": {
       "banner": {
@@ -320,11 +308,7 @@
       },
       "formTitle": "Unesite svoje podatke",
       "formatLabel": "Izaberite format rada",
-      "formats": [
-        "Psihodinamska psihoterapija",
-        "Psihološko savetovanje",
-        "Konsultacije"
-      ],
+      "formats": ["Psihodinamska psihoterapija", "Psihološko savetovanje", "Konsultacije"],
       "faqs": [
         {
           "question": "Koja je razlika između psihološkog savetovanja, psihodinamske psihoterapije i stručnih konsultacija?",

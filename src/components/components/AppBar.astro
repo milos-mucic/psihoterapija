@@ -18,7 +18,8 @@ const localeSwitcherHref =
     ? `${getLocalePrefix(alternateLocale)}${currentWithoutPrefix}`.replace("//", "/")
     : currentWithoutPrefix;
 const isHome = pathname === "/" || pathname === "/cir/";
-const isActivePath = (href: string) => (href === "/" ? pathname === href : pathname.startsWith(href));
+const isActivePath = (href: string) =>
+  href === "/" ? pathname === href : pathname.startsWith(href);
 
 const aboutLinks = [
   { label: dictionary.nav.aboutLinks.about, href: localizePath(locale, "/o-nama/") },
@@ -48,7 +49,10 @@ const therapyLinks = [
 
       <div class="appbar__desktop">
         <nav class="appbar__nav" aria-label={dictionary.a11y.appbarPrimaryNav}>
-          <a class:list={["appbar__link", isActivePath(localizePath(locale, "/")) && "is-active"]} href={localizePath(locale, "/")}>
+          <a
+            class:list={["appbar__link", isActivePath(localizePath(locale, "/")) && "is-active"]}
+            href={localizePath(locale, "/")}
+          >
             {dictionary.nav.home}
           </a>
 
@@ -58,11 +62,16 @@ const therapyLinks = [
               <span class="appbar__chevron">+</span>
             </summary>
             <div class="appbar__dropdown-menu">
-              {aboutLinks.map((item) => (
-                <a class:list={["appbar__dropdown-link", isActivePath(item.href) && "is-active"]} href={item.href}>
-                  {item.label}
-                </a>
-              ))}
+              {
+                aboutLinks.map((item) => (
+                  <a
+                    class:list={["appbar__dropdown-link", isActivePath(item.href) && "is-active"]}
+                    href={item.href}
+                  >
+                    {item.label}
+                  </a>
+                ))
+              }
             </div>
           </details>
 
@@ -72,18 +81,35 @@ const therapyLinks = [
               <span class="appbar__chevron">+</span>
             </summary>
             <div class="appbar__dropdown-menu">
-              {therapyLinks.map((item) => (
-                <a class:list={["appbar__dropdown-link", isActivePath(item.href) && "is-active"]} href={item.href}>
-                  {item.label}
-                </a>
-              ))}
+              {
+                therapyLinks.map((item) => (
+                  <a
+                    class:list={["appbar__dropdown-link", isActivePath(item.href) && "is-active"]}
+                    href={item.href}
+                  >
+                    {item.label}
+                  </a>
+                ))
+              }
             </div>
           </details>
 
-          <a class:list={["appbar__link", isActivePath(localizePath(locale, "/blog/")) && "is-active"]} href={localizePath(locale, "/blog/")}>
+          <a
+            class:list={[
+              "appbar__link",
+              isActivePath(localizePath(locale, "/blog/")) && "is-active",
+            ]}
+            href={localizePath(locale, "/blog/")}
+          >
             {dictionary.nav.blog}
           </a>
-          <a class:list={["appbar__link", isActivePath(localizePath(locale, "/faq/")) && "is-active"]} href={localizePath(locale, "/faq/")}>
+          <a
+            class:list={[
+              "appbar__link",
+              isActivePath(localizePath(locale, "/faq/")) && "is-active",
+            ]}
+            href={localizePath(locale, "/faq/")}
+          >
             {dictionary.nav.faq}
           </a>
         </nav>
@@ -108,39 +134,73 @@ const therapyLinks = [
         </summary>
 
         <div class="appbar__drawer">
-          <a class:list={["appbar__drawer-link", isActivePath(localizePath(locale, "/")) && "is-active"]} href={localizePath(locale, "/")}>
+          <a
+            class:list={[
+              "appbar__drawer-link",
+              isActivePath(localizePath(locale, "/")) && "is-active",
+            ]}
+            href={localizePath(locale, "/")}
+          >
             {dictionary.nav.home}
           </a>
 
           <details class="appbar__drawer-group">
             <summary>{dictionary.nav.about}</summary>
             <div class="appbar__drawer-group-links">
-              {aboutLinks.map((item) => (
-                <a class:list={["appbar__drawer-sublink", isActivePath(item.href) && "is-active"]} href={item.href}>
-                  {item.label}
-                </a>
-              ))}
+              {
+                aboutLinks.map((item) => (
+                  <a
+                    class:list={["appbar__drawer-sublink", isActivePath(item.href) && "is-active"]}
+                    href={item.href}
+                  >
+                    {item.label}
+                  </a>
+                ))
+              }
             </div>
           </details>
 
           <details class="appbar__drawer-group">
             <summary>{dictionary.nav.psychotherapy}</summary>
             <div class="appbar__drawer-group-links">
-              {therapyLinks.map((item) => (
-                <a class:list={["appbar__drawer-sublink", isActivePath(item.href) && "is-active"]} href={item.href}>
-                  {item.label}
-                </a>
-              ))}
+              {
+                therapyLinks.map((item) => (
+                  <a
+                    class:list={["appbar__drawer-sublink", isActivePath(item.href) && "is-active"]}
+                    href={item.href}
+                  >
+                    {item.label}
+                  </a>
+                ))
+              }
             </div>
           </details>
 
-          <a class:list={["appbar__drawer-link", isActivePath(localizePath(locale, "/blog/")) && "is-active"]} href={localizePath(locale, "/blog/")}>
+          <a
+            class:list={[
+              "appbar__drawer-link",
+              isActivePath(localizePath(locale, "/blog/")) && "is-active",
+            ]}
+            href={localizePath(locale, "/blog/")}
+          >
             {dictionary.nav.blog}
           </a>
-          <a class:list={["appbar__drawer-link", isActivePath(localizePath(locale, "/faq/")) && "is-active"]} href={localizePath(locale, "/faq/")}>
+          <a
+            class:list={[
+              "appbar__drawer-link",
+              isActivePath(localizePath(locale, "/faq/")) && "is-active",
+            ]}
+            href={localizePath(locale, "/faq/")}
+          >
             {dictionary.nav.faq}
           </a>
-          <a class:list={["appbar__drawer-link", isActivePath(localizePath(locale, "/kontakt/")) && "is-active"]} href={localizePath(locale, "/kontakt/")}>
+          <a
+            class:list={[
+              "appbar__drawer-link",
+              isActivePath(localizePath(locale, "/kontakt/")) && "is-active",
+            ]}
+            href={localizePath(locale, "/kontakt/")}
+          >
             {dictionary.nav.contact}
           </a>
 

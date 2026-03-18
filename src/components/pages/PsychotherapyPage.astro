@@ -22,9 +22,7 @@ const dictionary = getDictionary(locale);
     <div class="page-list-panel page-list-panel--centered" data-reveal="up">
       <h2>{content.scopeTitle}</h2>
       <ul>
-        {content.scopeItems.map((item) => (
-          <li>{item}</li>
-        ))}
+        {content.scopeItems.map((item) => <li>{item}</li>)}
       </ul>
     </div>
   </div>

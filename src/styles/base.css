@@ -514,7 +514,10 @@ img {
     linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
     linear-gradient(rgba(22, 60, 61, 0.1), rgba(22, 60, 61, 0.1)),
     url("/legacy/images/Banner-Home-3-1_1Banner Home 3 (1).webp");
-  background-position: 0 0, 0 0, 50%;
+  background-position:
+    0 0,
+    0 0,
+    50%;
   background-repeat: repeat, repeat, no-repeat;
   background-size: auto, auto, cover;
 }
@@ -683,7 +686,12 @@ img {
   padding: clamp(1.6rem, 4vw, 2.25rem);
   color: var(--white);
   background:
-    linear-gradient(110deg, rgba(10, 30, 31, 0.9) 0%, rgba(22, 60, 61, 0.68) 45%, rgba(226, 237, 223, 0.14) 100%),
+    linear-gradient(
+      110deg,
+      rgba(10, 30, 31, 0.9) 0%,
+      rgba(22, 60, 61, 0.68) 45%,
+      rgba(226, 237, 223, 0.14) 100%
+    ),
     var(--hero-image, url("/legacy/images/Banner-Home-3-1_1-p-1080.jpg")) center / cover no-repeat;
   box-shadow: var(--shadow-strong);
 }

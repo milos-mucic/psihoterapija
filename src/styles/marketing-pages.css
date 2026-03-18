@@ -192,7 +192,9 @@
 .page-video-card__hover {
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: rgba(255, 255, 255, 0.06);
-  transition: transform 300ms ease, background-color 300ms ease;
+  transition:
+    transform 300ms ease,
+    background-color 300ms ease;
 }
 
 .page-video-card:hover img {
@@ -406,7 +408,9 @@
   background-position:
     calc(100% - 1.1rem) calc(50% - 2px),
     calc(100% - 0.8rem) calc(50% - 2px);
-  background-size: 6px 6px, 6px 6px;
+  background-size:
+    6px 6px,
+    6px 6px;
   background-repeat: no-repeat;
 }
 
@@ -565,7 +569,9 @@
   color: var(--primary);
   font-family: "Fa solid 900", var(--font-ui);
   font-size: 0.85rem;
-  transition: transform 300ms ease, color 300ms ease;
+  transition:
+    transform 300ms ease,
+    color 300ms ease;
 }
 
 .faq-item__body {

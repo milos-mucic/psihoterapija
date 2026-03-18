@@ -25,7 +25,13 @@ const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
     </div>
 
     <div class="page-showcase page-showcase--single">
-      <a class="page-video-card page-video-card--lightbox" href={content.showcaseVideoHref} target="_blank" rel="noreferrer" data-reveal="grow">
+      <a
+        class="page-video-card page-video-card--lightbox"
+        href={content.showcaseVideoHref}
+        target="_blank"
+        rel="noreferrer"
+        data-reveal="grow"
+      >
         <img src={content.showcaseVideoImage} alt={content.showcaseTitle} loading="lazy" />
         <span class="page-video-card__play">ï‹</span>
         <span class="page-video-card__ring"></span>
@@ -50,9 +56,7 @@ const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
       <aside class="page-list-panel" data-reveal="right">
         <h3>{content.focusTitle}</h3>
         <ul>
-          {content.focusItems.map((item) => (
-            <li>{item}</li>
-          ))}
+          {content.focusItems.map((item) => <li>{item}</li>)}
         </ul>
       </aside>
     </div>
@@ -75,9 +79,17 @@ const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
       posts.length > 0 ? (
         <div class="page-card-grid">
           {posts.map((post, index) => (
-            <article class="page-card page-card--post" data-reveal="up" style={`--reveal-delay: ${index * 90}ms;`}>
+            <article
+              class="page-card page-card--post"
+              data-reveal="up"
+              style={`--reveal-delay: ${index * 90}ms;`}
+            >
               <div class="page-post-meta">
-                <span>{post.publishedAt.toLocaleDateString(locale === "sr-cyrl" ? "sr-Cyrl-RS" : "sr-RS")}</span>
+                <span>
+                  {post.publishedAt.toLocaleDateString(
+                    locale === "sr-cyrl" ? "sr-Cyrl-RS" : "sr-RS",
+                  )}
+                </span>
                 <span>&bull;</span>
                 <span>{post.tags.join(", ") || dictionary.blog.defaultTag}</span>
               </div>
