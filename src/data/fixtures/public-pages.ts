@@ -17,7 +17,9 @@ export type FaqAccordionItem = {
 };
 
 export const getAboutPageData = (locale: SiteLocale) => {
-  const content = getDictionary(locale).pages.about;
+  const dictionary = getDictionary(locale);
+  const content = dictionary.pages.about;
+  const serviceItems = dictionary.homePage.services.items;
 
   return {
     banner: {
@@ -30,6 +32,29 @@ export const getAboutPageData = (locale: SiteLocale) => {
     showcaseVideoHref: "https://www.youtube.com/watch?v=KGg5cIjHQiw",
     showcaseVideoImage: "/legacy/images/Video-BG-About-Us-1_1Video BG About Us (1).webp",
     showcaseEmptyLabel: content.showcaseEmptyLabel,
+    showcaseCards: [
+      {
+        title: serviceItems[2].title,
+        copy: serviceItems[2].copy,
+        href: localizePath(locale, "/zakazivanje/"),
+        image:
+          "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d692288_Logo%20Service%201.png",
+      },
+      {
+        title: serviceItems[0].title,
+        copy: serviceItems[0].copy,
+        href: localizePath(locale, "/psihoterapija/"),
+        image:
+          "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d692289_Logo%20Service%202.png",
+      },
+      {
+        title: serviceItems[1].title,
+        copy: serviceItems[1].copy,
+        href: localizePath(locale, "/psihoterapija/"),
+        image:
+          "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d69228a_Logo%20Service%203.png",
+      },
+    ],
     ideaTitle: content.ideaTitle,
     ideaHtml: content.ideaHtml,
     focusTitle: content.focusTitle,

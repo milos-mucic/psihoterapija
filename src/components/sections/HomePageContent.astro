@@ -23,11 +23,18 @@ const homeVideoEmbedSrc = videoIdMatch
 <section class="home-section">
   <div class="container">
     <div class="home-heading-row home-heading-row--prompt">
-      <div class="home-heading-copy home-heading-copy--prompt">
+      <div class="home-heading-copy home-heading-copy--prompt" data-reveal="up">
         <h2>{content.prompt.title}</h2>
         <p>{content.prompt.copy}</p>
       </div>
-      <a class="home-button" href={content.prompt.href}>{content.prompt.label}</a>
+      <a
+        class="home-button"
+        href={content.prompt.href}
+        data-reveal="up"
+        style="--reveal-delay: 90ms;"
+      >
+        {content.prompt.label}
+      </a>
     </div>
   </div>
 </section>
@@ -40,8 +47,9 @@ const homeVideoEmbedSrc = videoIdMatch
         src={content.about.image}
         alt={content.about.title}
         loading="lazy"
+        data-reveal="left"
       />
-      <div class="home-about__content">
+      <div class="home-about__content" data-reveal="right" style="--reveal-delay: 90ms;">
         <h2>{content.about.title}</h2>
         {content.about.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
         <ul class="home-list">
@@ -57,15 +65,19 @@ const homeVideoEmbedSrc = videoIdMatch
   <div class="container">
     <div class="home-services">
       <div class="home-services__layout">
-        <div class="home-services__intro">
+        <div class="home-services__intro" data-reveal="up">
           <h2>{content.services.title}</h2>
           <p>{content.services.copy}</p>
         </div>
 
         <div class="home-services__cards">
           {
-            content.services.items.map((item) => (
-              <article class="home-service-card">
+            content.services.items.map((item, index) => (
+              <article
+                class="home-service-card"
+                data-reveal="up"
+                style={`--reveal-delay: ${90 + index * 90}ms;`}
+              >
                 <img
                   class="home-service-card__icon"
                   src={item.image}
@@ -88,15 +100,20 @@ const homeVideoEmbedSrc = videoIdMatch
 
 <section class="home-section">
   <div class="container">
-    <div class="section-title-wrapper">
+    <div class="section-title-wrapper" data-reveal="up">
       <h2 class="heading-12">{content.themes.title}</h2>
     </div>
 
     <div class="collection-list-wrapper-w-100">
       <div role="list" class="collection-list-session-home-3">
         {
-          content.themes.items.map((item) => (
-            <div role="listitem" class="collection-item-session-home-3">
+          content.themes.items.map((item, index) => (
+            <div
+              role="listitem"
+              class="collection-item-session-home-3"
+              data-reveal="up"
+              style={`--reveal-delay: ${index * 90}ms;`}
+            >
               <a href={item.href} class="link-block">
                 <img class="service-img" src={item.image} alt={item.title} loading="lazy" />
               </a>
@@ -130,7 +147,7 @@ const homeVideoEmbedSrc = videoIdMatch
 <section class="home-section home-section--dark">
   <div class="container">
     <div class="home-reasons">
-      <div class="home-reasons__intro">
+      <div class="home-reasons__intro" data-reveal="up">
         <h2>{content.reasons.title}</h2>
         <p>{content.reasons.copy}</p>
       </div>
@@ -139,7 +156,12 @@ const homeVideoEmbedSrc = videoIdMatch
         <div class="home-reason-list">
           {
             content.reasons.items.map((item, index) => (
-              <a class="home-reason-panel" href={item.href}>
+              <a
+                class="home-reason-panel"
+                href={item.href}
+                data-reveal="up"
+                style={`--reveal-delay: ${index * 90}ms;`}
+              >
                 <span class="home-reason-panel__index">{String(index + 1).padStart(2, "0")}</span>
                 <div class="home-reason-panel__content">
                   <div class="home-reason-panel__top">
@@ -173,6 +195,8 @@ const homeVideoEmbedSrc = videoIdMatch
           data-home-video-open
           data-video-src={homeVideoEmbedSrc}
           aria-label={content.reasons.videoLabel}
+          data-reveal="grow"
+          style="--reveal-delay: 180ms;"
         >
           <img src={content.reasons.videoImage} alt="" loading="lazy" />
           <span class="home-video-card__badge">{dictionary.common.play}</span>
@@ -264,7 +288,7 @@ const homeVideoEmbedSrc = videoIdMatch
 <section class="home-section home-section--tight">
   <div class="container">
     <div class="home-booking">
-      <div class="home-booking__intro">
+      <div class="home-booking__intro" data-reveal="up">
         <h2>{content.booking.title}</h2>
         <p>{content.booking.copy}</p>
         <div class="home-booking__formats">
@@ -272,13 +296,15 @@ const homeVideoEmbedSrc = videoIdMatch
         </div>
       </div>
 
-      <AppointmentForm
-        client:load
-        locale={locale}
-        labels={dictionary.forms}
-        formatLabel={content.booking.formatLabel}
-        formats={content.booking.formats}
-      />
+      <div data-reveal="up" style="--reveal-delay: 90ms;">
+        <AppointmentForm
+          client:load
+          locale={locale}
+          labels={dictionary.forms}
+          formatLabel={content.booking.formatLabel}
+          formats={content.booking.formats}
+        />
+      </div>
     </div>
   </div>
 </section>
@@ -286,18 +312,29 @@ const homeVideoEmbedSrc = videoIdMatch
 <section class="home-section">
   <div class="container">
     <div class="home-heading-row home-heading-row--blog">
-      <div class="home-heading-copy">
+      <div class="home-heading-copy" data-reveal="up">
         <h2>{content.recent.title}</h2>
         <p>{content.recent.copy}</p>
       </div>
-      <a class="home-button" href={content.recent.href}>{content.recent.label}</a>
+      <a
+        class="home-button"
+        href={content.recent.href}
+        data-reveal="up"
+        style="--reveal-delay: 90ms;"
+      >
+        {content.recent.label}
+      </a>
     </div>
 
     {
       posts.length > 0 ? (
         <div class="home-card-grid home-card-grid--blog">
-          {posts.map((post) => (
-            <article class="home-blog-card">
+          {posts.map((post, index) => (
+            <article
+              class="home-blog-card"
+              data-reveal="up"
+              style={`--reveal-delay: ${index * 90}ms;`}
+            >
               <a class="home-blog-card__media" href={localizePath(locale, `/blog/${post.slug}/`)}>
                 <img
                   src={post.coverImage ?? "/legacy/images/Blog-1_1Blog 1.webp"}
@@ -338,7 +375,7 @@ const homeVideoEmbedSrc = videoIdMatch
           ))}
         </div>
       ) : (
-        <div class="home-card">
+        <div class="home-card" data-reveal="up">
           <p>{content.recent.empty}</p>
         </div>
       )
