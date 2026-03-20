@@ -33,6 +33,35 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Validate Astro DB secrets
+        env:
+          ASTRO_DB_REMOTE_URL: ${{ secrets.ASTRO_DB_REMOTE_URL }}
+          ASTRO_DB_APP_TOKEN: ${{ secrets.ASTRO_DB_APP_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          : "${ASTRO_DB_REMOTE_URL:?Missing ASTRO_DB_REMOTE_URL secret}"
+          : "${ASTRO_DB_APP_TOKEN:?Missing ASTRO_DB_APP_TOKEN secret}"
+
+          node -e '
+            const value = process.env.ASTRO_DB_REMOTE_URL;
+            try {
+              const url = new URL(value);
+              const allowedProtocols = new Set(["libsql:", "http:", "https:", "ws:", "wss:", "file:", "memory:"]);
+              if (!allowedProtocols.has(url.protocol)) {
+                throw new Error(`Unsupported protocol: ${url.protocol}`);
+              }
+            } catch (error) {
+              console.error("Invalid ASTRO_DB_REMOTE_URL secret.");
+              console.error("Expected a libSQL-compatible URL such as:");
+              console.error("  libsql://your-database.turso.io");
+              console.error("  https://your-libsql-host");
+              console.error(`Received: ${JSON.stringify(value)}`);
+              console.error(error instanceof Error ? error.message : String(error));
+              process.exit(1);
+            }
+          '
+
       - name: Push Astro DB schema
         run: npx astro db push --remote
         env:
