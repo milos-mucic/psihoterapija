@@ -1,0 +1,155 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: psihoterapija-ikar
+  namespace: prod
+  labels:
+    app: psihoterapija-ikar
+    version: v1
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 300
+  minReadySeconds: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: psihoterapija-ikar
+  template:
+    metadata:
+      labels:
+        app: psihoterapija-ikar
+        version: v1
+    spec:
+      securityContext:
+        fsGroup: 1000
+      terminationGracePeriodSeconds: 10
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: psihoterapija-ikar
+                topologyKey: kubernetes.io/hostname
+      containers:
+        - name: psihoterapija-ikar
+          image: ghcr.io/milos-mucic/psihoterapija:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: psihoterapija-ikar-config
+                  key: NODE_ENV
+                  optional: true
+            - name: HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: psihoterapija-ikar-config
+                  key: HOST
+                  optional: true
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: psihoterapija-ikar-config
+                  key: PORT
+                  optional: true
+            - name: PUBLIC_SITE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: psihoterapija-ikar-config
+                  key: PUBLIC_SITE_URL
+                  optional: true
+            - name: DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: psihoterapija-ikar-config
+                  key: DATABASE_URL
+                  optional: true
+            - name: UPLOADS_DIR
+              valueFrom:
+                configMapKeyRef:
+                  name: psihoterapija-ikar-config
+                  key: UPLOADS_DIR
+                  optional: true
+            - name: USE_CONTENT_BLOG
+              valueFrom:
+                configMapKeyRef:
+                  name: psihoterapija-ikar-config
+                  key: USE_CONTENT_BLOG
+                  optional: true
+            - name: USE_FILE_SUBMISSIONS
+              valueFrom:
+                configMapKeyRef:
+                  name: psihoterapija-ikar-config
+                  key: USE_FILE_SUBMISSIONS
+                  optional: true
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: psihoterapija-ikar-secrets
+                  key: admin-password
+            - name: ADMIN_SESSION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: psihoterapija-ikar-secrets
+                  key: admin-session-secret
+          volumeMounts:
+            - name: app-data
+              mountPath: /app/data
+
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 24
+
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+
+      volumes:
+        - name: app-data
+          persistentVolumeClaim:
+            claimName: psihoterapija-ikar-data
+      imagePullSecrets:
+        - name: ghcr-secret

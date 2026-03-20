@@ -5,6 +5,7 @@ import type { APIRoute } from "astro";
 import { requireAdminApiAuth } from "@/features/admin/auth/admin-api-auth";
 import { getDictionary } from "@/features/i18n/translate";
 import { getDb } from "@/lib/db/sqlite";
+import { getUploadsDir } from "@/lib/storage/uploads";
 
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 
@@ -85,7 +86,7 @@ export const POST: APIRoute = async (context) => {
     const storageName = `${id}-${baseName}${extension}`;
 
     const relativeDir = path.join("uploads", "blog", year, month);
-    const fullDir = path.join(process.cwd(), "public", relativeDir);
+    const fullDir = path.join(getUploadsDir(), "blog", year, month);
 
     await mkdir(fullDir, { recursive: true });
 

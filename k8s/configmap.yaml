@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: psihoterapija-ikar-config
+  namespace: prod
+  labels:
+    app: psihoterapija-ikar
+data:
+  NODE_ENV: "production"
+  HOST: "0.0.0.0"
+  PORT: "3000"
+  PUBLIC_SITE_URL: "https://psihoterapija-ikar.rs"
+  DATABASE_URL: "file:/app/data/app.db"
+  UPLOADS_DIR: "/app/data/uploads"
+  USE_CONTENT_BLOG: "false"
+  USE_FILE_SUBMISSIONS: "false"

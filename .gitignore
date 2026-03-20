@@ -4,6 +4,7 @@ dist
 .env
 .env.*
 data/mock/*.local.json
+data/uploads
 data/sqlite
 data/*.db
 data/*.db-wal
