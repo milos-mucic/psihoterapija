@@ -1,9 +1,6 @@
 import type { BlogRepository } from "@/features/blog/repositories/blog.repository";
-import {
-  ContentCollectionBlogRepository,
-  listContentCollectionBlogPosts,
-} from "@/features/blog/repositories/content-collection-blog.repository";
-import { SqliteBlogRepository } from "@/features/blog/repositories/sqlite-blog.repository";
+import { AstroDbBlogRepository } from "@/features/blog/repositories/astro-db-blog.repository";
+import { listContentCollectionBlogPosts } from "@/features/blog/repositories/content-collection-blog.repository";
 import {
   parseBlogPostCreateInput,
   parseBlogPostUpdateInput,
@@ -27,7 +24,7 @@ const createSeedInput = (
   seoDescription: post.seoDescription,
 });
 
-const seedSqliteBlogRepository = async (repository: BlogRepository) => {
+const seedAstroDbBlogRepository = async (repository: BlogRepository) => {
   const existingPosts = await repository.listAll();
 
   if (existingPosts.length > 0) {
@@ -42,18 +39,9 @@ const seedSqliteBlogRepository = async (repository: BlogRepository) => {
 };
 
 const initializeRepository = async (): Promise<BlogRepository> => {
-  if (process.env.USE_CONTENT_BLOG === "true") {
-    return new ContentCollectionBlogRepository();
-  }
-
-  try {
-    const sqliteRepository = new SqliteBlogRepository();
-    await seedSqliteBlogRepository(sqliteRepository);
-    return sqliteRepository;
-  } catch (error) {
-    console.warn("[blog] SQLite init failed, falling back to content collections.", error);
-    return new ContentCollectionBlogRepository();
-  }
+  const astroDbRepository = new AstroDbBlogRepository();
+  await seedAstroDbBlogRepository(astroDbRepository);
+  return astroDbRepository;
 };
 
 let repositoryPromise: Promise<BlogRepository> | undefined;

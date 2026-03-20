@@ -1,10 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { MediaAssets, db } from "astro:db";
 import type { APIRoute } from "astro";
 import { requireAdminApiAuth } from "@/features/admin/auth/admin-api-auth";
 import { getDictionary } from "@/features/i18n/translate";
-import { getDb } from "@/lib/db/sqlite";
 import { getUploadsDir } from "@/lib/storage/uploads";
 
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
@@ -40,8 +40,6 @@ const extensionFrom = (file: File) => {
 
   return ".jpg";
 };
-
-const insertMediaAssetSql = `INSERT INTO MEDIA_ASSETS (ID, FILENAME, MIME_TYPE, STORAGE_PATH, ALT_TEXT, WIDTH, HEIGHT, CREATED_AT) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`; // i18n-exempt
 
 export const POST: APIRoute = async (context) => {
   const authError = requireAdminApiAuth(context);
@@ -96,17 +94,13 @@ export const POST: APIRoute = async (context) => {
 
     const publicUrl = `/${relativeDir.replaceAll(path.sep, "/")}/${storageName}`;
 
-    const db = getDb();
-    db.prepare(insertMediaAssetSql).run(
+    await db.insert(MediaAssets).values({
       id,
-      storageName,
-      file.type,
-      publicUrl,
-      null,
-      null,
-      null,
-      new Date().toISOString(),
-    );
+      filename: storageName,
+      mimeType: file.type,
+      storagePath: publicUrl,
+      createdAt: new Date(),
+    });
 
     return new Response(JSON.stringify({ url: publicUrl }), {
       status: 201,

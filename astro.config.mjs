@@ -5,6 +5,8 @@ import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 
+import db from "@astrojs/db";
+
 const site = process.env.PUBLIC_SITE_URL ?? "https://example.com";
 
 export default defineConfig({
@@ -13,7 +15,7 @@ export default defineConfig({
   adapter: node({
     mode: "standalone",
   }),
-  integrations: [react(), mdx(), sitemap()],
+  integrations: [react(), mdx(), sitemap(), db()],
   vite: {
     plugins: [tailwindcss()],
   },

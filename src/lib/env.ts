@@ -8,6 +8,5 @@ export const serverEnv = {
   adminCookieName: getEnv("ADMIN_COOKIE_NAME") ?? "ikar_admin_session",
   adminSessionSecret: getEnv("ADMIN_SESSION_SECRET") ?? "change-me-session-secret",
   publicSiteUrl: getEnv("PUBLIC_SITE_URL") ?? "https://example.com",
-  databaseUrl: getEnv("DATABASE_URL"),
   uploadsDir: getEnv("UPLOADS_DIR"),
 };

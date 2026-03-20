@@ -1,22 +1,8 @@
-import { FileSubmissionRepository } from "@/features/forms/repositories/file-submission.repository";
-import { SqliteSubmissionRepository } from "@/features/forms/repositories/sqlite-submission.repository";
+import { AstroDbSubmissionRepository } from "@/features/forms/repositories/astro-db-submission.repository";
 import type { SubmissionRepository } from "@/features/forms/repositories/submission.repository";
 import { submissionSchema } from "@/features/forms/schemas/submission.schema";
 
-const createSubmissionRepository = (): SubmissionRepository => {
-  if (process.env.USE_FILE_SUBMISSIONS === "true") {
-    return new FileSubmissionRepository();
-  }
-
-  try {
-    return new SqliteSubmissionRepository();
-  } catch (error) {
-    console.warn("[submissions] SQLite init failed, falling back to file repository.", error);
-    return new FileSubmissionRepository();
-  }
-};
-
-const submissionRepository = createSubmissionRepository();
+const submissionRepository: SubmissionRepository = new AstroDbSubmissionRepository();
 
 export const submissionService = {
   listSubmissions() {

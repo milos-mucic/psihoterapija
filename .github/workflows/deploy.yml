@@ -30,6 +30,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Push Astro DB schema
+        run: npx astro db push --remote
+        env:
+          ASTRO_DB_REMOTE_URL: ${{ secrets.ASTRO_DB_REMOTE_URL }}
+          ASTRO_DB_APP_TOKEN: ${{ secrets.ASTRO_DB_APP_TOKEN }}
+
       - name: Compute vars
         id: vars
         shell: bash
@@ -70,6 +79,9 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             PUBLIC_SITE_URL=${{ vars.PUBLIC_SITE_URL || 'https://psihoterapija-ikar.rs' }}
+            ASTRO_DB_REMOTE_URL=${{ secrets.ASTRO_DB_REMOTE_URL }}
+          secrets: |
+            ASTRO_DB_APP_TOKEN=${{ secrets.ASTRO_DB_APP_TOKEN }}
 
   deploy:
     name: Deploy To Kubernetes
@@ -96,7 +108,7 @@ jobs:
           host: ${{ secrets.SERVER_HOST || '159.195.22.165' }}
           username: ${{ secrets.SERVER_USER || 'root' }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          envs: REGISTRY,IMAGE_NAME,DIGEST,SHORT_SHA,PUBLIC_SITE_URL,DATABASE_URL,UPLOADS_DIR,USE_CONTENT_BLOG,USE_FILE_SUBMISSIONS,ADMIN_PASSWORD,ADMIN_SESSION_SECRET,GHCR_USERNAME,GHCR_PAT
+          envs: REGISTRY,IMAGE_NAME,DIGEST,SHORT_SHA,PUBLIC_SITE_URL,UPLOADS_DIR,ASTRO_DB_REMOTE_URL,ASTRO_DB_APP_TOKEN,ADMIN_PASSWORD,ADMIN_SESSION_SECRET,GHCR_USERNAME,GHCR_PAT
           script: |
             set -euo pipefail
 
@@ -106,12 +118,11 @@ jobs:
 
             : "${ADMIN_PASSWORD:?Missing ADMIN_PASSWORD secret}"
             : "${ADMIN_SESSION_SECRET:?Missing ADMIN_SESSION_SECRET secret}"
+            : "${ASTRO_DB_REMOTE_URL:?Missing ASTRO_DB_REMOTE_URL secret}"
+            : "${ASTRO_DB_APP_TOKEN:?Missing ASTRO_DB_APP_TOKEN secret}"
 
             : "${PUBLIC_SITE_URL:=https://psihoterapija-ikar.rs}"
-            : "${DATABASE_URL:=file:/app/data/app.db}"
             : "${UPLOADS_DIR:=/app/data/uploads}"
-            : "${USE_CONTENT_BLOG:=false}"
-            : "${USE_FILE_SUBMISSIONS:=false}"
 
             echo "Deploying psihoterapija-ikar with image: ${FULL_IMAGE}"
 
@@ -137,14 +148,13 @@ jobs:
               --from-literal=HOST=0.0.0.0 \
               --from-literal=PORT=3000 \
               --from-literal=PUBLIC_SITE_URL="${PUBLIC_SITE_URL}" \
-              --from-literal=DATABASE_URL="${DATABASE_URL}" \
               --from-literal=UPLOADS_DIR="${UPLOADS_DIR}" \
-              --from-literal=USE_CONTENT_BLOG="${USE_CONTENT_BLOG}" \
-              --from-literal=USE_FILE_SUBMISSIONS="${USE_FILE_SUBMISSIONS}" \
               -n prod \
               --dry-run=client -o yaml | kubectl apply -f -
 
             kubectl create secret generic psihoterapija-ikar-secrets \
+              --from-literal=astro-db-remote-url="${ASTRO_DB_REMOTE_URL}" \
+              --from-literal=astro-db-app-token="${ASTRO_DB_APP_TOKEN}" \
               --from-literal=admin-password="${ADMIN_PASSWORD}" \
               --from-literal=admin-session-secret="${ADMIN_SESSION_SECRET}" \
               -n prod \
@@ -187,10 +197,9 @@ jobs:
           DIGEST: ${{ needs.build-and-push.outputs.digest }}
           SHORT_SHA: ${{ needs.build-and-push.outputs.short_sha }}
           PUBLIC_SITE_URL: ${{ vars.PUBLIC_SITE_URL }}
-          DATABASE_URL: ${{ vars.DATABASE_URL }}
           UPLOADS_DIR: ${{ vars.UPLOADS_DIR }}
-          USE_CONTENT_BLOG: ${{ vars.USE_CONTENT_BLOG }}
-          USE_FILE_SUBMISSIONS: ${{ vars.USE_FILE_SUBMISSIONS }}
+          ASTRO_DB_REMOTE_URL: ${{ secrets.ASTRO_DB_REMOTE_URL }}
+          ASTRO_DB_APP_TOKEN: ${{ secrets.ASTRO_DB_APP_TOKEN }}
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           ADMIN_SESSION_SECRET: ${{ secrets.ADMIN_SESSION_SECRET }}
           GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}

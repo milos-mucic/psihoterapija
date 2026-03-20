@@ -69,30 +69,22 @@ spec:
                   name: psihoterapija-ikar-config
                   key: PUBLIC_SITE_URL
                   optional: true
-            - name: DATABASE_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: psihoterapija-ikar-config
-                  key: DATABASE_URL
-                  optional: true
             - name: UPLOADS_DIR
               valueFrom:
                 configMapKeyRef:
                   name: psihoterapija-ikar-config
                   key: UPLOADS_DIR
                   optional: true
-            - name: USE_CONTENT_BLOG
+            - name: ASTRO_DB_REMOTE_URL
               valueFrom:
-                configMapKeyRef:
-                  name: psihoterapija-ikar-config
-                  key: USE_CONTENT_BLOG
-                  optional: true
-            - name: USE_FILE_SUBMISSIONS
+                secretKeyRef:
+                  name: psihoterapija-ikar-secrets
+                  key: astro-db-remote-url
+            - name: ASTRO_DB_APP_TOKEN
               valueFrom:
-                configMapKeyRef:
-                  name: psihoterapija-ikar-config
-                  key: USE_FILE_SUBMISSIONS
-                  optional: true
+                secretKeyRef:
+                  name: psihoterapija-ikar-secrets
+                  key: astro-db-app-token
             - name: ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
