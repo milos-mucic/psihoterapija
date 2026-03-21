@@ -33,41 +33,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Validate Astro DB secrets
-        env:
-          ASTRO_DB_REMOTE_URL: ${{ secrets.ASTRO_DB_REMOTE_URL }}
-          ASTRO_DB_APP_TOKEN: ${{ secrets.ASTRO_DB_APP_TOKEN }}
-        run: |
-          set -euo pipefail
-
-          : "${ASTRO_DB_REMOTE_URL:?Missing ASTRO_DB_REMOTE_URL secret}"
-          : "${ASTRO_DB_APP_TOKEN:?Missing ASTRO_DB_APP_TOKEN secret}"
-
-          node -e '
-            const value = process.env.ASTRO_DB_REMOTE_URL;
-            try {
-              const url = new URL(value);
-              const allowedProtocols = new Set(["libsql:", "http:", "https:", "ws:", "wss:", "file:", "memory:"]);
-              if (!allowedProtocols.has(url.protocol)) {
-                throw new Error(`Unsupported protocol: ${url.protocol}`);
-              }
-            } catch (error) {
-              console.error("Invalid ASTRO_DB_REMOTE_URL secret.");
-              console.error("Expected a libSQL-compatible URL such as:");
-              console.error("  libsql://your-database.turso.io");
-              console.error("  https://your-libsql-host");
-              console.error(`Received: ${JSON.stringify(value)}`);
-              console.error(error instanceof Error ? error.message : String(error));
-              process.exit(1);
-            }
-          '
-
-      - name: Push Astro DB schema
-        run: npx astro db push --remote
-        env:
-          ASTRO_DB_REMOTE_URL: ${{ secrets.ASTRO_DB_REMOTE_URL }}
-          ASTRO_DB_APP_TOKEN: ${{ secrets.ASTRO_DB_APP_TOKEN }}
-
       - name: Compute vars
         id: vars
         shell: bash
@@ -108,9 +73,6 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             PUBLIC_SITE_URL=${{ vars.PUBLIC_SITE_URL || 'https://psihoterapija-ikar.rs' }}
-            ASTRO_DB_REMOTE_URL=${{ secrets.ASTRO_DB_REMOTE_URL }}
-          secrets: |
-            ASTRO_DB_APP_TOKEN=${{ secrets.ASTRO_DB_APP_TOKEN }}
 
   deploy:
     name: Deploy To Kubernetes
@@ -137,7 +99,7 @@ jobs:
           host: ${{ secrets.SERVER_HOST || '159.195.22.165' }}
           username: ${{ secrets.SERVER_USER || 'root' }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          envs: REGISTRY,IMAGE_NAME,DIGEST,SHORT_SHA,PUBLIC_SITE_URL,UPLOADS_DIR,ASTRO_DB_REMOTE_URL,ASTRO_DB_APP_TOKEN,ADMIN_PASSWORD,ADMIN_SESSION_SECRET,GHCR_USERNAME,GHCR_PAT
+          envs: REGISTRY,IMAGE_NAME,DIGEST,SHORT_SHA,PUBLIC_SITE_URL,UPLOADS_DIR,GHCR_USERNAME,GHCR_PAT
           script: |
             set -euo pipefail
 
@@ -145,17 +107,21 @@ jobs:
 
             FULL_IMAGE="${REGISTRY}/${IMAGE_NAME}@${DIGEST}"
 
-            : "${ADMIN_PASSWORD:?Missing ADMIN_PASSWORD secret}"
-            : "${ADMIN_SESSION_SECRET:?Missing ADMIN_SESSION_SECRET secret}"
-            : "${ASTRO_DB_REMOTE_URL:?Missing ASTRO_DB_REMOTE_URL secret}"
-            : "${ASTRO_DB_APP_TOKEN:?Missing ASTRO_DB_APP_TOKEN secret}"
-
             : "${PUBLIC_SITE_URL:=https://psihoterapija-ikar.rs}"
             : "${UPLOADS_DIR:=/app/data/uploads}"
+            : "${RUNTIME_ENV_FILE:=/opt/psihoterapija-ikar/runtime.env}"
 
             echo "Deploying psihoterapija-ikar with image: ${FULL_IMAGE}"
 
             kubectl create namespace prod --dry-run=client -o yaml | kubectl apply -f -
+
+            if [ ! -f "${RUNTIME_ENV_FILE}" ]; then
+              echo "Missing runtime env file: ${RUNTIME_ENV_FILE}"
+              echo "Create it on the server with at least:"
+              echo "  ADMIN_PASSWORD=..."
+              echo "  ADMIN_SESSION_SECRET=..."
+              exit 1
+            fi
 
             if [ -n "${GHCR_PAT:-}" ] && [ -n "${GHCR_USERNAME:-}" ]; then
               kubectl create secret docker-registry ghcr-secret \
@@ -176,16 +142,14 @@ jobs:
               --from-literal=NODE_ENV=production \
               --from-literal=HOST=0.0.0.0 \
               --from-literal=PORT=3000 \
+              --from-literal=ASTRO_DATABASE_FILE=file:./data/astro.db \
               --from-literal=PUBLIC_SITE_URL="${PUBLIC_SITE_URL}" \
               --from-literal=UPLOADS_DIR="${UPLOADS_DIR}" \
               -n prod \
               --dry-run=client -o yaml | kubectl apply -f -
 
             kubectl create secret generic psihoterapija-ikar-secrets \
-              --from-literal=astro-db-remote-url="${ASTRO_DB_REMOTE_URL}" \
-              --from-literal=astro-db-app-token="${ASTRO_DB_APP_TOKEN}" \
-              --from-literal=admin-password="${ADMIN_PASSWORD}" \
-              --from-literal=admin-session-secret="${ADMIN_SESSION_SECRET}" \
+              --from-env-file="${RUNTIME_ENV_FILE}" \
               -n prod \
               --dry-run=client -o yaml | kubectl apply -f -
 

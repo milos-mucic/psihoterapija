@@ -9,5 +9,6 @@ data:
   NODE_ENV: "production"
   HOST: "0.0.0.0"
   PORT: "3000"
+  ASTRO_DATABASE_FILE: "file:./data/astro.db"
   PUBLIC_SITE_URL: "https://psihoterapija-ikar.rs"
   UPLOADS_DIR: "/app/data/uploads"

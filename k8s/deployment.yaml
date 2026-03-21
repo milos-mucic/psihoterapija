@@ -28,6 +28,23 @@ spec:
       securityContext:
         fsGroup: 1000
       terminationGracePeriodSeconds: 10
+      initContainers:
+        - name: init-app-data
+          image: ghcr.io/milos-mucic/psihoterapija:latest
+          imagePullPolicy: Always
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              mkdir -p /data/uploads
+              if [ ! -f /data/astro.db ]; then
+                cp /app/bootstrap/astro.db /data/astro.db
+              fi
+              chown -R 1000:1000 /data
+          volumeMounts:
+            - name: app-data
+              mountPath: /data
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -63,6 +80,12 @@ spec:
                   name: psihoterapija-ikar-config
                   key: PORT
                   optional: true
+            - name: ASTRO_DATABASE_FILE
+              valueFrom:
+                configMapKeyRef:
+                  name: psihoterapija-ikar-config
+                  key: ASTRO_DATABASE_FILE
+                  optional: true
             - name: PUBLIC_SITE_URL
               valueFrom:
                 configMapKeyRef:
@@ -75,26 +98,16 @@ spec:
                   name: psihoterapija-ikar-config
                   key: UPLOADS_DIR
                   optional: true
-            - name: ASTRO_DB_REMOTE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: psihoterapija-ikar-secrets
-                  key: astro-db-remote-url
-            - name: ASTRO_DB_APP_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: psihoterapija-ikar-secrets
-                  key: astro-db-app-token
             - name: ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: psihoterapija-ikar-secrets
-                  key: admin-password
+                  key: ADMIN_PASSWORD
             - name: ADMIN_SESSION_SECRET
               valueFrom:
                 secretKeyRef:
                   name: psihoterapija-ikar-secrets
-                  key: admin-session-secret
+                  key: ADMIN_SESSION_SECRET
           volumeMounts:
             - name: app-data
               mountPath: /app/data
