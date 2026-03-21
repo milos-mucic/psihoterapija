@@ -2,6 +2,7 @@ node_modules
 dist
 .astro
 .git
-data
+data/*
+!data/astro.db
 webflow-old
 .DS_Store
