@@ -29,14 +29,14 @@ const keywords = Array.from(keywordSet);
 const ui = dictionary.blog.index;
 ---
 
-<div class="blog-index__banner">
-  <PageBanner
-    title={dictionary.blog.title}
-    description={ui.bannerDescription}
-    theme="dark"
-    align="split"
-  />
-</div>
+<PageBanner
+  title={dictionary.blog.title}
+  description={ui.bannerDescription}
+  theme="dark"
+  align="split"
+  sectionId="blog-banner"
+  backgroundImage="/legacy/images/blog-header-hero.svg"
+/>
 
 <section class="page-section blog-index" data-blog-index>
   <div class="container">
@@ -275,18 +275,6 @@ const ui = dictionary.blog.index;
 </script>
 
 <style>
-  .blog-index__banner :global(.page-banner) {
-    min-height: clamp(20rem, 52vh, 30rem);
-    display: grid;
-    align-items: center;
-    padding: clamp(5rem, 10vh, 7rem) 0 clamp(2.4rem, 5vh, 3.6rem);
-  }
-
-  .blog-index__banner :global(.page-banner__content) {
-    align-items: center;
-    transform: translateY(-0.9rem);
-  }
-
   .blog-index {
     padding-top: 2.25rem;
   }
@@ -560,15 +548,6 @@ const ui = dictionary.blog.index;
   }
 
   @media (max-width: 780px) {
-    .blog-index__banner :global(.page-banner) {
-      min-height: clamp(13.5rem, 38vh, 18rem);
-      padding: 3.6rem 0 1.8rem;
-    }
-
-    .blog-index__banner :global(.page-banner__content) {
-      transform: none;
-    }
-
     .blog-index__list,
     .blog-index__recent-list {
       column-count: 1;

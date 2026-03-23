@@ -17,9 +17,6 @@ const content = await pageContentService.getScopePageData(locale);
   description={content.banner.description ?? dictionary.meta.psychotherapy.description}
   locale={locale}
   canonicalPath="/cir/oblast-rada/"
-  appBarTone="dark"
-  appBarOverlay={true}
-  bodyClass="therapy-subpage-route"
 >
   <ScopePage locale={locale} />
 </BaseLayout>

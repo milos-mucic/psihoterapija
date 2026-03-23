@@ -27,7 +27,7 @@ body {
 }
 
 main {
-  padding-bottom: 3rem;
+  padding-bottom: 0;
 }
 
 body:not(.home-route) main {
@@ -38,16 +38,26 @@ body.appbar-overlay-route main {
   padding-top: 0;
 }
 
-body.therapy-subpage-route .page-banner {
-  min-height: clamp(20rem, 52vh, 30rem);
+body.appbar-overlay-route .page-banner {
+  min-height: clamp(16rem, 31vh, 18rem);
   display: grid;
   align-items: center;
-  padding: clamp(5rem, 10vh, 7rem) 0 clamp(2.4rem, 5vh, 3.6rem);
+  padding: clamp(4rem, 7.8vh, 5.3rem) 0 clamp(1.7rem, 3.6vh, 2.4rem);
 }
 
-body.therapy-subpage-route .page-banner__content {
+body.appbar-overlay-route .page-banner__content {
   align-items: center;
-  transform: translateY(-0.9rem);
+}
+
+body.appbar-overlay-route .page-banner h1 {
+  font-size: clamp(1.8rem, 3.6vw, 3.25rem);
+  line-height: 1.05;
+}
+
+body.appbar-overlay-route .page-banner__description,
+body.appbar-overlay-route .page-banner__description :is(p, ul, ol, blockquote, li) {
+  font-size: clamp(0.98rem, 1.4vw, 1.08rem);
+  line-height: 1.6;
 }
 
 a {
@@ -1540,7 +1550,7 @@ body.appbar-drawer-open {
 
 .site-footer {
   padding: 0;
-  margin-top: 1rem;
+  margin-top: 0;
 }
 
 .footer-shell {
@@ -1733,13 +1743,13 @@ body.appbar-drawer-open {
     padding-top: 5.4rem;
   }
 
-  body.therapy-subpage-route .page-banner {
-    min-height: clamp(13.5rem, 38vh, 18rem);
-    padding: 3.6rem 0 1.8rem;
+  body.appbar-overlay-route .page-banner {
+    min-height: 16rem;
+    padding: 3.25rem 0 1.1rem;
   }
 
-  body.therapy-subpage-route .page-banner__content {
-    transform: none;
+  body.appbar-overlay-route .page-banner h1 {
+    font-size: clamp(1.4rem, 5.4vw, 2.1rem);
   }
 
   main {

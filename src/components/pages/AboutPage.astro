@@ -1,4 +1,5 @@
 ---
+import PageBanner from "@/components/sections/PageBanner.astro";
 import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import { blogService } from "@/features/blog/services/blog.service";
@@ -20,25 +21,7 @@ const aboutVideoEmbedSrc = videoIdMatch
 ---
 
 <div class="about-legacy">
-  <section
-    id="about-banner"
-    class="about-legacy__banner"
-    style={content.banner.backgroundImage
-      ? `--about-banner-image: url("${content.banner.backgroundImage}")`
-      : undefined}
-  >
-    <div class="about-legacy__container">
-      <div class="about-legacy__banner-grid">
-        <h1 data-reveal="up">{content.banner.title}</h1>
-        <div
-          class="about-legacy__banner-copy richtext-shell"
-          data-reveal="up"
-          style="--reveal-delay: 90ms;"
-          set:html={content.banner.description}
-        />
-      </div>
-    </div>
-  </section>
+  <PageBanner {...content.banner} sectionId="about-banner" />
 
   <section id="about-showcase" class="about-legacy__showcase">
     <div class="about-legacy__container">

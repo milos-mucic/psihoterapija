@@ -41,6 +41,7 @@
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  color: var(--white);
 }
 
 .page-banner:not(.page-banner--with-image) {
@@ -93,7 +94,12 @@
 
 .page-banner--dark h1,
 .page-banner--dark p,
-.page-banner--dark .page-banner__description :is(p, ul, ol, blockquote, li) {
+.page-banner--dark .page-banner__description,
+.page-banner--dark .page-banner__description :is(p, ul, ol, blockquote, li),
+.page-banner--with-image h1,
+.page-banner--with-image p,
+.page-banner--with-image .page-banner__description,
+.page-banner--with-image .page-banner__description :is(p, ul, ol, blockquote, li) {
   color: var(--white);
 }
 

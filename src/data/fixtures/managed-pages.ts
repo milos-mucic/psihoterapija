@@ -299,8 +299,8 @@ export const buildScopePageData = (locale: SiteLocale, content: ScopePageManaged
   banner: {
     title: content.banner.title,
     description: content.banner.description,
-    backgroundImage: content.banner.backgroundImage,
-    theme: "dark" as const,
+    backgroundImage: undefined,
+    theme: "light" as const,
     align: "split" as const,
   },
   tabs: content.tabs.map((tab) => ({
@@ -345,7 +345,7 @@ export const buildScopeDetailPageData = (
     banner: {
       title: currentTab.label,
       description: currentTab.cardCopy,
-      backgroundImage: content.banner.backgroundImage,
+      backgroundImage: undefined,
       theme: "dark" as const,
       align: "split" as const,
     },
