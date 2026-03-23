@@ -6,11 +6,12 @@ type Props = {
   intro?: string;
   items: FaqAccordionItem[];
   image?: string;
+  imageLoading?: "eager" | "lazy";
   sectionClass?: string;
   sectionId?: string;
 };
 
-const { title, intro, items, image, sectionClass, sectionId } = Astro.props;
+const { title, intro, items, image, imageLoading = "lazy", sectionClass, sectionId } = Astro.props;
 ---
 
 <section id={sectionId} class:list={["page-section", "faq-accordion-section", sectionClass]}>
@@ -19,7 +20,13 @@ const { title, intro, items, image, sectionClass, sectionId } = Astro.props;
       {
         image && (
           <div class="faq-accordion__media" data-reveal="left">
-            <img class="faq-accordion__image" src={image} alt="" loading="lazy" />
+            <img
+              class="faq-accordion__image"
+              src={image}
+              alt=""
+              loading={imageLoading}
+              data-image-component
+            />
           </div>
         )
       }

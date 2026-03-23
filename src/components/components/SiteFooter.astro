@@ -46,6 +46,9 @@ const footerSupportLinks = [
             class="footer-brand__logo"
             src="/legacy/images/Logo-White.svg"
             alt={siteConfig.name}
+            loading="lazy"
+            data-auto-loading
+            data-image-component
           />
           <div class="footer-contact-list">
             <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>
@@ -93,13 +96,42 @@ const footerSupportLinks = [
           </div>
 
           <div class="footer-gallery" aria-hidden="true">
-            {galleryImages.map((image) => <img src={image} alt="" loading="lazy" />)}
+            {
+              galleryImages.map((image) => (
+                <img src={image} alt="" loading="lazy" data-auto-loading data-image-component />
+              ))
+            }
           </div>
         </div>
       </div>
     </div>
   </div>
 </footer>
+
+<script is:inline>
+  (() => {
+    const syncFooterMediaLoading = () => {
+      document.querySelectorAll(".site-footer [data-auto-loading]").forEach((element) => {
+        if (!(element instanceof HTMLImageElement || element instanceof HTMLIFrameElement)) {
+          return;
+        }
+
+        let currentElement = element;
+        let elementYPosition = 0;
+
+        while (currentElement) {
+          elementYPosition += currentElement.offsetTop;
+          currentElement = currentElement.offsetParent;
+        }
+
+        element.loading = elementYPosition <= window.innerHeight ? "eager" : "lazy";
+      });
+    };
+
+    syncFooterMediaLoading();
+    document.addEventListener("astro:page-load", syncFooterMediaLoading);
+  })();
+</script>
 
 <style>
   .site-footer {

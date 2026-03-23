@@ -74,11 +74,12 @@ const aboutVideoEmbedSrc = videoIdMatch
                 <img
                   src={card.image}
                   alt={card.title}
-                  loading="lazy"
+                  loading="eager"
                   class="about-legacy__service-icon"
+                  data-image-component
                 />
                 <a href={card.href} class="service-name-wrapper">
-                  <h5 class="service-name">{card.title}</h5>
+                  <h3 class="service-name">{card.title}</h3>
                 </a>
                 <div class="richtext-shell" set:html={card.copy} />
               </article>
@@ -133,6 +134,7 @@ const aboutVideoEmbedSrc = videoIdMatch
                     src={post.coverImage ?? "/legacy/images/Blog-1_1Blog 1.webp"}
                     alt={post.title}
                     loading="lazy"
+                    data-image-component
                   />
                 </a>
                 <div class="home-blog-card__body">
@@ -199,8 +201,7 @@ const aboutVideoEmbedSrc = videoIdMatch
       <iframe
         data-about-video-iframe
         title={content.showcaseTitle}
-        allow="autoplay; fullscreen; picture-in-picture"
-        allowfullscreen></iframe>
+        allow="autoplay; fullscreen; picture-in-picture"></iframe>
     </div>
   </div>
 </dialog>

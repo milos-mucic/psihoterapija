@@ -54,6 +54,7 @@ const homeVideoSrc = youtubeVideoId
         src={content.about.image}
         alt={content.about.title}
         loading="lazy"
+        data-image-component
         data-reveal="left"
       />
       <div class="home-about__content" data-reveal="right" style="--reveal-delay: 90ms;">
@@ -87,6 +88,7 @@ const homeVideoSrc = youtubeVideoId
                   src={item.image}
                   alt=""
                   loading="lazy"
+                  data-image-component
                   aria-hidden="true"
                 />
                 <div class="home-service-card__body">
@@ -122,11 +124,17 @@ const homeVideoSrc = youtubeVideoId
               style={`--reveal-delay: ${index * 90}ms;`}
             >
               <a href={item.href} class="link-block">
-                <img class="service-img" src={item.image} alt={item.title} loading="lazy" />
+                <img
+                  class="service-img"
+                  src={item.image}
+                  alt={item.title}
+                  loading="lazy"
+                  data-image-component
+                />
               </a>
               <div class="info-collection-wrapper">
                 <a href={item.href}>
-                  <h5 class="service-name">{item.title}</h5>
+                  <h3 class="service-name">{item.title}</h3>
                 </a>
                 <div class="mt-0 home-richtext" set:html={item.copy} />
                 <div class="collection-link-wrapper">
@@ -214,7 +222,7 @@ const homeVideoSrc = youtubeVideoId
           data-reveal="grow"
           style="--reveal-delay: 180ms;"
         >
-          <img src={content.reasons.videoImage} alt="" loading="lazy" />
+          <img src={content.reasons.videoImage} alt="" loading="lazy" data-image-component />
           <span class="home-video-card__badge">{dictionary.common.play}</span>
           <span class="home-video-card__label">{content.reasons.videoLabel}</span>
         </button>
@@ -244,8 +252,7 @@ const homeVideoSrc = youtubeVideoId
       <iframe
         data-home-video-iframe
         title={content.reasons.videoLabel}
-        allow="autoplay; fullscreen; picture-in-picture"
-        allowfullscreen></iframe>
+        allow="autoplay; fullscreen; picture-in-picture"></iframe>
       <video data-home-video-player controls playsinline hidden>
         <track kind="captions" />
       </video>
@@ -379,6 +386,7 @@ const homeVideoSrc = youtubeVideoId
                   src={post.coverImage ?? "/legacy/images/Blog-1_1Blog 1.webp"}
                   alt={post.title}
                   loading="lazy"
+                  data-image-component
                 />
               </a>
               <div class="home-blog-card__body">

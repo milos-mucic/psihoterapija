@@ -69,6 +69,7 @@ const therapyLinks = [
                   <a
                     class:list={["appbar__dropdown-link", isActivePath(item.href) && "is-active"]}
                     href={item.href}
+                    aria-label={item.label}
                   >
                     {item.label}
                   </a>
@@ -88,6 +89,7 @@ const therapyLinks = [
                   <a
                     class:list={["appbar__dropdown-link", isActivePath(item.href) && "is-active"]}
                     href={item.href}
+                    aria-label={item.label}
                   >
                     {item.label}
                   </a>

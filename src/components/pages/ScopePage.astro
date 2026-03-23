@@ -14,7 +14,6 @@ const { locale } = Astro.props;
 const content = await pageContentService.getScopePageData(locale);
 const dictionary = getDictionary(locale);
 const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
-const detailCardLabel = locale === "sr-cyrl" ? "Погледај страницу" : "Pogledaj stranicu";
 ---
 
 <div id="scope-banner" class="scope-page__banner">
@@ -24,6 +23,7 @@ const detailCardLabel = locale === "sr-cyrl" ? "Погледај страниц�
 <section id="scope-tabs" class="page-section scope-page__tabs-section">
   <div class="container">
     <div class="scope-page__tabs" data-scope-tabs>
+      <h2 class="scope-page__section-heading">{content.scopeTitle}</h2>
       <div class="scope-page__tabs-menu" role="tablist" aria-label={content.scopeTitle}>
         {
           content.tabs.map((tab, index) => (
@@ -61,12 +61,18 @@ const detailCardLabel = locale === "sr-cyrl" ? "Погледај страниц�
               <article class="scope-page__tab-item" data-reveal="up">
                 <a class="scope-page__tab-link" href={tab.href}>
                   <div class="scope-page__tab-item-head">
-                    <img class="scope-page__tab-item-icon" src={tab.icon} alt="" loading="lazy" />
+                    <img
+                      class="scope-page__tab-item-icon"
+                      src={tab.icon}
+                      alt=""
+                      loading="eager"
+                      data-image-component
+                    />
                     <h3 class="scope-page__tab-item-title">{tab.cardTitle}</h3>
                   </div>
                   <div class="scope-page__tab-item-copy richtext-shell" set:html={tab.cardCopy} />
                   <span class="scope-page__tab-item-link">
-                    {detailCardLabel}
+                    {dictionary.common.viewPage}
                     <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
                       <path
                         d="M7 17L17 7M9 7H17V15"
@@ -90,7 +96,13 @@ const detailCardLabel = locale === "sr-cyrl" ? "Погледај страниц�
 <section id="scope-focus" class="page-section scope-page__focus-section">
   <div class="container">
     <div class="scope-page__focus-grid">
-      <img src={content.focusImage} alt="" class="scope-page__focus-image" data-reveal="left" />
+      <img
+        src={content.focusImage}
+        alt=""
+        class="scope-page__focus-image"
+        data-image-component
+        data-reveal="left"
+      />
       <div class="scope-page__focus-content" data-reveal="right" style="--reveal-delay: 90ms;">
         <h2>{content.focusTitle}</h2>
         <div class="scope-page__focus-copy richtext-shell" set:html={content.focusCopy} />
@@ -130,6 +142,7 @@ const detailCardLabel = locale === "sr-cyrl" ? "Погледај страниц�
                   src={post.coverImage ?? "/legacy/images/Blog-1_1Blog 1.webp"}
                   alt={post.title}
                   loading="lazy"
+                  data-image-component
                 />
               </a>
               <div class="home-blog-card__body">
@@ -226,6 +239,18 @@ const detailCardLabel = locale === "sr-cyrl" ? "Погледај страниц�
 </script>
 
 <style>
+  .scope-page__section-heading {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
   .scope-page__tabs {
     width: 100%;
   }

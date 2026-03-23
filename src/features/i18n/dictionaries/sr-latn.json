@@ -74,7 +74,19 @@
     "description": "Tekstovi iz oblasti psihologije i psihoterapije dostupni su kroz naš blog.",
     "recentLabel": "Najnoviji tekstovi",
     "readMoreLabel": "Pročitajte tekst",
-    "defaultTag": "Psihoterapija"
+    "defaultTag": "Psihoterapija",
+    "index": {
+      "bannerDescription": "U ovoj sekciji možete pronaći psihološke tekstove o temama koje su Vam interesantne, napisane iz naše perspektive.",
+      "allPosts": "Svi tekstovi",
+      "postsLabel": "teksta",
+      "searchTitle": "Pretraga",
+      "searchPlaceholder": "Unesite ključnu reč",
+      "searchAction": "Pretraži",
+      "recentTitle": "Najskoriji postovi",
+      "keywordsTitle": "Ključne reči",
+      "allKeywords": "Sve",
+      "noResults": "Nema tekstova za izabrani keyword."
+    }
   },
   "forms": {
     "name": "Ime i prezime",
@@ -99,7 +111,8 @@
     "play": "Play",
     "cancel": "Odustani",
     "close": "Zatvori",
-    "officeRoom": "Prostorija"
+    "officeRoom": "Prostorija",
+    "viewPage": "Pogledaj stranicu"
   },
   "footer": {
     "contactEyebrow": "Kontakt",

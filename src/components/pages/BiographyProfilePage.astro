@@ -24,7 +24,12 @@ if (!content) {
   <div class="container">
     <div class="biography-profile-page__grid">
       <div class="biography-profile-page__media" data-reveal="left">
-        <img src={content.profile.image} alt={content.profile.title} loading="lazy" />
+        <img
+          src={content.profile.image}
+          alt={content.profile.title}
+          loading="eager"
+          data-image-component
+        />
       </div>
 
       <div class="biography-profile-page__copy" data-reveal="right" style="--reveal-delay: 90ms;">
@@ -76,7 +81,7 @@ if (!content) {
               data-reveal="up"
               style={`--reveal-delay: ${index * 70}ms;`}
             >
-              <img src={profile.image} alt={profile.title} loading="lazy" />
+              <img src={profile.image} alt={profile.title} loading="eager" data-image-component />
               <p class="biography-profile-page__related-role">{profile.role}</p>
               <h3>{profile.title}</h3>
               <div class="richtext-shell" set:html={profile.summary} />

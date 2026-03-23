@@ -74,7 +74,19 @@
     "description": "Текстови из области психологије и психотерапије доступни су кроз наш блог.",
     "recentLabel": "Најновији текстови",
     "readMoreLabel": "Прочитајте текст",
-    "defaultTag": "Психотерапија"
+    "defaultTag": "Психотерапија",
+    "index": {
+      "bannerDescription": "У овој секцији можете пронаћи психолошке текстове о темама које су Вам интересантне, написане из наше перспективе.",
+      "allPosts": "Сви текстови",
+      "postsLabel": "текста",
+      "searchTitle": "Претрага",
+      "searchPlaceholder": "Унесите кључну реч",
+      "searchAction": "Претражи",
+      "recentTitle": "Најскорији постови",
+      "keywordsTitle": "Кључне речи",
+      "allKeywords": "Све",
+      "noResults": "Нема текстова за изабрани keyword."
+    }
   },
   "forms": {
     "name": "Име и презиме",
@@ -99,7 +111,8 @@
     "play": "Play",
     "cancel": "Одустани",
     "close": "Затвори",
-    "officeRoom": "Просторија"
+    "officeRoom": "Просторија",
+    "viewPage": "Погледај страницу"
   },
   "footer": {
     "contactEyebrow": "Контакт",

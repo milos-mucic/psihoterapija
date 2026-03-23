@@ -630,8 +630,8 @@ function ToolbarPlugin({
       <button
         className={`admin-rtf__button${canUndo ? "" : " is-disabled"}`}
         type="button"
-        aria-label={labels.undo ?? "Undo"}
-        title={labels.undo ?? "Undo"}
+        aria-label={labels.undo ?? "Poništi"}
+        title={labels.undo ?? "Poništi"}
         disabled={!canUndo}
         onClick={() => {
           editor.dispatchCommand(UNDO_COMMAND, undefined);
@@ -643,8 +643,8 @@ function ToolbarPlugin({
       <button
         className={`admin-rtf__button${canRedo ? "" : " is-disabled"}`}
         type="button"
-        aria-label={labels.redo ?? "Redo"}
-        title={labels.redo ?? "Redo"}
+        aria-label={labels.redo ?? "Ponovi"}
+        title={labels.redo ?? "Ponovi"}
         disabled={!canRedo}
         onClick={() => {
           editor.dispatchCommand(REDO_COMMAND, undefined);

@@ -43,7 +43,7 @@ const content = await pageContentService.getBiographyPageData(locale);
               style={`--reveal-delay: ${index * 90}ms;`}
             >
               <div class="biography-page__card-media">
-                <img src={card.image} alt={card.title} loading="lazy" />
+                <img src={card.image} alt={card.title} loading="eager" data-image-component />
               </div>
               <div class="biography-page__card-body">
                 <p class="biography-page__role">{card.role}</p>
@@ -69,7 +69,8 @@ const content = await pageContentService.getBiographyPageData(locale);
           class="biography-page__approach-image"
           src={content.approachImage}
           alt={content.approachTitle}
-          loading="lazy"
+          loading="eager"
+          data-image-component
           data-reveal="left"
         />
         <div

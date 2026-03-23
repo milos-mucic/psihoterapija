@@ -10,6 +10,8 @@ const exemptMarker = "i18n-exempt";
 const ignoredPaths = [
   `${path.sep}src${path.sep}features${path.sep}i18n${path.sep}dictionaries${path.sep}`,
   `${path.sep}src${path.sep}content${path.sep}`,
+  `${path.sep}src${path.sep}components${path.sep}components${path.sep}Admin`,
+  `${path.sep}src${path.sep}pages${path.sep}studio${path.sep}`,
 ];
 
 const userFacingAttributeNames = new Set(["aria-label", "title", "placeholder", "alt", "label"]);

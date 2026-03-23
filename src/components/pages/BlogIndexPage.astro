@@ -26,41 +26,13 @@ posts.forEach((post) => {
 });
 
 const keywords = Array.from(keywordSet);
-const bannerDescription =
-  locale === "sr-cyrl"
-    ? "У овој секцији можете пронаћи психолошке текстове о темама које су Вам интересантне, написане из наше перспективе."
-    : "U ovoj sekciji možete pronaći psihološke tekstove o temama koje su Vam interesantne, napisane iz naše perspektive.";
-
-const ui =
-  locale === "sr-cyrl"
-    ? {
-        allPosts: "Сви текстови",
-        postsLabel: "текста",
-        searchTitle: "Претрага",
-        searchPlaceholder: "Унесите кључну реч",
-        searchAction: "Претражи",
-        recentTitle: "Најскорији постови",
-        keywordsTitle: "Кључне речи",
-        allKeywords: "Све",
-        noResults: "Нема текстова за изабрани keyword.",
-      }
-    : {
-        allPosts: "Svi tekstovi",
-        postsLabel: "teksta",
-        searchTitle: "Pretraga",
-        searchPlaceholder: "Unesite ključnu reč",
-        searchAction: "Pretraži",
-        recentTitle: "Najskoriji postovi",
-        keywordsTitle: "Ključne reči",
-        allKeywords: "Sve",
-        noResults: "Nema tekstova za izabrani keyword.",
-      };
+const ui = dictionary.blog.index;
 ---
 
 <div class="blog-index__banner">
   <PageBanner
     title={dictionary.blog.title}
-    description={bannerDescription}
+    description={ui.bannerDescription}
     theme="dark"
     align="split"
   />
@@ -103,7 +75,8 @@ const ui =
                       class="blog-index__card-image"
                       src={post.coverImage ?? "/legacy/images/Blog-1_1Blog 1.webp"}
                       alt={post.title}
-                      loading="lazy"
+                      loading={index < 3 ? "eager" : "lazy"}
+                      data-image-component
                     />
                   </a>
 
@@ -173,7 +146,8 @@ const ui =
                       class="blog-index__recent-image"
                       src={post.coverImage ?? "/legacy/images/Blog-1_1Blog 1.webp"}
                       alt={post.title}
-                      loading="lazy"
+                      loading="eager"
+                      data-image-component
                     />
                   </a>
                   <div class="blog-index__recent-copy">

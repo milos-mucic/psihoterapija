@@ -59,8 +59,15 @@ const initialAppBarTone = appBarTone ?? derivedAppBarTone;
           }
 
           window.scrollTo(0, 0);
-          document.documentElement.scrollTop = 0;
-          document.body.scrollTop = 0;
+          const root = document.documentElement;
+
+          if (root) {
+            root.scrollTop = 0;
+          }
+
+          if (document.body) {
+            document.body.scrollTop = 0;
+          }
         };
 
         resetScroll();
