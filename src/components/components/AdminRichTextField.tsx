@@ -1032,8 +1032,7 @@ export function AdminRichTextField({
               const root = $getRoot();
 
               root.clear();
-              root.select();
-              $insertNodes(nodes);
+              root.append(...nodes);
 
               if (root.getChildrenSize() === 0) {
                 root.append($createParagraphNode());

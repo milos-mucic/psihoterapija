@@ -55,7 +55,11 @@ const { title, intro, items, image, sectionClass, sectionId } = Astro.props;
                 </button>
                 <div class="faq-item__body" data-accordion-body hidden={index !== 0}>
                   <div class="faq-item__body-inner">
-                    {item.answerHtml ? <div set:html={item.answerHtml} /> : <p>{item.answer}</p>}
+                    {item.answerHtml ? (
+                      <div class="richtext-shell" set:html={item.answerHtml} />
+                    ) : (
+                      <p>{item.answer}</p>
+                    )}
                   </div>
                 </div>
               </article>

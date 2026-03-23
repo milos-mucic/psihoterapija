@@ -31,7 +31,7 @@ const aboutVideoEmbedSrc = videoIdMatch
       <div class="about-legacy__banner-grid">
         <h1 data-reveal="up">{content.banner.title}</h1>
         <div
-          class="about-legacy__banner-copy"
+          class="about-legacy__banner-copy richtext-shell"
           data-reveal="up"
           style="--reveal-delay: 90ms;"
           set:html={content.banner.description}
@@ -80,7 +80,7 @@ const aboutVideoEmbedSrc = videoIdMatch
                 <a href={card.href} class="service-name-wrapper">
                   <h5 class="service-name">{card.title}</h5>
                 </a>
-                <div set:html={card.copy} />
+                <div class="richtext-shell" set:html={card.copy} />
               </article>
             ))
           }
@@ -94,7 +94,7 @@ const aboutVideoEmbedSrc = videoIdMatch
       <div class="about-legacy__split">
         <div class="about-legacy__copy" data-reveal="up">
           <h2>{content.ideaTitle}</h2>
-          <div class="about-legacy__rich-text" set:html={content.ideaHtml} />
+          <div class="about-legacy__rich-text richtext-shell" set:html={content.ideaHtml} />
         </div>
 
         <aside class="about-legacy__focus-card" data-reveal="right">
@@ -298,6 +298,11 @@ const aboutVideoEmbedSrc = videoIdMatch
     color: var(--white);
     font-size: 1.25rem;
     line-height: 1.5;
+  }
+
+  .about-legacy__banner-copy,
+  .about-legacy__banner-copy :global(*) {
+    color: var(--white);
   }
 
   .about-legacy__showcase {
@@ -752,7 +757,7 @@ const aboutVideoEmbedSrc = videoIdMatch
 
   @media (max-width: 767px) {
     .about-legacy__banner {
-      padding: 7.75rem 0 2.25rem;
+      padding: 5.8rem 0 2rem;
     }
 
     .about-legacy__showcase {

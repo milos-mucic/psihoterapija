@@ -7,6 +7,7 @@ import AdminLayout from "@/components/components/AdminLayout.astro";
 const dictionary = getDictionary("sr-latn");
 const posts = await blogService.listAllPosts();
 const params = Astro.url.searchParams;
+const archived = params.get("archived") === "1";
 const deleted = params.get("deleted") === "1";
 const error = params.get("error");
 ---
@@ -14,7 +15,11 @@ const error = params.get("error");
 <AdminLayout title={dictionary.admin.dashboard.blogManagementTitle}>
   <div class="admin-grid">
     {
-      deleted ? (
+      archived ? (
+        <p class="admin-status" data-tone="success">
+          {dictionary.admin.blogMessages.archived}
+        </p>
+      ) : deleted ? (
         <p class="admin-status" data-tone="success">
           {dictionary.admin.blogMessages.deleted}
         </p>
@@ -47,7 +52,7 @@ const error = params.get("error");
             <th>{dictionary.admin.blogIndex.headers.locale}</th>
             <th>{dictionary.admin.blogIndex.headers.status}</th>
             <th>{dictionary.admin.blogIndex.headers.date}</th>
-            <th></th>
+            <th class="admin-table__actions">{dictionary.admin.blogIndex.headers.actions}</th>
           </tr>
         </thead>
         <tbody>
@@ -57,19 +62,181 @@ const error = params.get("error");
                 <td colspan="5">{dictionary.admin.blogIndex.empty}</td>
               </tr>
             ) : (
-              posts.map((post) => (
-                <tr>
-                  <td>{post.title}</td>
-                  <td>{post.locale}</td>
-                  <td>{post.status}</td>
-                  <td>{post.publishedAt.toLocaleDateString("sr-RS")}</td>
-                  <td>
-                    <a href={`${adminConfig.basePath}/blog/${post.id}/edit/`}>
-                      {dictionary.admin.blogIndex.headers.open}
-                    </a>
-                  </td>
-                </tr>
-              ))
+              posts.map((post) => {
+                const publicHref =
+                  post.locale === "sr-cyrl" ? `/cir/blog/${post.slug}/` : `/blog/${post.slug}/`;
+                const canView = post.status === "published";
+                const canArchive = post.status !== "archived";
+
+                return (
+                  <tr>
+                    <td>{post.title}</td>
+                    <td>{post.locale}</td>
+                    <td>{post.status}</td>
+                    <td>{post.publishedAt.toLocaleDateString("sr-RS")}</td>
+                    <td class="admin-table__actions-cell">
+                      <div class="admin-quick-actions">
+                        {canView ? (
+                          <a
+                            class="admin-icon-button"
+                            href={publicHref}
+                            target="_blank"
+                            rel="noreferrer"
+                            aria-label={dictionary.admin.blogIndex.actions.view}
+                            title={dictionary.admin.blogIndex.actions.view}
+                          >
+                            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                              <path
+                                d="M2.75 12C4.97 7.83 8.16 5.75 12 5.75S19.03 7.83 21.25 12C19.03 16.17 15.84 18.25 12 18.25S4.97 16.17 2.75 12Z"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              />
+                              <circle
+                                cx="12"
+                                cy="12"
+                                r="2.65"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                              />
+                            </svg>
+                          </a>
+                        ) : (
+                          <span
+                            class="admin-icon-button is-disabled"
+                            aria-label={dictionary.admin.blogIndex.actions.unavailable}
+                            title={dictionary.admin.blogIndex.actions.unavailable}
+                          >
+                            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                              <path
+                                d="M2.75 12C4.97 7.83 8.16 5.75 12 5.75S19.03 7.83 21.25 12C19.03 16.17 15.84 18.25 12 18.25S4.97 16.17 2.75 12Z"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              />
+                              <circle
+                                cx="12"
+                                cy="12"
+                                r="2.65"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                              />
+                            </svg>
+                          </span>
+                        )}
+
+                        <a
+                          class="admin-icon-button"
+                          href={`${adminConfig.basePath}/blog/${post.id}/edit/`}
+                          aria-label={dictionary.admin.blogIndex.actions.edit}
+                          title={dictionary.admin.blogIndex.actions.edit}
+                        >
+                          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                            <path
+                              d="M4.75 19.25 8.8 18.33l8.74-8.74a1.9 1.9 0 0 0 0-2.68l-.45-.45a1.9 1.9 0 0 0-2.68 0l-8.74 8.74-.92 4.05Z"
+                              stroke="currentColor"
+                              stroke-width="1.7"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                            <path
+                              d="m13.25 7.63 3.12 3.12"
+                              stroke="currentColor"
+                              stroke-width="1.7"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
+                        </a>
+
+                        {canArchive ? (
+                          <form
+                            id={`archive-form-${post.id}`}
+                            method="post"
+                            action={`/api/admin/blog/${post.id}/archive`}
+                          >
+                            <button
+                              class="admin-icon-button"
+                              type="button"
+                              data-admin-archive-trigger
+                              data-admin-form-id={`archive-form-${post.id}`}
+                              data-admin-post-title={post.title}
+                              aria-label={dictionary.admin.blogIndex.actions.archive}
+                              title={dictionary.admin.blogIndex.actions.archive}
+                            >
+                              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                                <path
+                                  d="M4.75 6.75h14.5v3.5H4.75z"
+                                  stroke="currentColor"
+                                  stroke-width="1.7"
+                                  stroke-linejoin="round"
+                                />
+                                <path
+                                  d="M6.75 10.25v7a2 2 0 0 0 2 2h6.5a2 2 0 0 0 2-2v-7"
+                                  stroke="currentColor"
+                                  stroke-width="1.7"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                />
+                                <path
+                                  d="M12 12v4.5"
+                                  stroke="currentColor"
+                                  stroke-width="1.7"
+                                  stroke-linecap="round"
+                                />
+                                <path
+                                  d="m10.25 14.25 1.75 2 1.75-2"
+                                  stroke="currentColor"
+                                  stroke-width="1.7"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                />
+                              </svg>
+                            </button>
+                          </form>
+                        ) : (
+                          <span
+                            class="admin-icon-button is-disabled"
+                            aria-label={dictionary.admin.blogIndex.actions.archived}
+                            title={dictionary.admin.blogIndex.actions.archived}
+                          >
+                            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                              <path
+                                d="M4.75 6.75h14.5v3.5H4.75z"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linejoin="round"
+                              />
+                              <path
+                                d="M6.75 10.25v7a2 2 0 0 0 2 2h6.5a2 2 0 0 0 2-2v-7"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              />
+                              <path
+                                d="M12 12v4.5"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linecap="round"
+                              />
+                              <path
+                                d="m10.25 14.25 1.75 2 1.75-2"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              />
+                            </svg>
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
             )
           }
         </tbody>
@@ -77,3 +244,146 @@ const error = params.get("error");
     </div>
   </div>
 </AdminLayout>
+
+<dialog class="admin-confirm-dialog" data-admin-archive-dialog>
+  <div class="admin-confirm-dialog__surface">
+    <div class="page-grid">
+      <h2 class="admin-confirm-dialog__title">{dictionary.admin.blogIndex.archiveConfirm}</h2>
+      <p class="admin-confirm-dialog__meta" data-admin-archive-title></p>
+    </div>
+    <div class="admin-confirm-dialog__actions">
+      <button type="button" class="button-secondary" data-admin-archive-cancel>
+        {dictionary.common.cancel}
+      </button>
+      <button type="button" class="button-primary" data-admin-archive-confirm>
+        {dictionary.admin.blogIndex.actions.archive}
+      </button>
+    </div>
+  </div>
+</dialog>
+
+<script is:inline>
+  (() => {
+    const setupArchiveDialog = () => {
+      const dialog = document.querySelector("[data-admin-archive-dialog]");
+      const title = document.querySelector("[data-admin-archive-title]");
+      const cancelButton = document.querySelector("[data-admin-archive-cancel]");
+      const confirmButton = document.querySelector("[data-admin-archive-confirm]");
+      const triggers = document.querySelectorAll("[data-admin-archive-trigger]");
+
+      if (
+        !(dialog instanceof HTMLDialogElement) ||
+        !(title instanceof HTMLElement) ||
+        !(cancelButton instanceof HTMLButtonElement) ||
+        !(confirmButton instanceof HTMLButtonElement) ||
+        triggers.length === 0 ||
+        dialog.dataset.bound === "true"
+      ) {
+        return;
+      }
+
+      let activeForm = null;
+
+      const closeDialog = () => {
+        dialog.close();
+        activeForm = null;
+      };
+
+      triggers.forEach((trigger) => {
+        if (!(trigger instanceof HTMLButtonElement)) return;
+
+        trigger.addEventListener("click", () => {
+          const formId = trigger.dataset.adminFormId;
+          const postTitle = trigger.dataset.adminPostTitle ?? "";
+
+          if (!formId) return;
+
+          const form = document.getElementById(formId);
+
+          if (!(form instanceof HTMLFormElement)) return;
+
+          activeForm = form;
+          title.textContent = postTitle;
+          dialog.showModal();
+        });
+      });
+
+      cancelButton.addEventListener("click", closeDialog);
+
+      confirmButton.addEventListener("click", () => {
+        if (activeForm instanceof HTMLFormElement) {
+          activeForm.requestSubmit();
+        }
+
+        closeDialog();
+      });
+
+      dialog.addEventListener("click", (event) => {
+        if (event.target === dialog) {
+          closeDialog();
+        }
+      });
+
+      dialog.dataset.bound = "true";
+    };
+
+    setupArchiveDialog();
+    document.addEventListener("astro:page-load", setupArchiveDialog);
+  })();
+</script>
+
+<style>
+  .admin-quick-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.55rem;
+  }
+
+  .admin-quick-actions form {
+    margin: 0;
+  }
+
+  .admin-icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.35rem;
+    height: 2.35rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--line) 80%, white 20%);
+    background: color-mix(in srgb, var(--surface) 86%, white 14%);
+    color: var(--foreground);
+    text-decoration: none;
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+    transition:
+      transform 150ms ease,
+      border-color 150ms ease,
+      background-color 150ms ease,
+      color 150ms ease;
+    cursor: pointer;
+    font: inherit;
+  }
+
+  .admin-icon-button svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .admin-icon-button:hover {
+    transform: translateY(-1px);
+    border-color: color-mix(in srgb, var(--accent) 42%, var(--line) 58%);
+    background: color-mix(in srgb, var(--surface-soft) 65%, white 35%);
+    color: var(--accent-strong);
+  }
+
+  .admin-icon-button:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--accent) 60%, white 40%);
+    outline-offset: 2px;
+  }
+
+  .admin-icon-button.is-disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+</style>

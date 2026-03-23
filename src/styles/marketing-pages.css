@@ -666,7 +666,7 @@
 
 @media (max-width: 720px) {
   .page-banner {
-    padding-top: 3.9rem;
+    padding: 2.8rem 0 1.7rem;
   }
 
   .page-section {

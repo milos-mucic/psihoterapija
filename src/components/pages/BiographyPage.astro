@@ -30,7 +30,7 @@ const content = await pageContentService.getBiographyPageData(locale);
     <div class="container">
       <header class="page-section__header biography-page__header" data-reveal="up">
         <h2>{content.cardsTitle}</h2>
-        <div class="biography-page__richtext" set:html={content.cardsCopy} />
+        <div class="biography-page__richtext richtext-shell" set:html={content.cardsCopy} />
       </header>
 
       <div class="biography-page__cards">
@@ -48,7 +48,7 @@ const content = await pageContentService.getBiographyPageData(locale);
               <div class="biography-page__card-body">
                 <p class="biography-page__role">{card.role}</p>
                 <h3>{card.title}</h3>
-                <div class="biography-page__richtext" set:html={card.summary} />
+                <div class="biography-page__richtext richtext-shell" set:html={card.summary} />
                 <ul class="biography-page__tags">
                   {card.highlights.map((tag) => (
                     <li>{tag}</li>
@@ -78,7 +78,7 @@ const content = await pageContentService.getBiographyPageData(locale);
           style="--reveal-delay: 90ms;"
         >
           <h2>{content.approachTitle}</h2>
-          <div class="biography-page__richtext" set:html={content.approachCopy} />
+          <div class="biography-page__richtext richtext-shell" set:html={content.approachCopy} />
           <ul class="home-list biography-page__list">
             {content.approachPoints.map((point) => <li>{point}</li>)}
           </ul>

@@ -1,4 +1,5 @@
-.prose-shell {
+.prose-shell,
+.richtext-shell {
   font-size: 1.05rem;
   line-height: 1.85;
   color: var(--foreground);
@@ -6,7 +7,10 @@
 
 .prose-shell h2,
 .prose-shell h3,
-.prose-shell h4 {
+.prose-shell h4,
+.richtext-shell h2,
+.richtext-shell h3,
+.richtext-shell h4 {
   color: var(--foreground);
   font-family: var(--font-display);
   line-height: 1.1;
@@ -14,7 +18,10 @@
 
 .prose-shell p,
 .prose-shell ul,
-.prose-shell ol {
+.prose-shell ol,
+.richtext-shell p,
+.richtext-shell ul,
+.richtext-shell ol {
   color: var(--muted);
 }
 
@@ -24,16 +31,48 @@
 .prose-shell blockquote,
 .prose-shell h2,
 .prose-shell h3,
-.prose-shell h4 {
+.prose-shell h4,
+.richtext-shell p,
+.richtext-shell ul,
+.richtext-shell ol,
+.richtext-shell blockquote,
+.richtext-shell h2,
+.richtext-shell h3,
+.richtext-shell h4 {
   margin: 0 0 1.1rem;
 }
 
 .prose-shell ul,
-.prose-shell ol {
+.prose-shell ol,
+.richtext-shell ul,
+.richtext-shell ol {
   padding-left: 1.2rem;
 }
 
-.prose-shell blockquote {
+.prose-shell ul {
+  list-style: disc;
+}
+
+.prose-shell ol {
+  list-style: decimal;
+}
+
+.richtext-shell ul {
+  list-style: disc;
+}
+
+.richtext-shell ol {
+  list-style: decimal;
+}
+
+.prose-shell li,
+.richtext-shell li {
+  display: list-item;
+  line-height: 1.75;
+}
+
+.prose-shell blockquote,
+.richtext-shell blockquote {
   margin: 2rem 0;
   padding: 1.4rem 1.5rem;
   border-left: 4px solid var(--accent);
@@ -42,12 +81,14 @@
   color: var(--foreground);
 }
 
-.prose-shell a {
+.prose-shell a,
+.richtext-shell a {
   color: var(--accent-strong);
   text-decoration: underline;
 }
 
-.prose-shell img {
+.prose-shell img,
+.richtext-shell img {
   width: 100%;
   height: auto;
   border-radius: 14px;

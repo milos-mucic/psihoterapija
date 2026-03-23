@@ -31,7 +31,7 @@ const dictionary = getDictionary(locale);
     <div class="home-booking faq-page__booking-grid">
       <div class="home-booking__intro" data-reveal="up">
         <h2>{content.bookingTitle}</h2>
-        <div class="faq-page__booking-copy" set:html={content.bookingCopy} />
+        <div class="faq-page__booking-copy richtext-shell" set:html={content.bookingCopy} />
         <div class="home-booking__formats">
           {content.formats.map((format) => <span class="home-pill">{format}</span>)}
         </div>
@@ -95,6 +95,11 @@ const dictionary = getDictionary(locale);
   }
 
   @media (max-width: 720px) {
+    .faq-page__banner :global(.page-banner) {
+      min-height: clamp(13.5rem, 38vh, 18rem);
+      padding: 3.6rem 0 1.8rem;
+    }
+
     .faq-page__banner :global(.page-banner__content) {
       transform: none;
     }

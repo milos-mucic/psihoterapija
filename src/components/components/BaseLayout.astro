@@ -51,6 +51,24 @@ const initialAppBarTone = appBarTone ?? derivedAppBarTone;
   <head>
     <SeoHead title={title} description={description} canonicalPath={canonicalPath} />
     <ClientRouter />
+    <script is:inline>
+      (() => {
+        const resetScroll = () => {
+          if ("scrollRestoration" in history) {
+            history.scrollRestoration = "manual";
+          }
+
+          window.scrollTo(0, 0);
+          document.documentElement.scrollTop = 0;
+          document.body.scrollTop = 0;
+        };
+
+        resetScroll();
+        window.addEventListener("pageshow", resetScroll);
+        document.addEventListener("astro:after-swap", resetScroll);
+        document.addEventListener("astro:page-load", resetScroll);
+      })();
+    </script>
     <slot name="head" />
   </head>
   <body

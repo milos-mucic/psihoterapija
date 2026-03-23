@@ -30,7 +30,10 @@ if (!content) {
       <div class="biography-profile-page__copy" data-reveal="right" style="--reveal-delay: 90ms;">
         <p class="biography-profile-page__role">{content.profile.role}</p>
         <h1>{content.profile.title}</h1>
-        <div class="biography-profile-page__summary" set:html={content.profile.summary} />
+        <div
+          class="biography-profile-page__summary richtext-shell"
+          set:html={content.profile.summary}
+        />
 
         <ul class="biography-profile-page__tags">
           {content.profile.highlights.map((tag) => <li>{tag}</li>)}
@@ -47,7 +50,7 @@ if (!content) {
 <section class="page-section page-section--soft biography-profile-page__body">
   <div class="container container--narrow">
     <div class="biography-profile-page__body-card" data-reveal="up">
-      <div set:html={content.profile.body} />
+      <div class="richtext-shell" set:html={content.profile.body} />
     </div>
   </div>
 </section>
@@ -76,7 +79,7 @@ if (!content) {
               <img src={profile.image} alt={profile.title} loading="lazy" />
               <p class="biography-profile-page__related-role">{profile.role}</p>
               <h3>{profile.title}</h3>
-              <div set:html={profile.summary} />
+              <div class="richtext-shell" set:html={profile.summary} />
             </a>
           ))}
         </div>

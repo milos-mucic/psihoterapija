@@ -688,64 +688,6 @@ const heroTitleRichTextLabels = {
         }
 
         const baseHref = form.dataset.previewBaseHref ?? "";
-        const localeLabel = form.dataset.previewLocaleLabel ?? "trenutni jezik";
-
-        const createPreviewCard = ({ href, title, copy }) => {
-          const aside = document.createElement("aside");
-          aside.className = "card admin-preview-card admin-preview-card--compact";
-
-          const head = document.createElement("div");
-          head.className = "admin-preview-card__head";
-
-          const copyWrap = document.createElement("div");
-          const kicker = document.createElement("p");
-          kicker.className = "admin-kicker";
-          kicker.textContent = "Section Preview";
-
-          const heading = document.createElement("h3");
-          heading.textContent = title;
-
-          const copyNode = document.createElement("p");
-          copyNode.className = "admin-preview-card__copy";
-          copyNode.textContent = copy || `Prikaz javne sekcije za ${localeLabel}.`;
-
-          copyWrap.append(kicker, heading, copyNode);
-
-          const link = document.createElement("a");
-          link.className = "button-secondary";
-          link.href = href;
-          link.target = "_blank";
-          link.rel = "noreferrer";
-          link.textContent = "Otvori sekciju";
-
-          head.append(copyWrap, link);
-
-          const viewport = document.createElement("div");
-          viewport.className = "admin-preview-card__viewport";
-
-          const browserBar = document.createElement("div");
-          browserBar.className = "admin-preview-card__browser-bar";
-          browserBar.setAttribute("aria-hidden", "true");
-
-          for (let index = 0; index < 3; index += 1) {
-            browserBar.append(document.createElement("span"));
-          }
-
-          const frame = document.createElement("div");
-          frame.className = "admin-preview-card__frame";
-
-          const iframe = document.createElement("iframe");
-          iframe.className = "admin-preview-card__iframe";
-          iframe.loading = "lazy";
-          iframe.src = href;
-          iframe.title = `Preview: ${title}`;
-
-          frame.append(iframe);
-          viewport.append(browserBar, frame);
-          aside.append(head, viewport);
-
-          return aside;
-        };
 
         Array.from(form.children).forEach((child) => {
           if (!(child instanceof HTMLElement) || !child.matches("[data-section-preview]")) {
@@ -763,13 +705,21 @@ const heroTitleRichTextLabels = {
             child.querySelector(".section-copy")?.textContent?.trim() ??
             "";
 
-          const wrapper = document.createElement("div");
-          wrapper.className = "admin-section-editor";
+          child.classList.add("admin-section-editor");
 
-          const preview = createPreviewCard({ href, title, copy });
+          const linkbar = document.createElement("div");
+          linkbar.className = "admin-section-linkbar";
+          linkbar.dataset.sectionPreviewLinkbar = "true";
 
-          child.before(wrapper);
-          wrapper.append(preview, child);
+          const link = document.createElement("a");
+          link.className = "button-secondary";
+          link.href = href;
+          link.target = "_blank";
+          link.rel = "noreferrer";
+          link.textContent = copy ? `Otvori sekciju: ${title}` : "Otvori sekciju";
+
+          linkbar.append(link);
+          child.prepend(linkbar);
         });
 
         form.dataset.sectionPreviewBound = "true";

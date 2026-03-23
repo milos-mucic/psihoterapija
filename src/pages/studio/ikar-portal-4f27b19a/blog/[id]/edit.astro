@@ -55,7 +55,9 @@ const error = params.get("error");
                 </div>
                 <div class="card" style="padding: 1rem;">
                   <dt>{dictionary.admin.blogEdit.labels.published}</dt>
-                  <dd style="margin: 0.4rem 0 0;">{post.publishedAt.toLocaleDateString("sr-RS")}</dd>
+                  <dd style="margin: 0.4rem 0 0;">
+                    {post.publishedAt.toLocaleDateString("sr-RS")}
+                  </dd>
                 </div>
               </dl>
             </div>
@@ -73,18 +75,41 @@ const error = params.get("error");
             />
           </div>
 
-          <div class="card" style="padding: 1.25rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
-            <p style="margin: 0; color: var(--muted);">
-              {dictionary.admin.blogEdit.deleteHint}
-            </p>
+          <div
+            class="card"
+            style="padding: 1.25rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;"
+          >
+            <p style="margin: 0; color: var(--muted);">{dictionary.admin.blogEdit.deleteHint}</p>
             <form
+              id="admin-blog-delete-form"
               action={`/api/admin/blog/${post.id}/delete`}
               method="post"
-              onsubmit={`return confirm('${dictionary.admin.blogEdit.deleteConfirm}');`}
             >
-              <button class="button-ghost" type="submit">{dictionary.admin.blogEdit.delete}</button>
+              <button class="button-ghost" type="button" data-admin-delete-trigger>
+                {dictionary.admin.blogEdit.delete}
+              </button>
             </form>
           </div>
+
+          <dialog class="admin-confirm-dialog" data-admin-delete-dialog>
+            <div class="admin-confirm-dialog__surface">
+              <div class="page-grid">
+                <h2 class="admin-confirm-dialog__title">
+                  {dictionary.admin.blogEdit.deleteConfirm}
+                </h2>
+                <p class="admin-confirm-dialog__copy">{dictionary.admin.blogEdit.deleteHint}</p>
+                <p class="admin-confirm-dialog__meta">{post.title}</p>
+              </div>
+              <div class="admin-confirm-dialog__actions">
+                <button type="button" class="button-secondary" data-admin-delete-cancel>
+                  {dictionary.common.cancel}
+                </button>
+                <button type="button" class="button-primary" data-admin-delete-confirm>
+                  {dictionary.admin.blogEdit.delete}
+                </button>
+              </div>
+            </div>
+          </dialog>
         </>
       ) : (
         <div class="card" style="padding: 1.5rem;">
@@ -97,3 +122,52 @@ const error = params.get("error");
     }
   </div>
 </AdminLayout>
+
+<script is:inline>
+  (() => {
+    const setupDeleteDialog = () => {
+      const dialog = document.querySelector("[data-admin-delete-dialog]");
+      const trigger = document.querySelector("[data-admin-delete-trigger]");
+      const cancelButton = document.querySelector("[data-admin-delete-cancel]");
+      const confirmButton = document.querySelector("[data-admin-delete-confirm]");
+      const form = document.getElementById("admin-blog-delete-form");
+
+      if (
+        !(dialog instanceof HTMLDialogElement) ||
+        !(trigger instanceof HTMLButtonElement) ||
+        !(cancelButton instanceof HTMLButtonElement) ||
+        !(confirmButton instanceof HTMLButtonElement) ||
+        !(form instanceof HTMLFormElement) ||
+        dialog.dataset.bound === "true"
+      ) {
+        return;
+      }
+
+      const closeDialog = () => {
+        dialog.close();
+      };
+
+      trigger.addEventListener("click", () => {
+        dialog.showModal();
+      });
+
+      cancelButton.addEventListener("click", closeDialog);
+
+      confirmButton.addEventListener("click", () => {
+        form.requestSubmit();
+        closeDialog();
+      });
+
+      dialog.addEventListener("click", (event) => {
+        if (event.target === dialog) {
+          closeDialog();
+        }
+      });
+
+      dialog.dataset.bound = "true";
+    };
+
+    setupDeleteDialog();
+    document.addEventListener("astro:page-load", setupDeleteDialog);
+  })();
+</script>

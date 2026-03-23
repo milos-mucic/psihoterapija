@@ -587,6 +587,11 @@ const ui =
   }
 
   @media (max-width: 780px) {
+    .blog-index__banner :global(.page-banner) {
+      min-height: clamp(13.5rem, 38vh, 18rem);
+      padding: 3.6rem 0 1.8rem;
+    }
+
     .blog-index__banner :global(.page-banner__content) {
       transform: none;
     }

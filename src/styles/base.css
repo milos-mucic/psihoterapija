@@ -1729,6 +1729,15 @@ body.appbar-drawer-open {
 }
 
 @media (max-width: 720px) {
+  body:not(.home-route) main {
+    padding-top: 5.4rem;
+  }
+
+  body.therapy-subpage-route .page-banner {
+    min-height: clamp(13.5rem, 38vh, 18rem);
+    padding: 3.6rem 0 1.8rem;
+  }
+
   body.therapy-subpage-route .page-banner__content {
     transform: none;
   }

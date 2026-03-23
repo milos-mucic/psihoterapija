@@ -64,7 +64,7 @@ const detailCardLabel = locale === "sr-cyrl" ? "Погледај страниц�
                     <img class="scope-page__tab-item-icon" src={tab.icon} alt="" loading="lazy" />
                     <h3 class="scope-page__tab-item-title">{tab.cardTitle}</h3>
                   </div>
-                  <div class="scope-page__tab-item-copy" set:html={tab.cardCopy} />
+                  <div class="scope-page__tab-item-copy richtext-shell" set:html={tab.cardCopy} />
                   <span class="scope-page__tab-item-link">
                     {detailCardLabel}
                     <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
@@ -93,8 +93,11 @@ const detailCardLabel = locale === "sr-cyrl" ? "Погледај страниц�
       <img src={content.focusImage} alt="" class="scope-page__focus-image" data-reveal="left" />
       <div class="scope-page__focus-content" data-reveal="right" style="--reveal-delay: 90ms;">
         <h2>{content.focusTitle}</h2>
-        <div class="scope-page__focus-copy" set:html={content.focusCopy} />
-        <div class="scope-page__focus-secondary" set:html={content.focusSecondaryCopy} />
+        <div class="scope-page__focus-copy richtext-shell" set:html={content.focusCopy} />
+        <div
+          class="scope-page__focus-secondary richtext-shell"
+          set:html={content.focusSecondaryCopy}
+        />
         <a class="home-button" href={content.focusCtaHref}>
           {content.focusCtaLabel}
         </a>
@@ -108,7 +111,7 @@ const detailCardLabel = locale === "sr-cyrl" ? "Погледај страниц�
     <div class="home-heading-row home-heading-row--blog" data-reveal="up">
       <div class="home-heading-copy">
         <h2>{content.recentTitle}</h2>
-        <div class="scope-page__recent-copy" set:html={content.recentCopy} />
+        <div class="scope-page__recent-copy richtext-shell" set:html={content.recentCopy} />
       </div>
       <a class="home-button" href={content.recentHref}>{content.recentLabel}</a>
     </div>

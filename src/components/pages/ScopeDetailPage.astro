@@ -25,7 +25,7 @@ if (!content) {
     <div class="scope-detail-page__intro-grid">
       <div class="scope-detail-page__intro-copy" data-reveal="left">
         <p class="scope-detail-page__eyebrow">{content.eyebrow}</p>
-        <div class="scope-detail-page__lead" set:html={content.lead} />
+        <div class="scope-detail-page__lead richtext-shell" set:html={content.lead} />
         <div class="scope-detail-page__actions">
           <a class="button-ghost" href={content.backHref}>{content.backLabel}</a>
           <a class="home-button" href={content.ctaHref}>{content.ctaLabel}</a>
@@ -50,7 +50,7 @@ if (!content) {
             style={`--reveal-delay: ${index * 80}ms;`}
           >
             <h2>{item.title}</h2>
-            <div set:html={item.copy} />
+            <div class="richtext-shell" set:html={item.copy} />
           </article>
         ))
       }
@@ -78,7 +78,7 @@ if (!content) {
           >
             <img src={tab.icon} alt="" loading="lazy" />
             <h3>{tab.label}</h3>
-            <div set:html={tab.cardCopy} />
+            <div class="richtext-shell" set:html={tab.cardCopy} />
           </a>
         ))
       }

@@ -68,7 +68,10 @@ const dictionary = getDictionary(locale);
     <div class="home-booking psychotherapy-page__booking-grid">
       <div class="home-booking__intro" data-reveal="up">
         <h2>{content.booking.title}</h2>
-        <div class="psychotherapy-page__booking-copy" set:html={content.booking.copy} />
+        <div
+          class="psychotherapy-page__booking-copy richtext-shell"
+          set:html={content.booking.copy}
+        />
         <div class="home-booking__formats">
           {content.booking.formats.map((format) => <span class="home-pill">{format}</span>)}
         </div>

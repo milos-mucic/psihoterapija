@@ -97,6 +97,7 @@
   "common": {
     "noItemsFound": "No items found.",
     "play": "Play",
+    "cancel": "Одустани",
     "close": "Затвори",
     "officeRoom": "Просторија"
   },
@@ -391,12 +392,20 @@
       "copy": "Листа свих блог постова из SQLite базе.",
       "newPost": "Нови пост",
       "empty": "Нема постова.",
+      "archiveConfirm": "Да ли сте сигурни да желите да архивирате овај пост?",
       "headers": {
         "title": "Наслов",
         "locale": "Locale",
         "status": "Статус",
         "date": "Датум",
-        "open": "Отвори"
+        "actions": "Акције"
+      },
+      "actions": {
+        "view": "Погледај објаву",
+        "edit": "Уреди објаву",
+        "archive": "Архивирај објаву",
+        "archived": "Објава је већ архивирана",
+        "unavailable": "Објава није јавно доступна"
       }
     },
     "blogNew": {
@@ -464,7 +473,8 @@
       "saved": "Измене су сачуване.",
       "validationError": "Унос није валидан. Провери обавезна поља.",
       "slugConflict": "Већ постоји пост са истим slug-ом за изабрани locale.",
-      "deleted": "Пост је обрисан."
+      "deleted": "Пост је обрисан.",
+      "archived": "Пост је архивиран."
     },
     "submissions": {
       "title": "Пријаве и поруке",

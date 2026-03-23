@@ -136,8 +136,21 @@
   padding-left: 1.35rem;
 }
 
+.home-richtext ul {
+  list-style: disc;
+}
+
+.home-richtext ol {
+  list-style: decimal;
+}
+
 .home-richtext li {
+  display: list-item;
   line-height: 1.65;
+}
+
+.home-richtext li::marker {
+  color: currentColor;
 }
 
 .home-richtext blockquote {

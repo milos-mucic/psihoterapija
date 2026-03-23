@@ -22,7 +22,7 @@ const content = await pageContentService.getPricingPageData(locale);
           >
             <h3>{plan.title}</h3>
             <p class="pricing-page__price">{plan.price}</p>
-            <div class="pricing-page__outside" set:html={plan.outsideSerbiaPrice} />
+            <div class="pricing-page__outside richtext-shell" set:html={plan.outsideSerbiaPrice} />
             <a class="pricing-page__cta" href={plan.ctaHref}>
               <span>{plan.ctaLabel}</span>
               <span aria-hidden="true">→</span>
@@ -45,7 +45,7 @@ const content = await pageContentService.getPricingPageData(locale);
             style={`--reveal-delay: ${index * 85}ms;`}
           >
             <h4>{card.title}</h4>
-            <div set:html={card.copy} />
+            <div class="richtext-shell" set:html={card.copy} />
           </article>
         ))
       }
