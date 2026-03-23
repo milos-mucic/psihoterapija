@@ -1,4 +1,5 @@
 ---
+import { AdminMediaField } from "@/components/components/AdminMediaField";
 import { AdminRichTextField } from "@/components/components/AdminRichTextField";
 import type { BlogPostRecord } from "@/features/blog/types/blog.types";
 
@@ -68,7 +69,12 @@ const tagsValue = post?.tags.join(", ") ?? "";
 
     <label class="admin-form__field">
       <span>{labels.slug}</span>
-      <input class="input-control" name="slug" placeholder={placeholders.slug} value={post?.slug ?? ""} />
+      <input
+        class="input-control"
+        name="slug"
+        placeholder={placeholders.slug}
+        value={post?.slug ?? ""}
+      />
     </label>
 
     <label class="admin-form__field">
@@ -109,20 +115,28 @@ const tagsValue = post?.tags.join(", ") ?? "";
       />
     </label>
 
-    <label class="admin-form__field admin-form__field--full">
+    <div class="admin-form__field admin-form__field--full">
       <span>{labels.excerpt}</span>
-      <textarea class="input-control input-control--textarea" name="excerpt" rows={3}>{post?.excerpt ?? ""}</textarea>
-    </label>
-
-    <label class="admin-form__field admin-form__field--full">
-      <span>{labels.coverImage}</span>
-      <input
-        class="input-control"
-        name="coverImage"
-        placeholder={placeholders.coverImage}
-        value={post?.coverImage ?? ""}
+      <AdminRichTextField
+        client:load
+        name="excerpt"
+        initialValue={post?.excerpt ?? ""}
+        uploadUrl="/api/admin/media/upload"
+        uploadFolder="blog"
+        mode="inline"
+        labels={richText}
       />
-    </label>
+    </div>
+
+    <AdminMediaField
+      client:load
+      name="coverImage"
+      label={labels.coverImage}
+      initialValue={post?.coverImage ?? ""}
+      uploadUrl="/api/admin/media/upload"
+      uploadFolder="blog"
+      uploadLabel="Dodaj sliku"
+    />
 
     <label class="admin-form__field admin-form__field--full">
       <span>{labels.tags}</span>
@@ -148,12 +162,126 @@ const tagsValue = post?.tags.join(", ") ?? "";
         name="body"
         initialValue={post?.body ?? ""}
         uploadUrl="/api/admin/media/upload"
+        uploadFolder="blog"
         labels={richText}
       />
     </div>
   </div>
 
-  <div class="admin-form__actions">
-    <button class="button-primary" type="submit">{submitLabel}</button>
+  <div class="admin-form__actions admin-form__actions--floating">
+    <p class="admin-form__save-status" data-admin-form-submit-status aria-live="polite"></p>
+    <button class="button-primary admin-form__fab" type="submit" data-admin-form-submit>
+      {submitLabel}
+    </button>
   </div>
 </form>
+
+<script is:inline>
+  (() => {
+    document.querySelectorAll(".admin-form").forEach((form) => {
+      if (
+        !(form instanceof HTMLFormElement) ||
+        form.querySelector("[data-admin-form-submit]") === null ||
+        form.dataset.floatingSubmitBound === "true"
+      ) {
+        return;
+      }
+
+      const submitButtons = Array.from(form.querySelectorAll("[data-admin-form-submit]")).filter(
+        (button) => button instanceof HTMLButtonElement,
+      );
+      const statusNodes = Array.from(
+        form.querySelectorAll("[data-admin-form-submit-status]"),
+      ).filter((node) => node instanceof HTMLElement);
+      const pendingSources = new Map();
+      let autoSaveRequested = false;
+      let isSubmitting = false;
+
+      const syncSubmitState = () => {
+        const hasPending = pendingSources.size > 0;
+        const message = isSubmitting
+          ? "Čuvanje u toku..."
+          : autoSaveRequested && hasPending
+            ? "Završavam upload pa čuvam izmenu slike."
+            : autoSaveRequested
+              ? "Čuvam izmenu slike..."
+              : hasPending
+                ? "Sačekajte da se obrada slike ili videa završi."
+                : "Sve media izmene su spremne za čuvanje.";
+
+        form.dataset.pendingUploads = hasPending ? "true" : "false";
+
+        submitButtons.forEach((button) => {
+          button.disabled = hasPending;
+          button.setAttribute("aria-disabled", hasPending ? "true" : "false");
+        });
+
+        statusNodes.forEach((node) => {
+          node.textContent = message;
+          node.dataset.tone = hasPending ? "muted" : "ready";
+        });
+      };
+
+      const tryAutoSave = () => {
+        if (!autoSaveRequested || isSubmitting || form.dataset.pendingUploads === "true") {
+          return;
+        }
+
+        if (!form.checkValidity()) {
+          autoSaveRequested = false;
+          syncSubmitState();
+          return;
+        }
+
+        requestAnimationFrame(() => form.requestSubmit());
+      };
+
+      form.addEventListener("admin:pending-media", (event) => {
+        if (!(event instanceof CustomEvent)) {
+          return;
+        }
+
+        const sourceId =
+          typeof event.detail?.sourceId === "string" ? event.detail.sourceId : undefined;
+
+        if (!sourceId) {
+          return;
+        }
+
+        if (event.detail?.active) {
+          pendingSources.set(sourceId, true);
+        } else {
+          pendingSources.delete(sourceId);
+        }
+
+        syncSubmitState();
+        tryAutoSave();
+      });
+
+      form.addEventListener("admin:auto-save-media", () => {
+        autoSaveRequested = true;
+        syncSubmitState();
+        tryAutoSave();
+      });
+
+      form.addEventListener("submit", (event) => {
+        if (form.dataset.pendingUploads === "true") {
+          event.preventDefault();
+          syncSubmitState();
+          return;
+        }
+
+        if (isSubmitting) {
+          event.preventDefault();
+          return;
+        }
+
+        isSubmitting = true;
+        syncSubmitState();
+      });
+
+      syncSubmitState();
+      form.dataset.floatingSubmitBound = "true";
+    });
+  })();
+</script>

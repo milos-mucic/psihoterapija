@@ -25,7 +25,7 @@ const dictionary = getDictionary(locale);
       <span>{post.tags.join(", ") || dictionary.blog.defaultTag}</span>
     </div>
     <h3 style="margin: 0; font-size: 1.5rem;">{post.title}</h3>
-    <p style="margin: 0; color: var(--muted);">{post.excerpt}</p>
+    <div style="margin: 0; color: var(--muted); line-height: 1.6;" set:html={post.excerpt} />
     <a class="button-secondary" href={localizePath(locale, `/blog/${post.slug}/`)}>
       {dictionary.blog.readMoreLabel}
     </a>

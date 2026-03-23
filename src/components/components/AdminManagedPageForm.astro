@@ -531,6 +531,19 @@ const richTextLabels = {
                                   Ukloni sliku
                                 </button>
                               </div>
+                              <div
+                                class="admin-upload-progress"
+                                data-biography-card-image-progress
+                                hidden
+                              >
+                                <div class="admin-upload-progress__track">
+                                  <div
+                                    class="admin-upload-progress__bar"
+                                    data-biography-card-image-progress-bar
+                                    style="width: 0%;"
+                                  />
+                                </div>
+                              </div>
                               <p
                                 class="admin-inline-media-field__status"
                                 data-biography-card-image-status
@@ -639,6 +652,19 @@ const richTextLabels = {
                               >
                                 Ukloni sliku
                               </button>
+                            </div>
+                            <div
+                              class="admin-upload-progress"
+                              data-biography-card-image-progress
+                              hidden
+                            >
+                              <div class="admin-upload-progress__track">
+                                <div
+                                  class="admin-upload-progress__bar"
+                                  data-biography-card-image-progress-bar
+                                  style="width: 0%;"
+                                />
+                              </div>
                             </div>
                             <p
                               class="admin-inline-media-field__status"
@@ -1863,6 +1889,7 @@ const richTextLabels = {
 
 <script>
   import { mountAdminRichTextField, unmountAdminRichTextField } from "./AdminRichTextMount";
+  import { uploadWithProgress } from "@/lib/http/upload-with-progress";
 
   (() => {
     const setupFloatingSubmit = () => {
@@ -1883,7 +1910,6 @@ const richTextLabels = {
 
         const syncSubmitState = () => {
           const hasPending = pendingSources.size > 0;
-          const disabled = hasPending || isSubmitting;
           const message = isSubmitting
             ? "Čuvanje u toku..."
             : autoSaveRequested && hasPending
@@ -1897,8 +1923,8 @@ const richTextLabels = {
           form.dataset.pendingUploads = hasPending ? "true" : "false";
 
           submitButtons.forEach((button) => {
-            button.disabled = disabled;
-            button.setAttribute("aria-disabled", disabled ? "true" : "false");
+            button.disabled = hasPending;
+            button.setAttribute("aria-disabled", hasPending ? "true" : "false");
           });
 
           statusNodes.forEach((node) => {
@@ -1918,8 +1944,6 @@ const richTextLabels = {
             return;
           }
 
-          isSubmitting = true;
-          syncSubmitState();
           requestAnimationFrame(() => form.requestSubmit());
         };
 
@@ -1952,13 +1976,18 @@ const richTextLabels = {
         });
 
         form.addEventListener("submit", (event) => {
-          if (form.dataset.pendingUploads !== "true") {
-            isSubmitting = true;
+          if (form.dataset.pendingUploads === "true") {
+            event.preventDefault();
             syncSubmitState();
             return;
           }
 
-          event.preventDefault();
+          if (isSubmitting) {
+            event.preventDefault();
+            return;
+          }
+
+          isSubmitting = true;
           syncSubmitState();
         });
 
@@ -2170,6 +2199,32 @@ const richTextLabels = {
         }
       };
 
+      const setCardImageProgress = (card, percent = 0) => {
+        const progress = card.querySelector("[data-biography-card-image-progress]");
+        const bar = card.querySelector("[data-biography-card-image-progress-bar]");
+
+        if (progress instanceof HTMLElement) {
+          progress.hidden = false;
+        }
+
+        if (bar instanceof HTMLElement) {
+          bar.style.width = `${percent}%`;
+        }
+      };
+
+      const clearCardImageProgress = (card) => {
+        const progress = card.querySelector("[data-biography-card-image-progress]");
+        const bar = card.querySelector("[data-biography-card-image-progress-bar]");
+
+        if (progress instanceof HTMLElement) {
+          progress.hidden = true;
+        }
+
+        if (bar instanceof HTMLElement) {
+          bar.style.width = "0%";
+        }
+      };
+
       const mountCardRichText = (field, index) => {
         if (!(field instanceof HTMLElement)) {
           return;
@@ -2205,29 +2260,29 @@ const richTextLabels = {
         formData.append("folder", "pages/biography");
 
         setCardImageStatus(card, "Otpremanje...");
+        setCardImageProgress(card, 0);
         setPendingUpload(card, true);
 
         try {
-          const response = await fetch("/api/admin/media/upload", {
-            method: "POST",
-            body: formData,
+          const data = await uploadWithProgress({
+            formData,
+            url: "/api/admin/media/upload",
+            onProgress: (percent) => {
+              setCardImageProgress(card, percent);
+              setCardImageStatus(card, `Otpremanje... ${percent}%`);
+            },
           });
-
-          if (!response.ok) {
-            setCardImageStatus(card, "Upload nije uspeo.");
-            return;
-          }
-
-          const data = await response.json();
 
           if (!data?.url || typeof data.url !== "string") {
             setCardImageStatus(card, "Upload nije uspeo.");
+            clearCardImageProgress(card);
             return;
           }
 
           field.value = data.url;
           updateCardImagePreview(card);
           setCardImageStatus(card, "Slika je otpremljena.");
+          setCardImageProgress(card, 100);
           form.dispatchEvent(
             new CustomEvent("admin:auto-save-media", {
               detail: { sourceId: getPendingSourceId(card) },
@@ -2235,6 +2290,7 @@ const richTextLabels = {
           );
         } catch {
           setCardImageStatus(card, "Upload nije uspeo.");
+          clearCardImageProgress(card);
         } finally {
           setPendingUpload(card, false);
         }
@@ -2312,6 +2368,7 @@ const richTextLabels = {
 
           field.value = "";
           setCardImageStatus(card, "");
+          clearCardImageProgress(card);
           updateCardImagePreview(card);
           return;
         }

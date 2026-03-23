@@ -76,7 +76,7 @@ const { title, intro, items, image, sectionClass, sectionId } = Astro.props;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: clamp(2rem, 6vw, 3.75rem);
-    align-items: stretch;
+    align-items: start;
   }
 
   .faq-accordion--single {
@@ -84,7 +84,7 @@ const { title, intro, items, image, sectionClass, sectionId } = Astro.props;
   }
 
   .faq-accordion__media {
-    min-height: 450px;
+    min-height: clamp(18rem, 34vw, 24rem);
   }
 
   .faq-accordion__image {
@@ -101,12 +101,12 @@ const { title, intro, items, image, sectionClass, sectionId } = Astro.props;
 
   .faq-accordion__items {
     display: grid;
-    gap: 0.95rem;
+    gap: 0.75rem;
   }
 
   .faq-item {
     margin: 0;
-    padding: 20px 30px;
+    padding: 14px 18px;
     border: none;
     border-radius: 12px;
     background: #fff;
@@ -114,7 +114,7 @@ const { title, intro, items, image, sectionClass, sectionId } = Astro.props;
   }
 
   .faq-item:first-child {
-    padding-top: 20px;
+    padding-top: 14px;
   }
 
   .faq-item__trigger {
@@ -123,7 +123,7 @@ const { title, intro, items, image, sectionClass, sectionId } = Astro.props;
     justify-content: space-between;
     gap: 1rem;
     width: 100%;
-    padding: 10px 0;
+    padding: 0.15rem 0;
     border: 0;
     background: none;
     color: var(--primary);
@@ -140,8 +140,8 @@ const { title, intro, items, image, sectionClass, sectionId } = Astro.props;
 
   .faq-item__icon {
     flex: 0 0 auto;
-    margin-top: 10px;
-    margin-left: 20px;
+    margin-top: 0.15rem;
+    margin-left: 0.9rem;
     color: var(--primary);
     font-family: "Fa solid 900", var(--font-ui);
     font-size: 1.05rem;
@@ -157,8 +157,8 @@ const { title, intro, items, image, sectionClass, sectionId } = Astro.props;
   }
 
   .faq-item__body-inner {
-    padding-top: 0.4rem;
-    padding-bottom: 0.95rem;
+    padding-top: 0.3rem;
+    padding-bottom: 0.35rem;
   }
 
   .faq-item__body-inner p {
@@ -179,7 +179,7 @@ const { title, intro, items, image, sectionClass, sectionId } = Astro.props;
 
   @media (max-width: 720px) {
     .faq-item {
-      padding: 16px 18px;
+      padding: 12px 14px;
     }
   }
 </style>

@@ -2,19 +2,18 @@ import { z } from "zod";
 import type { BlogPostInput } from "@/features/blog/types/blog.types";
 import {
   extractPlainTextFromHtml,
+  sanitizeInlineRichTextHtml,
   sanitizeRichTextHtml,
 } from "@/features/blog/utils/rich-text";
 
-const optionalTextSchema = z
-  .union([z.string(), z.undefined(), z.null()])
-  .transform((value) => {
-    if (typeof value !== "string") {
-      return undefined;
-    }
+const optionalTextSchema = z.union([z.string(), z.undefined(), z.null()]).transform((value) => {
+  if (typeof value !== "string") {
+    return undefined;
+  }
 
-    const normalized = value.trim();
-    return normalized.length > 0 ? normalized : undefined;
-  });
+  const normalized = value.trim();
+  return normalized.length > 0 ? normalized : undefined;
+});
 
 const tagsSchema = z
   .union([z.string(), z.array(z.string()), z.undefined(), z.null()])
@@ -96,6 +95,7 @@ const normalizeInput = (
   fallbackSlugSeed: string,
 ): BlogPostInput => {
   const body = sanitizeRichTextHtml(parsed.body);
+  const excerpt = parsed.excerpt ? sanitizeInlineRichTextHtml(parsed.excerpt) : undefined;
   const slug = toSlug(parsed.slug ?? parsed.title);
   const fallbackSlug = `post-${Date.now()}`;
 
@@ -103,7 +103,7 @@ const normalizeInput = (
     locale: parsed.locale,
     title: parsed.title,
     slug: slug || toSlug(fallbackSlugSeed) || fallbackSlug,
-    excerpt: parsed.excerpt ?? (toExcerpt(body) || parsed.title),
+    excerpt: excerpt ?? sanitizeInlineRichTextHtml(toExcerpt(body) || parsed.title),
     body,
     coverImage: parsed.coverImage,
     publishedAt: parsed.publishedAt,

@@ -1,5 +1,6 @@
 ---
 import PageBanner from "@/components/sections/PageBanner.astro";
+import { extractPlainTextFromHtml } from "@/features/blog/utils/rich-text";
 import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import type { BlogListItem } from "@/features/blog/types/blog.types";
@@ -57,7 +58,12 @@ const ui =
 ---
 
 <div class="blog-index__banner">
-  <PageBanner title={dictionary.blog.title} description={bannerDescription} theme="dark" align="split" />
+  <PageBanner
+    title={dictionary.blog.title}
+    description={bannerDescription}
+    theme="dark"
+    align="split"
+  />
 </div>
 
 <section class="page-section blog-index" data-blog-index>
@@ -67,7 +73,8 @@ const ui =
         <div class="blog-index__main-head" data-reveal="up">
           <h2>{ui.allPosts}</h2>
           <p>
-            <span data-blog-count>{posts.length}</span> {ui.postsLabel}
+            <span data-blog-count>{posts.length}</span>
+            {ui.postsLabel}
           </p>
         </div>
 
@@ -75,7 +82,8 @@ const ui =
           {
             posts.map((post, index) => {
               const firstTag = post.tags[0] ?? dictionary.blog.defaultTag;
-              const normalizedSearch = `${post.title} ${post.excerpt} ${post.tags.join(" ")}`.toLowerCase();
+              const normalizedSearch =
+                `${post.title} ${extractPlainTextFromHtml(post.excerpt)} ${post.tags.join(" ")}`.toLowerCase();
               const normalizedTags = post.tags.map((tag) => tag.toLowerCase()).join(",");
 
               return (
@@ -87,7 +95,10 @@ const ui =
                   data-reveal="up"
                   style={`--reveal-delay: ${index * 70}ms;`}
                 >
-                  <a class="blog-index__card-image-link" href={localizePath(locale, `/blog/${post.slug}/`)}>
+                  <a
+                    class="blog-index__card-image-link"
+                    href={localizePath(locale, `/blog/${post.slug}/`)}
+                  >
                     <img
                       class="blog-index__card-image"
                       src={post.coverImage ?? "/legacy/images/Blog-1_1Blog 1.webp"}
@@ -98,16 +109,24 @@ const ui =
 
                   <div class="blog-index__card-body">
                     <span class="blog-index__card-category">{firstTag}</span>
-                    <a class="blog-index__card-title-link" href={localizePath(locale, `/blog/${post.slug}/`)}>
+                    <a
+                      class="blog-index__card-title-link"
+                      href={localizePath(locale, `/blog/${post.slug}/`)}
+                    >
                       <h3>{post.title}</h3>
                     </a>
-                    <p>{post.excerpt}</p>
+                    <div class="blog-index__card-excerpt" set:html={post.excerpt} />
 
                     <div class="blog-index__card-keywords">
-                      {post.tags.map((tag) => <span class="blog-index__keyword">{tag}</span>)}
+                      {post.tags.map((tag) => (
+                        <span class="blog-index__keyword">{tag}</span>
+                      ))}
                     </div>
 
-                    <a class="blog-index__read-more" href={localizePath(locale, `/blog/${post.slug}/`)}>
+                    <a
+                      class="blog-index__read-more"
+                      href={localizePath(locale, `/blog/${post.slug}/`)}
+                    >
                       {dictionary.blog.readMoreLabel}
                       <span aria-hidden="true">→</span>
                     </a>
@@ -146,7 +165,10 @@ const ui =
             {
               recentPosts.map((post) => (
                 <article class="blog-index__recent-item">
-                  <a class="blog-index__recent-image-link" href={localizePath(locale, `/blog/${post.slug}/`)}>
+                  <a
+                    class="blog-index__recent-image-link"
+                    href={localizePath(locale, `/blog/${post.slug}/`)}
+                  >
                     <img
                       class="blog-index__recent-image"
                       src={post.coverImage ?? "/legacy/images/Blog-1_1Blog 1.webp"}
@@ -178,7 +200,11 @@ const ui =
             </button>
             {
               keywords.map((keyword) => (
-                <button type="button" class="blog-index__keyword-chip" data-blog-tag={keyword.toLowerCase()}>
+                <button
+                  type="button"
+                  class="blog-index__keyword-chip"
+                  data-blog-tag={keyword.toLowerCase()}
+                >
                   {keyword}
                 </button>
               ))
@@ -209,8 +235,7 @@ const ui =
         let activeTag = "";
 
         const applyFilters = () => {
-          const term =
-            searchInput instanceof HTMLInputElement ? normalize(searchInput.value) : "";
+          const term = searchInput instanceof HTMLInputElement ? normalize(searchInput.value) : "";
           let visibleCount = 0;
 
           cards.forEach((card) => {
@@ -389,8 +414,12 @@ const ui =
     line-height: 1.22;
   }
 
-  .blog-index__card-body p {
+  .blog-index__card-excerpt,
+  .blog-index__card-excerpt :global(p),
+  .blog-index__card-excerpt :global(ul),
+  .blog-index__card-excerpt :global(ol) {
     color: var(--foreground);
+    margin: 0;
     line-height: 1.55;
   }
 

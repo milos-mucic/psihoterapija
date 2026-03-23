@@ -426,7 +426,7 @@
         "status": "Status",
         "publishedAt": "Datum objave",
         "excerpt": "Kratak opis (excerpt)",
-        "coverImage": "Cover image URL",
+        "coverImage": "Cover slika",
         "tags": "Tagovi (odvojeni zarezom)",
         "seoTitle": "SEO title",
         "seoDescription": "SEO description",

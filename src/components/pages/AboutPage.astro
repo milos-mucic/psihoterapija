@@ -147,7 +147,7 @@ const aboutVideoEmbedSrc = videoIdMatch
                   </div>
                   <div class="home-blog-card__copy">
                     <h3>{post.title}</h3>
-                    <p>{post.excerpt}</p>
+                    <div class="home-blog-card__excerpt" set:html={post.excerpt} />
                   </div>
                   <a
                     class="home-blog-card__action"

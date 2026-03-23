@@ -2,6 +2,7 @@
 export const prerender = false;
 
 import { blogService } from "@/features/blog/services/blog.service";
+import { extractPlainTextFromHtml } from "@/features/blog/utils/rich-text";
 import BlogPostLayout from "@/components/components/BlogPostLayout.astro";
 
 const { slug } = Astro.params;
@@ -19,7 +20,7 @@ if (!post || post.status !== "published") {
 
 <BlogPostLayout
   title={post.title}
-  description={post.seoDescription ?? post.excerpt}
+  description={extractPlainTextFromHtml(post.seoDescription ?? post.excerpt)}
   locale="sr-cyrl"
   canonicalPath={`/cir/blog/${post.slug}/`}
   publishedAt={post.publishedAt}

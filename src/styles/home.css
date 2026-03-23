@@ -778,7 +778,8 @@
 }
 
 .home-blog-card__body h3,
-.home-blog-card__body p {
+.home-blog-card__body p,
+.home-blog-card__excerpt {
   margin: 0;
 }
 
@@ -791,7 +792,7 @@
   overflow: hidden;
 }
 
-.home-blog-card__body p {
+.home-blog-card__excerpt {
   color: var(--muted);
   line-height: 1.68;
   display: -webkit-box;

@@ -19,6 +19,7 @@ import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
+import { uploadWithProgress } from "@/lib/http/upload-with-progress";
 import {
   $createHeadingNode,
   $createQuoteNode,
@@ -840,6 +841,7 @@ function AdminRichTextEditor({
   const shouldAutoSaveImageRef = useRef(false);
   const [error, setError] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
 
   const uploadImage = useCallback(
     async (file: File) => {
@@ -848,16 +850,13 @@ function AdminRichTextEditor({
       formData.append("file", preparedFile);
       formData.append("folder", uploadFolder);
 
-      const response = await fetch(uploadUrl, {
-        method: "POST",
-        body: formData,
+      const data = await uploadWithProgress<{ url?: string }>({
+        formData,
+        url: uploadUrl,
+        onProgress: (percent) => {
+          setUploadProgress(percent);
+        },
       });
-
-      if (!response.ok) {
-        throw new Error("Upload failed");
-      }
-
-      const data = (await response.json()) as { url?: string };
 
       if (!data.url) {
         throw new Error("Upload failed");
@@ -963,6 +962,7 @@ function AdminRichTextEditor({
             }
 
             setIsUploading(true);
+            setUploadProgress(0);
             setError("");
 
             void uploadImage(file)
@@ -982,14 +982,22 @@ function AdminRichTextEditor({
               })
               .finally(() => {
                 setIsUploading(false);
+                setUploadProgress((current) => (current === 100 ? current : null));
                 event.currentTarget.value = "";
               });
           }}
         />
       ) : null}
 
+      {mode === "full" && uploadProgress !== null ? (
+        <div className="admin-upload-progress" aria-live="polite">
+          <div className="admin-upload-progress__track">
+            <div className="admin-upload-progress__bar" style={{ width: `${uploadProgress}%` }} />
+          </div>
+        </div>
+      ) : null}
       {mode === "full" && isUploading ? (
-        <p className="admin-rtf__status">Upload u toku...</p>
+        <p className="admin-rtf__status">Upload u toku... {uploadProgress ?? 0}%</p>
       ) : null}
       {error ? <p className="admin-rtf__error">{error}</p> : null}
     </div>

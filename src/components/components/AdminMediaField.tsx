@@ -3,6 +3,7 @@ import Uppy from "@uppy/core";
 import type { UppyFile } from "@uppy/core";
 import ImageEditor from "@uppy/image-editor";
 import Dashboard from "@uppy/react/dashboard";
+import { uploadWithProgress } from "@/lib/http/upload-with-progress";
 
 import "@uppy/core/css/style.min.css";
 import "@uppy/dashboard/css/style.min.css";
@@ -124,6 +125,7 @@ export function AdminMediaField({
   const [status, setStatus] = useState("");
   const [showUploader, setShowUploader] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [hasSelectedImage, setHasSelectedImage] = useState(false);
   const isVideoField = accept.includes("video");
   const previewValue = value.trim();
@@ -208,20 +210,19 @@ export function AdminMediaField({
 
       try {
         setStatus("");
-        const response = await fetch(uploadUrl, {
-          method: "POST",
-          body: formData,
+        setUploadProgress(0);
+        const data = await uploadWithProgress<{ url?: string }>({
+          formData,
+          url: uploadUrl,
+          onProgress: (percent) => {
+            setUploadProgress(percent);
+            setStatus(`Otpremanje... ${percent}%`);
+          },
         });
-
-        if (!response.ok) {
-          setStatus("Upload nije uspeo.");
-          return;
-        }
-
-        const data = (await response.json()) as { url?: string };
 
         if (!data.url) {
           setStatus("Upload nije uspeo.");
+          setUploadProgress(null);
           return;
         }
 
@@ -231,8 +232,10 @@ export function AdminMediaField({
 
         setValue(data.url);
         setStatus("Fajl je otpremljen.");
+        setUploadProgress(100);
       } catch {
         setStatus("Upload nije uspeo.");
+        setUploadProgress(null);
       }
     },
     [isVideoField, uploadFolder, uploadUrl],
@@ -251,6 +254,7 @@ export function AdminMediaField({
     }
 
     setIsUploading(true);
+    setUploadProgress(null);
     setStatus("Otpremanje...");
 
     try {
@@ -266,6 +270,7 @@ export function AdminMediaField({
       setStatus("Obrada slike nije uspela.");
     } finally {
       setIsUploading(false);
+      setUploadProgress((current) => (current === 100 ? current : null));
     }
   }, [uppy, uploadFile]);
 
@@ -323,9 +328,11 @@ export function AdminMediaField({
 
                 if (file) {
                   setIsUploading(true);
+                  setUploadProgress(null);
 
                   void uploadFile(file).finally(() => {
                     setIsUploading(false);
+                    setUploadProgress((current) => (current === 100 ? current : null));
                   });
                 }
 
@@ -348,6 +355,13 @@ export function AdminMediaField({
           </div>
         ) : null}
 
+        {uploadProgress !== null ? (
+          <div className="admin-upload-progress" aria-live="polite">
+            <div className="admin-upload-progress__track">
+              <div className="admin-upload-progress__bar" style={{ width: `${uploadProgress}%` }} />
+            </div>
+          </div>
+        ) : null}
         {status ? <p className="admin-media-field__status">{status}</p> : null}
       </div>
     );
@@ -396,6 +410,13 @@ export function AdminMediaField({
         </div>
       ) : null}
 
+      {uploadProgress !== null ? (
+        <div className="admin-upload-progress" aria-live="polite">
+          <div className="admin-upload-progress__track">
+            <div className="admin-upload-progress__bar" style={{ width: `${uploadProgress}%` }} />
+          </div>
+        </div>
+      ) : null}
       {status ? <p className="admin-media-field__status">{status}</p> : null}
     </div>
   );

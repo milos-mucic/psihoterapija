@@ -595,7 +595,6 @@ const heroTitleRichTextLabels = {
 
         const syncSubmitState = () => {
           const hasPending = pendingSources.size > 0;
-          const disabled = hasPending || isSubmitting;
           const message = isSubmitting
             ? "Čuvanje u toku..."
             : autoSaveRequested && hasPending
@@ -609,8 +608,8 @@ const heroTitleRichTextLabels = {
           form.dataset.pendingUploads = hasPending ? "true" : "false";
 
           submitButtons.forEach((button) => {
-            button.disabled = disabled;
-            button.setAttribute("aria-disabled", disabled ? "true" : "false");
+            button.disabled = hasPending;
+            button.setAttribute("aria-disabled", hasPending ? "true" : "false");
           });
 
           statusNodes.forEach((node) => {
@@ -630,8 +629,6 @@ const heroTitleRichTextLabels = {
             return;
           }
 
-          isSubmitting = true;
-          syncSubmitState();
           requestAnimationFrame(() => form.requestSubmit());
         };
 
@@ -664,13 +661,18 @@ const heroTitleRichTextLabels = {
         });
 
         form.addEventListener("submit", (event) => {
-          if (form.dataset.pendingUploads !== "true") {
-            isSubmitting = true;
+          if (form.dataset.pendingUploads === "true") {
+            event.preventDefault();
             syncSubmitState();
             return;
           }
 
-          event.preventDefault();
+          if (isSubmitting) {
+            event.preventDefault();
+            return;
+          }
+
+          isSubmitting = true;
           syncSubmitState();
         });
 
