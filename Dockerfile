@@ -6,7 +6,7 @@ RUN npm ci
 FROM deps AS build
 WORKDIR /app
 COPY . .
-ARG PUBLIC_SITE_URL=https://psihoterapija-ikar.rs
+ARG PUBLIC_SITE_URL=https://dev.psihoterapija-ikar.rs
 ENV PUBLIC_SITE_URL=${PUBLIC_SITE_URL}
 RUN npm run build
 

@@ -27,25 +27,34 @@ const links = [
 ];
 ---
 
-<header class="admin-appbar">
+<header class="admin-appbar appbar" data-initial-tone="light">
   <div class="container">
-    <div class="admin-appbar__panel">
-      <a class="admin-appbar__brand" href={`${adminConfig.basePath}/`}>
+    <div class="admin-appbar__panel appbar__panel">
+      <a class="admin-appbar__brand appbar__brand" href={`${adminConfig.basePath}/`}>
         {dictionary.admin.layout.title}
       </a>
 
-      <nav class="admin-appbar__nav" aria-label={dictionary.a11y.appbarPrimaryNav}>
+      <nav class="admin-appbar__nav appbar__nav" aria-label={dictionary.a11y.appbarPrimaryNav}>
         {
           links.map((link) => (
-            <a class:list={["admin-appbar__link", isActive(link.href) && "is-active"]} href={link.href}>
+            <a
+              class:list={[
+                "admin-appbar__link",
+                "appbar__link",
+                isActive(link.href) && "is-active",
+              ]}
+              href={link.href}
+            >
               {link.label}
             </a>
           ))
         }
       </nav>
 
-      <form action="/api/admin/logout" method="post">
-        <button class="button-ghost" type="submit">{dictionary.admin.layout.logout}</button>
+      <form class="admin-appbar__actions appbar__actions" action="/api/admin/logout" method="post">
+        <button class="admin-appbar__logout appbar__cta" type="submit">
+          {dictionary.admin.layout.logout}
+        </button>
       </form>
     </div>
   </div>

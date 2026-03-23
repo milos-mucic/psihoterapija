@@ -9,41 +9,40 @@
   border-bottom: 1px solid rgb(var(--primary-rgb) / 0.16);
   background: linear-gradient(135deg, rgb(var(--primary-rgb) / 0.16), rgb(var(--primary-rgb) / 0.08));
   backdrop-filter: blur(12px);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.34),
+    0 18px 40px rgb(9 31 32 / 0.08);
 }
 
 .admin-appbar__panel {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   gap: 1rem;
-  padding: 1rem 0;
 }
 
 .admin-appbar__brand {
   font-family: var(--font-display);
   font-size: 1.2rem;
+  font-weight: 400;
   letter-spacing: -0.02em;
 }
 
 .admin-appbar__nav {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   gap: 0.35rem;
 }
 
 .admin-appbar__link {
-  padding: 0.5rem 0.85rem;
-  border-radius: 999px;
-  color: var(--foreground);
   font-family: var(--font-ui);
-  font-size: 0.92rem;
-  font-weight: 500;
+}
+
+.admin-appbar__actions {
+  justify-content: flex-end;
+}
+
+.admin-appbar__logout {
+  cursor: pointer;
 }
 
 .admin-appbar__link.is-active {
-  background: rgb(var(--primary-rgb) / 0.14);
-  color: var(--foreground);
+  color: var(--primary);
 }
 
 .admin-grid {
@@ -175,8 +174,16 @@
   }
 
   .admin-appbar__nav {
+    order: 2;
+    width: 100%;
+    justify-content: center;
+    overflow-x: auto;
+  }
+
+  .admin-appbar__actions {
     order: 3;
     width: 100%;
+    justify-content: center;
   }
 
   .admin-form__grid {

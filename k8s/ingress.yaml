@@ -18,10 +18,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - psihoterapija-ikar.rs
+        - dev.psihoterapija-ikar.rs
       secretName: psihoterapija-ikar-tls
   rules:
-    - host: psihoterapija-ikar.rs
+    - host: dev.psihoterapija-ikar.rs
       http:
         paths:
           - path: /
