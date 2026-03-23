@@ -1,6 +1,6 @@
 ---
 import PageBanner from "@/components/sections/PageBanner.astro";
-import { AppointmentForm } from "@/components/components/AppointmentForm";
+import AppointmentForm from "@/components/components/AppointmentForm.astro";
 import FaqAccordionSection from "@/components/sections/FaqAccordionSection.astro";
 import { getDictionary } from "@/features/i18n/translate";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
@@ -40,7 +40,6 @@ const dictionary = getDictionary(locale);
 
       <div data-reveal="up" style="--reveal-delay: 90ms;">
         <AppointmentForm
-          client:load
           locale={locale}
           labels={dictionary.forms}
           formatLabel={content.formatLabel}

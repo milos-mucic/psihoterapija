@@ -1,5 +1,4 @@
 ---
-import { ClientRouter } from "astro:transitions";
 import AppBar from "@/components/components/AppBar.astro";
 import AdminAppBar from "@/components/components/AdminAppBar.astro";
 import PageMotion from "@/components/components/PageMotion.astro";
@@ -50,32 +49,6 @@ const initialAppBarTone = appBarTone ?? derivedAppBarTone;
 <html lang={locale === "sr-cyrl" ? "sr-Cyrl-RS" : "sr-Latn-RS"}>
   <head>
     <SeoHead title={title} description={description} canonicalPath={canonicalPath} />
-    <ClientRouter />
-    <script is:inline>
-      (() => {
-        const resetScroll = () => {
-          if ("scrollRestoration" in history) {
-            history.scrollRestoration = "manual";
-          }
-
-          window.scrollTo(0, 0);
-          const root = document.documentElement;
-
-          if (root) {
-            root.scrollTop = 0;
-          }
-
-          if (document.body) {
-            document.body.scrollTop = 0;
-          }
-        };
-
-        resetScroll();
-        window.addEventListener("pageshow", resetScroll);
-        document.addEventListener("astro:after-swap", resetScroll);
-        document.addEventListener("astro:page-load", resetScroll);
-      })();
-    </script>
     <slot name="head" />
   </head>
   <body

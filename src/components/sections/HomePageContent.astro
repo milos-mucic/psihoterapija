@@ -1,5 +1,5 @@
 ---
-import { AppointmentForm } from "@/components/components/AppointmentForm";
+import AppointmentForm from "@/components/components/AppointmentForm.astro";
 import type { HomePageData } from "@/data/fixtures/home";
 import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
@@ -260,7 +260,7 @@ const homeVideoSrc = youtubeVideoId
   </div>
 </dialog>
 
-<script is:inline>
+<script>
   (() => {
     const setupHomeVideo = () => {
       const dialog = document.querySelector("[data-home-video-dialog]");
@@ -270,23 +270,35 @@ const homeVideoSrc = youtubeVideoId
       const video = document.querySelector("[data-home-video-player]");
 
       if (
-        !(dialog instanceof HTMLDialogElement) ||
         !(openButton instanceof HTMLElement) ||
         !(closeButton instanceof HTMLElement) ||
-        !(iframe instanceof HTMLIFrameElement) ||
-        !(video instanceof HTMLVideoElement) ||
+        !(dialog instanceof HTMLElement) ||
+        !(iframe instanceof HTMLElement) ||
+        !(video instanceof HTMLElement) ||
         dialog.dataset.bound === "true"
       ) {
         return;
       }
 
+      const supportsDialog =
+        typeof HTMLDialogElement !== "undefined" &&
+        dialog instanceof HTMLDialogElement &&
+        typeof dialog.showModal === "function";
+
       const closeDialog = () => {
-        dialog.close();
+        if (supportsDialog) {
+          dialog.close();
+        }
       };
 
       openButton.addEventListener("click", () => {
         const src = openButton.dataset.videoSrc;
         if (!src) {
+          return;
+        }
+
+        if (!supportsDialog) {
+          window.open(src, "_blank", "noopener");
           return;
         }
 
@@ -327,7 +339,6 @@ const homeVideoSrc = youtubeVideoId
     };
 
     setupHomeVideo();
-    document.addEventListener("astro:page-load", setupHomeVideo);
   })();
 </script>
 
@@ -344,7 +355,6 @@ const homeVideoSrc = youtubeVideoId
 
       <div data-reveal="up" style="--reveal-delay: 90ms;">
         <AppointmentForm
-          client:load
           locale={locale}
           labels={dictionary.forms}
           formatLabel={content.booking.formatLabel}

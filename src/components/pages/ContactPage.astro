@@ -1,6 +1,6 @@
 ---
 import PageBanner from "@/components/sections/PageBanner.astro";
-import { ContactForm } from "@/components/components/ContactForm";
+import ContactForm from "@/components/components/ContactForm.astro";
 import { getContactPageData, officeGallery } from "@/data/fixtures/public-pages";
 import { getDictionary } from "@/features/i18n/translate";
 import { siteConfig, type SiteLocale } from "@/lib/config/site";
@@ -17,17 +17,17 @@ const isCyrillic = locale === "sr-cyrl";
 const socialLinks = [
   {
     href: "https://www.facebook.com/",
-    value: "ïŽž",
+    icon: "facebook",
     label: isCyrillic ? "Фејсбук профил" : "Fejsbuk profil",
   },
   {
     href: "https://www.instagram.com/",
-    value: "ï…­",
+    icon: "instagram",
     label: isCyrillic ? "Инстаграм профил" : "Instagram profil",
   },
   {
     href: "https://www.linkedin.com/",
-    value: "ï‚Œ",
+    icon: "linkedin",
     label: isCyrillic ? "Линкедин профил" : "LinkedIn profil",
   },
 ];
@@ -70,7 +70,29 @@ const socialLinks = [
             {
               socialLinks.map((link) => (
                 <a href={link.href} target="_blank" rel="noreferrer" aria-label={link.label}>
-                  {link.value}
+                  {
+                    link.icon === "facebook" ? (
+                      <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M13.5 21v-7h2.4l.4-3h-2.8V9.2c0-.9.3-1.6 1.7-1.6H16V4.9c-.4-.1-1.2-.2-2.2-.2-2.2 0-3.8 1.4-3.8 4V11H7.5v3H10v7h3.5Z" />
+                      </svg>
+                    ) : link.icon === "instagram" ? (
+                      <svg
+                        aria-hidden="true"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      >
+                        <rect x="3.5" y="3.5" width="17" height="17" rx="5"></rect>
+                        <circle cx="12" cy="12" r="3.75"></circle>
+                        <circle cx="17.2" cy="6.8" r="1"></circle>
+                      </svg>
+                    ) : (
+                      <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6.9 8.2A1.9 1.9 0 1 1 7 4.4a1.9 1.9 0 0 1-.1 3.8ZM5.2 9.8h3.5V20H5.2V9.8Zm5.6 0H14v1.4h.1c.5-.9 1.7-1.8 3.4-1.8 3.6 0 4.3 2.4 4.3 5.5V20h-3.5v-4.6c0-1.1 0-2.5-1.5-2.5s-1.8 1.2-1.8 2.4V20h-3.5V9.8Z" />
+                      </svg>
+                    )
+                  }
                 </a>
               ))
             }
@@ -80,7 +102,7 @@ const socialLinks = [
 
       <div class="page-form-shell page-form-shell--contact" data-reveal="right">
         <h2>{content.formTitle}</h2>
-        <ContactForm client:load locale={locale} labels={dictionary.forms} />
+        <ContactForm locale={locale} labels={dictionary.forms} />
       </div>
     </div>
   </div>
@@ -104,7 +126,7 @@ const socialLinks = [
             <img
               src={image}
               alt={`${dictionary.common.officeRoom} ${index + 1}`}
-              loading="eager"
+              loading="lazy"
               data-image-component
             />
             <div class="office-gallery__meta">

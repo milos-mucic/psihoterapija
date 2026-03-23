@@ -2,6 +2,21 @@ import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import type { SiteLocale } from "@/lib/config/site";
 
+const mirroredImages = {
+  logoService1: "/legacy/images/mirrored/logo-service-1.png",
+  logoService2: "/legacy/images/mirrored/logo-service-2.png",
+  logoService3: "/legacy/images/mirrored/logo-service-3.png",
+  service3: "/legacy/images/mirrored/service-3.png",
+  serviceImage: "/legacy/images/mirrored/service-img.png",
+  sessionImage: "/legacy/images/mirrored/session-img-1.png",
+  supportImage: "/legacy/images/mirrored/support-img.webp",
+  scopeIcon1: "/legacy/images/mirrored/scope-icon-1.png",
+  scopeIcon2: "/legacy/images/mirrored/scope-icon-2.png",
+  scopeIcon3: "/legacy/images/mirrored/scope-icon-3.png",
+  scopeIcon4: "/legacy/images/mirrored/scope-icon-4.png",
+  sessionBanner: "/legacy/images/mirrored/session-banner.webp",
+} as const;
+
 export type BannerData = {
   title: string;
   description?: string;
@@ -88,22 +103,19 @@ export const getAboutPageData = (locale: SiteLocale) => {
         title: serviceItems[2].title,
         copy: serviceItems[2].copy,
         href: localizePath(locale, "/zakazivanje/"),
-        image:
-          "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d692288_Logo%20Service%201.png",
+        image: mirroredImages.logoService1,
       },
       {
         title: serviceItems[0].title,
         copy: serviceItems[0].copy,
         href: localizePath(locale, "/psihoterapija/"),
-        image:
-          "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d692289_Logo%20Service%202.png",
+        image: mirroredImages.logoService2,
       },
       {
         title: serviceItems[1].title,
         copy: serviceItems[1].copy,
         href: localizePath(locale, "/psihoterapija/"),
-        image:
-          "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d69228a_Logo%20Service%203.png",
+        image: mirroredImages.logoService3,
       },
     ],
     ideaTitle: content.ideaTitle,
@@ -129,24 +141,21 @@ export const getPsychotherapyPageData = (locale: SiteLocale) => {
       copy: serviceItems[0].copy,
       href: localizePath(locale, "/zakazivanje/"),
       label: serviceItems[0].label,
-      image:
-        "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d69229c_Service%203.png",
+      image: mirroredImages.service3,
     },
     {
       title: serviceItems[1].title,
       copy: serviceItems[1].copy,
       href: localizePath(locale, "/zakazivanje/"),
       label: serviceItems[1].label,
-      image:
-        "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d69228d_Service%20Img.png",
+      image: mirroredImages.serviceImage,
     },
     {
       title: serviceItems[2].title,
       copy: serviceItems[2].copy,
       href: localizePath(locale, "/zakazivanje/"),
       label: serviceItems[2].label,
-      image:
-        "https://uploads-ssl.webflow.com/6569b75914a6537423ee9927/656dcaf20f6eba5989f094e8_Session%20Img%201.png",
+      image: mirroredImages.sessionImage,
     },
   ];
 
@@ -163,8 +172,7 @@ export const getPsychotherapyPageData = (locale: SiteLocale) => {
     formatLabel: content.formatLabel,
     formats: content.formats,
     faqs: content.faqs satisfies FaqAccordionItem[],
-    faqImage:
-      "https://cdn.prod.website-files.com/689b44011832e2b57d692055/689b44011832e2b57d6921cc__Support%20Img.webp",
+    faqImage: mirroredImages.supportImage,
   };
 };
 
@@ -176,9 +184,8 @@ const getScopeTabSeeds = (locale: SiteLocale): ScopeTabSeed[] => {
         {
           id: "anksiozna-stanja",
           label: "Анксиозна стања",
-          icon: "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d6922a6_4.png",
-          detailImage:
-            "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d6922a6_4.png",
+          icon: mirroredImages.scopeIcon1,
+          detailImage: mirroredImages.scopeIcon1,
           detailLead:
             "Када напетост постане стално присутна, психотерапијски процес помаже да се разумеју унутрашњи конфликти и постепено врати осећај стабилности.",
           items: [
@@ -199,9 +206,8 @@ const getScopeTabSeeds = (locale: SiteLocale): ScopeTabSeed[] => {
         {
           id: "poremecaji-licnosti",
           label: "Поремећаји личности",
-          icon: "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d692286_Session%20Icon%202.png",
-          detailImage:
-            "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d692286_Session%20Icon%202.png",
+          icon: mirroredImages.scopeIcon2,
+          detailImage: mirroredImages.scopeIcon2,
           detailLead:
             "Фокус рада је на обрасцима односа, доживљају себе и начинима емоционалне регулације који се дуготрајно понављају.",
           items: [
@@ -222,9 +228,8 @@ const getScopeTabSeeds = (locale: SiteLocale): ScopeTabSeed[] => {
         {
           id: "depresivna-stanja",
           label: "Депресивна стања",
-          icon: "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d692287_Session%20Icon%203.png",
-          detailImage:
-            "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d692287_Session%20Icon%203.png",
+          icon: mirroredImages.scopeIcon3,
+          detailImage: mirroredImages.scopeIcon3,
           detailLead:
             "У терапији радимо на разумевању осећаја безвољности, унутрашње празнине и губитка смисла, кроз стабилан и континуиран процес.",
           items: [
@@ -245,9 +250,8 @@ const getScopeTabSeeds = (locale: SiteLocale): ScopeTabSeed[] => {
         {
           id: "trauma",
           label: "Траума",
-          icon: "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d692285_Session%20Icon%201.png",
-          detailImage:
-            "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d692285_Session%20Icon%201.png",
+          icon: mirroredImages.scopeIcon4,
+          detailImage: mirroredImages.scopeIcon4,
           detailLead:
             "Трауматска искуства остављају трајне емоционалне трагове. Циљ терапије је постепена интеграција искуства и стабилизација свакодневног функционисања.",
           items: [
@@ -270,9 +274,8 @@ const getScopeTabSeeds = (locale: SiteLocale): ScopeTabSeed[] => {
         {
           id: "anksiozna-stanja",
           label: "Anksiozna stanja",
-          icon: "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d6922a6_4.png",
-          detailImage:
-            "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d6922a6_4.png",
+          icon: mirroredImages.scopeIcon1,
+          detailImage: mirroredImages.scopeIcon1,
           detailLead:
             "Kada napetost postane stalno prisutna, psihoterapijski proces pomaže da se razumeju unutrašnji konflikti i postepeno vrati osećaj stabilnosti.",
           items: [
@@ -293,9 +296,8 @@ const getScopeTabSeeds = (locale: SiteLocale): ScopeTabSeed[] => {
         {
           id: "poremecaji-licnosti",
           label: "Poremećaji ličnosti",
-          icon: "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d692286_Session%20Icon%202.png",
-          detailImage:
-            "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d692286_Session%20Icon%202.png",
+          icon: mirroredImages.scopeIcon2,
+          detailImage: mirroredImages.scopeIcon2,
           detailLead:
             "Fokus rada je na obrascima odnosa, doživljaju sebe i načinima emocionalne regulacije koji se dugotrajno ponavljaju.",
           items: [
@@ -316,9 +318,8 @@ const getScopeTabSeeds = (locale: SiteLocale): ScopeTabSeed[] => {
         {
           id: "depresivna-stanja",
           label: "Depresivna stanja",
-          icon: "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d692287_Session%20Icon%203.png",
-          detailImage:
-            "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d692287_Session%20Icon%203.png",
+          icon: mirroredImages.scopeIcon3,
+          detailImage: mirroredImages.scopeIcon3,
           detailLead:
             "U terapiji radimo na razumevanju osećaja bezvoljnosti, unutrašnje praznine i gubitka smisla kroz stabilan i kontinuiran proces.",
           items: [
@@ -339,9 +340,8 @@ const getScopeTabSeeds = (locale: SiteLocale): ScopeTabSeed[] => {
         {
           id: "trauma",
           label: "Trauma",
-          icon: "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d692285_Session%20Icon%201.png",
-          detailImage:
-            "https://cdn.prod.website-files.com/689b44011832e2b57d6920e4/689b44011832e2b57d692285_Session%20Icon%201.png",
+          icon: mirroredImages.scopeIcon4,
+          detailImage: mirroredImages.scopeIcon4,
           detailLead:
             "Traumatska iskustva ostavljaju trajne emocionalne tragove. Cilj terapije je postepena integracija iskustva i stabilizacija svakodnevnog funkcionisanja.",
           items: [
@@ -383,8 +383,7 @@ export const getScopePageData = (locale: SiteLocale) => {
         ? "Овде можете прочитати детаљније о различитим менталним поремећајима, психолошким стањима и темама са којима радимо."
         : "Ovde možete pročitati detaljnije o različitim mentalnim poremećajima, psihološkim stanjima i temama sa kojima radimo.",
       theme: "dark" as const,
-      backgroundImage:
-        "https://cdn.prod.website-files.com/689b44011832e2b57d692055/689b44011832e2b57d6921fd_Session%20Banner%20(1).webp",
+      backgroundImage: mirroredImages.sessionBanner,
       align: "split" as const,
     },
     tabs,
@@ -428,8 +427,7 @@ export const getScopeDetailPageData = (locale: SiteLocale, slug: string) => {
       title: currentTab.label,
       description: currentTab.cardCopy,
       theme: "dark" as const,
-      backgroundImage:
-        "https://cdn.prod.website-files.com/689b44011832e2b57d692055/689b44011832e2b57d6921fd_Session%20Banner%20(1).webp",
+      backgroundImage: mirroredImages.sessionBanner,
       align: "split" as const,
     },
     eyebrow: isCyrillic ? "Област рада" : "Oblast rada",
@@ -525,8 +523,7 @@ export const getFaqPageData = (locale: SiteLocale) => {
     sectionIntro: content.banner.description,
     sectionTags: content.formats,
     items: content.items satisfies FaqAccordionItem[],
-    faqImage:
-      "https://cdn.prod.website-files.com/689b44011832e2b57d692055/689b44011832e2b57d6921cc__Support%20Img.webp",
+    faqImage: mirroredImages.supportImage,
     bookingTitle: content.bookingTitle,
     bookingCopy: dictionary.homePage.booking.copy,
     formatLabel: content.formatLabel,
@@ -567,8 +564,7 @@ export const getAppointmentPageData = (locale: SiteLocale) => {
     formatLabel: content.formatLabel,
     formats: content.formats,
     faqs: content.faqs satisfies FaqAccordionItem[],
-    faqImage:
-      "https://cdn.prod.website-files.com/689b44011832e2b57d692055/689b44011832e2b57d6921cc__Support%20Img.webp",
+    faqImage: mirroredImages.supportImage,
   };
 };
 

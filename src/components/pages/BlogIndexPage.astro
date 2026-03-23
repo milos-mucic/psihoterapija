@@ -190,7 +190,7 @@ const ui = dictionary.blog.index;
   </div>
 </section>
 
-<script is:inline>
+<script>
   (() => {
     const normalize = (value) => value.toLowerCase().trim();
 
@@ -271,7 +271,6 @@ const ui = dictionary.blog.index;
     };
 
     initBlogFilters();
-    document.addEventListener("astro:page-load", initBlogFilters);
   })();
 </script>
 

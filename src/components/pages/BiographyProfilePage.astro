@@ -81,7 +81,7 @@ if (!content) {
               data-reveal="up"
               style={`--reveal-delay: ${index * 70}ms;`}
             >
-              <img src={profile.image} alt={profile.title} loading="eager" data-image-component />
+              <img src={profile.image} alt={profile.title} loading="lazy" data-image-component />
               <p class="biography-profile-page__related-role">{profile.role}</p>
               <h3>{profile.title}</h3>
               <div class="richtext-shell" set:html={profile.summary} />

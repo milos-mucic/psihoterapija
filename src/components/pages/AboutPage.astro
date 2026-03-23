@@ -56,7 +56,11 @@ const aboutVideoEmbedSrc = videoIdMatch
         style={`--about-video-image: url("${content.showcaseVideoImage}")`}
       >
         <span class="about-legacy__video-center">
-          <span class="about-legacy__video-icon"></span>
+          <span class="about-legacy__video-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 6.5v11l9-5.5-9-5.5Z"></path>
+            </svg>
+          </span>
           <span class="about-legacy__video-core"></span>
           <span class="about-legacy__video-ring"></span>
         </span>
@@ -74,7 +78,7 @@ const aboutVideoEmbedSrc = videoIdMatch
                 <img
                   src={card.image}
                   alt={card.title}
-                  loading="eager"
+                  loading="lazy"
                   class="about-legacy__service-icon"
                   data-image-component
                 />
@@ -206,7 +210,7 @@ const aboutVideoEmbedSrc = videoIdMatch
   </div>
 </dialog>
 
-<script is:inline>
+<script>
   (() => {
     const setupAboutVideo = () => {
       const dialog = document.querySelector("[data-about-video-dialog]");
@@ -252,7 +256,6 @@ const aboutVideoEmbedSrc = videoIdMatch
     };
 
     setupAboutVideo();
-    document.addEventListener("astro:page-load", setupAboutVideo);
   })();
 </script>
 
@@ -376,10 +379,17 @@ const aboutVideoEmbedSrc = videoIdMatch
 
   .about-legacy__video-icon {
     z-index: 2;
-    margin-left: 0.25rem;
     color: var(--primary);
-    font-family: "Fa solid 900", var(--font-ui);
-    font-size: 1.25rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .about-legacy__video-icon svg {
+    width: 100%;
+    height: 100%;
   }
 
   .about-legacy__video-core {
@@ -625,7 +635,6 @@ const aboutVideoEmbedSrc = videoIdMatch
   }
 
   .about-legacy__post-link span {
-    font-family: "Fa solid 900", var(--font-ui);
     font-size: 0.8125rem;
     line-height: 1;
   }

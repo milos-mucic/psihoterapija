@@ -1,0 +1,104 @@
+---
+type FormLabels = {
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+  formatLabel: string;
+  chooseOption: string;
+  success: string;
+  error: string;
+};
+
+type Props = {
+  locale: "sr-latn" | "sr-cyrl";
+  type: "contact" | "appointment";
+  submitLabel: string;
+  formatLabel?: string;
+  appointmentFormats?: string[];
+  labels: FormLabels;
+};
+
+const {
+  locale,
+  type,
+  submitLabel,
+  labels,
+  formatLabel,
+  appointmentFormats = [],
+} = Astro.props;
+---
+
+<form
+  class:list={["stack-form", `stack-form--${type}`]}
+  action="/api/public/submissions"
+  method="post"
+  data-submission-form="true"
+  data-success-message={labels.success}
+  data-error-message={labels.error}
+>
+  <input type="hidden" name="type" value={type} />
+  <input type="hidden" name="locale" value={locale} />
+
+  <div class="stack-form__grid">
+    <label class="stack-form__field">
+      <span class="stack-form__label">{labels.name}</span>
+      <input class="input-control" name="name" autocomplete="name" required />
+    </label>
+
+    {
+      type === "appointment" ? (
+        <label class="stack-form__field">
+          <span class="stack-form__label">{labels.phone}</span>
+          <input class="input-control" name="phone" type="tel" autocomplete="tel" required />
+        </label>
+      ) : null
+    }
+
+    <label class="stack-form__field">
+      <span class="stack-form__label">{labels.email}</span>
+      <input class="input-control" name="email" type="email" autocomplete="email" required />
+    </label>
+
+    {
+      type === "appointment" ? (
+        <label class="stack-form__field">
+          <span class="stack-form__label">{formatLabel ?? labels.formatLabel}</span>
+          <select class="input-control" name="format" required>
+            <option value="" selected disabled>
+              {labels.chooseOption}
+            </option>
+            {appointmentFormats.map((format) => <option value={format}>{format}</option>)}
+          </select>
+        </label>
+      ) : (
+        <label class="stack-form__field stack-form__field--full stack-form__field--message">
+          <span class="stack-form__label">{labels.message}</span>
+          <textarea
+            class="input-control input-control--textarea"
+            name="message"
+            required
+            rows={5}
+          />
+        </label>
+      )
+    }
+
+    {type === "contact" ? null : <input name="message" type="hidden" value="" readOnly />}
+  </div>
+
+  <div class="stack-form__actions">
+    <div class="stack-form__feedback" aria-live="polite" data-form-feedback></div>
+
+    <button
+      class="button-primary stack-form__submit"
+      type="submit"
+      data-submit-button
+      data-idle-label={submitLabel}
+    >
+      {submitLabel}
+    </button>
+  </div>
+</form>
+
+<script type="module" src="/scripts/submission-form.js"></script>

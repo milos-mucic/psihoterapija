@@ -65,7 +65,7 @@ const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
                       class="scope-page__tab-item-icon"
                       src={tab.icon}
                       alt=""
-                      loading="eager"
+                      loading="lazy"
                       data-image-component
                     />
                     <h3 class="scope-page__tab-item-title">{tab.cardTitle}</h3>
@@ -187,7 +187,7 @@ const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
   </div>
 </section>
 
-<script is:inline>
+<script>
   (() => {
     const setupScopeTabs = () => {
       document.querySelectorAll("[data-scope-tabs]").forEach((tabsRoot) => {
@@ -234,7 +234,6 @@ const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
     };
 
     setupScopeTabs();
-    document.addEventListener("astro:page-load", setupScopeTabs);
   })();
 </script>
 

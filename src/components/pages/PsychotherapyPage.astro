@@ -1,7 +1,7 @@
 ---
 import FaqAccordionSection from "@/components/sections/FaqAccordionSection.astro";
 import PageBanner from "@/components/sections/PageBanner.astro";
-import { AppointmentForm } from "@/components/components/AppointmentForm";
+import AppointmentForm from "@/components/components/AppointmentForm.astro";
 import { getDictionary } from "@/features/i18n/translate";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import type { SiteLocale } from "@/lib/config/site";
@@ -50,7 +50,7 @@ const dictionary = getDictionary(locale);
                   class="service-img psychotherapy-page__service-img"
                   src={item.image}
                   alt={item.title}
-                  loading="eager"
+                  loading="lazy"
                   data-image-component
                 />
               </div>
@@ -81,7 +81,6 @@ const dictionary = getDictionary(locale);
 
       <div data-reveal="up" style="--reveal-delay: 90ms;">
         <AppointmentForm
-          client:load
           locale={locale}
           labels={dictionary.forms}
           formatLabel={content.booking.formatLabel}

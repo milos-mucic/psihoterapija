@@ -1,0 +1,22 @@
+---
+import SubmissionForm from "@/components/components/SubmissionForm.astro";
+
+type Props = {
+  locale: "sr-latn" | "sr-cyrl";
+  labels: {
+    name: string;
+    email: string;
+    phone: string;
+    message: string;
+    formatLabel: string;
+    chooseOption: string;
+    submitContact: string;
+    success: string;
+    error: string;
+  };
+};
+
+const { locale, labels } = Astro.props;
+---
+
+<SubmissionForm locale={locale} type="contact" submitLabel={labels.submitContact} labels={labels} />
