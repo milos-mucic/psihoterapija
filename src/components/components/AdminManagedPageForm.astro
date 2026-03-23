@@ -1116,37 +1116,10 @@ const richTextLabels = {
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Detalj stranice</h2>
-                    <p class="section-copy">Tekstovi zajednički svim detail stranicama.</p>
+                    <p class="section-copy">Zajednički tekst za donji deo detail stranica.</p>
                   </div>
 
                   <div class="admin-form__grid">
-                    <label class="admin-form__field">
-                      <span>Eyebrow</span>
-                      <input
-                        class="input-control"
-                        name="detailEyebrow"
-                        value={pageContent.detail.eyebrow}
-                      />
-                    </label>
-
-                    <label class="admin-form__field">
-                      <span>Labela nazad</span>
-                      <input
-                        class="input-control"
-                        name="detailBackLabel"
-                        value={pageContent.detail.backLabel}
-                      />
-                    </label>
-
-                    <label class="admin-form__field">
-                      <span>Labela CTA</span>
-                      <input
-                        class="input-control"
-                        name="detailCtaLabel"
-                        value={pageContent.detail.ctaLabel}
-                      />
-                    </label>
-
                     <label class="admin-form__field">
                       <span>Naslov povezanih tema</span>
                       <input
@@ -1319,6 +1292,15 @@ const richTextLabels = {
                             />
                           </label>
 
+                          <label class="admin-form__field">
+                            <span>Meta labela taba</span>
+                            <input
+                              class="input-control"
+                              name={`tab${index + 1}Meta`}
+                              value={tab.tabMeta}
+                            />
+                          </label>
+
                           <AdminMediaField
                             client:load
                             name={`tab${index + 1}Icon`}
@@ -1328,6 +1310,54 @@ const richTextLabels = {
                             uploadFolder="pages/scope"
                             uploadLabel="Otpremi sliku"
                           />
+
+                          <label class="admin-form__field">
+                            <span>Naslov panela</span>
+                            <input
+                              class="input-control"
+                              name={`tab${index + 1}SummaryTitle`}
+                              value={tab.summaryTitle}
+                            />
+                          </label>
+
+                          <div class="admin-form__field admin-form__field--full">
+                            <span>Kratki opis panela</span>
+                            <AdminRichTextField
+                              client:load
+                              name={`tab${index + 1}SummaryCopy`}
+                              initialValue={tab.summaryCopy}
+                              uploadUrl="/api/admin/media/upload"
+                              uploadFolder="pages/scope"
+                              labels={richTextLabels}
+                            />
+                          </div>
+
+                          <label class="admin-form__field">
+                            <span>Eyebrow panela</span>
+                            <input
+                              class="input-control"
+                              name={`tab${index + 1}PanelEyebrow`}
+                              value={tab.panelEyebrow}
+                            />
+                          </label>
+
+                          <label class="admin-form__field">
+                            <span>Labela statistike</span>
+                            <input
+                              class="input-control"
+                              name={`tab${index + 1}PanelStatLabel`}
+                              value={tab.panelStatLabel}
+                            />
+                          </label>
+
+                          <label class="admin-form__field">
+                            <span>Labela CTA u panelu</span>
+                            <input
+                              class="input-control"
+                              name={`tab${index + 1}PanelCtaLabel`}
+                              value={tab.panelCtaLabel}
+                            />
+                          </label>
 
                           <AdminMediaField
                             client:load
@@ -1340,6 +1370,27 @@ const richTextLabels = {
                           />
 
                           <div class="admin-form__field admin-form__field--full">
+                            <span>Opis bannera detail stranice</span>
+                            <AdminRichTextField
+                              client:load
+                              name={`tab${index + 1}DetailBannerDescription`}
+                              initialValue={tab.detailBannerDescription}
+                              uploadUrl="/api/admin/media/upload"
+                              uploadFolder="pages/scope"
+                              labels={richTextLabels}
+                            />
+                          </div>
+
+                          <label class="admin-form__field">
+                            <span>Eyebrow detail stranice</span>
+                            <input
+                              class="input-control"
+                              name={`tab${index + 1}DetailEyebrow`}
+                              value={tab.detailEyebrow}
+                            />
+                          </label>
+
+                          <div class="admin-form__field admin-form__field--full">
                             <span>Lead tekst</span>
                             <AdminRichTextField
                               client:load
@@ -1350,6 +1401,24 @@ const richTextLabels = {
                               labels={richTextLabels}
                             />
                           </div>
+
+                          <label class="admin-form__field">
+                            <span>Labela nazad</span>
+                            <input
+                              class="input-control"
+                              name={`tab${index + 1}DetailBackLabel`}
+                              value={tab.detailBackLabel}
+                            />
+                          </label>
+
+                          <label class="admin-form__field">
+                            <span>Labela CTA detail stranice</span>
+                            <input
+                              class="input-control"
+                              name={`tab${index + 1}DetailCtaLabel`}
+                              value={tab.detailCtaLabel}
+                            />
+                          </label>
 
                           {tab.items.map((item, itemIndex) => (
                             <>
@@ -2003,8 +2072,47 @@ const richTextLabels = {
         }
 
         const baseHref = form.dataset.previewBaseHref ?? "";
+        const editorRoot = form.closest("[data-admin-page-editor]");
+        const nav = editorRoot?.querySelector("[data-admin-section-nav]");
+        const previewFrame = editorRoot?.querySelector("[data-admin-preview-iframe]");
+        const previewLink = editorRoot?.querySelector("[data-admin-preview-open]");
+        const sections = Array.from(form.children).filter(
+          (child) => child instanceof HTMLElement && child.matches("[data-section-preview]"),
+        );
 
-        Array.from(form.children).forEach((child) => {
+        const activateSection = (nextIndex) => {
+          sections.forEach((section, index) => {
+            if (!(section instanceof HTMLElement)) {
+              return;
+            }
+
+            const isActive = index === nextIndex;
+            section.classList.toggle("is-active", isActive);
+            section.classList.toggle("is-collapsed", !isActive);
+
+            const navButton = nav?.querySelector(`[data-admin-section-nav-index="${index}"]`);
+            navButton?.classList.toggle("is-active", isActive);
+            navButton?.setAttribute("aria-current", isActive ? "true" : "false");
+          });
+
+          const activeSection = sections[nextIndex];
+          if (!(activeSection instanceof HTMLElement)) {
+            return;
+          }
+
+          const fragment = activeSection.dataset.sectionPreviewFragment ?? "";
+          const href = fragment ? `${baseHref}#${fragment}` : baseHref;
+
+          if (previewFrame instanceof HTMLIFrameElement && previewFrame.src !== href) {
+            previewFrame.src = href;
+          }
+
+          if (previewLink instanceof HTMLAnchorElement) {
+            previewLink.href = href;
+          }
+        };
+
+        sections.forEach((child, index) => {
           if (!(child instanceof HTMLElement) || !child.matches("[data-section-preview]")) {
             return;
           }
@@ -2021,22 +2129,95 @@ const richTextLabels = {
             "";
 
           child.classList.add("admin-section-editor");
+          child.classList.toggle("is-active", index === 0);
+          child.classList.toggle("is-collapsed", index !== 0);
 
-          const linkbar = document.createElement("div");
-          linkbar.className = "admin-section-linkbar";
-          linkbar.dataset.sectionPreviewLinkbar = "true";
+          const existingNodes = Array.from(child.childNodes);
+          const body = document.createElement("div");
+          body.className = "admin-section-editor__body";
+          existingNodes.forEach((node) => body.append(node));
+
+          const header = document.createElement("div");
+          header.className = "admin-section-editor__header";
+
+          const badge = document.createElement("span");
+          badge.className = "admin-section-editor__badge";
+          badge.textContent = String(index + 1).padStart(2, "0");
+
+          const meta = document.createElement("div");
+          meta.className = "admin-section-editor__meta";
+
+          const heading = document.createElement("h2");
+          heading.textContent = title;
+          meta.append(heading);
+
+          if (copy) {
+            const summary = document.createElement("p");
+            summary.className = "admin-section-editor__copy";
+            summary.textContent = copy;
+            meta.append(summary);
+          }
+
+          const actions = document.createElement("div");
+          actions.className = "admin-section-editor__actions";
+
+          const toggle = document.createElement("button");
+          toggle.type = "button";
+          toggle.className = "button-primary admin-section-editor__toggle";
+          toggle.textContent = "Uredi sekciju";
+          toggle.addEventListener("click", () => activateSection(index));
 
           const link = document.createElement("a");
           link.className = "button-secondary";
           link.href = href;
           link.target = "_blank";
           link.rel = "noreferrer";
-          link.textContent = copy ? `Otvori sekciju: ${title}` : "Otvori sekciju";
+          link.textContent = "Otvori javnu sekciju";
 
-          linkbar.append(link);
-          child.prepend(linkbar);
+          actions.append(toggle, link);
+          header.append(badge, meta, actions);
+
+          child.replaceChildren(header, body);
+
+          if (nav instanceof HTMLElement) {
+            const navButton = document.createElement("button");
+            navButton.type = "button";
+            navButton.className = `admin-section-nav__button${index === 0 ? " is-active" : ""}`;
+            navButton.dataset.adminSectionNavIndex = String(index);
+
+            const navIndex = document.createElement("span");
+            navIndex.className = "admin-section-nav__index";
+            navIndex.textContent = String(index + 1).padStart(2, "0");
+
+            const navTitle = document.createElement("span");
+            navTitle.className = "admin-section-nav__title";
+            navTitle.textContent = title;
+
+            navButton.append(navIndex, navTitle);
+
+            if (copy) {
+              const navCopy = document.createElement("span");
+              navCopy.className = "admin-section-nav__copy";
+              navCopy.textContent = copy;
+              navButton.append(navCopy);
+            }
+
+            navButton.addEventListener("click", () => activateSection(index));
+            nav.append(navButton);
+          }
+
+          child.addEventListener(
+            "invalid",
+            (event) => {
+              if (event.target instanceof HTMLElement) {
+                activateSection(index);
+              }
+            },
+            true,
+          );
         });
 
+        activateSection(0);
         form.dataset.sectionPreviewBound = "true";
       });
     };

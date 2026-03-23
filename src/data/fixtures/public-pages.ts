@@ -50,9 +50,19 @@ type ScopeTabItem = {
 type ScopeTab = {
   id: string;
   label: string;
+  tabMeta: string;
   icon: string;
+  summaryTitle: string;
+  summaryCopy: string;
+  panelEyebrow: string;
+  panelStatLabel: string;
+  panelCtaLabel: string;
   detailImage: string;
+  detailBannerDescription: string;
+  detailEyebrow: string;
   detailLead: string;
+  detailBackLabel: string;
+  detailCtaLabel: string;
   cardTitle: string;
   cardCopy: string;
   href: string;
@@ -363,12 +373,34 @@ const getScopeTabSeeds = (locale: SiteLocale): ScopeTabSeed[] => {
 };
 
 const getScopeTabs = (locale: SiteLocale): ScopeTab[] =>
-  getScopeTabSeeds(locale).map((tab) => ({
-    ...tab,
-    cardTitle: tab.items[0]?.title ?? tab.label,
-    cardCopy: tab.items[0]?.copy ?? "",
-    href: localizePath(locale, `/oblast-rada/${tab.id}/`),
-  }));
+  getScopeTabSeeds(locale).map((tab) => {
+    const isCyrillic = locale === "sr-cyrl";
+    const itemCount = tab.items.length;
+    const countLabel = isCyrillic ? "теме у фокусу" : "teme u fokusu";
+    const panelEyebrow = isCyrillic ? "Област рада" : "Oblast rada";
+    const detailBackLabel = isCyrillic ? "Назад на област рада" : "Nazad na oblast rada";
+    const detailCtaLabel = isCyrillic ? "Закажите термин" : "Zakažite termin";
+    const panelCtaLabel = isCyrillic ? "Погледај страницу" : "Pogledaj stranicu";
+    const summaryTitle = tab.items[0]?.title ?? tab.label;
+    const summaryCopy = tab.items[0]?.copy ?? "";
+
+    return {
+      ...tab,
+      tabMeta: `${itemCount} ${countLabel}`,
+      summaryTitle,
+      summaryCopy,
+      panelEyebrow,
+      panelStatLabel: countLabel,
+      panelCtaLabel,
+      detailBannerDescription: summaryCopy,
+      detailEyebrow: panelEyebrow,
+      detailBackLabel,
+      detailCtaLabel,
+      cardTitle: summaryTitle,
+      cardCopy: summaryCopy,
+      href: localizePath(locale, `/oblast-rada/${tab.id}/`),
+    };
+  });
 
 export const getScopePageData = (locale: SiteLocale) => {
   const dictionary = getDictionary(locale);

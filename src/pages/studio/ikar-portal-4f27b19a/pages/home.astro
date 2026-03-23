@@ -65,7 +65,49 @@ const previewHref = localizePath(locale, "/");
           </p>
         </div>
 
-        <div class="admin-editor-layout admin-editor-layout--single">
+        <div class="admin-editor-layout" data-admin-page-editor>
+          <aside class="admin-editor-layout__aside">
+            <div class="card admin-preview-panel">
+              <div class="admin-preview-panel__head">
+                <div>
+                  <p class="admin-kicker">Live Preview</p>
+                  <h3>Javna strana</h3>
+                </div>
+                <a
+                  class="button-secondary"
+                  href={previewHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  data-admin-preview-open
+                >
+                  Otvori stranu
+                </a>
+              </div>
+
+              <div class="admin-preview-panel__viewport">
+                <iframe
+                  class="admin-preview-panel__frame"
+                  src={previewHref}
+                  title={`Preview strane ${dictionary.admin.pages.homeTitle}`}
+                  loading="lazy"
+                  data-admin-preview-iframe
+                ></iframe>
+              </div>
+            </div>
+
+            <div class="card admin-section-nav-card">
+              <div class="admin-section-nav-card__head">
+                <p class="admin-kicker">Edit Mode</p>
+                <h3>Sekcije stranice</h3>
+                <p class="section-copy">
+                  Uređuje se jedna sekcija u fokusu, dok su ostale sabijene radi preglednosti.
+                </p>
+              </div>
+
+              <div class="admin-section-nav" data-admin-section-nav></div>
+            </div>
+          </aside>
+
           <div class="admin-editor-layout__form">
             <AdminHomePageForm
               action="/api/admin/pages/home"

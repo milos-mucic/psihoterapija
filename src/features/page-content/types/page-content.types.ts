@@ -173,15 +173,22 @@ export type ScopePageManagedContent = {
   tabs: Array<{
     id: string;
     label: string;
+    tabMeta: string;
     icon: string;
+    summaryTitle: string;
+    summaryCopy: string;
+    panelEyebrow: string;
+    panelStatLabel: string;
+    panelCtaLabel: string;
     detailImage: string;
+    detailBannerDescription: string;
+    detailEyebrow: string;
     detailLead: string;
+    detailBackLabel: string;
+    detailCtaLabel: string;
     items: ManagedTextCard[];
   }>;
   detail: {
-    eyebrow: string;
-    backLabel: string;
-    ctaLabel: string;
     relatedTitle: string;
   };
   focus: {

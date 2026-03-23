@@ -268,15 +268,22 @@ export const getDefaultScopePageManagedContent = (locale: SiteLocale): ScopePage
     tabs: content.tabs.map((tab) => ({
       id: tab.id,
       label: tab.label,
+      tabMeta: tab.tabMeta,
       icon: tab.icon,
+      summaryTitle: tab.summaryTitle,
+      summaryCopy: tab.summaryCopy,
+      panelEyebrow: tab.panelEyebrow,
+      panelStatLabel: tab.panelStatLabel,
+      panelCtaLabel: tab.panelCtaLabel,
       detailImage: tab.detailImage,
+      detailBannerDescription: tab.detailBannerDescription,
+      detailEyebrow: tab.detailEyebrow,
       detailLead: tab.detailLead,
+      detailBackLabel: tab.detailBackLabel,
+      detailCtaLabel: tab.detailCtaLabel,
       items: tab.items,
     })),
     detail: {
-      eyebrow: firstDetail?.eyebrow ?? "",
-      backLabel: firstDetail?.backLabel ?? "",
-      ctaLabel: firstDetail?.ctaLabel ?? "",
       relatedTitle: firstDetail?.relatedTitle ?? "",
     },
     focus: {
@@ -305,8 +312,8 @@ export const buildScopePageData = (locale: SiteLocale, content: ScopePageManaged
   },
   tabs: content.tabs.map((tab) => ({
     ...tab,
-    cardTitle: tab.items[0]?.title ?? tab.label,
-    cardCopy: tab.items[0]?.copy ?? "",
+    cardTitle: tab.summaryTitle,
+    cardCopy: tab.summaryCopy,
     href: localizePath(locale, `/oblast-rada/${tab.id}/`),
   })),
   scopeTitle: content.intro.title,
@@ -331,8 +338,8 @@ export const buildScopeDetailPageData = (
 ) => {
   const tabs = content.tabs.map((tab) => ({
     ...tab,
-    cardTitle: tab.items[0]?.title ?? tab.label,
-    cardCopy: tab.items[0]?.copy ?? "",
+    cardTitle: tab.summaryTitle,
+    cardCopy: tab.summaryCopy,
     href: localizePath(locale, `/oblast-rada/${tab.id}/`),
   }));
   const currentTab = tabs.find((tab) => tab.id === slug);
@@ -344,19 +351,19 @@ export const buildScopeDetailPageData = (
   return {
     banner: {
       title: currentTab.label,
-      description: currentTab.cardCopy,
+      description: currentTab.detailBannerDescription,
       backgroundImage: undefined,
       theme: "dark" as const,
       align: "split" as const,
     },
-    eyebrow: content.detail.eyebrow,
+    eyebrow: currentTab.detailEyebrow,
     lead: currentTab.detailLead,
     image: currentTab.detailImage,
     items: currentTab.items,
     backHref: localizePath(locale, "/oblast-rada/"),
-    backLabel: content.detail.backLabel,
+    backLabel: currentTab.detailBackLabel,
     ctaHref: localizePath(locale, "/zakazivanje/"),
-    ctaLabel: content.detail.ctaLabel,
+    ctaLabel: currentTab.detailCtaLabel,
     relatedTitle: content.detail.relatedTitle,
     relatedTabs: tabs.filter((tab) => tab.id !== slug),
   };
