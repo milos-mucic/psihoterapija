@@ -107,9 +107,11 @@ export const getDefaultBiographyPageManagedContent = (
       title: content.cardsTitle,
       copy: content.cardsCopy,
       cards: content.cards.map((card) => ({
+        slug: card.slug,
         title: card.title,
         role: card.role,
         summary: card.summary,
+        body: card.body,
         image: card.image,
         highlights: card.highlights,
       })),
@@ -137,7 +139,10 @@ export const buildBiographyPageData = (
   },
   cardsTitle: content.cardsSection.title,
   cardsCopy: content.cardsSection.copy,
-  cards: content.cardsSection.cards,
+  cards: content.cardsSection.cards.map((card) => ({
+    ...card,
+    href: localizePath(locale, `/biografija/${card.slug}/`),
+  })),
   approachTitle: content.approach.title,
   approachCopy: content.approach.copy,
   approachPoints: content.approach.points,
@@ -145,6 +150,37 @@ export const buildBiographyPageData = (
   ctaHref: localizePath(locale, "/zakazivanje/"),
   ctaLabel: content.approach.ctaLabel,
 });
+
+export const buildBiographyDetailPageData = (
+  locale: SiteLocale,
+  content: BiographyPageManagedContent,
+  slug: string,
+) => {
+  const cards = content.cardsSection.cards.map((card) => ({
+    ...card,
+    href: localizePath(locale, `/biografija/${card.slug}/`),
+  }));
+  const profile = cards.find((card) => card.slug === slug);
+
+  if (!profile) {
+    return null;
+  }
+
+  return {
+    banner: {
+      title: profile.title,
+      description: profile.role,
+      backgroundImage: content.banner.backgroundImage,
+      theme: "dark" as const,
+      align: "split" as const,
+    },
+    profile,
+    backHref: localizePath(locale, "/biografija/"),
+    backLabel: content.banner.title,
+    relatedTitle: content.cardsSection.title,
+    relatedProfiles: cards.filter((card) => card.slug !== slug),
+  };
+};
 
 export const getDefaultPsychotherapyPageManagedContent = (
   locale: SiteLocale,

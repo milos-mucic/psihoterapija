@@ -1,0 +1,40 @@
+---
+export const prerender = true;
+
+import BaseLayout from "@/components/components/BaseLayout.astro";
+import BiographyProfilePage from "@/components/pages/BiographyProfilePage.astro";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
+import { siteConfig } from "@/lib/config/site";
+
+export async function getStaticPaths() {
+  const biography = await pageContentService.getManagedBiographyContent("sr-cyrl");
+
+  return biography.cardsSection.cards.map((card) => ({
+    params: { slug: card.slug },
+  }));
+}
+
+const locale = "sr-cyrl";
+const { slug } = Astro.params;
+
+if (!slug) {
+  throw new Error("Missing biography profile slug.");
+}
+
+const content = await pageContentService.getBiographyProfilePageData(locale, slug);
+
+if (!content) {
+  return Astro.redirect("/cir/biografija/");
+}
+---
+
+<BaseLayout
+  title={`${content.profile.title} | ${siteConfig.name}`}
+  description={content.profile.summary}
+  locale={locale}
+  canonicalPath={`/cir/biografija/${slug}/`}
+  appBarTone="dark"
+  appBarOverlay={true}
+>
+  <BiographyProfilePage locale={locale} slug={slug} />
+</BaseLayout>

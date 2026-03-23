@@ -3,6 +3,7 @@ import {
   buildAboutPageData,
   buildAppointmentPageData,
   buildBiographyPageData,
+  buildBiographyDetailPageData,
   buildFaqPageData,
   buildPricingPageData,
   buildPsychotherapyPageData,
@@ -115,6 +116,13 @@ export const pageContentService = {
   },
   async getBiographyPageData(locale: SiteLocale) {
     return buildBiographyPageData(locale, await this.getManagedBiographyContent(locale));
+  },
+  async getBiographyProfilePageData(locale: SiteLocale, slug: string) {
+    return buildBiographyDetailPageData(
+      locale,
+      await this.getManagedBiographyContent(locale),
+      slug,
+    );
   },
   async updateBiographyContent(locale: SiteLocale, input: unknown) {
     const content = parseBiographyPageManagedContentForm(input);

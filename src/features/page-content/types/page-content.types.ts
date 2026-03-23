@@ -30,6 +30,16 @@ export type ManagedFaqItem = {
   answer: string;
 };
 
+export type BiographyProfileManagedContent = {
+  slug: string;
+  title: string;
+  role: string;
+  summary: string;
+  body: string;
+  image: string;
+  highlights: string[];
+};
+
 export type HomeEditableLinkCard = {
   title: string;
   copy: string;
@@ -122,13 +132,7 @@ export type BiographyPageManagedContent = {
   cardsSection: {
     title: string;
     copy: string;
-    cards: Array<{
-      title: string;
-      role: string;
-      summary: string;
-      image: string;
-      highlights: string[];
-    }>;
+    cards: BiographyProfileManagedContent[];
   };
   approach: {
     title: string;

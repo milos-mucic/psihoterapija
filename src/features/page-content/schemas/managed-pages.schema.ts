@@ -3,6 +3,7 @@ import { sanitizeRichTextHtml } from "@/features/blog/utils/rich-text";
 import type {
   AboutPageManagedContent,
   AppointmentPageManagedContent,
+  BiographyProfileManagedContent,
   BiographyPageManagedContent,
   FaqPageManagedContent,
   PricingPageManagedContent,
@@ -153,9 +154,11 @@ export const parseAboutPageManagedContentForm = (input: unknown): AboutPageManag
 };
 
 const biographyCardSchema = z.object({
+  slug: requiredText,
   title: requiredText,
   role: requiredText,
   summary: requiredText,
+  body: requiredText,
   image: requiredText,
   highlights: z.array(requiredText).length(3),
 });
@@ -165,7 +168,13 @@ export const biographyPageManagedContentSchema: z.ZodType<BiographyPageManagedCo
   cardsSection: z.object({
     title: requiredText,
     copy: requiredText,
-    cards: z.array(biographyCardSchema).length(3),
+    cards: z
+      .array(biographyCardSchema)
+      .min(1)
+      .refine(
+        (cards) => new Set(cards.map((card) => card.slug)).size === cards.length,
+        "Slugs profila moraju biti jedinstveni.",
+      ),
   }),
   approach: z.object({
     title: requiredText,
@@ -179,30 +188,9 @@ export const biographyPageManagedContentSchema: z.ZodType<BiographyPageManagedCo
 const biographyPageFormSchema = z.object({
   bannerTitle: requiredText,
   bannerDescription: requiredText,
-  bannerBackgroundImage: requiredText,
+  bannerBackgroundImage: optionalText,
   cardsTitle: requiredText,
   cardsCopy: requiredText,
-  card1Title: requiredText,
-  card1Role: requiredText,
-  card1Summary: requiredText,
-  card1Image: requiredText,
-  card1Highlight1: requiredText,
-  card1Highlight2: requiredText,
-  card1Highlight3: requiredText,
-  card2Title: requiredText,
-  card2Role: requiredText,
-  card2Summary: requiredText,
-  card2Image: requiredText,
-  card2Highlight1: requiredText,
-  card2Highlight2: requiredText,
-  card2Highlight3: requiredText,
-  card3Title: requiredText,
-  card3Role: requiredText,
-  card3Summary: requiredText,
-  card3Image: requiredText,
-  card3Highlight1: requiredText,
-  card3Highlight2: requiredText,
-  card3Highlight3: requiredText,
   approachTitle: requiredText,
   approachCopy: requiredText,
   approachPoint1: requiredText,
@@ -215,10 +203,47 @@ const biographyPageFormSchema = z.object({
 export const parseBiographyPageManagedContent = (input: unknown) =>
   biographyPageManagedContentSchema.parse(input);
 
+const getBiographyCardIndexes = (input: Record<string, unknown>) => {
+  const indexes = new Set<number>();
+
+  for (const key of Object.keys(input)) {
+    const match = /^biographyCard_(\d+)_slug$/.exec(key);
+
+    if (match) {
+      indexes.add(Number(match[1]));
+    }
+  }
+
+  return Array.from(indexes).sort((left, right) => left - right);
+};
+
+const toBiographyCard = (
+  input: Record<string, unknown>,
+  index: number,
+): BiographyProfileManagedContent => {
+  const prefix = `biographyCard_${index}_`;
+
+  return biographyCardSchema.parse({
+    slug: input[`${prefix}slug`],
+    title: input[`${prefix}title`],
+    role: input[`${prefix}role`],
+    summary: input[`${prefix}summary`],
+    body: input[`${prefix}body`],
+    image: input[`${prefix}image`],
+    highlights: [
+      input[`${prefix}highlight1`],
+      input[`${prefix}highlight2`],
+      input[`${prefix}highlight3`],
+    ],
+  });
+};
+
 export const parseBiographyPageManagedContentForm = (
   input: unknown,
 ): BiographyPageManagedContent => {
   const parsed = biographyPageFormSchema.parse(input);
+  const values = parsed as Record<string, unknown>;
+  const cards = getBiographyCardIndexes(values).map((index) => toBiographyCard(values, index));
 
   return biographyPageManagedContentSchema.parse({
     banner: {
@@ -229,29 +254,7 @@ export const parseBiographyPageManagedContentForm = (
     cardsSection: {
       title: parsed.cardsTitle,
       copy: parsed.cardsCopy,
-      cards: [
-        {
-          title: parsed.card1Title,
-          role: parsed.card1Role,
-          summary: parsed.card1Summary,
-          image: parsed.card1Image,
-          highlights: [parsed.card1Highlight1, parsed.card1Highlight2, parsed.card1Highlight3],
-        },
-        {
-          title: parsed.card2Title,
-          role: parsed.card2Role,
-          summary: parsed.card2Summary,
-          image: parsed.card2Image,
-          highlights: [parsed.card2Highlight1, parsed.card2Highlight2, parsed.card2Highlight3],
-        },
-        {
-          title: parsed.card3Title,
-          role: parsed.card3Role,
-          summary: parsed.card3Summary,
-          image: parsed.card3Image,
-          highlights: [parsed.card3Highlight1, parsed.card3Highlight2, parsed.card3Highlight3],
-        },
-      ],
+      cards,
     },
     approach: {
       title: parsed.approachTitle,

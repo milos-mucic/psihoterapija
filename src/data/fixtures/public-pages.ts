@@ -17,10 +17,13 @@ export type FaqAccordionItem = {
 };
 
 type BiographyCard = {
+  slug: string;
   title: string;
   role: string;
   summary: string;
+  body: string;
   image: string;
+  href: string;
   highlights: string[];
 };
 
@@ -573,20 +576,25 @@ export const getBiographyPageData = (locale: SiteLocale) => {
   const dictionary = getDictionary(locale);
   const isCyrillic = locale === "sr-cyrl";
   const services = dictionary.homePage.services.items;
+  const biographySlugs = ["nemanja-zajkeskovic", "kabinet-ikar", "prostor-za-terapijski-rad"];
 
   const cards: BiographyCard[] = [
     {
+      slug: biographySlugs[0],
       title: isCyrillic ? "Немања Зајкешковић" : "Nemanja Zajkešković",
       role: isCyrillic
         ? "Мастер психолог и психодинамски психотерапеут"
         : "Master psiholog i psihodinamski psihoterapeut",
       summary: dictionary.homePage.about.paragraphs[0],
+      body: dictionary.homePage.about.paragraphs[0],
       image: "/legacy/images/Doctor--1_1Doctor  (1).webp",
+      href: localizePath(locale, `/biografija/${biographySlugs[0]}/`),
       highlights: isCyrillic
         ? ["Психодинамска психотерапија", "Индивидуални рад", "Дугорочни процес"]
         : ["Psihodinamska psihoterapija", "Individualni rad", "Dugoročni proces"],
     },
     {
+      slug: biographySlugs[1],
       title: isCyrillic ? "Психотерапијски кабинет Икар" : "Psihoterapijski kabinet Ikar",
       role: isCyrillic
         ? "Структура рада и професионални оквир"
@@ -594,16 +602,25 @@ export const getBiographyPageData = (locale: SiteLocale) => {
       summary: isCyrillic
         ? "Рад се одвија у јасном професионалном оквиру, уз стабилан ритам сусрета, договорена правила и континуирано праћење циљева."
         : "Rad se odvija u jasnom profesionalnom okviru, uz stabilan ritam susreta, dogovorena pravila i kontinuirano praćenje ciljeva.",
+      body: isCyrillic
+        ? "Рад се одвија у јасном професионалном оквиру, уз стабилан ритам сусрета, договорена правила и континуирано праћење циљева."
+        : "Rad se odvija u jasnom profesionalnom okviru, uz stabilan ritam susreta, dogovorena pravila i kontinuirano praćenje ciljeva.",
       image: "/legacy/images/Team-Details_1Team Details.webp",
+      href: localizePath(locale, `/biografija/${biographySlugs[1]}/`),
       highlights: [services[0].title, services[1].title, services[2].title],
     },
     {
+      slug: biographySlugs[2],
       title: isCyrillic ? "Простор за терапијски рад" : "Prostor za terapijski rad",
       role: isCyrillic ? "Уживо и online формати" : "Uživo i online formati",
       summary: isCyrillic
         ? "Терапијски сусрети се организују уживо или online, у складу са проценом потреба и јасно дефинисаним планом рада."
         : "Terapijski susreti se organizuju uživo ili online, u skladu sa procenom potreba i jasno definisanim planom rada.",
+      body: isCyrillic
+        ? "Терапијски сусрети се организују уживо или online, у складу са проценом потреба и јасно дефинисаним планом рада."
+        : "Terapijski susreti se organizuju uživo ili online, u skladu sa procenom potreba i jasno definisanim planom rada.",
       image: "/legacy/images/Team-Img-1_1Team Img (1).webp",
+      href: localizePath(locale, `/biografija/${biographySlugs[2]}/`),
       highlights: isCyrillic
         ? ["Поверљивост", "Континуитет", "Фокус на промену"]
         : ["Poverljivost", "Kontinuitet", "Fokus na promenu"],
