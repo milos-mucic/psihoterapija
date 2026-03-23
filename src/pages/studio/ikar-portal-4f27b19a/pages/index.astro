@@ -55,29 +55,36 @@ const pageLinks = [
   {
     authenticated ? (
       <div class="admin-grid">
-        <div class="card" style="padding: 1.5rem;">
-          <h2>{dictionary.admin.pages.title}</h2>
-          <p class="section-copy">{dictionary.admin.pages.copy}</p>
+        <div class="card admin-intro-card">
+          <div class="admin-intro-card__content">
+            <p class="admin-kicker">Page Studio</p>
+            <h2>{dictionary.admin.pages.title}</h2>
+            <p class="section-copy">{dictionary.admin.pages.copy}</p>
+          </div>
         </div>
 
-        <div class="page-grid" style="grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));">
+        <div class="admin-tile-grid admin-tile-grid--pages">
           {pageLinks.map((page) => (
-            <a
-              class="card"
-              href={`${adminConfig.basePath}/pages/${page.slug}/`}
-              style="padding: 1.4rem;"
-            >
+            <a class="card admin-tile" href={`${adminConfig.basePath}/pages/${page.slug}/`}>
+              <p class="admin-tile__eyebrow">Page</p>
               <h3>{page.title}</h3>
-              <p style="margin: 0; color: var(--muted);">{page.copy}</p>
+              <p class="admin-tile__copy">{page.copy}</p>
+              <span class="admin-tile__footer">
+                Uredi stranicu
+                <span class="admin-tile__arrow">↗</span>
+              </span>
             </a>
           ))}
         </div>
       </div>
     ) : (
       <div class="page-grid">
-        <div class="card" style="padding: 1.5rem;">
-          <h2>{dictionary.admin.entry.title}</h2>
-          <p class="section-copy">{dictionary.admin.entry.copy}</p>
+        <div class="card admin-intro-card">
+          <div class="admin-intro-card__content">
+            <p class="admin-kicker">Private Access</p>
+            <h2>{dictionary.admin.entry.title}</h2>
+            <p class="section-copy">{dictionary.admin.entry.copy}</p>
+          </div>
         </div>
         <AdminPasswordModal client:load returnPath={adminConfig.basePath + "/pages/"} />
       </div>

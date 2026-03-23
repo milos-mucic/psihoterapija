@@ -13,36 +13,66 @@ const authenticated = adminAuthService.isAuthenticated(Astro.cookies);
   {
     authenticated ? (
       <div class="admin-grid">
-        <div class="card" style="padding: 1.5rem;">
-          <h2>{dictionary.admin.dashboard.title}</h2>
-          <p class="section-copy">{dictionary.admin.dashboard.copy}</p>
+        <div class="card admin-intro-card">
+          <div class="admin-intro-card__content">
+            <p class="admin-kicker">Ikar Studio</p>
+            <h2>{dictionary.admin.dashboard.title}</h2>
+            <p class="section-copy">{dictionary.admin.dashboard.copy}</p>
+          </div>
+
+          <div class="admin-stat-strip">
+            <div class="admin-stat-pill">
+              <span class="admin-stat-pill__label">Sadržaj</span>
+              <strong>Stranice</strong>
+            </div>
+            <div class="admin-stat-pill">
+              <span class="admin-stat-pill__label">Tok rada</span>
+              <strong>Blog</strong>
+            </div>
+            <div class="admin-stat-pill">
+              <span class="admin-stat-pill__label">Upiti</span>
+              <strong>Prijave</strong>
+            </div>
+          </div>
         </div>
-        <div class="page-grid" style="grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));">
-          <a class="card" href={`${adminConfig.basePath}/pages/`} style="padding: 1.4rem;">
+        <div class="admin-tile-grid">
+          <a class="card admin-tile" href={`${adminConfig.basePath}/pages/`}>
+            <p class="admin-tile__eyebrow">Content</p>
             <h3>{dictionary.admin.pages.title}</h3>
-            <p style="margin: 0; color: var(--muted);">
-              {dictionary.admin.pages.copy}
-            </p>
+            <p class="admin-tile__copy">{dictionary.admin.pages.copy}</p>
+            <span class="admin-tile__footer">
+              Otvori sekciju
+              <span class="admin-tile__arrow">↗</span>
+            </span>
           </a>
-          <a class="card" href={`${adminConfig.basePath}/blog/`} style="padding: 1.4rem;">
+          <a class="card admin-tile" href={`${adminConfig.basePath}/blog/`}>
+            <p class="admin-tile__eyebrow">Publishing</p>
             <h3>{dictionary.admin.dashboard.blogManagementTitle}</h3>
-            <p style="margin: 0; color: var(--muted);">
-              {dictionary.admin.dashboard.blogManagementCopy}
-            </p>
+            <p class="admin-tile__copy">{dictionary.admin.dashboard.blogManagementCopy}</p>
+            <span class="admin-tile__footer">
+              Otvori sekciju
+              <span class="admin-tile__arrow">↗</span>
+            </span>
           </a>
-          <a class="card" href={`${adminConfig.basePath}/submissions/`} style="padding: 1.4rem;">
+          <a class="card admin-tile" href={`${adminConfig.basePath}/submissions/`}>
+            <p class="admin-tile__eyebrow">Inbox</p>
             <h3>{dictionary.admin.dashboard.submissionsTitle}</h3>
-            <p style="margin: 0; color: var(--muted);">
-              {dictionary.admin.dashboard.submissionsCopy}
-            </p>
+            <p class="admin-tile__copy">{dictionary.admin.dashboard.submissionsCopy}</p>
+            <span class="admin-tile__footer">
+              Otvori sekciju
+              <span class="admin-tile__arrow">↗</span>
+            </span>
           </a>
         </div>
       </div>
     ) : (
       <div class="page-grid">
-        <div class="card" style="padding: 1.5rem;">
-          <h2>{dictionary.admin.entry.title}</h2>
-          <p class="section-copy">{dictionary.admin.entry.copy}</p>
+        <div class="card admin-intro-card">
+          <div class="admin-intro-card__content">
+            <p class="admin-kicker">Private Access</p>
+            <h2>{dictionary.admin.entry.title}</h2>
+            <p class="section-copy">{dictionary.admin.entry.copy}</p>
+          </div>
         </div>
         <AdminPasswordModal client:load returnPath={adminConfig.basePath + "/"} />
       </div>

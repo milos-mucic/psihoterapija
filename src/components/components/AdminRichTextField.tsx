@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { JSX } from "react";
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from "@lexical/html";
 import { LinkNode, TOGGLE_LINK_COMMAND, $isLinkNode } from "@lexical/link";
@@ -58,7 +58,7 @@ import {
   type Spread,
 } from "lexical";
 
-type Props = {
+export type AdminRichTextFieldProps = {
   name: string;
   initialValue: string;
   uploadUrl: string;
@@ -86,6 +86,7 @@ type Props = {
   };
 };
 
+type Props = AdminRichTextFieldProps;
 type EditorMode = NonNullable<Props["mode"]>;
 type ToolbarBlockType = "paragraph" | "h2" | "h3" | "quote" | "ul" | "ol";
 type InsertImagePayload = {
@@ -833,7 +834,10 @@ function AdminRichTextEditor({
   uploadUrl: string;
 }) {
   const [editor] = useLexicalComposerContext();
+  const sourceId = useId();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const shouldAutoSaveImageRef = useRef(false);
   const [error, setError] = useState("");
   const [isUploading, setIsUploading] = useState(false);
 
@@ -864,8 +868,30 @@ function AdminRichTextEditor({
     [uploadFolder, uploadUrl],
   );
 
+  useEffect(() => {
+    const form = rootRef.current?.closest("form");
+
+    if (!(form instanceof HTMLFormElement)) {
+      return;
+    }
+
+    form.dispatchEvent(
+      new CustomEvent("admin:pending-media", {
+        detail: { active: isUploading, sourceId },
+      }),
+    );
+
+    return () => {
+      form.dispatchEvent(
+        new CustomEvent("admin:pending-media", {
+          detail: { active: false, sourceId },
+        }),
+      );
+    };
+  }, [isUploading, sourceId]);
+
   return (
-    <>
+    <div ref={rootRef}>
       <ToolbarPlugin
         labels={labels}
         mode={mode}
@@ -900,6 +926,24 @@ function AdminRichTextEditor({
         onChange={(editorState, activeEditor) => {
           editorState.read(() => {
             onValueChange(normalizeEditorHtml($generateHtmlFromNodes(activeEditor, null), mode));
+
+            if (!shouldAutoSaveImageRef.current) {
+              return;
+            }
+
+            const form = rootRef.current?.closest("form");
+
+            shouldAutoSaveImageRef.current = false;
+
+            if (!(form instanceof HTMLFormElement)) {
+              return;
+            }
+
+            form.dispatchEvent(
+              new CustomEvent("admin:auto-save-media", {
+                detail: { sourceId },
+              }),
+            );
           });
         }}
       />
@@ -927,6 +971,7 @@ function AdminRichTextEditor({
                 const altText =
                   window.prompt(labels.image, suggestedAltText)?.trim() ?? suggestedAltText;
 
+                shouldAutoSaveImageRef.current = true;
                 editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
                   altText,
                   src: url,
@@ -947,7 +992,7 @@ function AdminRichTextEditor({
         <p className="admin-rtf__status">Upload u toku...</p>
       ) : null}
       {error ? <p className="admin-rtf__error">{error}</p> : null}
-    </>
+    </div>
   );
 }
 

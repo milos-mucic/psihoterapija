@@ -8,9 +8,11 @@ type Props = {
   action: string;
   content: HomePageManagedContent;
   locale: SiteLocale;
+  previewBaseHref: string;
+  localeLabel: string;
 };
 
-const { action, content, locale } = Astro.props;
+const { action, content, locale, previewBaseHref, localeLabel } = Astro.props;
 const localeOptions: Array<{ value: SiteLocale; label: string }> = [
   { value: "sr-latn", label: "Latinica" },
   { value: "sr-cyrl", label: "Ćirilica" },
@@ -37,7 +39,14 @@ const heroTitleRichTextLabels = {
 };
 ---
 
-<form class="admin-form" method="post" action={action}>
+<form
+  class="admin-form"
+  method="post"
+  action={action}
+  data-admin-section-preview-root
+  data-preview-base-href={previewBaseHref}
+  data-preview-locale-label={localeLabel}
+>
   <input type="hidden" name="locale" value={locale} />
 
   <div class="card" style="padding: 1.5rem;">
@@ -57,7 +66,12 @@ const heroTitleRichTextLabels = {
     </div>
   </div>
 
-  <div class="card" style="padding: 1.5rem;">
+  <div
+    class="card"
+    style="padding: 1.5rem;"
+    data-section-preview
+    data-section-preview-fragment="home-hero"
+  >
     <div class="page-grid">
       <div>
         <h2 style="margin: 0;">Hero sekcija</h2>
@@ -111,7 +125,12 @@ const heroTitleRichTextLabels = {
     </div>
   </div>
 
-  <div class="card" style="padding: 1.5rem;">
+  <div
+    class="card"
+    style="padding: 1.5rem;"
+    data-section-preview
+    data-section-preview-fragment="home-prompt"
+  >
     <div class="page-grid">
       <div>
         <h2 style="margin: 0;">Kontakt prompt</h2>
@@ -144,7 +163,12 @@ const heroTitleRichTextLabels = {
     </div>
   </div>
 
-  <div class="card" style="padding: 1.5rem;">
+  <div
+    class="card"
+    style="padding: 1.5rem;"
+    data-section-preview
+    data-section-preview-fragment="home-about"
+  >
     <div class="page-grid">
       <div>
         <h2 style="margin: 0;">O terapeutu</h2>
@@ -164,7 +188,7 @@ const heroTitleRichTextLabels = {
           initialValue={content.about.image}
           uploadUrl="/api/admin/media/upload"
           uploadFolder="pages/home"
-          uploadLabel="Uppy slika"
+          uploadLabel="Dodaj sliku"
         />
 
         <div class="admin-form__field admin-form__field--full">
@@ -187,7 +211,12 @@ const heroTitleRichTextLabels = {
     </div>
   </div>
 
-  <div class="card" style="padding: 1.5rem;">
+  <div
+    class="card"
+    style="padding: 1.5rem;"
+    data-section-preview
+    data-section-preview-fragment="home-services"
+  >
     <div class="page-grid">
       <div>
         <h2 style="margin: 0;">Usluge</h2>
@@ -233,7 +262,7 @@ const heroTitleRichTextLabels = {
                   initialValue={item.image}
                   uploadUrl="/api/admin/media/upload"
                   uploadFolder="pages/home"
-                  uploadLabel="Uppy slika"
+                  uploadLabel="Dodaj sliku"
                 />
 
                 <div class="admin-form__field admin-form__field--full">
@@ -255,7 +284,12 @@ const heroTitleRichTextLabels = {
     </div>
   </div>
 
-  <div class="card" style="padding: 1.5rem;">
+  <div
+    class="card"
+    style="padding: 1.5rem;"
+    data-section-preview
+    data-section-preview-fragment="home-themes"
+  >
     <div class="page-grid">
       <div>
         <h2 style="margin: 0;">Teme rada</h2>
@@ -290,7 +324,7 @@ const heroTitleRichTextLabels = {
                   initialValue={item.image}
                   uploadUrl="/api/admin/media/upload"
                   uploadFolder="pages/home"
-                  uploadLabel="Uppy slika"
+                  uploadLabel="Dodaj sliku"
                 />
 
                 <div class="admin-form__field admin-form__field--full">
@@ -312,7 +346,12 @@ const heroTitleRichTextLabels = {
     </div>
   </div>
 
-  <div class="card" style="padding: 1.5rem;">
+  <div
+    class="card"
+    style="padding: 1.5rem;"
+    data-section-preview
+    data-section-preview-fragment="home-reasons"
+  >
     <div class="page-grid">
       <div>
         <h2 style="margin: 0;">Zašto Ikar</h2>
@@ -397,7 +436,7 @@ const heroTitleRichTextLabels = {
           initialValue={content.reasons.videoImage}
           uploadUrl="/api/admin/media/upload"
           uploadFolder="pages/home"
-          uploadLabel="Uppy slika"
+          uploadLabel="Dodaj sliku"
         />
 
         <label class="admin-form__field">
@@ -412,7 +451,12 @@ const heroTitleRichTextLabels = {
     </div>
   </div>
 
-  <div class="card" style="padding: 1.5rem;">
+  <div
+    class="card"
+    style="padding: 1.5rem;"
+    data-section-preview
+    data-section-preview-fragment="home-booking"
+  >
     <div class="page-grid">
       <div>
         <h2 style="margin: 0;">Zakazivanje</h2>
@@ -476,7 +520,12 @@ const heroTitleRichTextLabels = {
     </div>
   </div>
 
-  <div class="card" style="padding: 1.5rem;">
+  <div
+    class="card"
+    style="padding: 1.5rem;"
+    data-section-preview
+    data-section-preview-fragment="home-blog"
+  >
     <div class="page-grid">
       <div>
         <h2 style="margin: 0;">Blog sekcija</h2>
@@ -518,7 +567,216 @@ const heroTitleRichTextLabels = {
     </div>
   </div>
 
-  <div class="admin-form__actions">
-    <button class="button-primary" type="submit">Sačuvaj početnu stranu</button>
+  <div class="admin-form__actions admin-form__actions--floating">
+    <p class="admin-form__save-status" data-admin-form-submit-status aria-live="polite"></p>
+    <button class="button-primary admin-form__fab" type="submit" data-admin-form-submit>
+      Sačuvaj početnu stranu
+    </button>
   </div>
 </form>
+
+<script is:inline>
+  (() => {
+    const setupFloatingSubmit = () => {
+      document.querySelectorAll("[data-admin-section-preview-root]").forEach((form) => {
+        if (!(form instanceof HTMLFormElement) || form.dataset.floatingSubmitBound === "true") {
+          return;
+        }
+
+        const submitButtons = Array.from(form.querySelectorAll("[data-admin-form-submit]")).filter(
+          (button) => button instanceof HTMLButtonElement,
+        );
+        const statusNodes = Array.from(
+          form.querySelectorAll("[data-admin-form-submit-status]"),
+        ).filter((node) => node instanceof HTMLElement);
+        const pendingSources = new Map();
+        let autoSaveRequested = false;
+        let isSubmitting = false;
+
+        const syncSubmitState = () => {
+          const hasPending = pendingSources.size > 0;
+          const disabled = hasPending || isSubmitting;
+          const message = isSubmitting
+            ? "Čuvanje u toku..."
+            : autoSaveRequested && hasPending
+              ? "Završavam upload pa čuvam izmenu slike."
+              : autoSaveRequested
+                ? "Čuvam izmenu slike..."
+                : hasPending
+                  ? "Sačekajte da se obrada slike ili videa završi."
+                  : "Sve media izmene su spremne za čuvanje.";
+
+          form.dataset.pendingUploads = hasPending ? "true" : "false";
+
+          submitButtons.forEach((button) => {
+            button.disabled = disabled;
+            button.setAttribute("aria-disabled", disabled ? "true" : "false");
+          });
+
+          statusNodes.forEach((node) => {
+            node.textContent = message;
+            node.dataset.tone = hasPending ? "muted" : "ready";
+          });
+        };
+
+        const tryAutoSave = () => {
+          if (!autoSaveRequested || isSubmitting || form.dataset.pendingUploads === "true") {
+            return;
+          }
+
+          if (!form.checkValidity()) {
+            autoSaveRequested = false;
+            syncSubmitState();
+            return;
+          }
+
+          isSubmitting = true;
+          syncSubmitState();
+          requestAnimationFrame(() => form.requestSubmit());
+        };
+
+        form.addEventListener("admin:pending-media", (event) => {
+          if (!(event instanceof CustomEvent)) {
+            return;
+          }
+
+          const sourceId =
+            typeof event.detail?.sourceId === "string" ? event.detail.sourceId : undefined;
+
+          if (!sourceId) {
+            return;
+          }
+
+          if (event.detail?.active) {
+            pendingSources.set(sourceId, true);
+          } else {
+            pendingSources.delete(sourceId);
+          }
+
+          syncSubmitState();
+          tryAutoSave();
+        });
+
+        form.addEventListener("admin:auto-save-media", () => {
+          autoSaveRequested = true;
+          syncSubmitState();
+          tryAutoSave();
+        });
+
+        form.addEventListener("submit", (event) => {
+          if (form.dataset.pendingUploads !== "true") {
+            isSubmitting = true;
+            syncSubmitState();
+            return;
+          }
+
+          event.preventDefault();
+          syncSubmitState();
+        });
+
+        syncSubmitState();
+        form.dataset.floatingSubmitBound = "true";
+      });
+    };
+
+    const setupSectionPreviews = () => {
+      document.querySelectorAll("[data-admin-section-preview-root]").forEach((form) => {
+        if (!(form instanceof HTMLFormElement) || form.dataset.sectionPreviewBound === "true") {
+          return;
+        }
+
+        const baseHref = form.dataset.previewBaseHref ?? "";
+        const localeLabel = form.dataset.previewLocaleLabel ?? "trenutni jezik";
+
+        const createPreviewCard = ({ href, title, copy }) => {
+          const aside = document.createElement("aside");
+          aside.className = "card admin-preview-card admin-preview-card--compact";
+
+          const head = document.createElement("div");
+          head.className = "admin-preview-card__head";
+
+          const copyWrap = document.createElement("div");
+          const kicker = document.createElement("p");
+          kicker.className = "admin-kicker";
+          kicker.textContent = "Section Preview";
+
+          const heading = document.createElement("h3");
+          heading.textContent = title;
+
+          const copyNode = document.createElement("p");
+          copyNode.className = "admin-preview-card__copy";
+          copyNode.textContent = copy || `Prikaz javne sekcije za ${localeLabel}.`;
+
+          copyWrap.append(kicker, heading, copyNode);
+
+          const link = document.createElement("a");
+          link.className = "button-secondary";
+          link.href = href;
+          link.target = "_blank";
+          link.rel = "noreferrer";
+          link.textContent = "Otvori sekciju";
+
+          head.append(copyWrap, link);
+
+          const viewport = document.createElement("div");
+          viewport.className = "admin-preview-card__viewport";
+
+          const browserBar = document.createElement("div");
+          browserBar.className = "admin-preview-card__browser-bar";
+          browserBar.setAttribute("aria-hidden", "true");
+
+          for (let index = 0; index < 3; index += 1) {
+            browserBar.append(document.createElement("span"));
+          }
+
+          const frame = document.createElement("div");
+          frame.className = "admin-preview-card__frame";
+
+          const iframe = document.createElement("iframe");
+          iframe.className = "admin-preview-card__iframe";
+          iframe.loading = "lazy";
+          iframe.src = href;
+          iframe.title = `Preview: ${title}`;
+
+          frame.append(iframe);
+          viewport.append(browserBar, frame);
+          aside.append(head, viewport);
+
+          return aside;
+        };
+
+        Array.from(form.children).forEach((child) => {
+          if (!(child instanceof HTMLElement) || !child.matches("[data-section-preview]")) {
+            return;
+          }
+
+          const fragment = child.dataset.sectionPreviewFragment ?? "";
+          const href = fragment ? `${baseHref}#${fragment}` : baseHref;
+          const title =
+            child.dataset.sectionPreviewTitle ??
+            child.querySelector("h2")?.textContent?.trim() ??
+            "Preview sekcije";
+          const copy =
+            child.dataset.sectionPreviewCopy ??
+            child.querySelector(".section-copy")?.textContent?.trim() ??
+            "";
+
+          const wrapper = document.createElement("div");
+          wrapper.className = "admin-section-editor";
+
+          const preview = createPreviewCard({ href, title, copy });
+
+          child.before(wrapper);
+          wrapper.append(preview, child);
+        });
+
+        form.dataset.sectionPreviewBound = "true";
+      });
+    };
+
+    setupFloatingSubmit();
+    setupSectionPreviews();
+    document.addEventListener("astro:page-load", setupFloatingSubmit);
+    document.addEventListener("astro:page-load", setupSectionPreviews);
+  })();
+</script>

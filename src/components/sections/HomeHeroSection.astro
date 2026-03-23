@@ -14,7 +14,7 @@ type Props = {
 const { titleHtml, description, primaryAction, secondaryAction } = Astro.props;
 ---
 
-<section class="home-hero">
+<section id="home-hero" class="home-hero">
   <div class="container home-hero__container">
     <div class="home-hero__content">
       <h1 class="home-hero__title" data-reveal="up" set:html={titleHtml} />

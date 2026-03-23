@@ -24,13 +24,13 @@ const content = await pageContentService.getBiographyPageData(locale);
   appBarTone="dark"
   appBarOverlay={true}
 >
-  <PageBanner {...content.banner} />
+  <PageBanner {...content.banner} sectionId="biography-banner" />
 
-  <section class="page-section">
+  <section id="biography-cards" class="page-section">
     <div class="container">
       <header class="page-section__header biography-page__header" data-reveal="up">
         <h2>{content.cardsTitle}</h2>
-        <p>{content.cardsCopy}</p>
+        <div class="biography-page__richtext" set:html={content.cardsCopy} />
       </header>
 
       <div class="biography-page__cards">
@@ -48,7 +48,7 @@ const content = await pageContentService.getBiographyPageData(locale);
               <div class="biography-page__card-body">
                 <p class="biography-page__role">{card.role}</p>
                 <h3>{card.title}</h3>
-                <p>{card.summary}</p>
+                <div class="biography-page__richtext" set:html={card.summary} />
                 <ul class="biography-page__tags">
                   {card.highlights.map((tag) => (
                     <li>{tag}</li>
@@ -62,7 +62,7 @@ const content = await pageContentService.getBiographyPageData(locale);
     </div>
   </section>
 
-  <section class="page-section page-section--soft">
+  <section id="biography-approach" class="page-section page-section--soft">
     <div class="container">
       <div class="biography-page__approach">
         <img
@@ -78,7 +78,7 @@ const content = await pageContentService.getBiographyPageData(locale);
           style="--reveal-delay: 90ms;"
         >
           <h2>{content.approachTitle}</h2>
-          <p>{content.approachCopy}</p>
+          <div class="biography-page__richtext" set:html={content.approachCopy} />
           <ul class="home-list biography-page__list">
             {content.approachPoints.map((point) => <li>{point}</li>)}
           </ul>
@@ -94,6 +94,18 @@ const content = await pageContentService.getBiographyPageData(locale);
     .biography-page__header {
       max-width: 46rem;
       margin-bottom: 1.85rem;
+    }
+
+    .biography-page__richtext {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .biography-page__richtext :global(p),
+    .biography-page__richtext :global(ul),
+    .biography-page__richtext :global(ol) {
+      margin: 0;
+      line-height: 1.7;
     }
 
     .biography-page__cards {

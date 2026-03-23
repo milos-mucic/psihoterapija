@@ -17,11 +17,11 @@ const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
 const detailCardLabel = locale === "sr-cyrl" ? "Погледај страницу" : "Pogledaj stranicu";
 ---
 
-<div class="scope-page__banner">
+<div id="scope-banner" class="scope-page__banner">
   <PageBanner {...content.banner} />
 </div>
 
-<section class="page-section scope-page__tabs-section">
+<section id="scope-tabs" class="page-section scope-page__tabs-section">
   <div class="container">
     <div class="scope-page__tabs" data-scope-tabs>
       <div class="scope-page__tabs-menu" role="tablist" aria-label={content.scopeTitle}>
@@ -64,7 +64,7 @@ const detailCardLabel = locale === "sr-cyrl" ? "Погледај страниц�
                     <img class="scope-page__tab-item-icon" src={tab.icon} alt="" loading="lazy" />
                     <h3 class="scope-page__tab-item-title">{tab.cardTitle}</h3>
                   </div>
-                  <p class="scope-page__tab-item-copy">{tab.cardCopy}</p>
+                  <div class="scope-page__tab-item-copy" set:html={tab.cardCopy} />
                   <span class="scope-page__tab-item-link">
                     {detailCardLabel}
                     <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
@@ -87,14 +87,14 @@ const detailCardLabel = locale === "sr-cyrl" ? "Погледај страниц�
   </div>
 </section>
 
-<section class="page-section scope-page__focus-section">
+<section id="scope-focus" class="page-section scope-page__focus-section">
   <div class="container">
     <div class="scope-page__focus-grid">
       <img src={content.focusImage} alt="" class="scope-page__focus-image" data-reveal="left" />
       <div class="scope-page__focus-content" data-reveal="right" style="--reveal-delay: 90ms;">
         <h2>{content.focusTitle}</h2>
-        <p>{content.focusCopy}</p>
-        <p class="scope-page__focus-secondary">{content.focusSecondaryCopy}</p>
+        <div class="scope-page__focus-copy" set:html={content.focusCopy} />
+        <div class="scope-page__focus-secondary" set:html={content.focusSecondaryCopy} />
         <a class="home-button" href={content.focusCtaHref}>
           {content.focusCtaLabel}
         </a>
@@ -103,12 +103,12 @@ const detailCardLabel = locale === "sr-cyrl" ? "Погледај страниц�
   </div>
 </section>
 
-<section class="home-section home-section--tight">
+<section id="scope-blog" class="home-section home-section--tight">
   <div class="container">
     <div class="home-heading-row home-heading-row--blog" data-reveal="up">
       <div class="home-heading-copy">
         <h2>{content.recentTitle}</h2>
-        <p>{content.recentCopy}</p>
+        <div class="scope-page__recent-copy" set:html={content.recentCopy} />
       </div>
       <a class="home-button" href={content.recentHref}>{content.recentLabel}</a>
     </div>
@@ -225,6 +225,22 @@ const detailCardLabel = locale === "sr-cyrl" ? "Погледај страниц�
 <style>
   .scope-page__tabs {
     width: 100%;
+  }
+
+  .scope-page__tab-item-copy :global(p),
+  .scope-page__tab-item-copy :global(ul),
+  .scope-page__tab-item-copy :global(ol),
+  .scope-page__focus-copy :global(p),
+  .scope-page__focus-copy :global(ul),
+  .scope-page__focus-copy :global(ol),
+  .scope-page__focus-secondary :global(p),
+  .scope-page__focus-secondary :global(ul),
+  .scope-page__focus-secondary :global(ol),
+  .scope-page__recent-copy :global(p),
+  .scope-page__recent-copy :global(ul),
+  .scope-page__recent-copy :global(ol) {
+    margin: 0;
+    line-height: 1.7;
   }
 
   .scope-page__tabs-menu {

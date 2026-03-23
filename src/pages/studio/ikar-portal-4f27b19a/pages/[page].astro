@@ -1,6 +1,7 @@
 ---
 import { AdminPasswordModal } from "@/components/components/AdminPasswordModal";
 import AdminManagedPageForm from "@/components/components/AdminManagedPageForm.astro";
+import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import { adminAuthService } from "@/features/admin/auth/admin-auth.service";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
@@ -57,6 +58,24 @@ const saved = Astro.url.searchParams.get("saved") === "1";
 const error = Astro.url.searchParams.get("error");
 const localeLabel = locale === "sr-cyrl" ? "Ćirilica" : "Latinica";
 const config = pageConfig[page];
+const previewHref = (() => {
+  switch (page) {
+    case "about":
+      return localizePath(locale, "/o-nama/");
+    case "biography":
+      return localizePath(locale, "/biografija/");
+    case "psychotherapy":
+      return localizePath(locale, "/psihoterapija/");
+    case "scope":
+      return localizePath(locale, "/oblast-rada/");
+    case "pricing":
+      return localizePath(locale, "/cena/");
+    case "appointment":
+      return localizePath(locale, "/zakazivanje/");
+    case "faq":
+      return localizePath(locale, "/pitanja/");
+  }
+})();
 
 const content = authenticated
   ? await (async () => {
@@ -94,14 +113,15 @@ const content = authenticated
           </p>
         ) : null}
 
-        <div class="card" style="padding: 1.5rem;">
-          <div style="display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; align-items: center;">
+        <div class="card admin-page-header">
+          <div class="admin-page-header__content">
             <div>
-              <h2 style="margin: 0;">{config.title}</h2>
-              <p style="margin: 0.5rem 0 0; color: var(--muted);">{config.copy}</p>
+              <p class="admin-kicker">Page Editing</p>
+              <h2>{config.title}</h2>
+              <p class="admin-page-header__copy">{config.copy}</p>
             </div>
 
-            <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+            <div class="admin-page-header__actions">
               <a
                 class:list={["button-secondary", locale === "sr-latn" && "is-active"]}
                 href={`${adminConfig.basePath}/pages/${page}/?locale=sr-latn`}
@@ -118,26 +138,35 @@ const content = authenticated
           </div>
         </div>
 
-        <div class="card" style="padding: 1.25rem;">
-          <p style="margin: 0; color: var(--muted);">
+        <div class="card admin-meta-card">
+          <p>
             Uređujete sadržaj za: <strong style="color: var(--foreground);">{localeLabel}</strong>
           </p>
         </div>
 
         {content ? (
-          <AdminManagedPageForm
-            action={`/api/admin/pages/${page}`}
-            page={page}
-            content={content}
-            locale={locale}
-          />
+          <div class="admin-editor-layout admin-editor-layout--single">
+            <div class="admin-editor-layout__form">
+              <AdminManagedPageForm
+                action={`/api/admin/pages/${page}`}
+                page={page}
+                content={content}
+                locale={locale}
+                previewBaseHref={previewHref}
+                localeLabel={localeLabel}
+              />
+            </div>
+          </div>
         ) : null}
       </div>
     ) : (
       <div class="page-grid">
-        <div class="card" style="padding: 1.5rem;">
-          <h2>{dictionary.admin.entry.title}</h2>
-          <p class="section-copy">{dictionary.admin.entry.copy}</p>
+        <div class="card admin-intro-card">
+          <div class="admin-intro-card__content">
+            <p class="admin-kicker">Private Access</p>
+            <h2>{dictionary.admin.entry.title}</h2>
+            <p class="section-copy">{dictionary.admin.entry.copy}</p>
+          </div>
         </div>
         <AdminPasswordModal
           client:load

@@ -21,6 +21,7 @@ const aboutVideoEmbedSrc = videoIdMatch
 
 <div class="about-legacy">
   <section
+    id="about-banner"
     class="about-legacy__banner"
     style={content.banner.backgroundImage
       ? `--about-banner-image: url("${content.banner.backgroundImage}")`
@@ -29,12 +30,17 @@ const aboutVideoEmbedSrc = videoIdMatch
     <div class="about-legacy__container">
       <div class="about-legacy__banner-grid">
         <h1 data-reveal="up">{content.banner.title}</h1>
-        <p data-reveal="up" style="--reveal-delay: 90ms;">{content.banner.description}</p>
+        <div
+          class="about-legacy__banner-copy"
+          data-reveal="up"
+          style="--reveal-delay: 90ms;"
+          set:html={content.banner.description}
+        />
       </div>
     </div>
   </section>
 
-  <section class="about-legacy__showcase">
+  <section id="about-showcase" class="about-legacy__showcase">
     <div class="about-legacy__container">
       <div class="about-legacy__showcase-title" data-reveal="up">
         <h2>{content.showcaseTitle}</h2>
@@ -74,7 +80,7 @@ const aboutVideoEmbedSrc = videoIdMatch
                 <a href={card.href} class="service-name-wrapper">
                   <h5 class="service-name">{card.title}</h5>
                 </a>
-                <p>{card.copy}</p>
+                <div set:html={card.copy} />
               </article>
             ))
           }
@@ -83,7 +89,7 @@ const aboutVideoEmbedSrc = videoIdMatch
     </div>
   </section>
 
-  <section class="about-legacy__section">
+  <section id="about-idea" class="about-legacy__section">
     <div class="about-legacy__container">
       <div class="about-legacy__split">
         <div class="about-legacy__copy" data-reveal="up">
@@ -103,12 +109,12 @@ const aboutVideoEmbedSrc = videoIdMatch
     </div>
   </section>
 
-  <section class="home-section">
+  <section id="about-blog" class="home-section">
     <div class="container">
       <div class="home-heading-row home-heading-row--blog" data-reveal="up">
         <div class="home-heading-copy">
           <h2>{content.recentTitle}</h2>
-          <p>{content.recentCopy}</p>
+          <div class="home-richtext" set:html={content.recentCopy} />
         </div>
         <a class="home-button" href={content.recentHref}>{content.recentLabel}</a>
       </div>
@@ -257,6 +263,12 @@ const aboutVideoEmbedSrc = videoIdMatch
   .about-legacy__container {
     width: min(calc(100% - 1.875rem), 75rem);
     margin: 0 auto;
+  }
+
+  .about-legacy__banner-copy :global(p),
+  .about-legacy__banner-copy :global(ul),
+  .about-legacy__banner-copy :global(ol) {
+    margin: 0;
   }
 
   .about-legacy__banner {

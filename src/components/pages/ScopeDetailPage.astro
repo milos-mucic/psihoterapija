@@ -25,7 +25,7 @@ if (!content) {
     <div class="scope-detail-page__intro-grid">
       <div class="scope-detail-page__intro-copy" data-reveal="left">
         <p class="scope-detail-page__eyebrow">{content.eyebrow}</p>
-        <p class="scope-detail-page__lead">{content.lead}</p>
+        <div class="scope-detail-page__lead" set:html={content.lead} />
         <div class="scope-detail-page__actions">
           <a class="button-ghost" href={content.backHref}>{content.backLabel}</a>
           <a class="home-button" href={content.ctaHref}>{content.ctaLabel}</a>
@@ -50,7 +50,7 @@ if (!content) {
             style={`--reveal-delay: ${index * 80}ms;`}
           >
             <h2>{item.title}</h2>
-            <p>{item.copy}</p>
+            <div set:html={item.copy} />
           </article>
         ))
       }
@@ -78,7 +78,7 @@ if (!content) {
           >
             <img src={tab.icon} alt="" loading="lazy" />
             <h3>{tab.label}</h3>
-            <p>{tab.cardCopy}</p>
+            <div set:html={tab.cardCopy} />
           </a>
         ))
       }
@@ -104,6 +104,19 @@ if (!content) {
     color: var(--foreground);
     font-size: clamp(1.02rem, 2vw, 1.2rem);
     line-height: 1.7;
+  }
+
+  .scope-detail-page__lead :global(p),
+  .scope-detail-page__lead :global(ul),
+  .scope-detail-page__lead :global(ol),
+  .scope-detail-page__point :global(p),
+  .scope-detail-page__point :global(ul),
+  .scope-detail-page__point :global(ol),
+  .scope-detail-page__related-card :global(p),
+  .scope-detail-page__related-card :global(ul),
+  .scope-detail-page__related-card :global(ol) {
+    margin: 0;
+    line-height: 1.62;
   }
 
   .scope-detail-page__actions {

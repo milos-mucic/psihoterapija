@@ -14,11 +14,6 @@ const content = await pageContentService.getBiographyProfilePageData(locale, slu
 if (!content) {
   throw new Error(`Missing biography profile data for slug: ${slug}`);
 }
-
-const bodyParagraphs = content.profile.body
-  .split(/\n{2,}/)
-  .map((paragraph) => paragraph.trim())
-  .filter(Boolean);
 ---
 
 <div class="biography-profile-page__banner">
@@ -35,7 +30,7 @@ const bodyParagraphs = content.profile.body
       <div class="biography-profile-page__copy" data-reveal="right" style="--reveal-delay: 90ms;">
         <p class="biography-profile-page__role">{content.profile.role}</p>
         <h1>{content.profile.title}</h1>
-        <p class="biography-profile-page__summary">{content.profile.summary}</p>
+        <div class="biography-profile-page__summary" set:html={content.profile.summary} />
 
         <ul class="biography-profile-page__tags">
           {content.profile.highlights.map((tag) => <li>{tag}</li>)}
@@ -52,7 +47,7 @@ const bodyParagraphs = content.profile.body
 <section class="page-section page-section--soft biography-profile-page__body">
   <div class="container container--narrow">
     <div class="biography-profile-page__body-card" data-reveal="up">
-      {bodyParagraphs.map((paragraph) => <p>{paragraph}</p>)}
+      <div set:html={content.profile.body} />
     </div>
   </div>
 </section>
@@ -81,7 +76,7 @@ const bodyParagraphs = content.profile.body
               <img src={profile.image} alt={profile.title} loading="lazy" />
               <p class="biography-profile-page__related-role">{profile.role}</p>
               <h3>{profile.title}</h3>
-              <p>{profile.summary}</p>
+              <div set:html={profile.summary} />
             </a>
           ))}
         </div>
@@ -135,6 +130,16 @@ const bodyParagraphs = content.profile.body
   .biography-profile-page__summary {
     color: var(--foreground);
     font-size: 1.04rem;
+    line-height: 1.75;
+  }
+
+  .biography-profile-page__summary :global(p),
+  .biography-profile-page__summary :global(ul),
+  .biography-profile-page__summary :global(ol),
+  .biography-profile-page__body-card :global(p),
+  .biography-profile-page__body-card :global(ul),
+  .biography-profile-page__body-card :global(ol) {
+    margin: 0;
     line-height: 1.75;
   }
 

@@ -32,7 +32,8 @@ const links = [
   <div class="container">
     <div class="admin-appbar__panel appbar__panel">
       <a class="admin-appbar__brand appbar__brand" href={`${adminConfig.basePath}/`}>
-        {dictionary.admin.layout.title}
+        <span class="admin-appbar__brand-mark">Studio</span>
+        <span class="admin-appbar__brand-text">{dictionary.admin.layout.title}</span>
       </a>
 
       <nav class="admin-appbar__nav appbar__nav" aria-label={dictionary.a11y.appbarPrimaryNav}>

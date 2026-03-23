@@ -16,21 +16,22 @@ const dictionary = getDictionary(locale);
 ---
 
 <div class="faq-page__banner">
-  <PageBanner {...content.banner} />
+  <PageBanner {...content.banner} sectionId="faq-banner" />
 </div>
 
 <FaqAccordionSection
   items={content.items}
   image={content.faqImage}
   sectionClass="page-section--soft faq-page__accordion-section"
+  sectionId="faq-items"
 />
 
-<section class="home-section home-section--tight faq-page__booking">
+<section id="faq-booking" class="home-section home-section--tight faq-page__booking">
   <div class="container">
     <div class="home-booking faq-page__booking-grid">
       <div class="home-booking__intro" data-reveal="up">
         <h2>{content.bookingTitle}</h2>
-        <p>{content.bookingCopy}</p>
+        <div class="faq-page__booking-copy" set:html={content.bookingCopy} />
         <div class="home-booking__formats">
           {content.formats.map((format) => <span class="home-pill">{format}</span>)}
         </div>
@@ -68,6 +69,13 @@ const dictionary = getDictionary(locale);
 
   .faq-page__booking-grid {
     gap: clamp(1.4rem, 4vw, 2.1rem);
+  }
+
+  .faq-page__booking-copy :global(p),
+  .faq-page__booking-copy :global(ul),
+  .faq-page__booking-copy :global(ol) {
+    margin: 0;
+    line-height: 1.7;
   }
 
   .faq-page__booking :global(.stack-form) {

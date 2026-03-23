@@ -19,10 +19,18 @@ const { title, description = dictionary.meta.admin.layoutDescription } = Astro.p
   appBarVariant="admin"
   bodyClass="admin-shell"
 >
+  <div class="admin-shell__backdrop" aria-hidden="true">
+    <div class="admin-shell__orb admin-shell__orb--one"></div>
+    <div class="admin-shell__orb admin-shell__orb--two"></div>
+    <div class="admin-shell__mesh"></div>
+  </div>
+
   <section class="section">
     <div class="container">
-      <div class="admin-grid">
-        <slot />
+      <div class="admin-shell__frame">
+        <div class="admin-grid">
+          <slot />
+        </div>
       </div>
     </div>
   </section>

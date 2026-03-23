@@ -19,7 +19,6 @@ import type {
   ScopePageManagedContent,
 } from "@/features/page-content/types/page-content.types";
 import { localizePath } from "@/features/i18n/locale";
-import { extractPlainTextFromHtml } from "@/features/blog/utils/rich-text";
 import type { SiteLocale } from "@/lib/config/site";
 
 const aboutShowcaseHrefs = ["/zakazivanje/", "/psihoterapija/", "/psihoterapija/"];
@@ -207,7 +206,7 @@ export const getDefaultPsychotherapyPageManagedContent = (
     },
     booking: {
       title: home.booking.title,
-      copy: extractPlainTextFromHtml(home.booking.copy),
+      copy: home.booking.copy,
       formatLabel: home.booking.formatLabel,
       formats: home.booking.formats,
     },
@@ -247,7 +246,7 @@ export const buildPsychotherapyPageData = (
   },
   faqs: content.faq.items.map((item) => ({
     question: item.question,
-    answer: item.answer,
+    answerHtml: item.answer,
   })),
   faqImage: content.faq.image,
 });
@@ -443,7 +442,7 @@ export const buildAppointmentPageData = (
   formats: content.booking.formats,
   faqs: content.faq.items.map((item) => ({
     question: item.question,
-    answer: item.answer,
+    answerHtml: item.answer,
   })),
   faqImage: content.faq.image,
 });
@@ -483,7 +482,7 @@ export const buildFaqPageData = (_locale: SiteLocale, content: FaqPageManagedCon
   },
   items: content.faq.items.map((item) => ({
     question: item.question,
-    answer: item.answer,
+    answerHtml: item.answer,
   })),
   faqImage: content.faq.image,
   bookingTitle: content.booking.title,

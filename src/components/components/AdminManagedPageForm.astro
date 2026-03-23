@@ -27,9 +27,11 @@ type Props = {
     | AppointmentPageManagedContent
     | FaqPageManagedContent;
   locale: SiteLocale;
+  previewBaseHref: string;
+  localeLabel: string;
 };
 
-const { action, content, locale, page } = Astro.props;
+const { action, content, locale, page, previewBaseHref, localeLabel } = Astro.props;
 const richTextLabels = {
   bold: "Bold",
   italic: "Italic",
@@ -46,7 +48,14 @@ const richTextLabels = {
 };
 ---
 
-<form class="admin-form" method="post" action={action}>
+<form
+  class="admin-form"
+  method="post"
+  action={action}
+  data-admin-section-preview-root
+  data-preview-base-href={previewBaseHref}
+  data-preview-locale-label={localeLabel}
+>
   <input type="hidden" name="locale" value={locale} />
 
   {
@@ -56,7 +65,12 @@ const richTextLabels = {
 
           return (
             <>
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="about-banner"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Banner</h2>
@@ -73,16 +87,17 @@ const richTextLabels = {
                       />
                     </label>
 
-                    <label class="admin-form__field">
+                    <div class="admin-form__field">
                       <span>Opis</span>
-                      <textarea
-                        class="input-control input-control--textarea"
+                      <AdminRichTextField
+                        client:load
                         name="bannerDescription"
-                        rows={3}
-                      >
-                        {pageContent.banner.description}
-                      </textarea>
-                    </label>
+                        initialValue={pageContent.banner.description}
+                        uploadUrl="/api/admin/media/upload"
+                        uploadFolder="pages/about"
+                        labels={richTextLabels}
+                      />
+                    </div>
 
                     <AdminMediaField
                       client:load
@@ -97,7 +112,12 @@ const richTextLabels = {
                 </div>
               </div>
 
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="about-showcase"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Video i kartice</h2>
@@ -146,16 +166,17 @@ const richTextLabels = {
                             />
                           </label>
 
-                          <label class="admin-form__field admin-form__field--full">
+                          <div class="admin-form__field admin-form__field--full">
                             <span>Opis</span>
-                            <textarea
-                              class="input-control input-control--textarea"
+                            <AdminRichTextField
+                              client:load
                               name={`showcaseCard${index + 1}Copy`}
-                              rows={3}
-                            >
-                              {card.copy}
-                            </textarea>
-                          </label>
+                              initialValue={card.copy}
+                              uploadUrl="/api/admin/media/upload"
+                              uploadFolder="pages/about"
+                              labels={richTextLabels}
+                            />
+                          </div>
 
                           <AdminMediaField
                             client:load
@@ -173,7 +194,12 @@ const richTextLabels = {
                 </div>
               </div>
 
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="about-idea"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Glavna ideja</h2>
@@ -205,7 +231,12 @@ const richTextLabels = {
                 </div>
               </div>
 
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="about-idea"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Fokus</h2>
@@ -232,7 +263,12 @@ const richTextLabels = {
                 </div>
               </div>
 
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="about-blog"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Blog sekcija</h2>
@@ -258,16 +294,17 @@ const richTextLabels = {
                       />
                     </label>
 
-                    <label class="admin-form__field admin-form__field--full">
+                    <div class="admin-form__field admin-form__field--full">
                       <span>Opis</span>
-                      <textarea
-                        class="input-control input-control--textarea"
+                      <AdminRichTextField
+                        client:load
                         name="recentCopy"
-                        rows={3}
-                      >
-                        {pageContent.recent.copy}
-                      </textarea>
-                    </label>
+                        initialValue={pageContent.recent.copy}
+                        uploadUrl="/api/admin/media/upload"
+                        uploadFolder="pages/about"
+                        labels={richTextLabels}
+                      />
+                    </div>
 
                     <label class="admin-form__field admin-form__field--full">
                       <span>Poruka kada nema postova</span>
@@ -295,7 +332,12 @@ const richTextLabels = {
 
           return (
             <>
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="biography-banner"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Banner</h2>
@@ -312,16 +354,17 @@ const richTextLabels = {
                       />
                     </label>
 
-                    <label class="admin-form__field">
+                    <div class="admin-form__field">
                       <span>Opis</span>
-                      <textarea
-                        class="input-control input-control--textarea"
+                      <AdminRichTextField
+                        client:load
                         name="bannerDescription"
-                        rows={3}
-                      >
-                        {pageContent.banner.description}
-                      </textarea>
-                    </label>
+                        initialValue={pageContent.banner.description}
+                        uploadUrl="/api/admin/media/upload"
+                        uploadFolder="pages/biography"
+                        labels={richTextLabels}
+                      />
+                    </div>
 
                     <AdminMediaField
                       client:load
@@ -336,7 +379,12 @@ const richTextLabels = {
                 </div>
               </div>
 
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="biography-cards"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Kartice</h2>
@@ -356,18 +404,23 @@ const richTextLabels = {
                       />
                     </label>
 
-                    <label class="admin-form__field admin-form__field--full">
+                    <div class="admin-form__field admin-form__field--full">
                       <span>Opis sekcije</span>
-                      <textarea
-                        class="input-control input-control--textarea"
+                      <AdminRichTextField
+                        client:load
                         name="cardsCopy"
-                        rows={3}
-                      >
-                        {pageContent.cardsSection.copy}
-                      </textarea>
-                    </label>
+                        initialValue={pageContent.cardsSection.copy}
+                        uploadUrl="/api/admin/media/upload"
+                        uploadFolder="pages/biography"
+                        labels={richTextLabels}
+                      />
+                    </div>
 
-                    <div class="admin-form__field admin-form__field--full" data-biography-card-list>
+                    <div
+                      class="admin-form__field admin-form__field--full"
+                      data-biography-card-list
+                      data-biography-card-rich-text-labels={JSON.stringify(richTextLabels)}
+                    >
                       {pageContent.cardsSection.cards.map((card, index) => (
                         <div
                           class="admin-section-group admin-form__field--full"
@@ -417,39 +470,72 @@ const richTextLabels = {
                               />
                             </label>
 
-                            <label class="admin-form__field admin-form__field--full">
+                            <div class="admin-form__field admin-form__field--full">
                               <span>Sažetak na kartici</span>
-                              <textarea
-                                class="input-control input-control--textarea"
+                              <div
+                                class="admin-biography-card-rich-text"
                                 data-biography-card-field="summary"
-                                name={`biographyCard_${index}_summary`}
-                                rows={3}
                               >
-                                {card.summary}
-                              </textarea>
-                            </label>
+                                <textarea data-biography-card-rtf-initial hidden>
+                                  {card.summary}
+                                </textarea>
+                              </div>
+                            </div>
 
-                            <label class="admin-form__field admin-form__field--full">
+                            <div class="admin-form__field admin-form__field--full">
                               <span>Detalj tekst stranice</span>
-                              <textarea
-                                class="input-control input-control--textarea"
+                              <div
+                                class="admin-biography-card-rich-text"
                                 data-biography-card-field="body"
-                                name={`biographyCard_${index}_body`}
-                                rows={5}
                               >
-                                {card.body}
-                              </textarea>
-                            </label>
+                                <textarea data-biography-card-rtf-initial hidden>
+                                  {card.body}
+                                </textarea>
+                              </div>
+                            </div>
 
-                            <label class="admin-form__field admin-form__field--full">
-                              <span>URL slike</span>
+                            <div class="admin-inline-media-field admin-form__field--full">
+                              <span>Slika</span>
                               <input
-                                class="input-control"
                                 data-biography-card-field="image"
+                                data-biography-card-image-input
                                 name={`biographyCard_${index}_image`}
+                                type="hidden"
                                 value={card.image}
                               />
-                            </label>
+                              <div
+                                class="admin-inline-media-field__preview"
+                                data-biography-card-image-preview
+                              >
+                                {card.image ? (
+                                  <img src={card.image} alt="" loading="lazy" />
+                                ) : (
+                                  <p class="admin-inline-media-field__empty">Slika nije dodata.</p>
+                                )}
+                              </div>
+                              <div class="admin-inline-media-field__actions">
+                                <label class="button-secondary admin-inline-media-field__upload">
+                                  <span>Otpremi sliku</span>
+                                  <input
+                                    accept="image/*"
+                                    data-biography-card-upload
+                                    hidden
+                                    type="file"
+                                  />
+                                </label>
+                                <button
+                                  class="button-secondary"
+                                  data-biography-card-image-clear
+                                  type="button"
+                                >
+                                  Ukloni sliku
+                                </button>
+                              </div>
+                              <p
+                                class="admin-inline-media-field__status"
+                                data-biography-card-image-status
+                              />
+                            </div>
 
                             {card.highlights.map((highlight, highlightIndex) => (
                               <label class="admin-form__field">
@@ -503,28 +589,62 @@ const richTextLabels = {
                             <input class="input-control" data-biography-card-field="role" />
                           </label>
 
-                          <label class="admin-form__field admin-form__field--full">
+                          <div class="admin-form__field admin-form__field--full">
                             <span>Sažetak na kartici</span>
-                            <textarea
-                              class="input-control input-control--textarea"
+                            <div
+                              class="admin-biography-card-rich-text"
                               data-biography-card-field="summary"
-                              rows={3}
-                            />
-                          </label>
+                            >
+                              <textarea data-biography-card-rtf-initial hidden />
+                            </div>
+                          </div>
 
-                          <label class="admin-form__field admin-form__field--full">
+                          <div class="admin-form__field admin-form__field--full">
                             <span>Detalj tekst stranice</span>
-                            <textarea
-                              class="input-control input-control--textarea"
+                            <div
+                              class="admin-biography-card-rich-text"
                               data-biography-card-field="body"
-                              rows={5}
-                            />
-                          </label>
+                            >
+                              <textarea data-biography-card-rtf-initial hidden />
+                            </div>
+                          </div>
 
-                          <label class="admin-form__field admin-form__field--full">
-                            <span>URL slike</span>
-                            <input class="input-control" data-biography-card-field="image" />
-                          </label>
+                          <div class="admin-inline-media-field admin-form__field--full">
+                            <span>Slika</span>
+                            <input
+                              data-biography-card-field="image"
+                              data-biography-card-image-input
+                              type="hidden"
+                            />
+                            <div
+                              class="admin-inline-media-field__preview"
+                              data-biography-card-image-preview
+                            >
+                              <p class="admin-inline-media-field__empty">Slika nije dodata.</p>
+                            </div>
+                            <div class="admin-inline-media-field__actions">
+                              <label class="button-secondary admin-inline-media-field__upload">
+                                <span>Otpremi sliku</span>
+                                <input
+                                  accept="image/*"
+                                  data-biography-card-upload
+                                  hidden
+                                  type="file"
+                                />
+                              </label>
+                              <button
+                                class="button-secondary"
+                                data-biography-card-image-clear
+                                type="button"
+                              >
+                                Ukloni sliku
+                              </button>
+                            </div>
+                            <p
+                              class="admin-inline-media-field__status"
+                              data-biography-card-image-status
+                            />
+                          </div>
 
                           <label class="admin-form__field">
                             <span>Tag 1</span>
@@ -547,7 +667,12 @@ const richTextLabels = {
                 </div>
               </div>
 
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="biography-approach"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Pristup radu</h2>
@@ -564,16 +689,17 @@ const richTextLabels = {
                       />
                     </label>
 
-                    <label class="admin-form__field admin-form__field--full">
+                    <div class="admin-form__field admin-form__field--full">
                       <span>Opis</span>
-                      <textarea
-                        class="input-control input-control--textarea"
+                      <AdminRichTextField
+                        client:load
                         name="approachCopy"
-                        rows={4}
-                      >
-                        {pageContent.approach.copy}
-                      </textarea>
-                    </label>
+                        initialValue={pageContent.approach.copy}
+                        uploadUrl="/api/admin/media/upload"
+                        uploadFolder="pages/biography"
+                        labels={richTextLabels}
+                      />
+                    </div>
 
                     {pageContent.approach.points.map((point, index) => (
                       <label class="admin-form__field">
@@ -620,7 +746,12 @@ const richTextLabels = {
 
           return (
             <>
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="psychotherapy-banner"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Banner</h2>
@@ -637,16 +768,17 @@ const richTextLabels = {
                       />
                     </label>
 
-                    <label class="admin-form__field admin-form__field--full">
+                    <div class="admin-form__field admin-form__field--full">
                       <span>Opis</span>
-                      <textarea
-                        class="input-control input-control--textarea"
+                      <AdminRichTextField
+                        client:load
                         name="bannerDescription"
-                        rows={4}
-                      >
-                        {pageContent.banner.description}
-                      </textarea>
-                    </label>
+                        initialValue={pageContent.banner.description}
+                        uploadUrl="/api/admin/media/upload"
+                        uploadFolder="pages/psychotherapy"
+                        labels={richTextLabels}
+                      />
+                    </div>
 
                     <AdminMediaField
                       client:load
@@ -661,7 +793,12 @@ const richTextLabels = {
                 </div>
               </div>
 
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="psychotherapy-scope"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Opseg rada</h2>
@@ -688,7 +825,12 @@ const richTextLabels = {
                 </div>
               </div>
 
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="psychotherapy-services"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Usluge</h2>
@@ -709,16 +851,17 @@ const richTextLabels = {
                             />
                           </label>
 
-                          <label class="admin-form__field admin-form__field--full">
+                          <div class="admin-form__field admin-form__field--full">
                             <span>Opis</span>
-                            <textarea
-                              class="input-control input-control--textarea"
+                            <AdminRichTextField
+                              client:load
                               name={`service${index + 1}Copy`}
-                              rows={3}
-                            >
-                              {card.copy}
-                            </textarea>
-                          </label>
+                              initialValue={card.copy}
+                              uploadUrl="/api/admin/media/upload"
+                              uploadFolder="pages/psychotherapy"
+                              labels={richTextLabels}
+                            />
+                          </div>
 
                           <AdminMediaField
                             client:load
@@ -736,7 +879,12 @@ const richTextLabels = {
                 </div>
               </div>
 
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="psychotherapy-booking"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Zakazivanje</h2>
@@ -753,16 +901,17 @@ const richTextLabels = {
                       />
                     </label>
 
-                    <label class="admin-form__field admin-form__field--full">
+                    <div class="admin-form__field admin-form__field--full">
                       <span>Opis</span>
-                      <textarea
-                        class="input-control input-control--textarea"
+                      <AdminRichTextField
+                        client:load
                         name="bookingCopy"
-                        rows={4}
-                      >
-                        {pageContent.booking.copy}
-                      </textarea>
-                    </label>
+                        initialValue={pageContent.booking.copy}
+                        uploadUrl="/api/admin/media/upload"
+                        uploadFolder="pages/psychotherapy"
+                        labels={richTextLabels}
+                      />
+                    </div>
 
                     <label class="admin-form__field">
                       <span>Labela formata</span>
@@ -787,7 +936,12 @@ const richTextLabels = {
                 </div>
               </div>
 
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="psychotherapy-faq"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">FAQ</h2>
@@ -818,16 +972,17 @@ const richTextLabels = {
                             />
                           </label>
 
-                          <label class="admin-form__field admin-form__field--full">
+                          <div class="admin-form__field admin-form__field--full">
                             <span>Odgovor</span>
-                            <textarea
-                              class="input-control input-control--textarea"
+                            <AdminRichTextField
+                              client:load
                               name={`faq${index + 1}Answer`}
-                              rows={4}
-                            >
-                              {item.answer}
-                            </textarea>
-                          </label>
+                              initialValue={item.answer}
+                              uploadUrl="/api/admin/media/upload"
+                              uploadFolder="pages/psychotherapy"
+                              labels={richTextLabels}
+                            />
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -847,7 +1002,12 @@ const richTextLabels = {
 
           return (
             <>
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="scope-banner"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Banner</h2>
@@ -864,16 +1024,17 @@ const richTextLabels = {
                       />
                     </label>
 
-                    <label class="admin-form__field admin-form__field--full">
+                    <div class="admin-form__field admin-form__field--full">
                       <span>Opis</span>
-                      <textarea
-                        class="input-control input-control--textarea"
+                      <AdminRichTextField
+                        client:load
                         name="bannerDescription"
-                        rows={4}
-                      >
-                        {pageContent.banner.description}
-                      </textarea>
-                    </label>
+                        initialValue={pageContent.banner.description}
+                        uploadUrl="/api/admin/media/upload"
+                        uploadFolder="pages/scope"
+                        labels={richTextLabels}
+                      />
+                    </div>
 
                     <AdminMediaField
                       client:load
@@ -888,7 +1049,12 @@ const richTextLabels = {
                 </div>
               </div>
 
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="scope-tabs"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Uvodni blok</h2>
@@ -915,7 +1081,12 @@ const richTextLabels = {
                 </div>
               </div>
 
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="scope-tabs"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Detalj stranice</h2>
@@ -962,7 +1133,12 @@ const richTextLabels = {
                 </div>
               </div>
 
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="scope-focus"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Fokus sekcija</h2>
@@ -979,27 +1155,29 @@ const richTextLabels = {
                       />
                     </label>
 
-                    <label class="admin-form__field admin-form__field--full">
+                    <div class="admin-form__field admin-form__field--full">
                       <span>Prvi pasus</span>
-                      <textarea
-                        class="input-control input-control--textarea"
+                      <AdminRichTextField
+                        client:load
                         name="focusCopy"
-                        rows={3}
-                      >
-                        {pageContent.focus.copy}
-                      </textarea>
-                    </label>
+                        initialValue={pageContent.focus.copy}
+                        uploadUrl="/api/admin/media/upload"
+                        uploadFolder="pages/scope"
+                        labels={richTextLabels}
+                      />
+                    </div>
 
-                    <label class="admin-form__field admin-form__field--full">
+                    <div class="admin-form__field admin-form__field--full">
                       <span>Drugi pasus</span>
-                      <textarea
-                        class="input-control input-control--textarea"
+                      <AdminRichTextField
+                        client:load
                         name="focusSecondaryCopy"
-                        rows={3}
-                      >
-                        {pageContent.focus.secondaryCopy}
-                      </textarea>
-                    </label>
+                        initialValue={pageContent.focus.secondaryCopy}
+                        uploadUrl="/api/admin/media/upload"
+                        uploadFolder="pages/scope"
+                        labels={richTextLabels}
+                      />
+                    </div>
 
                     <AdminMediaField
                       client:load
@@ -1023,7 +1201,12 @@ const richTextLabels = {
                 </div>
               </div>
 
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="scope-blog"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Blog sekcija</h2>
@@ -1049,16 +1232,17 @@ const richTextLabels = {
                       />
                     </label>
 
-                    <label class="admin-form__field admin-form__field--full">
+                    <div class="admin-form__field admin-form__field--full">
                       <span>Opis</span>
-                      <textarea
-                        class="input-control input-control--textarea"
+                      <AdminRichTextField
+                        client:load
                         name="recentCopy"
-                        rows={3}
-                      >
-                        {pageContent.recent.copy}
-                      </textarea>
-                    </label>
+                        initialValue={pageContent.recent.copy}
+                        uploadUrl="/api/admin/media/upload"
+                        uploadFolder="pages/scope"
+                        labels={richTextLabels}
+                      />
+                    </div>
 
                     <label class="admin-form__field admin-form__field--full">
                       <span>Poruka kada nema postova</span>
@@ -1074,7 +1258,12 @@ const richTextLabels = {
                 </div>
               </div>
 
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="scope-tabs"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Teme rada</h2>
@@ -1124,16 +1313,17 @@ const richTextLabels = {
                             uploadLabel="Otpremi sliku"
                           />
 
-                          <label class="admin-form__field admin-form__field--full">
+                          <div class="admin-form__field admin-form__field--full">
                             <span>Lead tekst</span>
-                            <textarea
-                              class="input-control input-control--textarea"
+                            <AdminRichTextField
+                              client:load
                               name={`tab${index + 1}DetailLead`}
-                              rows={3}
-                            >
-                              {tab.detailLead}
-                            </textarea>
-                          </label>
+                              initialValue={tab.detailLead}
+                              uploadUrl="/api/admin/media/upload"
+                              uploadFolder="pages/scope"
+                              labels={richTextLabels}
+                            />
+                          </div>
 
                           {tab.items.map((item, itemIndex) => (
                             <>
@@ -1146,16 +1336,17 @@ const richTextLabels = {
                                 />
                               </label>
 
-                              <label class="admin-form__field admin-form__field--full">
+                              <div class="admin-form__field admin-form__field--full">
                                 <span>Stavka {itemIndex + 1} opis</span>
-                                <textarea
-                                  class="input-control input-control--textarea"
+                                <AdminRichTextField
+                                  client:load
                                   name={`tab${index + 1}Item${itemIndex + 1}Copy`}
-                                  rows={3}
-                                >
-                                  {item.copy}
-                                </textarea>
-                              </label>
+                                  initialValue={item.copy}
+                                  uploadUrl="/api/admin/media/upload"
+                                  uploadFolder="pages/scope"
+                                  labels={richTextLabels}
+                                />
+                              </div>
                             </>
                           ))}
                         </div>
@@ -1177,7 +1368,13 @@ const richTextLabels = {
 
           return (
             <>
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="pricing-plans"
+                data-section-preview-copy="Ovaj blok najviše utiče na SEO i uvodni sloj stranice, pa preview otvara vrh javne strane."
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Banner i SEO tekst</h2>
@@ -1196,16 +1393,17 @@ const richTextLabels = {
                       />
                     </label>
 
-                    <label class="admin-form__field admin-form__field--full">
+                    <div class="admin-form__field admin-form__field--full">
                       <span>Opis</span>
-                      <textarea
-                        class="input-control input-control--textarea"
+                      <AdminRichTextField
+                        client:load
                         name="bannerDescription"
-                        rows={3}
-                      >
-                        {pageContent.banner.description}
-                      </textarea>
-                    </label>
+                        initialValue={pageContent.banner.description}
+                        uploadUrl="/api/admin/media/upload"
+                        uploadFolder="pages/pricing"
+                        labels={richTextLabels}
+                      />
+                    </div>
 
                     <AdminMediaField
                       client:load
@@ -1220,7 +1418,12 @@ const richTextLabels = {
                 </div>
               </div>
 
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="pricing-plans"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Planovi</h2>
@@ -1250,16 +1453,17 @@ const richTextLabels = {
                             />
                           </label>
 
-                          <label class="admin-form__field admin-form__field--full">
+                          <div class="admin-form__field admin-form__field--full">
                             <span>Napomena za uplate iz inostranstva</span>
-                            <textarea
-                              class="input-control input-control--textarea"
+                            <AdminRichTextField
+                              client:load
                               name={`plan${index + 1}OutsideSerbiaPrice`}
-                              rows={3}
-                            >
-                              {plan.outsideSerbiaPrice}
-                            </textarea>
-                          </label>
+                              initialValue={plan.outsideSerbiaPrice}
+                              uploadUrl="/api/admin/media/upload"
+                              uploadFolder="pages/pricing"
+                              labels={richTextLabels}
+                            />
+                          </div>
 
                           <label class="admin-form__field">
                             <span>Labela CTA</span>
@@ -1276,7 +1480,12 @@ const richTextLabels = {
                 </div>
               </div>
 
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="pricing-info"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Info kartice</h2>
@@ -1297,16 +1506,17 @@ const richTextLabels = {
                             />
                           </label>
 
-                          <label class="admin-form__field admin-form__field--full">
+                          <div class="admin-form__field admin-form__field--full">
                             <span>Opis</span>
-                            <textarea
-                              class="input-control input-control--textarea"
+                            <AdminRichTextField
+                              client:load
                               name={`info${index + 1}Copy`}
-                              rows={3}
-                            >
-                              {card.copy}
-                            </textarea>
-                          </label>
+                              initialValue={card.copy}
+                              uploadUrl="/api/admin/media/upload"
+                              uploadFolder="pages/pricing"
+                              labels={richTextLabels}
+                            />
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -1326,7 +1536,12 @@ const richTextLabels = {
 
           return (
             <>
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="appointment-booking"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Banner i uvod</h2>
@@ -1343,16 +1558,17 @@ const richTextLabels = {
                       />
                     </label>
 
-                    <label class="admin-form__field admin-form__field--full">
+                    <div class="admin-form__field admin-form__field--full">
                       <span>SEO opis</span>
-                      <textarea
-                        class="input-control input-control--textarea"
+                      <AdminRichTextField
+                        client:load
                         name="bannerDescription"
-                        rows={3}
-                      >
-                        {pageContent.banner.description}
-                      </textarea>
-                    </label>
+                        initialValue={pageContent.banner.description}
+                        uploadUrl="/api/admin/media/upload"
+                        uploadFolder="pages/appointment"
+                        labels={richTextLabels}
+                      />
+                    </div>
 
                     <AdminMediaField
                       client:load
@@ -1373,16 +1589,17 @@ const richTextLabels = {
                       />
                     </label>
 
-                    <label class="admin-form__field admin-form__field--full">
+                    <div class="admin-form__field admin-form__field--full">
                       <span>Uvodni tekst</span>
-                      <textarea
-                        class="input-control input-control--textarea"
+                      <AdminRichTextField
+                        client:load
                         name="bookingCopy"
-                        rows={3}
-                      >
-                        {pageContent.booking.copy}
-                      </textarea>
-                    </label>
+                        initialValue={pageContent.booking.copy}
+                        uploadUrl="/api/admin/media/upload"
+                        uploadFolder="pages/appointment"
+                        labels={richTextLabels}
+                      />
+                    </div>
 
                     <label class="admin-form__field">
                       <span>Labela formata</span>
@@ -1407,7 +1624,12 @@ const richTextLabels = {
                 </div>
               </div>
 
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="appointment-faq"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">FAQ</h2>
@@ -1438,16 +1660,17 @@ const richTextLabels = {
                             />
                           </label>
 
-                          <label class="admin-form__field admin-form__field--full">
+                          <div class="admin-form__field admin-form__field--full">
                             <span>Odgovor</span>
-                            <textarea
-                              class="input-control input-control--textarea"
+                            <AdminRichTextField
+                              client:load
                               name={`faq${index + 1}Answer`}
-                              rows={4}
-                            >
-                              {item.answer}
-                            </textarea>
-                          </label>
+                              initialValue={item.answer}
+                              uploadUrl="/api/admin/media/upload"
+                              uploadFolder="pages/appointment"
+                              labels={richTextLabels}
+                            />
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -1467,7 +1690,12 @@ const richTextLabels = {
 
           return (
             <>
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="faq-banner"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Banner</h2>
@@ -1484,16 +1712,17 @@ const richTextLabels = {
                       />
                     </label>
 
-                    <label class="admin-form__field admin-form__field--full">
+                    <div class="admin-form__field admin-form__field--full">
                       <span>Opis</span>
-                      <textarea
-                        class="input-control input-control--textarea"
+                      <AdminRichTextField
+                        client:load
                         name="bannerDescription"
-                        rows={3}
-                      >
-                        {pageContent.banner.description}
-                      </textarea>
-                    </label>
+                        initialValue={pageContent.banner.description}
+                        uploadUrl="/api/admin/media/upload"
+                        uploadFolder="pages/faq"
+                        labels={richTextLabels}
+                      />
+                    </div>
 
                     <AdminMediaField
                       client:load
@@ -1508,7 +1737,12 @@ const richTextLabels = {
                 </div>
               </div>
 
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="faq-items"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">FAQ pitanja</h2>
@@ -1539,16 +1773,17 @@ const richTextLabels = {
                             />
                           </label>
 
-                          <label class="admin-form__field admin-form__field--full">
+                          <div class="admin-form__field admin-form__field--full">
                             <span>Odgovor</span>
-                            <textarea
-                              class="input-control input-control--textarea"
+                            <AdminRichTextField
+                              client:load
                               name={`faq${index + 1}Answer`}
-                              rows={4}
-                            >
-                              {item.answer}
-                            </textarea>
-                          </label>
+                              initialValue={item.answer}
+                              uploadUrl="/api/admin/media/upload"
+                              uploadFolder="pages/faq"
+                              labels={richTextLabels}
+                            />
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -1556,7 +1791,12 @@ const richTextLabels = {
                 </div>
               </div>
 
-              <div class="card" style="padding: 1.5rem;">
+              <div
+                class="card"
+                style="padding: 1.5rem;"
+                data-section-preview
+                data-section-preview-fragment="faq-booking"
+              >
                 <div class="page-grid">
                   <div>
                     <h2 style="margin: 0;">Zakazivanje blok</h2>
@@ -1573,16 +1813,17 @@ const richTextLabels = {
                       />
                     </label>
 
-                    <label class="admin-form__field admin-form__field--full">
+                    <div class="admin-form__field admin-form__field--full">
                       <span>Opis</span>
-                      <textarea
-                        class="input-control input-control--textarea"
+                      <AdminRichTextField
+                        client:load
                         name="bookingCopy"
-                        rows={3}
-                      >
-                        {pageContent.booking.copy}
-                      </textarea>
-                    </label>
+                        initialValue={pageContent.booking.copy}
+                        uploadUrl="/api/admin/media/upload"
+                        uploadFolder="pages/faq"
+                        labels={richTextLabels}
+                      />
+                    </div>
 
                     <label class="admin-form__field">
                       <span>Labela formata</span>
@@ -1612,26 +1853,392 @@ const richTextLabels = {
       : null
   }
 
-  <div class="admin-form__actions">
-    <button class="button-primary" type="submit">Sačuvaj stranicu</button>
+  <div class="admin-form__actions admin-form__actions--floating">
+    <p class="admin-form__save-status" data-admin-form-submit-status aria-live="polite"></p>
+    <button class="button-primary admin-form__fab" type="submit" data-admin-form-submit>
+      Sačuvaj stranicu
+    </button>
   </div>
 </form>
 
-<script is:inline>
+<script>
+  import { mountAdminRichTextField, unmountAdminRichTextField } from "./AdminRichTextMount";
+
   (() => {
+    const setupFloatingSubmit = () => {
+      document.querySelectorAll("[data-admin-section-preview-root]").forEach((form) => {
+        if (!(form instanceof HTMLFormElement) || form.dataset.floatingSubmitBound === "true") {
+          return;
+        }
+
+        const submitButtons = Array.from(form.querySelectorAll("[data-admin-form-submit]")).filter(
+          (button) => button instanceof HTMLButtonElement,
+        );
+        const statusNodes = Array.from(
+          form.querySelectorAll("[data-admin-form-submit-status]"),
+        ).filter((node) => node instanceof HTMLElement);
+        const pendingSources = new Map();
+        let autoSaveRequested = false;
+        let isSubmitting = false;
+
+        const syncSubmitState = () => {
+          const hasPending = pendingSources.size > 0;
+          const disabled = hasPending || isSubmitting;
+          const message = isSubmitting
+            ? "Čuvanje u toku..."
+            : autoSaveRequested && hasPending
+              ? "Završavam upload pa čuvam izmenu slike."
+              : autoSaveRequested
+                ? "Čuvam izmenu slike..."
+                : hasPending
+                  ? "Sačekajte da se obrada slike ili videa završi."
+                  : "Sve media izmene su spremne za čuvanje.";
+
+          form.dataset.pendingUploads = hasPending ? "true" : "false";
+
+          submitButtons.forEach((button) => {
+            button.disabled = disabled;
+            button.setAttribute("aria-disabled", disabled ? "true" : "false");
+          });
+
+          statusNodes.forEach((node) => {
+            node.textContent = message;
+            node.dataset.tone = hasPending ? "muted" : "ready";
+          });
+        };
+
+        const tryAutoSave = () => {
+          if (!autoSaveRequested || isSubmitting || form.dataset.pendingUploads === "true") {
+            return;
+          }
+
+          if (!form.checkValidity()) {
+            autoSaveRequested = false;
+            syncSubmitState();
+            return;
+          }
+
+          isSubmitting = true;
+          syncSubmitState();
+          requestAnimationFrame(() => form.requestSubmit());
+        };
+
+        form.addEventListener("admin:pending-media", (event) => {
+          if (!(event instanceof CustomEvent)) {
+            return;
+          }
+
+          const sourceId =
+            typeof event.detail?.sourceId === "string" ? event.detail.sourceId : undefined;
+
+          if (!sourceId) {
+            return;
+          }
+
+          if (event.detail?.active) {
+            pendingSources.set(sourceId, true);
+          } else {
+            pendingSources.delete(sourceId);
+          }
+
+          syncSubmitState();
+          tryAutoSave();
+        });
+
+        form.addEventListener("admin:auto-save-media", () => {
+          autoSaveRequested = true;
+          syncSubmitState();
+          tryAutoSave();
+        });
+
+        form.addEventListener("submit", (event) => {
+          if (form.dataset.pendingUploads !== "true") {
+            isSubmitting = true;
+            syncSubmitState();
+            return;
+          }
+
+          event.preventDefault();
+          syncSubmitState();
+        });
+
+        syncSubmitState();
+        form.dataset.floatingSubmitBound = "true";
+      });
+    };
+
+    const setupSectionPreviews = () => {
+      document.querySelectorAll("[data-admin-section-preview-root]").forEach((form) => {
+        if (!(form instanceof HTMLFormElement) || form.dataset.sectionPreviewBound === "true") {
+          return;
+        }
+
+        const baseHref = form.dataset.previewBaseHref ?? "";
+        const localeLabel = form.dataset.previewLocaleLabel ?? "trenutni jezik";
+
+        const createPreviewCard = ({ href, title, copy }) => {
+          const aside = document.createElement("aside");
+          aside.className = "card admin-preview-card admin-preview-card--compact";
+
+          const head = document.createElement("div");
+          head.className = "admin-preview-card__head";
+
+          const copyWrap = document.createElement("div");
+          const kicker = document.createElement("p");
+          kicker.className = "admin-kicker";
+          kicker.textContent = "Section Preview";
+
+          const heading = document.createElement("h3");
+          heading.textContent = title;
+
+          const copyNode = document.createElement("p");
+          copyNode.className = "admin-preview-card__copy";
+          copyNode.textContent = copy || `Prikaz javne sekcije za ${localeLabel}.`;
+
+          copyWrap.append(kicker, heading, copyNode);
+
+          const link = document.createElement("a");
+          link.className = "button-secondary";
+          link.href = href;
+          link.target = "_blank";
+          link.rel = "noreferrer";
+          link.textContent = "Otvori sekciju";
+
+          head.append(copyWrap, link);
+
+          const viewport = document.createElement("div");
+          viewport.className = "admin-preview-card__viewport";
+
+          const browserBar = document.createElement("div");
+          browserBar.className = "admin-preview-card__browser-bar";
+          browserBar.setAttribute("aria-hidden", "true");
+
+          for (let index = 0; index < 3; index += 1) {
+            browserBar.append(document.createElement("span"));
+          }
+
+          const frame = document.createElement("div");
+          frame.className = "admin-preview-card__frame";
+
+          const iframe = document.createElement("iframe");
+          iframe.className = "admin-preview-card__iframe";
+          iframe.loading = "lazy";
+          iframe.src = href;
+          iframe.title = `Preview: ${title}`;
+
+          frame.append(iframe);
+          viewport.append(browserBar, frame);
+          aside.append(head, viewport);
+
+          return aside;
+        };
+
+        Array.from(form.children).forEach((child) => {
+          if (!(child instanceof HTMLElement) || !child.matches("[data-section-preview]")) {
+            return;
+          }
+
+          const fragment = child.dataset.sectionPreviewFragment ?? "";
+          const href = fragment ? `${baseHref}#${fragment}` : baseHref;
+          const title =
+            child.dataset.sectionPreviewTitle ??
+            child.querySelector("h2")?.textContent?.trim() ??
+            "Preview sekcije";
+          const copy =
+            child.dataset.sectionPreviewCopy ??
+            child.querySelector(".section-copy")?.textContent?.trim() ??
+            "";
+
+          const wrapper = document.createElement("div");
+          wrapper.className = "admin-section-editor";
+
+          const preview = createPreviewCard({ href, title, copy });
+
+          child.before(wrapper);
+          wrapper.append(preview, child);
+        });
+
+        form.dataset.sectionPreviewBound = "true";
+      });
+    };
+
     const setupBiographyCards = () => {
       const list = document.querySelector("[data-biography-card-list]");
       const template = document.querySelector("[data-biography-card-template]");
       const addButton = document.querySelector("[data-biography-card-add]");
+      const form = list?.closest("form");
 
       if (
         !(list instanceof HTMLElement) ||
         !(template instanceof HTMLTemplateElement) ||
         !(addButton instanceof HTMLButtonElement) ||
+        !(form instanceof HTMLFormElement) ||
         list.dataset.bound === "true"
       ) {
         return;
       }
+
+      let richTextLabels = {};
+
+      try {
+        richTextLabels = JSON.parse(list.dataset.biographyCardRichTextLabels ?? "{}");
+      } catch {
+        richTextLabels = {};
+      }
+
+      const getPendingSourceId = (card) => {
+        if (!(card instanceof HTMLElement)) {
+          return "";
+        }
+
+        if (!card.dataset.pendingSourceId) {
+          card.dataset.pendingSourceId =
+            globalThis.crypto?.randomUUID?.() ?? `bio-card-${Date.now()}-${Math.random()}`;
+        }
+
+        return card.dataset.pendingSourceId;
+      };
+
+      const setPendingUpload = (card, active) => {
+        const sourceId = getPendingSourceId(card);
+
+        if (!sourceId) {
+          return;
+        }
+
+        form.dispatchEvent(
+          new CustomEvent("admin:pending-media", {
+            detail: { active, sourceId },
+          }),
+        );
+      };
+
+      const createEmptyImageState = () => {
+        const empty = document.createElement("p");
+        empty.className = "admin-inline-media-field__empty";
+        empty.textContent = "Slika nije dodata.";
+        return empty;
+      };
+
+      const getCardImageField = (card) => {
+        const field = card.querySelector("[data-biography-card-image-input]");
+        return field instanceof HTMLInputElement ? field : null;
+      };
+
+      const getCardImagePreview = (card) => {
+        const preview = card.querySelector("[data-biography-card-image-preview]");
+        return preview instanceof HTMLElement ? preview : null;
+      };
+
+      const getCardImageStatus = (card) => {
+        const status = card.querySelector("[data-biography-card-image-status]");
+        return status instanceof HTMLElement ? status : null;
+      };
+
+      const updateCardImagePreview = (card) => {
+        const field = getCardImageField(card);
+        const preview = getCardImagePreview(card);
+
+        if (!field || !preview) {
+          return;
+        }
+
+        preview.replaceChildren();
+
+        if (field.value.trim()) {
+          const image = document.createElement("img");
+          image.src = field.value.trim();
+          image.alt = "";
+          image.loading = "lazy";
+          preview.append(image);
+        } else {
+          preview.append(createEmptyImageState());
+        }
+
+        const clearButton = card.querySelector("[data-biography-card-image-clear]");
+
+        if (clearButton instanceof HTMLButtonElement) {
+          clearButton.disabled = field.value.trim().length === 0;
+        }
+      };
+
+      const setCardImageStatus = (card, message = "") => {
+        const status = getCardImageStatus(card);
+
+        if (status) {
+          status.textContent = message;
+        }
+      };
+
+      const mountCardRichText = (field, index) => {
+        if (!(field instanceof HTMLElement)) {
+          return;
+        }
+
+        const fieldName = field.dataset.biographyCardField;
+
+        if (!fieldName) {
+          return;
+        }
+
+        const initialField = field.querySelector("[data-biography-card-rtf-initial]");
+        const initialValue = initialField instanceof HTMLTextAreaElement ? initialField.value : "";
+
+        mountAdminRichTextField(field, {
+          initialValue,
+          labels: richTextLabels,
+          name: `biographyCard_${index}_${fieldName}`,
+          uploadFolder: "pages/biography",
+          uploadUrl: "/api/admin/media/upload",
+        });
+      };
+
+      const uploadCardImage = async (card, file) => {
+        const field = getCardImageField(card);
+
+        if (!field) {
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("folder", "pages/biography");
+
+        setCardImageStatus(card, "Otpremanje...");
+        setPendingUpload(card, true);
+
+        try {
+          const response = await fetch("/api/admin/media/upload", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) {
+            setCardImageStatus(card, "Upload nije uspeo.");
+            return;
+          }
+
+          const data = await response.json();
+
+          if (!data?.url || typeof data.url !== "string") {
+            setCardImageStatus(card, "Upload nije uspeo.");
+            return;
+          }
+
+          field.value = data.url;
+          updateCardImagePreview(card);
+          setCardImageStatus(card, "Slika je otpremljena.");
+          form.dispatchEvent(
+            new CustomEvent("admin:auto-save-media", {
+              detail: { sourceId: getPendingSourceId(card) },
+            }),
+          );
+        } catch {
+          setCardImageStatus(card, "Upload nije uspeo.");
+        } finally {
+          setPendingUpload(card, false);
+        }
+      };
 
       const syncCards = () => {
         const items = Array.from(list.querySelectorAll("[data-biography-card-item]"));
@@ -1654,18 +2261,25 @@ const richTextLabels = {
           }
 
           item.querySelectorAll("[data-biography-card-field]").forEach((field) => {
-            if (!(field instanceof HTMLInputElement) && !(field instanceof HTMLTextAreaElement)) {
-              return;
-            }
-
             const fieldName = field.dataset.biographyCardField;
 
             if (!fieldName) {
               return;
             }
 
+            if (field.classList.contains("admin-biography-card-rich-text")) {
+              mountCardRichText(field, index);
+              return;
+            }
+
+            if (!(field instanceof HTMLInputElement) && !(field instanceof HTMLTextAreaElement)) {
+              return;
+            }
+
             field.name = `biographyCard_${index}_${fieldName}`;
           });
+
+          updateCardImagePreview(item);
         });
       };
 
@@ -1678,6 +2292,27 @@ const richTextLabels = {
         const target = event.target;
 
         if (!(target instanceof HTMLElement)) {
+          return;
+        }
+
+        const clearButton = target.closest("[data-biography-card-image-clear]");
+
+        if (clearButton instanceof HTMLButtonElement) {
+          const card = clearButton.closest("[data-biography-card-item]");
+
+          if (!(card instanceof HTMLElement)) {
+            return;
+          }
+
+          const field = getCardImageField(card);
+
+          if (!field) {
+            return;
+          }
+
+          field.value = "";
+          setCardImageStatus(card, "");
+          updateCardImagePreview(card);
           return;
         }
 
@@ -1696,16 +2331,48 @@ const richTextLabels = {
         const card = removeButton.closest("[data-biography-card-item]");
 
         if (card instanceof HTMLElement) {
+          card.querySelectorAll(".admin-biography-card-rich-text").forEach((field) => {
+            if (field instanceof HTMLElement) {
+              unmountAdminRichTextField(field);
+            }
+          });
+          setPendingUpload(card, false);
           card.remove();
           syncCards();
         }
+      });
+
+      list.addEventListener("change", (event) => {
+        const target = event.target;
+
+        if (
+          !(target instanceof HTMLInputElement) ||
+          !target.matches("[data-biography-card-upload]")
+        ) {
+          return;
+        }
+
+        const file = target.files?.[0];
+        const card = target.closest("[data-biography-card-item]");
+
+        target.value = "";
+
+        if (!file || !(card instanceof HTMLElement)) {
+          return;
+        }
+
+        void uploadCardImage(card, file);
       });
 
       syncCards();
       list.dataset.bound = "true";
     };
 
+    setupFloatingSubmit();
+    setupSectionPreviews();
     setupBiographyCards();
+    document.addEventListener("astro:page-load", setupFloatingSubmit);
+    document.addEventListener("astro:page-load", setupSectionPreviews);
     document.addEventListener("astro:page-load", setupBiographyCards);
   })();
 </script>

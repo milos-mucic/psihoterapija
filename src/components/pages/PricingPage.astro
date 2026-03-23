@@ -10,7 +10,7 @@ const { locale } = Astro.props;
 const content = await pageContentService.getPricingPageData(locale);
 ---
 
-<section class="page-section pricing-page__plans-section">
+<section id="pricing-plans" class="page-section pricing-page__plans-section">
   <div class="container">
     <div class="pricing-page__grid">
       {
@@ -22,7 +22,7 @@ const content = await pageContentService.getPricingPageData(locale);
           >
             <h3>{plan.title}</h3>
             <p class="pricing-page__price">{plan.price}</p>
-            <p class="pricing-page__outside">{plan.outsideSerbiaPrice}</p>
+            <div class="pricing-page__outside" set:html={plan.outsideSerbiaPrice} />
             <a class="pricing-page__cta" href={plan.ctaHref}>
               <span>{plan.ctaLabel}</span>
               <span aria-hidden="true">→</span>
@@ -34,7 +34,7 @@ const content = await pageContentService.getPricingPageData(locale);
   </div>
 </section>
 
-<section class="page-section pricing-page__info-section">
+<section id="pricing-info" class="page-section pricing-page__info-section">
   <div class="container">
     <div class="pricing-page__info-grid">
       {
@@ -45,7 +45,7 @@ const content = await pageContentService.getPricingPageData(locale);
             style={`--reveal-delay: ${index * 85}ms;`}
           >
             <h4>{card.title}</h4>
-            <p>{card.copy}</p>
+            <div set:html={card.copy} />
           </article>
         ))
       }
@@ -92,6 +92,16 @@ const content = await pageContentService.getPricingPageData(locale);
   .pricing-page__outside {
     color: var(--foreground);
     line-height: 1.6;
+  }
+
+  .pricing-page__outside :global(p),
+  .pricing-page__outside :global(ul),
+  .pricing-page__outside :global(ol),
+  .pricing-page__info-card :global(p),
+  .pricing-page__info-card :global(ul),
+  .pricing-page__info-card :global(ol) {
+    margin: 0;
+    line-height: 1.62;
   }
 
   .pricing-page__cta {

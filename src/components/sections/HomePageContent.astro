@@ -27,7 +27,7 @@ const homeVideoSrc = youtubeVideoId
     : content.reasons.videoHref;
 ---
 
-<section class="home-section">
+<section id="home-prompt" class="home-section">
   <div class="container">
     <div class="home-heading-row home-heading-row--prompt">
       <div class="home-heading-copy home-heading-copy--prompt" data-reveal="up">
@@ -46,7 +46,7 @@ const homeVideoSrc = youtubeVideoId
   </div>
 </section>
 
-<section class="home-section home-section--tight">
+<section id="home-about" class="home-section home-section--tight">
   <div class="container">
     <div class="home-about">
       <img
@@ -65,7 +65,7 @@ const homeVideoSrc = youtubeVideoId
   </div>
 </section>
 
-<section class="home-section home-section--dark">
+<section id="home-services" class="home-section home-section--dark">
   <div class="container">
     <div class="home-services">
       <div class="home-services__layout">
@@ -91,7 +91,10 @@ const homeVideoSrc = youtubeVideoId
                 />
                 <div class="home-service-card__body">
                   <h3 class="home-service-title">{item.title}</h3>
-                  <div class="home-service-copy home-richtext home-richtext--light" set:html={item.copy} />
+                  <div
+                    class="home-service-copy home-richtext home-richtext--light"
+                    set:html={item.copy}
+                  />
                 </div>
               </article>
             ))
@@ -102,7 +105,7 @@ const homeVideoSrc = youtubeVideoId
   </div>
 </section>
 
-<section class="home-section">
+<section id="home-themes" class="home-section">
   <div class="container">
     <div class="section-title-wrapper" data-reveal="up">
       <h2 class="heading-12">{content.themes.title}</h2>
@@ -129,13 +132,19 @@ const homeVideoSrc = youtubeVideoId
                 <div class="collection-link-wrapper">
                   <a class="link-with-icon" href={item.href}>
                     {item.label}
-                    <svg class="text-button-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <svg
+                      class="text-button-icon"
+                      aria-hidden="true"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
                       <path
                         d="M7 17L17 7M9 7H17V15"
                         stroke="currentColor"
                         stroke-linecap="round"
                         stroke-linejoin="round"
-                        stroke-width="1.9"></path>
+                        stroke-width="1.9"
+                      />
                     </svg>
                   </a>
                 </div>
@@ -148,7 +157,7 @@ const homeVideoSrc = youtubeVideoId
   </div>
 </section>
 
-<section class="home-section home-section--dark">
+<section id="home-reasons" class="home-section home-section--dark">
   <div class="container">
     <div class="home-reasons">
       <div class="home-reasons__intro" data-reveal="up">
@@ -176,13 +185,15 @@ const homeVideoSrc = youtubeVideoId
                         class="home-inline-link__icon"
                         aria-hidden="true"
                         viewBox="0 0 24 24"
-                        fill="none">
+                        fill="none"
+                      >
                         <path
                           d="M7 17L17 7M9 7H17V15"
                           stroke="currentColor"
                           stroke-linecap="round"
                           stroke-linejoin="round"
-                          stroke-width="1.9"></path>
+                          stroke-width="1.9"
+                        />
                       </svg>
                     </span>
                   </div>
@@ -218,7 +229,8 @@ const homeVideoSrc = youtubeVideoId
       type="button"
       class="home-video-dialog__close"
       data-home-video-close
-      aria-label={dictionary.common.close}>
+      aria-label={dictionary.common.close}
+    >
       <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
         <path
           d="M6 6L18 18M18 6L6 18"
@@ -312,7 +324,7 @@ const homeVideoSrc = youtubeVideoId
   })();
 </script>
 
-<section class="home-section home-section--tight">
+<section id="home-booking" class="home-section home-section--tight">
   <div class="container">
     <div class="home-booking">
       <div class="home-booking__intro" data-reveal="up">
@@ -336,7 +348,7 @@ const homeVideoSrc = youtubeVideoId
   </div>
 </section>
 
-<section class="home-section">
+<section id="home-blog" class="home-section">
   <div class="container">
     <div class="home-heading-row home-heading-row--blog">
       <div class="home-heading-copy" data-reveal="up">
@@ -394,7 +406,8 @@ const homeVideoSrc = youtubeVideoId
                       stroke="currentColor"
                       stroke-linecap="round"
                       stroke-linejoin="round"
-                      stroke-width="1.9"></path>
+                      stroke-width="1.9"
+                    />
                   </svg>
                 </a>
               </div>

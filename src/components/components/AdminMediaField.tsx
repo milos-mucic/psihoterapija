@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import Uppy from "@uppy/core";
 import type { UppyFile } from "@uppy/core";
 import ImageEditor from "@uppy/image-editor";
@@ -118,6 +118,8 @@ export function AdminMediaField({
 }: Props) {
   const inputId = useId();
   const previewId = `${inputId}-preview`;
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const shouldAutoSaveImageRef = useRef(false);
   const [value, setValue] = useState(initialValue);
   const [status, setStatus] = useState("");
   const [showUploader, setShowUploader] = useState(false);
@@ -146,29 +148,6 @@ export function AdminMediaField({
   });
 
   useEffect(() => {
-    if (isVideoField || !uppy) {
-      return;
-    }
-
-    const syncSelection = () => {
-      setHasSelectedImage(uppy.getFiles().length > 0);
-      setStatus("");
-    };
-
-    uppy.on("file-added", syncSelection);
-    uppy.on("file-removed", syncSelection);
-    uppy.on("file-editor:complete", syncSelection);
-    uppy.on("cancel-all", syncSelection);
-
-    return () => {
-      uppy.off("file-added", syncSelection);
-      uppy.off("file-removed", syncSelection);
-      uppy.off("file-editor:complete", syncSelection);
-      uppy.off("cancel-all", syncSelection);
-    };
-  }, [isVideoField, uppy]);
-
-  useEffect(() => {
     if (!uppy) {
       return;
     }
@@ -178,38 +157,88 @@ export function AdminMediaField({
     };
   }, [uppy]);
 
-  const uploadFile = async (file: File) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("folder", uploadFolder);
+  useEffect(() => {
+    const form = rootRef.current?.closest("form");
 
-    try {
-      setStatus("");
-      const response = await fetch(uploadUrl, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        setStatus("Upload nije uspeo.");
-        return;
-      }
-
-      const data = (await response.json()) as { url?: string };
-
-      if (!data.url) {
-        setStatus("Upload nije uspeo.");
-        return;
-      }
-
-      setValue(data.url);
-      setStatus("Fajl je otpremljen.");
-    } catch {
-      setStatus("Upload nije uspeo.");
+    if (!(form instanceof HTMLFormElement)) {
+      return;
     }
-  };
 
-  const uploadSelectedImage = async () => {
+    const pending = isUploading || (!isVideoField && hasSelectedImage);
+
+    form.dispatchEvent(
+      new CustomEvent("admin:pending-media", {
+        detail: { active: pending, sourceId: inputId },
+      }),
+    );
+
+    return () => {
+      form.dispatchEvent(
+        new CustomEvent("admin:pending-media", {
+          detail: { active: false, sourceId: inputId },
+        }),
+      );
+    };
+  }, [hasSelectedImage, inputId, isUploading, isVideoField]);
+
+  useEffect(() => {
+    if (isVideoField || !shouldAutoSaveImageRef.current) {
+      return;
+    }
+
+    const form = rootRef.current?.closest("form");
+
+    if (!(form instanceof HTMLFormElement)) {
+      return;
+    }
+
+    shouldAutoSaveImageRef.current = false;
+    form.dispatchEvent(
+      new CustomEvent("admin:auto-save-media", {
+        detail: { sourceId: inputId },
+      }),
+    );
+  }, [inputId, isVideoField, value]);
+
+  const uploadFile = useCallback(
+    async (file: File) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", uploadFolder);
+
+      try {
+        setStatus("");
+        const response = await fetch(uploadUrl, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          setStatus("Upload nije uspeo.");
+          return;
+        }
+
+        const data = (await response.json()) as { url?: string };
+
+        if (!data.url) {
+          setStatus("Upload nije uspeo.");
+          return;
+        }
+
+        if (!isVideoField) {
+          shouldAutoSaveImageRef.current = true;
+        }
+
+        setValue(data.url);
+        setStatus("Fajl je otpremljen.");
+      } catch {
+        setStatus("Upload nije uspeo.");
+      }
+    },
+    [isVideoField, uploadFolder, uploadUrl],
+  );
+
+  const uploadSelectedImage = useCallback(async () => {
     if (!uppy) {
       return;
     }
@@ -222,9 +251,12 @@ export function AdminMediaField({
     }
 
     setIsUploading(true);
+    setStatus("Otpremanje...");
 
     try {
-      const preparedFile = fileFromUppy(selectedFile as UppyFile<Record<string, never>, Record<string, never>>);
+      const preparedFile = fileFromUppy(
+        selectedFile as UppyFile<Record<string, never>, Record<string, never>>,
+      );
       const compressedFile = await compressImageToMaxSize(preparedFile, imageMaxBytes);
       await uploadFile(compressedFile);
       uppy.clear();
@@ -235,11 +267,39 @@ export function AdminMediaField({
     } finally {
       setIsUploading(false);
     }
-  };
+  }, [uppy, uploadFile]);
+
+  useEffect(() => {
+    if (isVideoField || !uppy) {
+      return;
+    }
+
+    const syncSelection = () => {
+      setHasSelectedImage(uppy.getFiles().length > 0);
+      setStatus("");
+    };
+
+    const handleEditorComplete = () => {
+      syncSelection();
+      void uploadSelectedImage();
+    };
+
+    uppy.on("file-added", syncSelection);
+    uppy.on("file-removed", syncSelection);
+    uppy.on("file-editor:complete", handleEditorComplete);
+    uppy.on("cancel-all", syncSelection);
+
+    return () => {
+      uppy.off("file-added", syncSelection);
+      uppy.off("file-removed", syncSelection);
+      uppy.off("file-editor:complete", handleEditorComplete);
+      uppy.off("cancel-all", syncSelection);
+    };
+  }, [isVideoField, uppy, uploadSelectedImage]);
 
   if (isVideoField) {
     return (
-      <div className="admin-media-field">
+      <div className="admin-media-field" ref={rootRef}>
         <label className="admin-form__field admin-form__field--full" htmlFor={inputId}>
           <span>{label}</span>
           <input
@@ -262,7 +322,11 @@ export function AdminMediaField({
                 const file = event.currentTarget.files?.[0];
 
                 if (file) {
-                  void uploadFile(file);
+                  setIsUploading(true);
+
+                  void uploadFile(file).finally(() => {
+                    setIsUploading(false);
+                  });
                 }
 
                 event.currentTarget.value = "";
@@ -290,37 +354,23 @@ export function AdminMediaField({
   }
 
   return (
-    <div className="admin-media-field">
-      <label className="admin-form__field admin-form__field--full" htmlFor={inputId}>
+    <div className="admin-media-field" ref={rootRef}>
+      <input name={name} type="hidden" value={value} />
+
+      <div className="admin-form__field admin-form__field--full">
         <span>{label}</span>
-        <input
-          id={inputId}
-          className="input-control"
-          name={name}
-          value={value}
-          onChange={(event) => setValue(event.currentTarget.value)}
-        />
-      </label>
+      </div>
 
       <div className="admin-media-field__actions">
         <button
+          id={inputId}
           className="button-secondary"
           type="button"
           onClick={() => setShowUploader((current) => !current)}
         >
-          {showUploader ? "Zatvori Uppy" : uploadLabel}
+          {showUploader ? "Zatvori" : uploadLabel}
         </button>
-        <button
-          className="button-primary"
-          type="button"
-          disabled={!hasSelectedImage || isUploading}
-          onClick={() => void uploadSelectedImage()}
-        >
-          {isUploading ? "Otpremanje..." : "Sačuvaj izabranu sliku"}
-        </button>
-        <p className="admin-media-field__help">
-          {helpText ?? "Uppy editor + automatska kompresija slike do 1 MB pre slanja."}
-        </p>
+        {helpText ? <p className="admin-media-field__help">{helpText}</p> : null}
       </div>
 
       {showUploader && uppy ? (
@@ -334,7 +384,6 @@ export function AdminMediaField({
             hideCancelButton
             showProgressDetails={false}
             doneButtonHandler={() => undefined}
-            note="JPG, PNG, WEBP • edit + kompresija do 1 MB"
             autoOpen="imageEditor"
             height={360}
           />

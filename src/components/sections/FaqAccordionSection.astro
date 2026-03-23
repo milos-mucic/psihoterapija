@@ -7,12 +7,13 @@ type Props = {
   items: FaqAccordionItem[];
   image?: string;
   sectionClass?: string;
+  sectionId?: string;
 };
 
-const { title, intro, items, image, sectionClass } = Astro.props;
+const { title, intro, items, image, sectionClass, sectionId } = Astro.props;
 ---
 
-<section class:list={["page-section", "faq-accordion-section", sectionClass]}>
+<section id={sectionId} class:list={["page-section", "faq-accordion-section", sectionClass]}>
   <div class="container">
     <div class:list={["faq-accordion", !image && "faq-accordion--single"]}>
       {
@@ -54,7 +55,7 @@ const { title, intro, items, image, sectionClass } = Astro.props;
                 </button>
                 <div class="faq-item__body" data-accordion-body hidden={index !== 0}>
                   <div class="faq-item__body-inner">
-                    {item.answerHtml ? <p set:html={item.answerHtml} /> : <p>{item.answer}</p>}
+                    {item.answerHtml ? <div set:html={item.answerHtml} /> : <p>{item.answer}</p>}
                   </div>
                 </div>
               </article>

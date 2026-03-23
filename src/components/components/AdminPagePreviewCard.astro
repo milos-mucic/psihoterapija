@@ -1,0 +1,44 @@
+---
+type Props = {
+  href: string;
+  title: string;
+  localeLabel: string;
+};
+
+const { href, title, localeLabel } = Astro.props;
+---
+
+<aside class="card admin-preview-card">
+  <div class="admin-preview-card__head">
+    <div>
+      <p class="admin-kicker">Live Overview</p>
+      <h3>{title}</h3>
+      <p class="admin-preview-card__copy">
+        Prikaz javne strane za <strong>{localeLabel}</strong>.
+      </p>
+    </div>
+
+    <a class="button-secondary" href={href} target="_blank" rel="noreferrer"> Otvori stranicu </a>
+  </div>
+
+  <div class="admin-preview-card__viewport">
+    <div class="admin-preview-card__browser-bar" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <div class="admin-preview-card__frame">
+      <iframe
+        src={href}
+        title={`Preview: ${title}`}
+        loading="lazy"
+        class="admin-preview-card__iframe"></iframe>
+    </div>
+  </div>
+
+  <p class="admin-preview-card__hint">
+    Preview je samo za pregled rasporeda i sadržaja. Za interakciju koristi javnu stranicu u novom
+    tabu.
+  </p>
+</aside>

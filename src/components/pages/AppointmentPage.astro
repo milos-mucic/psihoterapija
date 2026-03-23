@@ -14,12 +14,15 @@ const content = await pageContentService.getAppointmentPageData(locale);
 const dictionary = getDictionary(locale);
 ---
 
-<section class="home-section home-section--tight appointment-page__booking">
+<section
+  id="appointment-booking"
+  class="home-section home-section--tight appointment-page__booking"
+>
   <div class="container">
     <div class="home-booking appointment-page__booking-grid">
       <div class="home-booking__intro" data-reveal="up">
         <h2>{content.formTitle}</h2>
-        <p>{content.introCopy}</p>
+        <div class="appointment-page__intro-copy" set:html={content.introCopy} />
         <div class="home-booking__formats">
           {content.formats.map((format) => <span class="home-pill">{format}</span>)}
         </div>
@@ -42,6 +45,7 @@ const dictionary = getDictionary(locale);
   items={content.faqs}
   image={content.faqImage}
   sectionClass="page-section--soft appointment-page__accordion-section"
+  sectionId="appointment-faq"
 />
 
 <style>
@@ -51,6 +55,13 @@ const dictionary = getDictionary(locale);
 
   .appointment-page__booking-grid {
     gap: clamp(1.4rem, 4vw, 2.1rem);
+  }
+
+  .appointment-page__intro-copy :global(p),
+  .appointment-page__intro-copy :global(ul),
+  .appointment-page__intro-copy :global(ol) {
+    margin: 0;
+    line-height: 1.7;
   }
 
   .appointment-page__booking :global(.stack-form) {
