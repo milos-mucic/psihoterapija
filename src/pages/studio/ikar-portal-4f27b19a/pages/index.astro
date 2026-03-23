@@ -1,0 +1,86 @@
+---
+import { AdminPasswordModal } from "@/components/components/AdminPasswordModal";
+import { getDictionary } from "@/features/i18n/translate";
+import { adminAuthService } from "@/features/admin/auth/admin-auth.service";
+import { adminConfig } from "@/lib/config/admin";
+import AdminLayout from "@/components/components/AdminLayout.astro";
+
+const dictionary = getDictionary("sr-latn");
+const authenticated = adminAuthService.isAuthenticated(Astro.cookies);
+const pageLinks = [
+  {
+    slug: "home",
+    title: dictionary.admin.pages.homeTitle,
+    copy: dictionary.admin.pages.homeCopy,
+  },
+  {
+    slug: "about",
+    title: "O nama",
+    copy: "Video sekcija, glavno objašnjenje kabineta i blog blok.",
+  },
+  {
+    slug: "biography",
+    title: "Biografija",
+    copy: "Stručni profil, kartice i pristup radu.",
+  },
+  {
+    slug: "psychotherapy",
+    title: "Pristup",
+    copy: "Naslovna sekcija, opseg rada, usluge i FAQ.",
+  },
+  {
+    slug: "scope",
+    title: "Oblast rada",
+    copy: "Uvod, fokus sekcija i sve detail teme.",
+  },
+  {
+    slug: "pricing",
+    title: "Cena",
+    copy: "Cenovne kartice i dodatna pojašnjenja.",
+  },
+  {
+    slug: "appointment",
+    title: "Zakazivanje",
+    copy: "Uvod uz formu i donji FAQ blok.",
+  },
+  {
+    slug: "faq",
+    title: "Pitanja",
+    copy: "FAQ lista i blok za zakazivanje.",
+  },
+];
+---
+
+<AdminLayout title={dictionary.admin.pages.title}>
+  {
+    authenticated ? (
+      <div class="admin-grid">
+        <div class="card" style="padding: 1.5rem;">
+          <h2>{dictionary.admin.pages.title}</h2>
+          <p class="section-copy">{dictionary.admin.pages.copy}</p>
+        </div>
+
+        <div class="page-grid" style="grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));">
+          {pageLinks.map((page) => (
+            <a
+              class="card"
+              href={`${adminConfig.basePath}/pages/${page.slug}/`}
+              style="padding: 1.4rem;"
+            >
+              <h3>{page.title}</h3>
+              <p style="margin: 0; color: var(--muted);">{page.copy}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    ) : (
+      <div class="page-grid">
+        <div class="card" style="padding: 1.5rem;">
+          <h2>{dictionary.admin.entry.title}</h2>
+          <p class="section-copy">{dictionary.admin.entry.copy}</p>
+        </div>
+        <AdminPasswordModal client:load returnPath={adminConfig.basePath + "/pages/"} />
+      </div>
+    )
+  }
+</AdminLayout>

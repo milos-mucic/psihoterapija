@@ -1,8 +1,8 @@
 ---
-import { getAboutPageData } from "@/data/fixtures/public-pages";
 import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import { blogService } from "@/features/blog/services/blog.service";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
 import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
 
 const { locale } = Astro.props;
 const dictionary = getDictionary(locale);
-const content = getAboutPageData(locale);
+const content = await pageContentService.getAboutPageData(locale);
 const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
 const videoIdMatch = content.showcaseVideoHref.match(/[?&]v=([^&]+)/);
 const aboutVideoEmbedSrc = videoIdMatch
@@ -20,7 +20,12 @@ const aboutVideoEmbedSrc = videoIdMatch
 ---
 
 <div class="about-legacy">
-  <section class="about-legacy__banner">
+  <section
+    class="about-legacy__banner"
+    style={content.banner.backgroundImage
+      ? `--about-banner-image: url("${content.banner.backgroundImage}")`
+      : undefined}
+  >
     <div class="about-legacy__container">
       <div class="about-legacy__banner-grid">
         <h1 data-reveal="up">{content.banner.title}</h1>
@@ -42,6 +47,7 @@ const aboutVideoEmbedSrc = videoIdMatch
         data-video-src={aboutVideoEmbedSrc}
         aria-label={content.showcaseTitle}
         data-reveal="grow"
+        style={`--about-video-image: url("${content.showcaseVideoImage}")`}
       >
         <span class="about-legacy__video-center">
           <span class="about-legacy__video-icon"></span>
@@ -52,19 +58,26 @@ const aboutVideoEmbedSrc = videoIdMatch
 
       <div class="collection-list-wrapper-services" data-reveal="up" style="--reveal-delay: 120ms;">
         <div role="list" class="collection-list-services">
-          {content.showcaseCards.map((card, index) => (
-            <article
-              role="listitem"
-              class="collection-item-service"
-              style={`--reveal-delay: ${120 + index * 90}ms;`}
-            >
-              <img src={card.image} alt={card.title} loading="lazy" class="about-legacy__service-icon" />
-              <a href={card.href} class="service-name-wrapper">
-                <h5 class="service-name">{card.title}</h5>
-              </a>
-              <p>{card.copy}</p>
-            </article>
-          ))}
+          {
+            content.showcaseCards.map((card, index) => (
+              <article
+                role="listitem"
+                class="collection-item-service"
+                style={`--reveal-delay: ${120 + index * 90}ms;`}
+              >
+                <img
+                  src={card.image}
+                  alt={card.title}
+                  loading="lazy"
+                  class="about-legacy__service-icon"
+                />
+                <a href={card.href} class="service-name-wrapper">
+                  <h5 class="service-name">{card.title}</h5>
+                </a>
+                <p>{card.copy}</p>
+              </article>
+            ))
+          }
         </div>
       </div>
     </div>
@@ -130,7 +143,10 @@ const aboutVideoEmbedSrc = videoIdMatch
                     <h3>{post.title}</h3>
                     <p>{post.excerpt}</p>
                   </div>
-                  <a class="home-blog-card__action" href={localizePath(locale, `/blog/${post.slug}/`)}>
+                  <a
+                    class="home-blog-card__action"
+                    href={localizePath(locale, `/blog/${post.slug}/`)}
+                  >
                     <span>{dictionary.blog.readMoreLabel}</span>
                     <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
                       <path
@@ -138,7 +154,8 @@ const aboutVideoEmbedSrc = videoIdMatch
                         stroke="currentColor"
                         stroke-linecap="round"
                         stroke-linejoin="round"
-                        stroke-width="1.9"></path>
+                        stroke-width="1.9"
+                      />
                     </svg>
                   </a>
                 </div>
@@ -161,7 +178,8 @@ const aboutVideoEmbedSrc = videoIdMatch
       type="button"
       class="about-video-dialog__close"
       data-about-video-close
-      aria-label={dictionary.common.close}>
+      aria-label={dictionary.common.close}
+    >
       <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
         <path
           d="M6 6L18 18M18 6L6 18"
@@ -244,8 +262,7 @@ const aboutVideoEmbedSrc = videoIdMatch
   .about-legacy__banner {
     background-image:
       linear-gradient(rgba(22, 60, 61, 0.1), rgba(22, 60, 61, 0.1)),
-      linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-      url("/legacy/images/BG-Video-2_1BG Video (2).webp");
+      linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), var(--about-banner-image, none);
     background-position: center top;
     background-repeat: no-repeat;
     background-size: cover;
@@ -305,8 +322,7 @@ const aboutVideoEmbedSrc = videoIdMatch
     overflow: hidden;
     cursor: pointer;
     background-image:
-      linear-gradient(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.08)),
-      url("/legacy/images/Video-BG-About-Us-1_1Video BG About Us (1).webp");
+      linear-gradient(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.08)), var(--about-video-image);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;

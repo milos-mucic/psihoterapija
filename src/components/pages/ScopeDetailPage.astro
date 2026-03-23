@@ -1,6 +1,6 @@
 ---
 import PageBanner from "@/components/sections/PageBanner.astro";
-import { getScopeDetailPageData } from "@/data/fixtures/public-pages";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
 import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
 };
 
 const { locale, slug } = Astro.props;
-const content = getScopeDetailPageData(locale, slug);
+const content = await pageContentService.getScopeDetailPageData(locale, slug);
 
 if (!content) {
   throw new Error(`Missing scope detail data for slug: ${slug}`);
@@ -42,16 +42,18 @@ if (!content) {
 <section class="page-section scope-detail-page__points-section">
   <div class="container">
     <div class="scope-detail-page__points-grid">
-      {content.items.map((item, index) => (
-        <article
-          class="scope-detail-page__point"
-          data-reveal="up"
-          style={`--reveal-delay: ${index * 80}ms;`}
-        >
-          <h2>{item.title}</h2>
-          <p>{item.copy}</p>
-        </article>
-      ))}
+      {
+        content.items.map((item, index) => (
+          <article
+            class="scope-detail-page__point"
+            data-reveal="up"
+            style={`--reveal-delay: ${index * 80}ms;`}
+          >
+            <h2>{item.title}</h2>
+            <p>{item.copy}</p>
+          </article>
+        ))
+      }
     </div>
   </div>
 </section>
@@ -66,36 +68,25 @@ if (!content) {
     </div>
 
     <div class="scope-detail-page__related-grid">
-      {content.relatedTabs.map((tab, index) => (
-        <a
-          class="scope-detail-page__related-card"
-          href={tab.href}
-          data-reveal="up"
-          style={`--reveal-delay: ${index * 70}ms;`}
-        >
-          <img src={tab.icon} alt="" loading="lazy" />
-          <h3>{tab.label}</h3>
-          <p>{tab.cardCopy}</p>
-        </a>
-      ))}
+      {
+        content.relatedTabs.map((tab, index) => (
+          <a
+            class="scope-detail-page__related-card"
+            href={tab.href}
+            data-reveal="up"
+            style={`--reveal-delay: ${index * 70}ms;`}
+          >
+            <img src={tab.icon} alt="" loading="lazy" />
+            <h3>{tab.label}</h3>
+            <p>{tab.cardCopy}</p>
+          </a>
+        ))
+      }
     </div>
   </div>
 </section>
 
 <style>
-  .scope-detail-page__banner :global(.page-banner) {
-    background-image:
-      linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-      linear-gradient(rgba(22, 60, 61, 0.1), rgba(22, 60, 61, 0.1)),
-      url("https://cdn.prod.website-files.com/689b44011832e2b57d692055/689b44011832e2b57d6921fd_Session%20Banner%20(1).webp");
-    background-position:
-      0 0,
-      0 0,
-      50%;
-    background-repeat: repeat, repeat, no-repeat;
-    background-size: auto, auto, cover;
-  }
-
   .scope-detail-page__intro-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;

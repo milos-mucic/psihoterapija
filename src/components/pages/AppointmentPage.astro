@@ -1,8 +1,8 @@
 ---
 import FaqAccordionSection from "@/components/sections/FaqAccordionSection.astro";
 import { AppointmentForm } from "@/components/components/AppointmentForm";
-import { getAppointmentPageData } from "@/data/fixtures/public-pages";
 import { getDictionary } from "@/features/i18n/translate";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
 import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 };
 
 const { locale } = Astro.props;
-const content = getAppointmentPageData(locale);
+const content = await pageContentService.getAppointmentPageData(locale);
 const dictionary = getDictionary(locale);
 ---
 
@@ -19,7 +19,7 @@ const dictionary = getDictionary(locale);
     <div class="home-booking appointment-page__booking-grid">
       <div class="home-booking__intro" data-reveal="up">
         <h2>{content.formTitle}</h2>
-        {content.banner.description && <p>{content.banner.description}</p>}
+        <p>{content.introCopy}</p>
         <div class="home-booking__formats">
           {content.formats.map((format) => <span class="home-pill">{format}</span>)}
         </div>

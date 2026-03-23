@@ -1,0 +1,84 @@
+---
+import { AdminPasswordModal } from "@/components/components/AdminPasswordModal";
+import AdminHomePageForm from "@/components/components/AdminHomePageForm.astro";
+import { getDictionary } from "@/features/i18n/translate";
+import { adminAuthService } from "@/features/admin/auth/admin-auth.service";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
+import type { SiteLocale } from "@/lib/config/site";
+import { adminConfig } from "@/lib/config/admin";
+import AdminLayout from "@/components/components/AdminLayout.astro";
+
+const dictionary = getDictionary("sr-latn");
+const authenticated = adminAuthService.isAuthenticated(Astro.cookies);
+const localeParam = Astro.url.searchParams.get("locale");
+const locale: SiteLocale = localeParam === "sr-cyrl" ? "sr-cyrl" : "sr-latn";
+const content = await pageContentService.getManagedHomeContent(locale);
+const saved = Astro.url.searchParams.get("saved") === "1";
+const error = Astro.url.searchParams.get("error");
+const localeLabel = locale === "sr-cyrl" ? "Ćirilica" : "Latinica";
+---
+
+<AdminLayout title={dictionary.admin.pages.homeTitle}>
+  {
+    authenticated ? (
+      <div class="admin-grid">
+        {
+          saved ? (
+            <p class="admin-status" data-tone="success">
+              {dictionary.admin.pages.messages.saved}
+            </p>
+          ) : error === "validation" ? (
+            <p class="admin-status" data-tone="error">
+              {dictionary.admin.pages.messages.validationError}
+            </p>
+          ) : null
+        }
+
+        <div class="card" style="padding: 1.5rem;">
+          <div
+            style="display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; align-items: center;"
+          >
+            <div>
+              <h2 style="margin: 0;">{dictionary.admin.pages.homeTitle}</h2>
+              <p style="margin: 0.5rem 0 0; color: var(--muted);">
+                {dictionary.admin.pages.homeCopy}
+              </p>
+            </div>
+
+            <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+              <a
+                class:list={["button-secondary", locale === "sr-latn" && "is-active"]}
+                href={`${adminConfig.basePath}/pages/home/?locale=sr-latn`}>
+                Latinica
+              </a>
+              <a
+                class:list={["button-secondary", locale === "sr-cyrl" && "is-active"]}
+                href={`${adminConfig.basePath}/pages/home/?locale=sr-cyrl`}>
+                Ćirilica
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="padding: 1.25rem;">
+          <p style="margin: 0; color: var(--muted);">
+            Uređujete sadržaj za: <strong style="color: var(--foreground);">{localeLabel}</strong>
+          </p>
+        </div>
+
+        <AdminHomePageForm action="/api/admin/pages/home" content={content} locale={locale} />
+      </div>
+    ) : (
+      <div class="page-grid">
+        <div class="card" style="padding: 1.5rem;">
+          <h2>{dictionary.admin.entry.title}</h2>
+          <p class="section-copy">{dictionary.admin.entry.copy}</p>
+        </div>
+        <AdminPasswordModal
+          client:load
+          returnPath={`${adminConfig.basePath}/pages/home/?locale=${locale}`}
+        />
+      </div>
+    )
+  }
+</AdminLayout>

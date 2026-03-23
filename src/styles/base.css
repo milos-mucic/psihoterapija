@@ -1223,6 +1223,12 @@ body.appbar-drawer-open {
   line-height: 1.6;
 }
 
+.home-hero__description p,
+.home-hero__description ul,
+.home-hero__description ol {
+  color: inherit;
+}
+
 .home-hero__actions {
   display: flex;
   align-items: center;

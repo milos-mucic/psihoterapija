@@ -1,9 +1,9 @@
 ---
 import PageBanner from "@/components/sections/PageBanner.astro";
-import { getScopePageData } from "@/data/fixtures/public-pages";
 import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import { blogService } from "@/features/blog/services/blog.service";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
 import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
 };
 
 const { locale } = Astro.props;
-const content = getScopePageData(locale);
+const content = await pageContentService.getScopePageData(locale);
 const dictionary = getDictionary(locale);
 const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
 const detailCardLabel = locale === "sr-cyrl" ? "Погледај страницу" : "Pogledaj stranicu";
@@ -223,19 +223,6 @@ const detailCardLabel = locale === "sr-cyrl" ? "Погледај страниц�
 </script>
 
 <style>
-  .scope-page__banner :global(.page-banner) {
-    background-image:
-      linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-      linear-gradient(rgba(22, 60, 61, 0.1), rgba(22, 60, 61, 0.1)),
-      url("https://cdn.prod.website-files.com/689b44011832e2b57d692055/689b44011832e2b57d6921fd_Session%20Banner%20(1).webp");
-    background-position:
-      0 0,
-      0 0,
-      50%;
-    background-repeat: repeat, repeat, no-repeat;
-    background-size: auto, auto, cover;
-  }
-
   .scope-page__tabs {
     width: 100%;
   }

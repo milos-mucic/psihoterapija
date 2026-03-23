@@ -7,7 +7,11 @@
   inset: 0 0 auto;
   z-index: 42;
   border-bottom: 1px solid rgb(var(--primary-rgb) / 0.16);
-  background: linear-gradient(135deg, rgb(var(--primary-rgb) / 0.16), rgb(var(--primary-rgb) / 0.08));
+  background: linear-gradient(
+    135deg,
+    rgb(var(--primary-rgb) / 0.16),
+    rgb(var(--primary-rgb) / 0.08)
+  );
   backdrop-filter: blur(12px);
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 0.34),
@@ -111,6 +115,83 @@
   justify-content: flex-end;
 }
 
+.admin-section-group {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid rgb(var(--primary-rgb) / 0.12);
+  border-radius: 1rem;
+  background: rgb(255 255 255 / 0.55);
+}
+
+.admin-media-field {
+  display: grid;
+  gap: 0.75rem;
+  grid-column: 1 / -1;
+}
+
+.admin-media-field__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.admin-media-field__upload {
+  cursor: pointer;
+}
+
+.admin-media-field__help,
+.admin-media-field__status {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.admin-media-field__status {
+  color: var(--foreground);
+}
+
+.admin-media-field__uppy {
+  overflow: hidden;
+  border: 1px solid rgb(var(--primary-rgb) / 0.12);
+  border-radius: 1rem;
+  background: rgb(255 255 255 / 0.78);
+}
+
+.admin-media-field__uppy .uppy-Container {
+  width: 100%;
+}
+
+.admin-media-field__preview {
+  overflow: hidden;
+  max-width: 20rem;
+  border: 1px solid rgb(var(--primary-rgb) / 0.12);
+  border-radius: 0.9rem;
+  background: rgb(255 255 255 / 0.88);
+}
+
+.admin-media-field__preview img,
+.admin-media-field__preview video {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 14rem;
+  object-fit: cover;
+}
+
+.admin-media-field__preview a {
+  display: block;
+  padding: 1rem;
+  word-break: break-word;
+}
+
+.button-secondary.is-active {
+  border-color: rgb(var(--primary-rgb) / 0.3);
+  background: rgb(var(--primary-rgb) / 0.08);
+  color: var(--primary);
+}
+
 .admin-rtf {
   display: grid;
   gap: 0.65rem;
@@ -144,6 +225,10 @@
   background: #fff;
   color: var(--foreground);
   line-height: 1.65;
+}
+
+.admin-rtf__editor--inline {
+  min-height: 6rem;
 }
 
 .admin-rtf__editor:focus {

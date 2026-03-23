@@ -54,10 +54,23 @@ export const BlogPosts = defineTable({
   ],
 });
 
+export const PageContent = defineTable({
+  columns: {
+    id: column.text({ primaryKey: true }),
+    pageKey: column.text(),
+    locale: column.text({ enum: ["sr-latn", "sr-cyrl"] }),
+    content: column.json(),
+    createdAt: column.date(),
+    updatedAt: column.date(),
+  },
+  indexes: [{ on: ["pageKey", "locale"], unique: true }],
+});
+
 export default defineDb({
   tables: {
     Submissions,
     MediaAssets,
     BlogPosts,
+    PageContent,
   },
 });

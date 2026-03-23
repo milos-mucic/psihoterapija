@@ -1,9 +1,9 @@
 ---
 import BaseLayout from "@/components/components/BaseLayout.astro";
 import PageBanner from "@/components/sections/PageBanner.astro";
-import { getBiographyPageData } from "@/data/fixtures/public-pages";
 import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
 import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
@@ -13,7 +13,7 @@ type Props = {
 const { locale } = Astro.props;
 const dictionary = getDictionary(locale);
 const canonicalPath = localizePath(locale, "/biografija/");
-const content = getBiographyPageData(locale);
+const content = await pageContentService.getBiographyPageData(locale);
 ---
 
 <BaseLayout

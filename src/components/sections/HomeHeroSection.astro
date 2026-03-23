@@ -18,9 +18,12 @@ const { titleHtml, description, primaryAction, secondaryAction } = Astro.props;
   <div class="container home-hero__container">
     <div class="home-hero__content">
       <h1 class="home-hero__title" data-reveal="up" set:html={titleHtml} />
-      <p class="home-hero__description" data-reveal="up" style="--reveal-delay: 90ms;">
-        {description}
-      </p>
+      <div
+        class="home-hero__description home-richtext home-richtext--hero"
+        data-reveal="up"
+        style="--reveal-delay: 90ms;"
+        set:html={description}
+      />
       <div class="home-hero__actions" data-reveal="up" style="--reveal-delay: 180ms;">
         <a class="home-hero__button" href={primaryAction.href}>{primaryAction.label}</a>
         <a class="home-hero__text-link" href={secondaryAction.href}>

@@ -1,6 +1,6 @@
 import sanitizeHtml from "sanitize-html";
 
-const allowedTags = [
+const richTextAllowedTags = [
   "p",
   "br",
   "strong",
@@ -18,6 +18,8 @@ const allowedTags = [
   "a",
   "img",
 ];
+
+const inlineRichTextAllowedTags = ["br", "strong", "b", "em", "i", "u", "a"];
 
 const allowedAttributes: sanitizeHtml.IOptions["allowedAttributes"] = {
   a: ["href", "target", "rel"],
@@ -99,13 +101,34 @@ const convertPlainTextToHtml = (input: string) => {
     .join("\n");
 };
 
+const convertPlainTextToInlineHtml = (input: string) => {
+  const blocks = input
+    .split(/\n{2,}/)
+    .map((block) => block.trim())
+    .filter(Boolean);
+
+  if (blocks.length === 0) {
+    return "";
+  }
+
+  return blocks
+    .map((block) =>
+      block
+        .split("\n")
+        .map((line) => escapeHtml(stripMarkupPrefix(line.trim())))
+        .filter(Boolean)
+        .join("<br />"),
+    )
+    .join("<br />");
+};
+
 const hasHtmlTag = (input: string) => /<\s*[a-z][^>]*>/i.test(input);
 
 export const sanitizeRichTextHtml = (input: string) => {
   const prepared = hasHtmlTag(input) ? input : convertPlainTextToHtml(input);
 
   return sanitizeHtml(prepared, {
-    allowedTags,
+    allowedTags: richTextAllowedTags,
     allowedAttributes,
     allowedSchemes: ["http", "https", "data"],
     allowedSchemesByTag: {
@@ -122,6 +145,40 @@ export const sanitizeRichTextHtml = (input: string) => {
       }),
     },
   }).trim();
+};
+
+export const sanitizeInlineRichTextHtml = (input: string) => {
+  const prepared = hasHtmlTag(input) ? input : convertPlainTextToInlineHtml(input);
+  const normalized = prepared
+    .replace(/<\s*\/(p|h[1-6]|blockquote)\s*>\s*<\s*(p|h[1-6]|blockquote)[^>]*\s*>/gi, "<br />")
+    .replace(/<\s*p[^>]*>/gi, "")
+    .replace(/<\/p>/gi, "")
+    .replace(/<\s*h[1-6][^>]*>/gi, "")
+    .replace(/<\/h[1-6]>/gi, "")
+    .replace(/<\s*blockquote[^>]*>/gi, "")
+    .replace(/<\/blockquote>/gi, "")
+    .replace(/<\s*li[^>]*>/gi, "")
+    .replace(/<\/li>/gi, "<br />")
+    .replace(/<\s*(ul|ol)[^>]*>/gi, "")
+    .replace(/<\/(ul|ol)>/gi, "");
+
+  return sanitizeHtml(normalized, {
+    allowedTags: inlineRichTextAllowedTags,
+    allowedAttributes,
+    allowedSchemes: ["http", "https"],
+    allowedSchemesByTag: {
+      a: ["http", "https", "mailto", "tel"],
+    },
+    transformTags: {
+      a: sanitizeHtml.simpleTransform("a", {
+        target: "_blank",
+        rel: "noopener noreferrer",
+      }),
+    },
+  })
+    .replace(/^(<br\s*\/?>)+/gi, "")
+    .replace(/(<br\s*\/?>)+$/gi, "")
+    .trim();
 };
 
 export const extractPlainTextFromHtml = (input: string) =>

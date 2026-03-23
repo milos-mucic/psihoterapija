@@ -3,13 +3,13 @@ export const prerender = true;
 
 import BaseLayout from "@/components/components/BaseLayout.astro";
 import ScopePage from "@/components/pages/ScopePage.astro";
-import { getScopePageData } from "@/data/fixtures/public-pages";
 import { getDictionary } from "@/features/i18n/translate";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
 import { siteConfig } from "@/lib/config/site";
 
 const locale = "sr-cyrl";
 const dictionary = getDictionary(locale);
-const content = getScopePageData(locale);
+const content = await pageContentService.getScopePageData(locale);
 ---
 
 <BaseLayout

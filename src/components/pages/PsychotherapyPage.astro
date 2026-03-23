@@ -2,9 +2,8 @@
 import FaqAccordionSection from "@/components/sections/FaqAccordionSection.astro";
 import PageBanner from "@/components/sections/PageBanner.astro";
 import { AppointmentForm } from "@/components/components/AppointmentForm";
-import { getHomePageData } from "@/data/fixtures/home";
-import { getPsychotherapyPageData } from "@/data/fixtures/public-pages";
 import { getDictionary } from "@/features/i18n/translate";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
 import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
@@ -12,8 +11,7 @@ type Props = {
 };
 
 const { locale } = Astro.props;
-const content = getPsychotherapyPageData(locale);
-const homeContent = getHomePageData(locale);
+const content = await pageContentService.getPsychotherapyPageData(locale);
 const dictionary = getDictionary(locale);
 ---
 
@@ -63,10 +61,10 @@ const dictionary = getDictionary(locale);
   <div class="container">
     <div class="home-booking psychotherapy-page__booking-grid">
       <div class="home-booking__intro" data-reveal="up">
-        <h2>{homeContent.booking.title}</h2>
-        <p>{homeContent.booking.copy}</p>
+        <h2>{content.booking.title}</h2>
+        <p>{content.booking.copy}</p>
         <div class="home-booking__formats">
-          {homeContent.booking.formats.map((format) => <span class="home-pill">{format}</span>)}
+          {content.booking.formats.map((format) => <span class="home-pill">{format}</span>)}
         </div>
       </div>
 
@@ -75,8 +73,8 @@ const dictionary = getDictionary(locale);
           client:load
           locale={locale}
           labels={dictionary.forms}
-          formatLabel={homeContent.booking.formatLabel}
-          formats={homeContent.booking.formats}
+          formatLabel={content.booking.formatLabel}
+          formats={content.booking.formats}
         />
       </div>
     </div>
@@ -181,7 +179,6 @@ const dictionary = getDictionary(locale);
     .psychotherapy-page__service-img {
       height: 14rem;
     }
-
   }
 
   @media (max-width: 640px) {

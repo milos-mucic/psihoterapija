@@ -1,0 +1,149 @@
+---
+import { AdminPasswordModal } from "@/components/components/AdminPasswordModal";
+import AdminManagedPageForm from "@/components/components/AdminManagedPageForm.astro";
+import { getDictionary } from "@/features/i18n/translate";
+import { adminAuthService } from "@/features/admin/auth/admin-auth.service";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
+import type { PageKey } from "@/features/page-content/types/page-content.types";
+import { adminConfig } from "@/lib/config/admin";
+import type { SiteLocale } from "@/lib/config/site";
+import AdminLayout from "@/components/components/AdminLayout.astro";
+
+type SupportedPage = Exclude<PageKey, "home">;
+
+const pageConfig = {
+  about: {
+    title: "O nama",
+    copy: "Uređivanje video sekcije, objašnjenja kabineta, fokus liste i blog bloka.",
+  },
+  biography: {
+    title: "Biografija",
+    copy: "Kartice stručnog profila, pristup radu i CTA sekcija.",
+  },
+  psychotherapy: {
+    title: "Pristup",
+    copy: "Naslovna sekcija, opseg rada, usluge, zakazivanje i FAQ.",
+  },
+  scope: {
+    title: "Oblast rada",
+    copy: "Uvod, fokus blok, blog blok i sve četiri teme sa detail stranicama.",
+  },
+  pricing: {
+    title: "Cena",
+    copy: "Tri cenovne kartice i info blokovi ispod njih.",
+  },
+  appointment: {
+    title: "Zakazivanje",
+    copy: "Uvod uz formu, formati rada i FAQ blok.",
+  },
+  faq: {
+    title: "Pitanja",
+    copy: "FAQ pitanja, slika i blok za zakazivanje.",
+  },
+} as const satisfies Record<SupportedPage, { title: string; copy: string }>;
+
+const pageParam = Astro.params.page as SupportedPage | undefined;
+
+if (!pageParam || !(pageParam in pageConfig)) {
+  return Astro.redirect(`${adminConfig.basePath}/pages/`);
+}
+
+const page = pageParam as SupportedPage;
+const dictionary = getDictionary("sr-latn");
+const authenticated = adminAuthService.isAuthenticated(Astro.cookies);
+const localeParam = Astro.url.searchParams.get("locale");
+const locale: SiteLocale = localeParam === "sr-cyrl" ? "sr-cyrl" : "sr-latn";
+const saved = Astro.url.searchParams.get("saved") === "1";
+const error = Astro.url.searchParams.get("error");
+const localeLabel = locale === "sr-cyrl" ? "Ćirilica" : "Latinica";
+const config = pageConfig[page];
+
+const content = authenticated
+  ? await (async () => {
+      switch (page) {
+        case "about":
+          return pageContentService.getManagedAboutContent(locale);
+        case "biography":
+          return pageContentService.getManagedBiographyContent(locale);
+        case "psychotherapy":
+          return pageContentService.getManagedPsychotherapyContent(locale);
+        case "scope":
+          return pageContentService.getManagedScopeContent(locale);
+        case "pricing":
+          return pageContentService.getManagedPricingContent(locale);
+        case "appointment":
+          return pageContentService.getManagedAppointmentContent(locale);
+        case "faq":
+          return pageContentService.getManagedFaqContent(locale);
+      }
+    })()
+  : undefined;
+---
+
+<AdminLayout title={config.title}>
+  {
+    authenticated ? (
+      <div class="admin-grid">
+        {saved ? (
+          <p class="admin-status" data-tone="success">
+            Izmene stranice su sačuvane.
+          </p>
+        ) : error === "validation" ? (
+          <p class="admin-status" data-tone="error">
+            Unos nije validan. Proverite obavezna polja i media URL-ove.
+          </p>
+        ) : null}
+
+        <div class="card" style="padding: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; align-items: center;">
+            <div>
+              <h2 style="margin: 0;">{config.title}</h2>
+              <p style="margin: 0.5rem 0 0; color: var(--muted);">{config.copy}</p>
+            </div>
+
+            <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+              <a
+                class:list={["button-secondary", locale === "sr-latn" && "is-active"]}
+                href={`${adminConfig.basePath}/pages/${page}/?locale=sr-latn`}
+              >
+                Latinica
+              </a>
+              <a
+                class:list={["button-secondary", locale === "sr-cyrl" && "is-active"]}
+                href={`${adminConfig.basePath}/pages/${page}/?locale=sr-cyrl`}
+              >
+                Ćirilica
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="padding: 1.25rem;">
+          <p style="margin: 0; color: var(--muted);">
+            Uređujete sadržaj za: <strong style="color: var(--foreground);">{localeLabel}</strong>
+          </p>
+        </div>
+
+        {content ? (
+          <AdminManagedPageForm
+            action={`/api/admin/pages/${page}`}
+            page={page}
+            content={content}
+            locale={locale}
+          />
+        ) : null}
+      </div>
+    ) : (
+      <div class="page-grid">
+        <div class="card" style="padding: 1.5rem;">
+          <h2>{dictionary.admin.entry.title}</h2>
+          <p class="section-copy">{dictionary.admin.entry.copy}</p>
+        </div>
+        <AdminPasswordModal
+          client:load
+          returnPath={`${adminConfig.basePath}/pages/${page}/?locale=${locale}`}
+        />
+      </div>
+    )
+  }
+</AdminLayout>

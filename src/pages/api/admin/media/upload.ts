@@ -8,6 +8,8 @@ import { getDictionary } from "@/features/i18n/translate";
 import { getUploadsDir } from "@/lib/storage/uploads";
 
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
+const MAX_VIDEO_BYTES = 128 * 1024 * 1024;
+const safeFolderPattern = /^[a-z0-9/-]+$/;
 
 const safeBaseName = (raw: string) =>
   raw
@@ -38,6 +40,22 @@ const extensionFrom = (file: File) => {
     return ".gif";
   }
 
+  if (file.type === "video/mp4") {
+    return ".mp4";
+  }
+
+  if (file.type === "video/webm") {
+    return ".webm";
+  }
+
+  if (file.type === "video/ogg") {
+    return ".ogv";
+  }
+
+  if (file.type === "video/quicktime") {
+    return ".mov";
+  }
+
   return ".jpg";
 };
 
@@ -53,6 +71,7 @@ export const POST: APIRoute = async (context) => {
   try {
     const formData = await context.request.formData();
     const file = formData.get("file");
+    const folderValue = formData.get("folder");
 
     if (!(file instanceof File)) {
       return new Response(JSON.stringify({ message: dictionary.api.invalidSubmission }), {
@@ -61,14 +80,19 @@ export const POST: APIRoute = async (context) => {
       });
     }
 
-    if (!file.type.startsWith("image/")) {
+    const isImage = file.type.startsWith("image/");
+    const isVideo = file.type.startsWith("video/");
+
+    if (!isImage && !isVideo) {
       return new Response(JSON.stringify({ message: dictionary.api.invalidSubmission }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    if (file.size > MAX_IMAGE_BYTES) {
+    const maxBytes = isVideo ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
+
+    if (file.size > maxBytes) {
       return new Response(JSON.stringify({ message: dictionary.api.invalidSubmission }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
@@ -82,9 +106,10 @@ export const POST: APIRoute = async (context) => {
     const baseName = safeBaseName(file.name) || "image";
     const id = randomUUID();
     const storageName = `${id}-${baseName}${extension}`;
-
-    const relativeDir = path.join("uploads", "blog", year, month);
-    const fullDir = path.join(getUploadsDir(), "blog", year, month);
+    const folder =
+      typeof folderValue === "string" && safeFolderPattern.test(folderValue) ? folderValue : "media";
+    const relativeDir = path.join("uploads", ...folder.split("/"), year, month);
+    const fullDir = path.join(getUploadsDir(), ...folder.split("/"), year, month);
 
     await mkdir(fullDir, { recursive: true });
 

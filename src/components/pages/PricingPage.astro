@@ -1,5 +1,5 @@
 ---
-import { getPricingPageData } from "@/data/fixtures/public-pages";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
 import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
@@ -7,7 +7,7 @@ type Props = {
 };
 
 const { locale } = Astro.props;
-const content = getPricingPageData(locale);
+const content = await pageContentService.getPricingPageData(locale);
 ---
 
 <section class="page-section pricing-page__plans-section">

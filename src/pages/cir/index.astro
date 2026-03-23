@@ -3,14 +3,14 @@ export const prerender = false;
 
 import HomeHeroSection from "@/components/sections/HomeHeroSection.astro";
 import HomePageContent from "@/components/sections/HomePageContent.astro";
-import { getHomePageData } from "@/data/fixtures/home";
 import { blogService } from "@/features/blog/services/blog.service";
 import { getDictionary } from "@/features/i18n/translate";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
 import BaseLayout from "@/components/components/BaseLayout.astro";
 
 const locale = "sr-cyrl";
 const dictionary = getDictionary(locale);
-const content = getHomePageData(locale);
+const content = await pageContentService.getHomePageData(locale);
 const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
 ---
 
@@ -27,5 +27,5 @@ const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
     secondaryAction={content.hero.secondaryAction}
   />
 
-  <HomePageContent locale={locale} posts={posts} />
+  <HomePageContent locale={locale} content={content} posts={posts} />
 </BaseLayout>

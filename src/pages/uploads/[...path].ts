@@ -12,8 +12,13 @@ const contentTypes: Record<string, string> = {
   ".gif": "image/gif",
   ".jpeg": "image/jpeg",
   ".jpg": "image/jpeg",
+  ".mov": "video/quicktime",
+  ".mp4": "video/mp4",
+  ".ogv": "video/ogg",
+  ".ogg": "video/ogg",
   ".png": "image/png",
   ".svg": "image/svg+xml", // i18n-exempt
+  ".webm": "video/webm",
   ".webp": "image/webp",
 };
 

@@ -350,6 +350,7 @@
       "eyebrow": "Skriveni admin",
       "title": "Ikar admin",
       "dashboard": "Kontrolna tabla",
+      "pages": "Stranice",
       "blog": "Blog",
       "submissions": "Prijave",
       "logout": "Odjava"
@@ -367,11 +368,23 @@
     },
     "dashboard": {
       "title": "Kontrolna tabla",
-      "copy": "Prijave i blog postovi se čuvaju u lokalnoj SQLite bazi. Blog je spreman za create, edit i delete iz admin panela.",
+      "copy": "Prijave, blog postovi i sadržaj stranica se čuvaju u lokalnoj SQLite bazi. Iz admin panela možete uređivati sadržaj bez menjanja layout-a i CSS-a.",
+      "pagesTitle": "Stranice",
+      "pagesCopy": "Uređivanje teksta i medija za javne stranice sajta.",
       "blogManagementTitle": "Upravljanje blogom",
       "blogManagementCopy": "Kreiranje, uređivanje i brisanje blog postova.",
       "submissionsTitle": "Prijave",
       "submissionsCopy": "Pregled poslatih kontakt i appointment prijava."
+    },
+    "pages": {
+      "title": "Stranice",
+      "copy": "Ovde uređujete sadržaj javnih stranica. Redosled polja prati redosled prikaza na samoj stranici.",
+      "homeTitle": "Početna strana",
+      "homeCopy": "Tekstovi, slike i video za početnu stranu, odvojeno po pismu.",
+      "messages": {
+        "saved": "Izmene početne strane su sačuvane.",
+        "validationError": "Unos nije validan. Proverite obavezna polja i medija URL-ove."
+      }
     },
     "blogIndex": {
       "title": "Blog postovi",

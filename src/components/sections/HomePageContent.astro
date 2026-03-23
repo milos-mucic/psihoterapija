@@ -1,6 +1,6 @@
 ---
 import { AppointmentForm } from "@/components/components/AppointmentForm";
-import { getHomePageData } from "@/data/fixtures/home";
+import type { HomePageData } from "@/data/fixtures/home";
 import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import type { BlogListItem } from "@/features/blog/types/blog.types";
@@ -8,16 +8,23 @@ import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
   locale: SiteLocale;
+  content: HomePageData;
   posts: BlogListItem[];
 };
 
-const { locale, posts } = Astro.props;
+const { locale, content, posts } = Astro.props;
 const dictionary = getDictionary(locale);
-const content = getHomePageData(locale);
-const videoIdMatch = content.reasons.videoHref.match(/[?&]v=([^&]+)/);
-const homeVideoEmbedSrc = videoIdMatch
-  ? `https://www.youtube.com/embed/${videoIdMatch[1]}?autoplay=1&rel=0`
-  : content.reasons.videoHref;
+const youtubeShortCodeMatch = content.reasons.videoHref.match(/youtu\.be\/([^?&#]+)/);
+const youtubeWatchMatch = content.reasons.videoHref.match(/[?&]v=([^&]+)/);
+const youtubeVideoId = youtubeWatchMatch?.[1] ?? youtubeShortCodeMatch?.[1];
+const vimeoMatch = content.reasons.videoHref.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+const isDirectVideo = /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(content.reasons.videoHref);
+const homeVideoKind = isDirectVideo ? "direct" : "embed";
+const homeVideoSrc = youtubeVideoId
+  ? `https://www.youtube.com/embed/${youtubeVideoId}?autoplay=1&rel=0`
+  : vimeoMatch?.[1]
+    ? `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`
+    : content.reasons.videoHref;
 ---
 
 <section class="home-section">
@@ -25,7 +32,7 @@ const homeVideoEmbedSrc = videoIdMatch
     <div class="home-heading-row home-heading-row--prompt">
       <div class="home-heading-copy home-heading-copy--prompt" data-reveal="up">
         <h2>{content.prompt.title}</h2>
-        <p>{content.prompt.copy}</p>
+        <div class="home-richtext" set:html={content.prompt.copy} />
       </div>
       <a
         class="home-button"
@@ -51,10 +58,7 @@ const homeVideoEmbedSrc = videoIdMatch
       />
       <div class="home-about__content" data-reveal="right" style="--reveal-delay: 90ms;">
         <h2>{content.about.title}</h2>
-        {content.about.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
-        <ul class="home-list">
-          {content.about.bullets.map((bullet) => <li>{bullet}</li>)}
-        </ul>
+        <div class="home-richtext" set:html={content.about.body} />
         <a class="home-button" href={content.about.href}>{content.about.label}</a>
       </div>
     </div>
@@ -67,7 +71,7 @@ const homeVideoEmbedSrc = videoIdMatch
       <div class="home-services__layout">
         <div class="home-services__intro" data-reveal="up">
           <h2>{content.services.title}</h2>
-          <p>{content.services.copy}</p>
+          <div class="home-richtext home-richtext--light" set:html={content.services.copy} />
         </div>
 
         <div class="home-services__cards">
@@ -87,7 +91,7 @@ const homeVideoEmbedSrc = videoIdMatch
                 />
                 <div class="home-service-card__body">
                   <h3 class="home-service-title">{item.title}</h3>
-                  <p class="home-service-copy">{item.copy}</p>
+                  <div class="home-service-copy home-richtext home-richtext--light" set:html={item.copy} />
                 </div>
               </article>
             ))
@@ -121,7 +125,7 @@ const homeVideoEmbedSrc = videoIdMatch
                 <a href={item.href}>
                   <h5 class="service-name">{item.title}</h5>
                 </a>
-                <p class="mt-0">{item.copy}</p>
+                <div class="mt-0 home-richtext" set:html={item.copy} />
                 <div class="collection-link-wrapper">
                   <a class="link-with-icon" href={item.href}>
                     {item.label}
@@ -149,7 +153,7 @@ const homeVideoEmbedSrc = videoIdMatch
     <div class="home-reasons">
       <div class="home-reasons__intro" data-reveal="up">
         <h2>{content.reasons.title}</h2>
-        <p>{content.reasons.copy}</p>
+        <div class="home-richtext home-richtext--light" set:html={content.reasons.copy} />
       </div>
 
       <div class="home-reasons__grid">
@@ -182,7 +186,7 @@ const homeVideoEmbedSrc = videoIdMatch
                       </svg>
                     </span>
                   </div>
-                  <p>{item.copy}</p>
+                  <div class="home-richtext home-richtext--light" set:html={item.copy} />
                 </div>
               </a>
             ))
@@ -193,7 +197,8 @@ const homeVideoEmbedSrc = videoIdMatch
           type="button"
           class="home-video-card"
           data-home-video-open
-          data-video-src={homeVideoEmbedSrc}
+          data-video-kind={homeVideoKind}
+          data-video-src={homeVideoSrc}
           aria-label={content.reasons.videoLabel}
           data-reveal="grow"
           style="--reveal-delay: 180ms;"
@@ -229,6 +234,9 @@ const homeVideoEmbedSrc = videoIdMatch
         title={content.reasons.videoLabel}
         allow="autoplay; fullscreen; picture-in-picture"
         allowfullscreen></iframe>
+      <video data-home-video-player controls playsinline hidden>
+        <track kind="captions" />
+      </video>
     </div>
   </div>
 </dialog>
@@ -240,12 +248,14 @@ const homeVideoEmbedSrc = videoIdMatch
       const openButton = document.querySelector("[data-home-video-open]");
       const closeButton = document.querySelector("[data-home-video-close]");
       const iframe = document.querySelector("[data-home-video-iframe]");
+      const video = document.querySelector("[data-home-video-player]");
 
       if (
         !(dialog instanceof HTMLDialogElement) ||
         !(openButton instanceof HTMLElement) ||
         !(closeButton instanceof HTMLElement) ||
         !(iframe instanceof HTMLIFrameElement) ||
+        !(video instanceof HTMLVideoElement) ||
         dialog.dataset.bound === "true"
       ) {
         return;
@@ -261,7 +271,21 @@ const homeVideoEmbedSrc = videoIdMatch
           return;
         }
 
-        iframe.src = src;
+        if (openButton.dataset.videoKind === "direct") {
+          iframe.hidden = true;
+          iframe.src = "";
+          video.hidden = false;
+          video.src = src;
+          void video.play().catch(() => {});
+        } else {
+          video.hidden = true;
+          video.pause();
+          video.removeAttribute("src");
+          video.load();
+          iframe.hidden = false;
+          iframe.src = src;
+        }
+
         dialog.showModal();
       });
 
@@ -275,6 +299,9 @@ const homeVideoEmbedSrc = videoIdMatch
 
       dialog.addEventListener("close", () => {
         iframe.src = "";
+        video.pause();
+        video.removeAttribute("src");
+        video.load();
       });
 
       dialog.dataset.bound = "true";
@@ -290,7 +317,7 @@ const homeVideoEmbedSrc = videoIdMatch
     <div class="home-booking">
       <div class="home-booking__intro" data-reveal="up">
         <h2>{content.booking.title}</h2>
-        <p>{content.booking.copy}</p>
+        <div class="home-richtext" set:html={content.booking.copy} />
         <div class="home-booking__formats">
           {content.booking.formats.map((format) => <span class="home-pill">{format}</span>)}
         </div>
@@ -314,7 +341,7 @@ const homeVideoEmbedSrc = videoIdMatch
     <div class="home-heading-row home-heading-row--blog">
       <div class="home-heading-copy" data-reveal="up">
         <h2>{content.recent.title}</h2>
-        <p>{content.recent.copy}</p>
+        <div class="home-richtext" set:html={content.recent.copy} />
       </div>
       <a
         class="home-button"

@@ -31,7 +31,8 @@
   max-width: none;
 }
 
-.home-heading-copy p {
+.home-heading-copy p,
+.home-heading-copy .home-richtext {
   max-width: 40rem;
 }
 
@@ -47,7 +48,8 @@
   max-width: none;
 }
 
-.home-heading-copy--prompt p {
+.home-heading-copy--prompt p,
+.home-heading-copy--prompt .home-richtext {
   max-width: 32rem;
   font-size: 1.08rem;
   line-height: 1.65;
@@ -106,6 +108,52 @@
 .home-about__content {
   display: grid;
   gap: 1rem;
+}
+
+.home-richtext {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.home-richtext > :first-child {
+  margin-top: 0;
+}
+
+.home-richtext > :last-child {
+  margin-bottom: 0;
+}
+
+.home-richtext p,
+.home-richtext ul,
+.home-richtext ol,
+.home-richtext blockquote {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.home-richtext ul,
+.home-richtext ol {
+  padding-left: 1.35rem;
+}
+
+.home-richtext li {
+  line-height: 1.65;
+}
+
+.home-richtext blockquote {
+  padding-left: 1rem;
+  border-left: 3px solid rgb(var(--primary-rgb) / 0.24);
+  color: var(--foreground);
+}
+
+.home-richtext--light p,
+.home-richtext--light li,
+.home-richtext--light blockquote {
+  color: inherit;
+}
+
+.home-richtext--light blockquote {
+  border-left-color: rgb(255 255 255 / 0.24);
 }
 
 .home-list {
@@ -623,6 +671,14 @@
   width: 100%;
   height: 100%;
   border: 0;
+}
+
+.home-video-dialog__frame video {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  object-fit: contain;
+  background: #0d2021;
 }
 
 .home-booking {

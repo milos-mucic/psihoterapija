@@ -1,0 +1,524 @@
+---
+import { AdminMediaField } from "@/components/components/AdminMediaField";
+import { AdminRichTextField } from "@/components/components/AdminRichTextField";
+import type { HomePageManagedContent } from "@/features/page-content/types/page-content.types";
+import type { SiteLocale } from "@/lib/config/site";
+
+type Props = {
+  action: string;
+  content: HomePageManagedContent;
+  locale: SiteLocale;
+};
+
+const { action, content, locale } = Astro.props;
+const localeOptions: Array<{ value: SiteLocale; label: string }> = [
+  { value: "sr-latn", label: "Latinica" },
+  { value: "sr-cyrl", label: "Ćirilica" },
+];
+const videoAccept = "video/*,.mp4,.webm,.mov,.ogg,.ogv";
+const richTextLabels = {
+  bold: "Bold",
+  italic: "Italic",
+  underline: "Underline",
+  heading2: "Heading 2",
+  heading3: "Heading 3",
+  bulletList: "Lista",
+  orderedList: "Numerisana lista",
+  quote: "Citat",
+  link: "Link",
+  image: "Slika",
+  clear: "Ukloni format",
+  uploadFailed: "Upload slike nije uspeo.",
+};
+
+const heroTitleRichTextLabels = {
+  ...richTextLabels,
+  placeholder: "Naslov hero sekcije",
+};
+---
+
+<form class="admin-form" method="post" action={action}>
+  <input type="hidden" name="locale" value={locale} />
+
+  <div class="card" style="padding: 1.5rem;">
+    <div class="admin-form__grid">
+      <label class="admin-form__field">
+        <span>Jezik sadržaja</span>
+        <select class="input-control" name="localeDisplay" disabled>
+          {
+            localeOptions.map((option) => (
+              <option value={option.value} selected={option.value === locale}>
+                {option.label}
+              </option>
+            ))
+          }
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <div class="card" style="padding: 1.5rem;">
+    <div class="page-grid">
+      <div>
+        <h2 style="margin: 0;">Hero sekcija</h2>
+        <p class="section-copy">Naslov i opis sada koriste isti Lexical rich text editor.</p>
+      </div>
+
+      <div class="admin-form__grid">
+        <div class="admin-form__field admin-form__field--full">
+          <span>Naslov hero sekcije</span>
+          <AdminRichTextField
+            client:load
+            name="heroTitleHtml"
+            initialValue={content.hero.titleHtml}
+            mode="inline"
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder="pages/home"
+            labels={heroTitleRichTextLabels}
+          />
+        </div>
+
+        <div class="admin-form__field admin-form__field--full">
+          <span>Opis hero sekcije</span>
+          <AdminRichTextField
+            client:load
+            name="heroDescription"
+            initialValue={content.hero.description}
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder="pages/home"
+            labels={richTextLabels}
+          />
+        </div>
+
+        <label class="admin-form__field">
+          <span>Labela primarnog dugmeta</span>
+          <input
+            class="input-control"
+            name="heroPrimaryActionLabel"
+            value={content.hero.primaryActionLabel}
+          />
+        </label>
+
+        <label class="admin-form__field">
+          <span>Labela sekundarnog linka</span>
+          <input
+            class="input-control"
+            name="heroSecondaryActionLabel"
+            value={content.hero.secondaryActionLabel}
+          />
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="padding: 1.5rem;">
+    <div class="page-grid">
+      <div>
+        <h2 style="margin: 0;">Kontakt prompt</h2>
+        <p class="section-copy">Sekcija odmah ispod hero dela.</p>
+      </div>
+
+      <div class="admin-form__grid">
+        <label class="admin-form__field">
+          <span>Naslov</span>
+          <input class="input-control" name="promptTitle" value={content.prompt.title} />
+        </label>
+
+        <label class="admin-form__field">
+          <span>Labela dugmeta</span>
+          <input class="input-control" name="promptLabel" value={content.prompt.label} />
+        </label>
+
+        <div class="admin-form__field admin-form__field--full">
+          <span>Tekst</span>
+          <AdminRichTextField
+            client:load
+            name="promptCopy"
+            initialValue={content.prompt.copy}
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder="pages/home"
+            labels={richTextLabels}
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="padding: 1.5rem;">
+    <div class="page-grid">
+      <div>
+        <h2 style="margin: 0;">O terapeutu</h2>
+        <p class="section-copy">Opis je objedinjeni rich text dokument sa paragrafima i listama.</p>
+      </div>
+
+      <div class="admin-form__grid">
+        <label class="admin-form__field admin-form__field--full">
+          <span>Naslov</span>
+          <input class="input-control" name="aboutTitle" value={content.about.title} />
+        </label>
+
+        <AdminMediaField
+          client:load
+          name="aboutImage"
+          label="Slika"
+          initialValue={content.about.image}
+          uploadUrl="/api/admin/media/upload"
+          uploadFolder="pages/home"
+          uploadLabel="Uppy slika"
+        />
+
+        <div class="admin-form__field admin-form__field--full">
+          <span>Opis</span>
+          <AdminRichTextField
+            client:load
+            name="aboutBody"
+            initialValue={content.about.body}
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder="pages/home"
+            labels={richTextLabels}
+          />
+        </div>
+
+        <label class="admin-form__field">
+          <span>Labela dugmeta</span>
+          <input class="input-control" name="aboutLabel" value={content.about.label} />
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="padding: 1.5rem;">
+    <div class="page-grid">
+      <div>
+        <h2 style="margin: 0;">Usluge</h2>
+        <p class="section-copy">Opis sekcije i opisi kartica koriste rich text editor.</p>
+      </div>
+
+      <div class="admin-form__grid">
+        <label class="admin-form__field">
+          <span>Naslov sekcije</span>
+          <input class="input-control" name="servicesTitle" value={content.services.title} />
+        </label>
+
+        <div class="admin-form__field admin-form__field--full">
+          <span>Opis sekcije</span>
+          <AdminRichTextField
+            client:load
+            name="servicesCopy"
+            initialValue={content.services.copy}
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder="pages/home"
+            labels={richTextLabels}
+          />
+        </div>
+
+        {
+          content.services.items.map((item, index) => (
+            <div class="admin-section-group admin-form__field--full">
+              <h3 style="margin: 0;">Kartica {index + 1}</h3>
+              <div class="admin-form__grid">
+                <label class="admin-form__field">
+                  <span>Naslov</span>
+                  <input
+                    class="input-control"
+                    name={`service${index + 1}Title`}
+                    value={item.title}
+                  />
+                </label>
+
+                <AdminMediaField
+                  client:load
+                  name={`service${index + 1}Image`}
+                  label="Ikonica / slika"
+                  initialValue={item.image}
+                  uploadUrl="/api/admin/media/upload"
+                  uploadFolder="pages/home"
+                  uploadLabel="Uppy slika"
+                />
+
+                <div class="admin-form__field admin-form__field--full">
+                  <span>Opis</span>
+                  <AdminRichTextField
+                    client:load
+                    name={`service${index + 1}Copy`}
+                    initialValue={item.copy}
+                    uploadUrl="/api/admin/media/upload"
+                    uploadFolder="pages/home"
+                    labels={richTextLabels}
+                  />
+                </div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="padding: 1.5rem;">
+    <div class="page-grid">
+      <div>
+        <h2 style="margin: 0;">Teme rada</h2>
+        <p class="section-copy">Tri kartice sa slikom i rich text opisom.</p>
+      </div>
+
+      <div class="admin-form__grid">
+        <label class="admin-form__field">
+          <span>Naslov sekcije</span>
+          <input class="input-control" name="themesTitle" value={content.themes.title} />
+        </label>
+
+        {
+          content.themes.items.map((item, index) => (
+            <div class="admin-section-group admin-form__field--full">
+              <h3 style="margin: 0;">Tema {index + 1}</h3>
+              <div class="admin-form__grid">
+                <label class="admin-form__field">
+                  <span>Naslov</span>
+                  <input class="input-control" name={`theme${index + 1}Title`} value={item.title} />
+                </label>
+
+                <label class="admin-form__field">
+                  <span>Labela linka</span>
+                  <input class="input-control" name={`theme${index + 1}Label`} value={item.label} />
+                </label>
+
+                <AdminMediaField
+                  client:load
+                  name={`theme${index + 1}Image`}
+                  label="Slika"
+                  initialValue={item.image}
+                  uploadUrl="/api/admin/media/upload"
+                  uploadFolder="pages/home"
+                  uploadLabel="Uppy slika"
+                />
+
+                <div class="admin-form__field admin-form__field--full">
+                  <span>Opis</span>
+                  <AdminRichTextField
+                    client:load
+                    name={`theme${index + 1}Copy`}
+                    initialValue={item.copy}
+                    uploadUrl="/api/admin/media/upload"
+                    uploadFolder="pages/home"
+                    labels={richTextLabels}
+                  />
+                </div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="padding: 1.5rem;">
+    <div class="page-grid">
+      <div>
+        <h2 style="margin: 0;">Zašto Ikar</h2>
+        <p class="section-copy">
+          Opis sekcije i opisi razloga su rich text. Video ostaje URL ili upload.
+        </p>
+      </div>
+
+      <div class="admin-form__grid">
+        <label class="admin-form__field">
+          <span>Naslov sekcije</span>
+          <input class="input-control" name="reasonsTitle" value={content.reasons.title} />
+        </label>
+
+        <div class="admin-form__field admin-form__field--full">
+          <span>Opis sekcije</span>
+          <AdminRichTextField
+            client:load
+            name="reasonsCopy"
+            initialValue={content.reasons.copy}
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder="pages/home"
+            labels={richTextLabels}
+          />
+        </div>
+
+        {
+          content.reasons.items.map((item, index) => (
+            <div class="admin-section-group admin-form__field--full">
+              <h3 style="margin: 0;">Razlog {index + 1}</h3>
+              <div class="admin-form__grid">
+                <label class="admin-form__field">
+                  <span>Naslov</span>
+                  <input
+                    class="input-control"
+                    name={`reason${index + 1}Title`}
+                    value={item.title}
+                  />
+                </label>
+
+                <label class="admin-form__field">
+                  <span>Labela linka</span>
+                  <input
+                    class="input-control"
+                    name={`reason${index + 1}Label`}
+                    value={item.label}
+                  />
+                </label>
+
+                <div class="admin-form__field admin-form__field--full">
+                  <span>Opis</span>
+                  <AdminRichTextField
+                    client:load
+                    name={`reason${index + 1}Copy`}
+                    initialValue={item.copy}
+                    uploadUrl="/api/admin/media/upload"
+                    uploadFolder="pages/home"
+                    labels={richTextLabels}
+                  />
+                </div>
+              </div>
+            </div>
+          ))
+        }
+
+        <AdminMediaField
+          client:load
+          name="reasonsVideoUrl"
+          label="Video URL ili otpremljen video"
+          initialValue={content.reasons.videoUrl}
+          uploadUrl="/api/admin/media/upload"
+          uploadFolder="pages/home"
+          accept={videoAccept}
+          uploadLabel="Otpremi video"
+          helpText="Možete ostaviti YouTube/Vimeo URL ili otpremiti direktan video fajl."
+        />
+
+        <AdminMediaField
+          client:load
+          name="reasonsVideoImage"
+          label="Poster / preview slika videa"
+          initialValue={content.reasons.videoImage}
+          uploadUrl="/api/admin/media/upload"
+          uploadFolder="pages/home"
+          uploadLabel="Uppy slika"
+        />
+
+        <label class="admin-form__field">
+          <span>Labela videa</span>
+          <input
+            class="input-control"
+            name="reasonsVideoLabel"
+            value={content.reasons.videoLabel}
+          />
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="padding: 1.5rem;">
+    <div class="page-grid">
+      <div>
+        <h2 style="margin: 0;">Zakazivanje</h2>
+        <p class="section-copy">Opis sekcije je jedan rich text dokument.</p>
+      </div>
+
+      <div class="admin-form__grid">
+        <label class="admin-form__field">
+          <span>Naslov sekcije</span>
+          <input class="input-control" name="bookingTitle" value={content.booking.title} />
+        </label>
+
+        <div class="admin-form__field admin-form__field--full">
+          <span>Opis sekcije</span>
+          <AdminRichTextField
+            client:load
+            name="bookingCopy"
+            initialValue={content.booking.copy}
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder="pages/home"
+            labels={richTextLabels}
+          />
+        </div>
+
+        <label class="admin-form__field">
+          <span>Labela iznad izbora formata</span>
+          <input
+            class="input-control"
+            name="bookingFormatLabel"
+            value={content.booking.formatLabel}
+          />
+        </label>
+
+        <label class="admin-form__field">
+          <span>Format 1</span>
+          <input
+            class="input-control"
+            name="bookingFormat1"
+            value={content.booking.formats[0] ?? ""}
+          />
+        </label>
+
+        <label class="admin-form__field">
+          <span>Format 2</span>
+          <input
+            class="input-control"
+            name="bookingFormat2"
+            value={content.booking.formats[1] ?? ""}
+          />
+        </label>
+
+        <label class="admin-form__field">
+          <span>Format 3</span>
+          <input
+            class="input-control"
+            name="bookingFormat3"
+            value={content.booking.formats[2] ?? ""}
+          />
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="padding: 1.5rem;">
+    <div class="page-grid">
+      <div>
+        <h2 style="margin: 0;">Blog sekcija</h2>
+        <p class="section-copy">
+          Opis sekcije je rich text, a fallback poruka ostaje običan tekst.
+        </p>
+      </div>
+
+      <div class="admin-form__grid">
+        <label class="admin-form__field">
+          <span>Naslov sekcije</span>
+          <input class="input-control" name="recentTitle" value={content.recent.title} />
+        </label>
+
+        <label class="admin-form__field">
+          <span>Labela dugmeta</span>
+          <input class="input-control" name="recentLabel" value={content.recent.label} />
+        </label>
+
+        <div class="admin-form__field admin-form__field--full">
+          <span>Opis sekcije</span>
+          <AdminRichTextField
+            client:load
+            name="recentCopy"
+            initialValue={content.recent.copy}
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder="pages/home"
+            labels={richTextLabels}
+          />
+        </div>
+
+        <label class="admin-form__field admin-form__field--full">
+          <span>Poruka kada nema blog postova</span>
+          <textarea class="input-control input-control--textarea" name="recentEmpty" rows={2}
+            >{content.recent.empty}</textarea
+          >
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-form__actions">
+    <button class="button-primary" type="submit">Sačuvaj početnu stranu</button>
+  </div>
+</form>

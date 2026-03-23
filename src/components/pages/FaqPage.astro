@@ -2,8 +2,8 @@
 import PageBanner from "@/components/sections/PageBanner.astro";
 import { AppointmentForm } from "@/components/components/AppointmentForm";
 import FaqAccordionSection from "@/components/sections/FaqAccordionSection.astro";
-import { getFaqPageData } from "@/data/fixtures/public-pages";
 import { getDictionary } from "@/features/i18n/translate";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
 import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
 };
 
 const { locale } = Astro.props;
-const content = getFaqPageData(locale);
+const content = await pageContentService.getFaqPageData(locale);
 const dictionary = getDictionary(locale);
 ---
 

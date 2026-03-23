@@ -1,0 +1,1495 @@
+---
+import { AdminMediaField } from "@/components/components/AdminMediaField";
+import { AdminRichTextField } from "@/components/components/AdminRichTextField";
+import type {
+  AboutPageManagedContent,
+  AppointmentPageManagedContent,
+  BiographyPageManagedContent,
+  FaqPageManagedContent,
+  PageKey,
+  PricingPageManagedContent,
+  PsychotherapyPageManagedContent,
+  ScopePageManagedContent,
+} from "@/features/page-content/types/page-content.types";
+import type { SiteLocale } from "@/lib/config/site";
+
+type SupportedPage = Exclude<PageKey, "home">;
+
+type Props = {
+  action: string;
+  page: SupportedPage;
+  content:
+    | AboutPageManagedContent
+    | BiographyPageManagedContent
+    | PsychotherapyPageManagedContent
+    | ScopePageManagedContent
+    | PricingPageManagedContent
+    | AppointmentPageManagedContent
+    | FaqPageManagedContent;
+  locale: SiteLocale;
+};
+
+const { action, content, locale, page } = Astro.props;
+const richTextLabels = {
+  bold: "Bold",
+  italic: "Italic",
+  underline: "Underline",
+  heading2: "Heading 2",
+  heading3: "Heading 3",
+  bulletList: "Lista",
+  orderedList: "Numerisana lista",
+  quote: "Citat",
+  link: "Link",
+  image: "Slika",
+  clear: "Ukloni format",
+  uploadFailed: "Upload slike nije uspeo.",
+};
+---
+
+<form class="admin-form" method="post" action={action}>
+  <input type="hidden" name="locale" value={locale} />
+
+  {
+    page === "about"
+      ? (() => {
+          const pageContent = content as AboutPageManagedContent;
+
+          return (
+            <>
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Banner</h2>
+                    <p class="section-copy">Naslov, opis i pozadinska slika vrha stranice.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <label class="admin-form__field">
+                      <span>Naslov</span>
+                      <input
+                        class="input-control"
+                        name="bannerTitle"
+                        value={pageContent.banner.title}
+                      />
+                    </label>
+
+                    <label class="admin-form__field">
+                      <span>Opis</span>
+                      <textarea
+                        class="input-control input-control--textarea"
+                        name="bannerDescription"
+                        rows={3}
+                      >
+                        {pageContent.banner.description}
+                      </textarea>
+                    </label>
+
+                    <AdminMediaField
+                      client:load
+                      name="bannerBackgroundImage"
+                      label="Pozadinska slika"
+                      initialValue={pageContent.banner.backgroundImage}
+                      uploadUrl="/api/admin/media/upload"
+                      uploadFolder="pages/about"
+                      uploadLabel="Otpremi sliku"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Video i kartice</h2>
+                    <p class="section-copy">Video prikaz i tri kartice ispod njega.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Naslov sekcije</span>
+                      <input
+                        class="input-control"
+                        name="showcaseTitle"
+                        value={pageContent.showcase.title}
+                      />
+                    </label>
+
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Video URL</span>
+                      <input
+                        class="input-control"
+                        name="showcaseVideoUrl"
+                        value={pageContent.showcase.videoUrl}
+                      />
+                    </label>
+
+                    <AdminMediaField
+                      client:load
+                      name="showcaseVideoImage"
+                      label="Poster slika videa"
+                      initialValue={pageContent.showcase.videoImage}
+                      uploadUrl="/api/admin/media/upload"
+                      uploadFolder="pages/about"
+                      uploadLabel="Otpremi sliku"
+                    />
+
+                    {pageContent.showcase.cards.map((card, index) => (
+                      <div class="admin-section-group admin-form__field--full">
+                        <h3 style="margin: 0;">Kartica {index + 1}</h3>
+                        <div class="admin-form__grid">
+                          <label class="admin-form__field">
+                            <span>Naslov</span>
+                            <input
+                              class="input-control"
+                              name={`showcaseCard${index + 1}Title`}
+                              value={card.title}
+                            />
+                          </label>
+
+                          <label class="admin-form__field admin-form__field--full">
+                            <span>Opis</span>
+                            <textarea
+                              class="input-control input-control--textarea"
+                              name={`showcaseCard${index + 1}Copy`}
+                              rows={3}
+                            >
+                              {card.copy}
+                            </textarea>
+                          </label>
+
+                          <AdminMediaField
+                            client:load
+                            name={`showcaseCard${index + 1}Image`}
+                            label="Slika"
+                            initialValue={card.image}
+                            uploadUrl="/api/admin/media/upload"
+                            uploadFolder="pages/about"
+                            uploadLabel="Otpremi sliku"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Glavna ideja</h2>
+                    <p class="section-copy">Naslov i rich text sadržaj centralnog objašnjenja.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Naslov</span>
+                      <input
+                        class="input-control"
+                        name="ideaTitle"
+                        value={pageContent.idea.title}
+                      />
+                    </label>
+
+                    <div class="admin-form__field admin-form__field--full">
+                      <span>Sadržaj</span>
+                      <AdminRichTextField
+                        client:load
+                        name="ideaBody"
+                        initialValue={pageContent.idea.body}
+                        uploadUrl="/api/admin/media/upload"
+                        uploadFolder="pages/about"
+                        labels={richTextLabels}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Fokus</h2>
+                    <p class="section-copy">Naslov i pet stavki u bočnoj kartici.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Naslov</span>
+                      <input
+                        class="input-control"
+                        name="focusTitle"
+                        value={pageContent.focus.title}
+                      />
+                    </label>
+
+                    {pageContent.focus.items.map((item, index) => (
+                      <label class="admin-form__field">
+                        <span>Stavka {index + 1}</span>
+                        <input class="input-control" name={`focusItem${index + 1}`} value={item} />
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Blog sekcija</h2>
+                    <p class="section-copy">Tekstualni blok iznad poslednjih blog postova.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <label class="admin-form__field">
+                      <span>Naslov</span>
+                      <input
+                        class="input-control"
+                        name="recentTitle"
+                        value={pageContent.recent.title}
+                      />
+                    </label>
+
+                    <label class="admin-form__field">
+                      <span>Labela dugmeta</span>
+                      <input
+                        class="input-control"
+                        name="recentLabel"
+                        value={pageContent.recent.label}
+                      />
+                    </label>
+
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Opis</span>
+                      <textarea
+                        class="input-control input-control--textarea"
+                        name="recentCopy"
+                        rows={3}
+                      >
+                        {pageContent.recent.copy}
+                      </textarea>
+                    </label>
+
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Poruka kada nema postova</span>
+                      <textarea
+                        class="input-control input-control--textarea"
+                        name="recentEmpty"
+                        rows={2}
+                      >
+                        {pageContent.recent.empty}
+                      </textarea>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </>
+          );
+        })()
+      : null
+  }
+
+  {
+    page === "biography"
+      ? (() => {
+          const pageContent = content as BiographyPageManagedContent;
+
+          return (
+            <>
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Banner</h2>
+                    <p class="section-copy">Naslovna sekcija biografije.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <label class="admin-form__field">
+                      <span>Naslov</span>
+                      <input
+                        class="input-control"
+                        name="bannerTitle"
+                        value={pageContent.banner.title}
+                      />
+                    </label>
+
+                    <label class="admin-form__field">
+                      <span>Opis</span>
+                      <textarea
+                        class="input-control input-control--textarea"
+                        name="bannerDescription"
+                        rows={3}
+                      >
+                        {pageContent.banner.description}
+                      </textarea>
+                    </label>
+
+                    <AdminMediaField
+                      client:load
+                      name="bannerBackgroundImage"
+                      label="Pozadinska slika"
+                      initialValue={pageContent.banner.backgroundImage}
+                      uploadUrl="/api/admin/media/upload"
+                      uploadFolder="pages/biography"
+                      uploadLabel="Otpremi sliku"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Kartice</h2>
+                    <p class="section-copy">Naslov sekcije i tri biografske kartice.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Naslov sekcije</span>
+                      <input
+                        class="input-control"
+                        name="cardsTitle"
+                        value={pageContent.cardsSection.title}
+                      />
+                    </label>
+
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Opis sekcije</span>
+                      <textarea
+                        class="input-control input-control--textarea"
+                        name="cardsCopy"
+                        rows={3}
+                      >
+                        {pageContent.cardsSection.copy}
+                      </textarea>
+                    </label>
+
+                    {pageContent.cardsSection.cards.map((card, index) => (
+                      <div class="admin-section-group admin-form__field--full">
+                        <h3 style="margin: 0;">Kartica {index + 1}</h3>
+                        <div class="admin-form__grid">
+                          <label class="admin-form__field">
+                            <span>Naslov</span>
+                            <input
+                              class="input-control"
+                              name={`card${index + 1}Title`}
+                              value={card.title}
+                            />
+                          </label>
+
+                          <label class="admin-form__field">
+                            <span>Rola</span>
+                            <input
+                              class="input-control"
+                              name={`card${index + 1}Role`}
+                              value={card.role}
+                            />
+                          </label>
+
+                          <label class="admin-form__field admin-form__field--full">
+                            <span>Sažetak</span>
+                            <textarea
+                              class="input-control input-control--textarea"
+                              name={`card${index + 1}Summary`}
+                              rows={3}
+                            >
+                              {card.summary}
+                            </textarea>
+                          </label>
+
+                          <AdminMediaField
+                            client:load
+                            name={`card${index + 1}Image`}
+                            label="Slika"
+                            initialValue={card.image}
+                            uploadUrl="/api/admin/media/upload"
+                            uploadFolder="pages/biography"
+                            uploadLabel="Otpremi sliku"
+                          />
+
+                          {card.highlights.map((highlight, highlightIndex) => (
+                            <label class="admin-form__field">
+                              <span>Tag {highlightIndex + 1}</span>
+                              <input
+                                class="input-control"
+                                name={`card${index + 1}Highlight${highlightIndex + 1}`}
+                                value={highlight}
+                              />
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Pristup radu</h2>
+                    <p class="section-copy">Donja sekcija sa slikom i CTA dugmetom.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Naslov</span>
+                      <input
+                        class="input-control"
+                        name="approachTitle"
+                        value={pageContent.approach.title}
+                      />
+                    </label>
+
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Opis</span>
+                      <textarea
+                        class="input-control input-control--textarea"
+                        name="approachCopy"
+                        rows={4}
+                      >
+                        {pageContent.approach.copy}
+                      </textarea>
+                    </label>
+
+                    {pageContent.approach.points.map((point, index) => (
+                      <label class="admin-form__field">
+                        <span>Stavka {index + 1}</span>
+                        <input
+                          class="input-control"
+                          name={`approachPoint${index + 1}`}
+                          value={point}
+                        />
+                      </label>
+                    ))}
+
+                    <AdminMediaField
+                      client:load
+                      name="approachImage"
+                      label="Slika"
+                      initialValue={pageContent.approach.image}
+                      uploadUrl="/api/admin/media/upload"
+                      uploadFolder="pages/biography"
+                      uploadLabel="Otpremi sliku"
+                    />
+
+                    <label class="admin-form__field">
+                      <span>Labela CTA dugmeta</span>
+                      <input
+                        class="input-control"
+                        name="approachCtaLabel"
+                        value={pageContent.approach.ctaLabel}
+                      />
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </>
+          );
+        })()
+      : null
+  }
+
+  {
+    page === "psychotherapy"
+      ? (() => {
+          const pageContent = content as PsychotherapyPageManagedContent;
+
+          return (
+            <>
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Banner</h2>
+                    <p class="section-copy">Naslovna sekcija stranice Pristup.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <label class="admin-form__field">
+                      <span>Naslov</span>
+                      <input
+                        class="input-control"
+                        name="bannerTitle"
+                        value={pageContent.banner.title}
+                      />
+                    </label>
+
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Opis</span>
+                      <textarea
+                        class="input-control input-control--textarea"
+                        name="bannerDescription"
+                        rows={4}
+                      >
+                        {pageContent.banner.description}
+                      </textarea>
+                    </label>
+
+                    <AdminMediaField
+                      client:load
+                      name="bannerBackgroundImage"
+                      label="Pozadinska slika"
+                      initialValue={pageContent.banner.backgroundImage}
+                      uploadUrl="/api/admin/media/upload"
+                      uploadFolder="pages/psychotherapy"
+                      uploadLabel="Otpremi sliku"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Opseg rada</h2>
+                    <p class="section-copy">Naslov i sedam stavki centralnog bloka.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Naslov bloka</span>
+                      <input
+                        class="input-control"
+                        name="scopeTitle"
+                        value={pageContent.scope.title}
+                      />
+                    </label>
+
+                    {pageContent.scope.items.map((item, index) => (
+                      <label class="admin-form__field">
+                        <span>Stavka {index + 1}</span>
+                        <input class="input-control" name={`scopeItem${index + 1}`} value={item} />
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Usluge</h2>
+                    <p class="section-copy">Tri vizuelne kartice usluga.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    {pageContent.services.cards.map((card, index) => (
+                      <div class="admin-section-group admin-form__field--full">
+                        <h3 style="margin: 0;">Kartica {index + 1}</h3>
+                        <div class="admin-form__grid">
+                          <label class="admin-form__field">
+                            <span>Naslov</span>
+                            <input
+                              class="input-control"
+                              name={`service${index + 1}Title`}
+                              value={card.title}
+                            />
+                          </label>
+
+                          <label class="admin-form__field admin-form__field--full">
+                            <span>Opis</span>
+                            <textarea
+                              class="input-control input-control--textarea"
+                              name={`service${index + 1}Copy`}
+                              rows={3}
+                            >
+                              {card.copy}
+                            </textarea>
+                          </label>
+
+                          <AdminMediaField
+                            client:load
+                            name={`service${index + 1}Image`}
+                            label="Slika"
+                            initialValue={card.image}
+                            uploadUrl="/api/admin/media/upload"
+                            uploadFolder="pages/psychotherapy"
+                            uploadLabel="Otpremi sliku"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Zakazivanje</h2>
+                    <p class="section-copy">Tekstualni blok i formati rada.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Naslov</span>
+                      <input
+                        class="input-control"
+                        name="bookingTitle"
+                        value={pageContent.booking.title}
+                      />
+                    </label>
+
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Opis</span>
+                      <textarea
+                        class="input-control input-control--textarea"
+                        name="bookingCopy"
+                        rows={4}
+                      >
+                        {pageContent.booking.copy}
+                      </textarea>
+                    </label>
+
+                    <label class="admin-form__field">
+                      <span>Labela formata</span>
+                      <input
+                        class="input-control"
+                        name="bookingFormatLabel"
+                        value={pageContent.booking.formatLabel}
+                      />
+                    </label>
+
+                    {pageContent.booking.formats.map((format, index) => (
+                      <label class="admin-form__field">
+                        <span>Format {index + 1}</span>
+                        <input
+                          class="input-control"
+                          name={`bookingFormat${index + 1}`}
+                          value={format}
+                        />
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">FAQ</h2>
+                    <p class="section-copy">Slika i četiri pitanja sa odgovorima.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <AdminMediaField
+                      client:load
+                      name="faqImage"
+                      label="FAQ slika"
+                      initialValue={pageContent.faq.image}
+                      uploadUrl="/api/admin/media/upload"
+                      uploadFolder="pages/psychotherapy"
+                      uploadLabel="Otpremi sliku"
+                    />
+
+                    {pageContent.faq.items.map((item, index) => (
+                      <div class="admin-section-group admin-form__field--full">
+                        <h3 style="margin: 0;">Pitanje {index + 1}</h3>
+                        <div class="admin-form__grid">
+                          <label class="admin-form__field admin-form__field--full">
+                            <span>Pitanje</span>
+                            <input
+                              class="input-control"
+                              name={`faq${index + 1}Question`}
+                              value={item.question}
+                            />
+                          </label>
+
+                          <label class="admin-form__field admin-form__field--full">
+                            <span>Odgovor</span>
+                            <textarea
+                              class="input-control input-control--textarea"
+                              name={`faq${index + 1}Answer`}
+                              rows={4}
+                            >
+                              {item.answer}
+                            </textarea>
+                          </label>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </>
+          );
+        })()
+      : null
+  }
+
+  {
+    page === "scope"
+      ? (() => {
+          const pageContent = content as ScopePageManagedContent;
+
+          return (
+            <>
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Banner</h2>
+                    <p class="section-copy">Naslovna sekcija stranice Oblast rada.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <label class="admin-form__field">
+                      <span>Naslov</span>
+                      <input
+                        class="input-control"
+                        name="bannerTitle"
+                        value={pageContent.banner.title}
+                      />
+                    </label>
+
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Opis</span>
+                      <textarea
+                        class="input-control input-control--textarea"
+                        name="bannerDescription"
+                        rows={4}
+                      >
+                        {pageContent.banner.description}
+                      </textarea>
+                    </label>
+
+                    <AdminMediaField
+                      client:load
+                      name="bannerBackgroundImage"
+                      label="Pozadinska slika"
+                      initialValue={pageContent.banner.backgroundImage}
+                      uploadUrl="/api/admin/media/upload"
+                      uploadFolder="pages/scope"
+                      uploadLabel="Otpremi sliku"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Uvodni blok</h2>
+                    <p class="section-copy">Naslov i sedam stavki uvoda.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Naslov</span>
+                      <input
+                        class="input-control"
+                        name="introTitle"
+                        value={pageContent.intro.title}
+                      />
+                    </label>
+
+                    {pageContent.intro.items.map((item, index) => (
+                      <label class="admin-form__field">
+                        <span>Stavka {index + 1}</span>
+                        <input class="input-control" name={`introItem${index + 1}`} value={item} />
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Detalj stranice</h2>
+                    <p class="section-copy">Tekstovi zajednički svim detail stranicama.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <label class="admin-form__field">
+                      <span>Eyebrow</span>
+                      <input
+                        class="input-control"
+                        name="detailEyebrow"
+                        value={pageContent.detail.eyebrow}
+                      />
+                    </label>
+
+                    <label class="admin-form__field">
+                      <span>Labela nazad</span>
+                      <input
+                        class="input-control"
+                        name="detailBackLabel"
+                        value={pageContent.detail.backLabel}
+                      />
+                    </label>
+
+                    <label class="admin-form__field">
+                      <span>Labela CTA</span>
+                      <input
+                        class="input-control"
+                        name="detailCtaLabel"
+                        value={pageContent.detail.ctaLabel}
+                      />
+                    </label>
+
+                    <label class="admin-form__field">
+                      <span>Naslov povezanih tema</span>
+                      <input
+                        class="input-control"
+                        name="detailRelatedTitle"
+                        value={pageContent.detail.relatedTitle}
+                      />
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Fokus sekcija</h2>
+                    <p class="section-copy">Slika, kopija i CTA za srednji blok.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Naslov</span>
+                      <input
+                        class="input-control"
+                        name="focusTitle"
+                        value={pageContent.focus.title}
+                      />
+                    </label>
+
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Prvi pasus</span>
+                      <textarea
+                        class="input-control input-control--textarea"
+                        name="focusCopy"
+                        rows={3}
+                      >
+                        {pageContent.focus.copy}
+                      </textarea>
+                    </label>
+
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Drugi pasus</span>
+                      <textarea
+                        class="input-control input-control--textarea"
+                        name="focusSecondaryCopy"
+                        rows={3}
+                      >
+                        {pageContent.focus.secondaryCopy}
+                      </textarea>
+                    </label>
+
+                    <AdminMediaField
+                      client:load
+                      name="focusImage"
+                      label="Slika"
+                      initialValue={pageContent.focus.image}
+                      uploadUrl="/api/admin/media/upload"
+                      uploadFolder="pages/scope"
+                      uploadLabel="Otpremi sliku"
+                    />
+
+                    <label class="admin-form__field">
+                      <span>Labela CTA</span>
+                      <input
+                        class="input-control"
+                        name="focusCtaLabel"
+                        value={pageContent.focus.ctaLabel}
+                      />
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Blog sekcija</h2>
+                    <p class="section-copy">Tekstualni blok ispod fokus sekcije.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <label class="admin-form__field">
+                      <span>Naslov</span>
+                      <input
+                        class="input-control"
+                        name="recentTitle"
+                        value={pageContent.recent.title}
+                      />
+                    </label>
+
+                    <label class="admin-form__field">
+                      <span>Labela dugmeta</span>
+                      <input
+                        class="input-control"
+                        name="recentLabel"
+                        value={pageContent.recent.label}
+                      />
+                    </label>
+
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Opis</span>
+                      <textarea
+                        class="input-control input-control--textarea"
+                        name="recentCopy"
+                        rows={3}
+                      >
+                        {pageContent.recent.copy}
+                      </textarea>
+                    </label>
+
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Poruka kada nema postova</span>
+                      <textarea
+                        class="input-control input-control--textarea"
+                        name="recentEmpty"
+                        rows={2}
+                      >
+                        {pageContent.recent.empty}
+                      </textarea>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Teme rada</h2>
+                    <p class="section-copy">Tabovi i detail sadržaj za četiri teme.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    {pageContent.tabs.map((tab, index) => (
+                      <div class="admin-section-group admin-form__field--full">
+                        <h3 style="margin: 0;">Tema {index + 1}</h3>
+                        <div class="admin-form__grid">
+                          <label class="admin-form__field">
+                            <span>Slug</span>
+                            <input
+                              class="input-control"
+                              name={`tab${index + 1}Id`}
+                              value={tab.id}
+                            />
+                          </label>
+
+                          <label class="admin-form__field">
+                            <span>Labela</span>
+                            <input
+                              class="input-control"
+                              name={`tab${index + 1}Label`}
+                              value={tab.label}
+                            />
+                          </label>
+
+                          <AdminMediaField
+                            client:load
+                            name={`tab${index + 1}Icon`}
+                            label="Ikonica"
+                            initialValue={tab.icon}
+                            uploadUrl="/api/admin/media/upload"
+                            uploadFolder="pages/scope"
+                            uploadLabel="Otpremi sliku"
+                          />
+
+                          <AdminMediaField
+                            client:load
+                            name={`tab${index + 1}DetailImage`}
+                            label="Detalj slika"
+                            initialValue={tab.detailImage}
+                            uploadUrl="/api/admin/media/upload"
+                            uploadFolder="pages/scope"
+                            uploadLabel="Otpremi sliku"
+                          />
+
+                          <label class="admin-form__field admin-form__field--full">
+                            <span>Lead tekst</span>
+                            <textarea
+                              class="input-control input-control--textarea"
+                              name={`tab${index + 1}DetailLead`}
+                              rows={3}
+                            >
+                              {tab.detailLead}
+                            </textarea>
+                          </label>
+
+                          {tab.items.map((item, itemIndex) => (
+                            <>
+                              <label class="admin-form__field">
+                                <span>Stavka {itemIndex + 1} naslov</span>
+                                <input
+                                  class="input-control"
+                                  name={`tab${index + 1}Item${itemIndex + 1}Title`}
+                                  value={item.title}
+                                />
+                              </label>
+
+                              <label class="admin-form__field admin-form__field--full">
+                                <span>Stavka {itemIndex + 1} opis</span>
+                                <textarea
+                                  class="input-control input-control--textarea"
+                                  name={`tab${index + 1}Item${itemIndex + 1}Copy`}
+                                  rows={3}
+                                >
+                                  {item.copy}
+                                </textarea>
+                              </label>
+                            </>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </>
+          );
+        })()
+      : null
+  }
+
+  {
+    page === "pricing"
+      ? (() => {
+          const pageContent = content as PricingPageManagedContent;
+
+          return (
+            <>
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Banner i SEO tekst</h2>
+                    <p class="section-copy">
+                      Ovo se koristi za naslovni opis stranice i meta opis.
+                    </p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <label class="admin-form__field">
+                      <span>Naslov</span>
+                      <input
+                        class="input-control"
+                        name="bannerTitle"
+                        value={pageContent.banner.title}
+                      />
+                    </label>
+
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Opis</span>
+                      <textarea
+                        class="input-control input-control--textarea"
+                        name="bannerDescription"
+                        rows={3}
+                      >
+                        {pageContent.banner.description}
+                      </textarea>
+                    </label>
+
+                    <AdminMediaField
+                      client:load
+                      name="bannerBackgroundImage"
+                      label="Pozadinska slika"
+                      initialValue={pageContent.banner.backgroundImage}
+                      uploadUrl="/api/admin/media/upload"
+                      uploadFolder="pages/pricing"
+                      uploadLabel="Otpremi sliku"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Planovi</h2>
+                    <p class="section-copy">Tri cenovne kartice.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    {pageContent.plans.map((plan, index) => (
+                      <div class="admin-section-group admin-form__field--full">
+                        <h3 style="margin: 0;">Plan {index + 1}</h3>
+                        <div class="admin-form__grid">
+                          <label class="admin-form__field">
+                            <span>Naslov</span>
+                            <input
+                              class="input-control"
+                              name={`plan${index + 1}Title`}
+                              value={plan.title}
+                            />
+                          </label>
+
+                          <label class="admin-form__field">
+                            <span>Cena</span>
+                            <input
+                              class="input-control"
+                              name={`plan${index + 1}Price`}
+                              value={plan.price}
+                            />
+                          </label>
+
+                          <label class="admin-form__field admin-form__field--full">
+                            <span>Napomena za uplate iz inostranstva</span>
+                            <textarea
+                              class="input-control input-control--textarea"
+                              name={`plan${index + 1}OutsideSerbiaPrice`}
+                              rows={3}
+                            >
+                              {plan.outsideSerbiaPrice}
+                            </textarea>
+                          </label>
+
+                          <label class="admin-form__field">
+                            <span>Labela CTA</span>
+                            <input
+                              class="input-control"
+                              name={`plan${index + 1}CtaLabel`}
+                              value={plan.ctaLabel}
+                            />
+                          </label>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Info kartice</h2>
+                    <p class="section-copy">Tri objašnjenja ispod planova.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    {pageContent.infoCards.map((card, index) => (
+                      <div class="admin-section-group admin-form__field--full">
+                        <h3 style="margin: 0;">Info {index + 1}</h3>
+                        <div class="admin-form__grid">
+                          <label class="admin-form__field">
+                            <span>Naslov</span>
+                            <input
+                              class="input-control"
+                              name={`info${index + 1}Title`}
+                              value={card.title}
+                            />
+                          </label>
+
+                          <label class="admin-form__field admin-form__field--full">
+                            <span>Opis</span>
+                            <textarea
+                              class="input-control input-control--textarea"
+                              name={`info${index + 1}Copy`}
+                              rows={3}
+                            >
+                              {card.copy}
+                            </textarea>
+                          </label>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </>
+          );
+        })()
+      : null
+  }
+
+  {
+    page === "appointment"
+      ? (() => {
+          const pageContent = content as AppointmentPageManagedContent;
+
+          return (
+            <>
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Banner i uvod</h2>
+                    <p class="section-copy">SEO opis i tekst u levom stupcu forme.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <label class="admin-form__field">
+                      <span>Naslov</span>
+                      <input
+                        class="input-control"
+                        name="bannerTitle"
+                        value={pageContent.banner.title}
+                      />
+                    </label>
+
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>SEO opis</span>
+                      <textarea
+                        class="input-control input-control--textarea"
+                        name="bannerDescription"
+                        rows={3}
+                      >
+                        {pageContent.banner.description}
+                      </textarea>
+                    </label>
+
+                    <AdminMediaField
+                      client:load
+                      name="bannerBackgroundImage"
+                      label="Pozadinska slika"
+                      initialValue={pageContent.banner.backgroundImage}
+                      uploadUrl="/api/admin/media/upload"
+                      uploadFolder="pages/appointment"
+                      uploadLabel="Otpremi sliku"
+                    />
+
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Naslov forme</span>
+                      <input
+                        class="input-control"
+                        name="bookingTitle"
+                        value={pageContent.booking.title}
+                      />
+                    </label>
+
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Uvodni tekst</span>
+                      <textarea
+                        class="input-control input-control--textarea"
+                        name="bookingCopy"
+                        rows={3}
+                      >
+                        {pageContent.booking.copy}
+                      </textarea>
+                    </label>
+
+                    <label class="admin-form__field">
+                      <span>Labela formata</span>
+                      <input
+                        class="input-control"
+                        name="bookingFormatLabel"
+                        value={pageContent.booking.formatLabel}
+                      />
+                    </label>
+
+                    {pageContent.booking.formats.map((format, index) => (
+                      <label class="admin-form__field">
+                        <span>Format {index + 1}</span>
+                        <input
+                          class="input-control"
+                          name={`bookingFormat${index + 1}`}
+                          value={format}
+                        />
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">FAQ</h2>
+                    <p class="section-copy">Slika i četiri pitanja na dnu stranice.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <AdminMediaField
+                      client:load
+                      name="faqImage"
+                      label="FAQ slika"
+                      initialValue={pageContent.faq.image}
+                      uploadUrl="/api/admin/media/upload"
+                      uploadFolder="pages/appointment"
+                      uploadLabel="Otpremi sliku"
+                    />
+
+                    {pageContent.faq.items.map((item, index) => (
+                      <div class="admin-section-group admin-form__field--full">
+                        <h3 style="margin: 0;">Pitanje {index + 1}</h3>
+                        <div class="admin-form__grid">
+                          <label class="admin-form__field admin-form__field--full">
+                            <span>Pitanje</span>
+                            <input
+                              class="input-control"
+                              name={`faq${index + 1}Question`}
+                              value={item.question}
+                            />
+                          </label>
+
+                          <label class="admin-form__field admin-form__field--full">
+                            <span>Odgovor</span>
+                            <textarea
+                              class="input-control input-control--textarea"
+                              name={`faq${index + 1}Answer`}
+                              rows={4}
+                            >
+                              {item.answer}
+                            </textarea>
+                          </label>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </>
+          );
+        })()
+      : null
+  }
+
+  {
+    page === "faq"
+      ? (() => {
+          const pageContent = content as FaqPageManagedContent;
+
+          return (
+            <>
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Banner</h2>
+                    <p class="section-copy">Naslov, SEO opis i pozadinska slika FAQ stranice.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <label class="admin-form__field">
+                      <span>Naslov</span>
+                      <input
+                        class="input-control"
+                        name="bannerTitle"
+                        value={pageContent.banner.title}
+                      />
+                    </label>
+
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Opis</span>
+                      <textarea
+                        class="input-control input-control--textarea"
+                        name="bannerDescription"
+                        rows={3}
+                      >
+                        {pageContent.banner.description}
+                      </textarea>
+                    </label>
+
+                    <AdminMediaField
+                      client:load
+                      name="bannerBackgroundImage"
+                      label="Pozadinska slika"
+                      initialValue={pageContent.banner.backgroundImage}
+                      uploadUrl="/api/admin/media/upload"
+                      uploadFolder="pages/faq"
+                      uploadLabel="Otpremi sliku"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">FAQ pitanja</h2>
+                    <p class="section-copy">Slika i četiri glavna pitanja.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <AdminMediaField
+                      client:load
+                      name="faqImage"
+                      label="FAQ slika"
+                      initialValue={pageContent.faq.image}
+                      uploadUrl="/api/admin/media/upload"
+                      uploadFolder="pages/faq"
+                      uploadLabel="Otpremi sliku"
+                    />
+
+                    {pageContent.faq.items.map((item, index) => (
+                      <div class="admin-section-group admin-form__field--full">
+                        <h3 style="margin: 0;">Pitanje {index + 1}</h3>
+                        <div class="admin-form__grid">
+                          <label class="admin-form__field admin-form__field--full">
+                            <span>Pitanje</span>
+                            <input
+                              class="input-control"
+                              name={`faq${index + 1}Question`}
+                              value={item.question}
+                            />
+                          </label>
+
+                          <label class="admin-form__field admin-form__field--full">
+                            <span>Odgovor</span>
+                            <textarea
+                              class="input-control input-control--textarea"
+                              name={`faq${index + 1}Answer`}
+                              rows={4}
+                            >
+                              {item.answer}
+                            </textarea>
+                          </label>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="padding: 1.5rem;">
+                <div class="page-grid">
+                  <div>
+                    <h2 style="margin: 0;">Zakazivanje blok</h2>
+                    <p class="section-copy">Tekst i formati rada ispod FAQ liste.</p>
+                  </div>
+
+                  <div class="admin-form__grid">
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Naslov</span>
+                      <input
+                        class="input-control"
+                        name="bookingTitle"
+                        value={pageContent.booking.title}
+                      />
+                    </label>
+
+                    <label class="admin-form__field admin-form__field--full">
+                      <span>Opis</span>
+                      <textarea
+                        class="input-control input-control--textarea"
+                        name="bookingCopy"
+                        rows={3}
+                      >
+                        {pageContent.booking.copy}
+                      </textarea>
+                    </label>
+
+                    <label class="admin-form__field">
+                      <span>Labela formata</span>
+                      <input
+                        class="input-control"
+                        name="bookingFormatLabel"
+                        value={pageContent.booking.formatLabel}
+                      />
+                    </label>
+
+                    {pageContent.booking.formats.map((format, index) => (
+                      <label class="admin-form__field">
+                        <span>Format {index + 1}</span>
+                        <input
+                          class="input-control"
+                          name={`bookingFormat${index + 1}`}
+                          value={format}
+                        />
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </>
+          );
+        })()
+      : null
+  }
+
+  <div class="admin-form__actions">
+    <button class="button-primary" type="submit">Sačuvaj stranicu</button>
+  </div>
+</form>

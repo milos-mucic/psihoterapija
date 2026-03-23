@@ -1,5 +1,7 @@
 import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
+import { sanitizeInlineRichTextHtml, sanitizeRichTextHtml } from "@/features/blog/utils/rich-text";
+import type { HomePageManagedContent } from "@/features/page-content/types/page-content.types";
 import type { SiteLocale } from "@/lib/config/site";
 
 type LinkCard = {
@@ -32,8 +34,7 @@ export type HomePageData = {
   };
   about: {
     title: string;
-    paragraphs: string[];
-    bullets: string[];
+    body: string;
     href: string;
     label: string;
     image: string;
@@ -76,8 +77,108 @@ export type HomePageData = {
   };
 };
 
-export const getHomePageData = (locale: SiteLocale): HomePageData => {
+const toParagraphHtml = (value: string) => sanitizeRichTextHtml(value);
+
+const toCombinedRichTextHtml = (paragraphs: string[], bullets: string[]) => {
+  const paragraphHtml = paragraphs.map((paragraph) => `<p>${paragraph}</p>`).join("");
+  const listHtml =
+    bullets.length > 0 ? `<ul>${bullets.map((bullet) => `<li>${bullet}</li>`).join("")}</ul>` : "";
+
+  return sanitizeRichTextHtml(`${paragraphHtml}${listHtml}`);
+};
+
+export const getDefaultHomePageManagedContent = (locale: SiteLocale): HomePageManagedContent => {
   const content = getDictionary(locale).homePage;
+
+  return {
+    hero: {
+      titleHtml: sanitizeInlineRichTextHtml(content.hero.titleHtml),
+      description: toParagraphHtml(content.hero.description),
+      primaryActionLabel: content.hero.primaryActionLabel,
+      secondaryActionLabel: content.hero.secondaryActionLabel,
+    },
+    prompt: {
+      title: content.prompt.title,
+      copy: toParagraphHtml(content.prompt.copy),
+      label: content.prompt.label,
+    },
+    about: {
+      title: content.about.title,
+      body: toCombinedRichTextHtml(content.about.paragraphs, content.about.bullets),
+      label: content.about.label,
+      image: "/legacy/images/Doctor--1_1Doctor  (1).webp",
+    },
+    services: {
+      title: content.services.title,
+      copy: toParagraphHtml(content.services.copy),
+      items: [
+        {
+          title: content.services.items[0].title,
+          copy: toParagraphHtml(content.services.items[0].copy),
+          image: "/legacy/images/White-Icon-2.png",
+        },
+        {
+          title: content.services.items[2].title,
+          copy: toParagraphHtml(content.services.items[2].copy),
+          image: "/legacy/images/White-Icon-1.png",
+        },
+      ],
+    },
+    themes: {
+      title: content.themes.title,
+      items: [
+        {
+          title: content.themes.items[0].title,
+          copy: toParagraphHtml(content.themes.items[0].copy),
+          label: content.themes.items[0].label,
+          image: "/legacy/images/Service-Img-2.png",
+        },
+        {
+          title: content.themes.items[1].title,
+          copy: toParagraphHtml(content.themes.items[1].copy),
+          label: content.themes.items[1].label,
+          image: "/legacy/images/Session-Img-2.png",
+        },
+        {
+          title: content.themes.items[2].title,
+          copy: toParagraphHtml(content.themes.items[2].copy),
+          label: content.themes.items[2].label,
+          image: "/legacy/images/Service-Img-3.png",
+        },
+      ],
+    },
+    reasons: {
+      title: content.reasons.title,
+      copy: toParagraphHtml(content.reasons.copy),
+      items: [
+        { ...content.reasons.items[0], copy: toParagraphHtml(content.reasons.items[0].copy) },
+        { ...content.reasons.items[1], copy: toParagraphHtml(content.reasons.items[1].copy) },
+        { ...content.reasons.items[2], copy: toParagraphHtml(content.reasons.items[2].copy) },
+      ],
+      videoUrl: "https://www.youtube.com/watch?v=KGg5cIjHQiw",
+      videoImage: "/legacy/images/Video-Home-3-BG_1Video Home 3 BG.webp",
+      videoLabel: content.reasons.videoLabel,
+    },
+    booking: {
+      title: content.booking.title,
+      copy: toParagraphHtml(content.booking.copy),
+      formatLabel: content.booking.formatLabel,
+      formats: content.booking.formats,
+    },
+    recent: {
+      title: content.recent.title,
+      copy: toParagraphHtml(content.recent.copy),
+      label: content.recent.label,
+      empty: content.recent.empty,
+    },
+  };
+};
+
+export const buildHomePageData = (
+  locale: SiteLocale,
+  content: HomePageManagedContent,
+): HomePageData => {
+  const dictionary = getDictionary(locale);
 
   return {
     hero: {
@@ -100,11 +201,10 @@ export const getHomePageData = (locale: SiteLocale): HomePageData => {
     },
     about: {
       title: content.about.title,
-      paragraphs: content.about.paragraphs,
-      bullets: content.about.bullets,
+      body: content.about.body,
       href: localizePath(locale, "/o-nama/"),
       label: content.about.label,
-      image: "/legacy/images/Doctor--1_1Doctor  (1).webp",
+      image: content.about.image,
     },
     services: {
       title: content.services.title,
@@ -113,19 +213,19 @@ export const getHomePageData = (locale: SiteLocale): HomePageData => {
         {
           ...content.services.items[0],
           href: localizePath(locale, "/psihoterapija/"),
-          image: "/legacy/images/White-Icon-2.png",
+          label: dictionary.homePage.services.items[0].label,
         },
         {
-          ...content.services.items[2],
+          ...content.services.items[1],
           href: localizePath(locale, "/zakazivanje/"),
-          image: "/legacy/images/White-Icon-1.png",
+          label: dictionary.homePage.services.items[2].label,
         },
       ],
     },
     promo: {
-      title: content.promo.title,
+      title: dictionary.homePage.promo.title,
       href: localizePath(locale, "/kontakt/"),
-      label: content.promo.label,
+      label: dictionary.homePage.promo.label,
       image: "/legacy/images/Appointmebt-Img_1Appointmebt Img.webp",
     },
     themes: {
@@ -134,17 +234,14 @@ export const getHomePageData = (locale: SiteLocale): HomePageData => {
         {
           ...content.themes.items[0],
           href: localizePath(locale, "/psihoterapija/"),
-          image: "/legacy/images/Service-Img-2.png",
         },
         {
           ...content.themes.items[1],
           href: localizePath(locale, "/psihoterapija/"),
-          image: "/legacy/images/Session-Img-2.png",
         },
         {
           ...content.themes.items[2],
           href: localizePath(locale, "/psihoterapija/"),
-          image: "/legacy/images/Service-Img-3.png",
         },
       ],
     },
@@ -156,8 +253,8 @@ export const getHomePageData = (locale: SiteLocale): HomePageData => {
         { ...content.reasons.items[1], href: localizePath(locale, "/pitanja/") },
         { ...content.reasons.items[2], href: localizePath(locale, "/kontakt/") },
       ],
-      videoHref: "https://www.youtube.com/watch?v=KGg5cIjHQiw",
-      videoImage: "/legacy/images/Video-Home-3-BG_1Video Home 3 BG.webp",
+      videoHref: content.reasons.videoUrl,
+      videoImage: content.reasons.videoImage,
       videoLabel: content.reasons.videoLabel,
     },
     booking: {
@@ -175,3 +272,6 @@ export const getHomePageData = (locale: SiteLocale): HomePageData => {
     },
   };
 };
+
+export const getHomePageData = (locale: SiteLocale): HomePageData =>
+  buildHomePageData(locale, getDefaultHomePageManagedContent(locale));

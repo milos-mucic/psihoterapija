@@ -18,6 +18,12 @@ const authenticated = adminAuthService.isAuthenticated(Astro.cookies);
           <p class="section-copy">{dictionary.admin.dashboard.copy}</p>
         </div>
         <div class="page-grid" style="grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));">
+          <a class="card" href={`${adminConfig.basePath}/pages/`} style="padding: 1.4rem;">
+            <h3>{dictionary.admin.pages.title}</h3>
+            <p style="margin: 0; color: var(--muted);">
+              {dictionary.admin.pages.copy}
+            </p>
+          </a>
           <a class="card" href={`${adminConfig.basePath}/blog/`} style="padding: 1.4rem;">
             <h3>{dictionary.admin.dashboard.blogManagementTitle}</h3>
             <p style="margin: 0; color: var(--muted);">
