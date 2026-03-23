@@ -194,37 +194,83 @@
 
 .admin-rtf {
   display: grid;
-  gap: 0.65rem;
+  gap: 0;
 }
 
 .admin-rtf__toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
+  gap: 0.35rem;
+  align-items: center;
+  padding: 0.5rem;
+  border: 1px solid var(--line);
+  border-bottom: 0;
+  border-radius: 0.75rem 0.75rem 0 0;
+  background: #f6f7f8;
 }
 
 .admin-rtf__button {
   border: 1px solid var(--line);
-  background: var(--surface);
-  color: var(--foreground);
-  border-radius: 8px;
-  min-width: 2rem;
-  height: 2rem;
+  background: #fff;
+  color: #111827;
+  border-radius: 0.45rem;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  padding: 0 0.55rem;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
   cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
 }
 
 .admin-rtf__button:hover {
-  border-color: rgb(var(--primary-rgb) / 0.45);
+  border-color: rgb(var(--primary-rgb) / 0.25);
+  background: #f9fafb;
+}
+
+.admin-rtf__button.is-active {
+  border-color: rgb(var(--primary-rgb) / 0.35);
+  background: rgb(var(--primary-rgb) / 0.08);
+  color: rgb(var(--primary-rgb) / 1);
+}
+
+.admin-rtf__button.is-disabled,
+.admin-rtf__button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.admin-rtf__editor-shell {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 0 0 0.75rem 0.75rem;
+  background: #fff;
 }
 
 .admin-rtf__editor {
   min-height: 16rem;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 0.85rem 0.95rem;
+  padding: 0.9rem 1rem;
   background: #fff;
-  color: var(--foreground);
-  line-height: 1.65;
+  color: #111827;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
 .admin-rtf__editor--inline {
@@ -232,20 +278,140 @@
 }
 
 .admin-rtf__editor:focus {
-  outline: 2px solid rgb(var(--primary-rgb) / 0.25);
-  outline-offset: 0;
+  outline: none;
+}
+
+.admin-rtf__editor-shell:focus-within {
+  border-color: rgb(var(--primary-rgb) / 0.32);
+  box-shadow: 0 0 0 4px rgb(var(--primary-rgb) / 0.1);
+}
+
+.admin-rtf__placeholder {
+  position: absolute;
+  top: 0.95rem;
+  left: 1rem;
+  color: #9ca3af;
+  pointer-events: none;
+  font-size: 1rem;
+}
+
+.admin-rtf__paragraph,
+.admin-rtf__list,
+.admin-rtf__quote {
+  color: #111827;
+}
+
+.admin-rtf__paragraph {
+  margin: 0 0 1rem;
+}
+
+.admin-rtf__editor h2.admin-rtf__heading,
+.admin-rtf__editor h3.admin-rtf__heading {
+  margin: 1.25rem 0 0.65rem;
+  color: #111827;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.25;
+}
+
+.admin-rtf__editor h2.admin-rtf__heading {
+  font-size: 1.5rem;
+}
+
+.admin-rtf__editor h3.admin-rtf__heading {
+  font-size: 1.25rem;
+}
+
+.admin-rtf__list {
+  margin: 0 0 1rem 1.25rem;
+  padding-left: 1.25rem;
+}
+
+.admin-rtf__editor ul.admin-rtf__list {
+  list-style: disc;
+}
+
+.admin-rtf__editor ol.admin-rtf__list {
+  list-style: decimal;
+}
+
+.admin-rtf__list-item {
+  margin: 0.25rem 0;
+}
+
+.admin-rtf__quote {
+  margin: 0 0 1rem;
+  padding-left: 1rem;
+  border-left: 4px solid #d1d5db;
+  color: #4b5563;
+  font-style: italic;
+}
+
+.admin-rtf__link {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.admin-rtf__text--bold {
+  font-weight: 700;
+}
+
+.admin-rtf__text--italic {
+  font-style: italic;
+}
+
+.admin-rtf__text--underline {
+  text-decoration: underline;
+}
+
+.admin-rtf__text--strikethrough {
+  text-decoration: line-through;
+}
+
+.admin-rtf__image {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+}
+
+.admin-rtf__image-remove {
+  width: fit-content;
+  border: 1px solid var(--line);
+  border-radius: 0.45rem;
+  background: #fff;
+  color: #111827;
+  padding: 0.4rem 0.7rem;
+  cursor: pointer;
 }
 
 .admin-rtf__editor img {
   max-width: 100%;
   height: auto;
-  border-radius: 8px;
+  display: block;
+  border-radius: 0.5rem;
+}
+
+.admin-rtf__status,
+.admin-rtf__error {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.admin-rtf__status {
+  color: #4b5563;
+  padding-top: 0.5rem;
 }
 
 .admin-rtf__error {
   color: #8f2b2b;
-  margin: 0;
-  font-size: 0.92rem;
+  padding-top: 0.5rem;
 }
 
 @media (max-width: 840px) {

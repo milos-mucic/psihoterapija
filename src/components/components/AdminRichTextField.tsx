@@ -149,6 +149,7 @@ const imageMaxBytes = 1_000_000;
 const imageScales = [1, 0.92, 0.84, 0.76, 0.68];
 const imageQualities = [0.92, 0.84, 0.76, 0.68, 0.6, 0.52, 0.44];
 const INSERT_IMAGE_COMMAND = createCommand<InsertImagePayload>();
+const canUseDomParser = () => typeof window !== "undefined" && typeof DOMParser !== "undefined";
 
 const normalizeLinkUrl = (value: string) => {
   if (/^(https?:\/\/|mailto:|tel:)/i.test(value)) {
@@ -173,6 +174,14 @@ const normalizeInlineEditorHtml = (value: string) => {
 
   if (!html) {
     return "";
+  }
+
+  if (!canUseDomParser()) {
+    return html
+      .replace(/<\/p>\s*<p>/gi, "<br />")
+      .replace(/^<p>/i, "")
+      .replace(/<\/p>$/i, "")
+      .trim();
   }
 
   const document = new DOMParser().parseFromString(html, "text/html");
@@ -959,24 +968,25 @@ export function AdminRichTextField({
         throw editorError;
       },
       theme: editorTheme,
-      editorState: getInitialEditorHtml(initialValue, mode)
-        ? (editor: LexicalEditor) => {
-            const dom = new DOMParser().parseFromString(
-              getInitialEditorHtml(initialValue, mode),
-              "text/html",
-            );
-            const nodes = $generateNodesFromDOM(editor, dom);
-            const root = $getRoot();
+      editorState:
+        canUseDomParser() && getInitialEditorHtml(initialValue, mode)
+          ? (editor: LexicalEditor) => {
+              const dom = new DOMParser().parseFromString(
+                getInitialEditorHtml(initialValue, mode),
+                "text/html",
+              );
+              const nodes = $generateNodesFromDOM(editor, dom);
+              const root = $getRoot();
 
-            root.clear();
-            root.select();
-            $insertNodes(nodes);
+              root.clear();
+              root.select();
+              $insertNodes(nodes);
 
-            if (root.getChildrenSize() === 0) {
-              root.append($createParagraphNode());
+              if (root.getChildrenSize() === 0) {
+                root.append($createParagraphNode());
+              }
             }
-          }
-        : undefined,
+          : undefined,
     }),
     [initialValue, mode, name],
   );
