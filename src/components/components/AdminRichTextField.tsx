@@ -262,7 +262,11 @@ const appendImportedNodesToRoot = (nodes: LexicalNode[]) => {
       continue;
     }
 
-    if ($isTextNode(node) || ($isElementNode(node) && node.isInline()) || node.getType() === "linebreak") {
+    if (
+      $isTextNode(node) ||
+      ($isElementNode(node) && node.isInline()) ||
+      node.getType() === "linebreak"
+    ) {
       appendInlineNode(node);
       continue;
     }
@@ -384,7 +388,9 @@ const convertImageElement = (domNode: Node): DOMConversionOutput | null => {
         const widthValue =
           domNode.dataset.widthPct ?? domNode.style.width.replace(/%$/, "").trim() ?? "";
         const parsedWidth = Number(widthValue);
-        return Number.isFinite(parsedWidth) ? clampImageWidthPct(parsedWidth) : defaultImageWidthPct;
+        return Number.isFinite(parsedWidth)
+          ? clampImageWidthPct(parsedWidth)
+          : defaultImageWidthPct;
       })(),
     }),
   };
@@ -524,7 +530,9 @@ function ImageComponent({
       const handlePointerMove = (moveEvent: PointerEvent) => {
         const deltaPx = moveEvent.clientX - startX;
         const signedDeltaPx = edge === "right" ? deltaPx : -deltaPx;
-        const nextWidthPct = clampImageWidthPct(initialWidthPct + (signedDeltaPx / rootWidth) * 100);
+        const nextWidthPct = clampImageWidthPct(
+          initialWidthPct + (signedDeltaPx / rootWidth) * 100,
+        );
 
         updateWidthPct(nextWidthPct);
       };
@@ -1313,6 +1321,7 @@ export function AdminRichTextField({
   labels,
 }: Props) {
   const [value, setValue] = useState(initialValue);
+  const rootRef = useRef<HTMLDivElement | null>(null);
   const initialConfig = useMemo(
     () => ({
       namespace: `admin-rich-text-${name}`,
@@ -1336,8 +1345,18 @@ export function AdminRichTextField({
     [initialValue, mode, name],
   );
 
+  useEffect(() => {
+    const form = rootRef.current?.closest("form");
+
+    if (!(form instanceof HTMLFormElement)) {
+      return;
+    }
+
+    form.dispatchEvent(new CustomEvent("admin:form-value-change"));
+  }, [value]);
+
   return (
-    <div className="admin-rtf">
+    <div ref={rootRef} className="admin-rtf">
       <LexicalComposer initialConfig={initialConfig}>
         <AdminRichTextEditor
           labels={labels}

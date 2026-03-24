@@ -1,0 +1,63 @@
+---
+import { AdminMediaField } from "@/components/components/AdminMediaField";
+import { AdminRichTextField } from "@/components/components/AdminRichTextField";
+import type { ManagedPageEditorField } from "@/features/page-content/admin/managed-page-editor.config";
+
+type Props = {
+  field: ManagedPageEditorField;
+  uploadFolder: string;
+  richTextLabels: Record<string, string>;
+};
+
+const { field, uploadFolder, richTextLabels } = Astro.props;
+const fieldClass =
+  field.kind === "media"
+    ? undefined
+    : field.full
+      ? "admin-form__field admin-form__field--full"
+      : "admin-form__field";
+---
+
+{
+  field.kind === "text" ? (
+    <label class={fieldClass}>
+      <span>{field.label}</span>
+      <input class="input-control" name={field.name} value={field.value} />
+    </label>
+  ) : field.kind === "textarea" ? (
+    <label class={fieldClass}>
+      <span>{field.label}</span>
+      <textarea
+        class="input-control input-control--textarea"
+        name={field.name}
+        rows={field.rows ?? 2}
+      >
+        {field.value}
+      </textarea>
+    </label>
+  ) : field.kind === "richText" ? (
+    <div class={fieldClass}>
+      <span>{field.label}</span>
+      <AdminRichTextField
+        client:load
+        name={field.name}
+        initialValue={field.value}
+        uploadUrl="/api/admin/media/upload"
+        uploadFolder={uploadFolder}
+        labels={richTextLabels}
+      />
+    </div>
+  ) : (
+    <AdminMediaField
+      client:load
+      name={field.name}
+      label={field.label}
+      initialValue={field.value}
+      uploadUrl="/api/admin/media/upload"
+      uploadFolder={uploadFolder}
+      accept={field.accept}
+      helpText={field.helpText}
+      uploadLabel={field.uploadLabel}
+    />
+  )
+}

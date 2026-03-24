@@ -202,6 +202,16 @@ export function AdminMediaField({
     );
   }, [inputId, isVideoField, value]);
 
+  useEffect(() => {
+    const form = rootRef.current?.closest("form");
+
+    if (!(form instanceof HTMLFormElement)) {
+      return;
+    }
+
+    form.dispatchEvent(new CustomEvent("admin:form-value-change"));
+  }, [value]);
+
   const uploadFile = useCallback(
     async (file: File) => {
       const formData = new FormData();

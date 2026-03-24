@@ -1,0 +1,85 @@
+---
+import AdminRepeatableGroupField from "@/components/components/AdminRepeatableGroupField.astro";
+import type { ManagedPageEditorRepeatableGroupSection } from "@/features/page-content/admin/managed-page-editor.config";
+
+type Props = {
+  section: ManagedPageEditorRepeatableGroupSection;
+  uploadFolder: string;
+  richTextLabels: Record<string, string>;
+};
+
+const { section, uploadFolder, richTextLabels } = Astro.props;
+---
+
+<div
+  class="card"
+  style="padding: 1.5rem;"
+  data-section-preview
+  data-section-preview-fragment={section.fragment}
+>
+  <div class="page-grid">
+    <div>
+      <h2 style="margin: 0;">{section.title}</h2>
+      <p class="section-copy">{section.copy}</p>
+    </div>
+
+    <div class="admin-form__grid">
+      <div
+        class="admin-form__field admin-form__field--full"
+        data-repeatable-group-list
+        data-repeatable-item-label={section.itemLabel}
+        data-repeatable-name-prefix={section.itemNamePrefix}
+        data-repeatable-min-items={section.minItems ?? 1}
+        data-repeatable-upload-folder={uploadFolder}
+        data-repeatable-group-fields={JSON.stringify(section.fields)}
+        data-repeatable-rich-text-labels={JSON.stringify(richTextLabels)}
+      >
+        {
+          section.items.map((item, index) => (
+            <div class="admin-section-group admin-form__field--full" data-repeatable-group-item>
+              <div style="display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                <h3 style="margin: 0;" data-repeatable-group-title>
+                  {section.itemLabel} {index + 1}
+                </h3>
+                <button class="button-secondary" type="button" data-repeatable-group-remove>
+                  Ukloni
+                </button>
+              </div>
+
+              <div class="admin-form__grid">
+                {section.fields.map((field) => (
+                  <AdminRepeatableGroupField field={field} value={item[field.key] ?? ""} />
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="admin-form__actions" style="justify-content: flex-start;">
+        <button class="button-secondary" type="button" data-repeatable-group-add>
+          {section.addButtonLabel}
+        </button>
+      </div>
+
+      <template data-repeatable-group-template>
+        <div class="admin-section-group admin-form__field--full" data-repeatable-group-item>
+          <div
+            style="display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; flex-wrap: wrap;"
+          >
+            <h3 style="margin: 0;" data-repeatable-group-title>
+              {section.itemLabel}
+            </h3>
+            <button class="button-secondary" type="button" data-repeatable-group-remove>
+              Ukloni
+            </button>
+          </div>
+
+          <div class="admin-form__grid">
+            {section.fields.map((field) => <AdminRepeatableGroupField field={field} value="" />)}
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,14 @@
 ---
-import { AdminMediaField } from "@/components/components/AdminMediaField";
-import { AdminRichTextField } from "@/components/components/AdminRichTextField";
+import AdminBiographyCardsEditor from "@/components/components/AdminBiographyCardsEditor.astro";
+import AdminManagedSection from "@/components/components/AdminManagedSection.astro";
+import AdminRepeatableGroupSection from "@/components/components/AdminRepeatableGroupSection.astro";
+import AdminRepeatableTextSection from "@/components/components/AdminRepeatableTextSection.astro";
+import AdminScopeTabsEditor from "@/components/components/AdminScopeTabsEditor.astro";
+import {
+  getManagedPageEditorConfig,
+  type ManagedPageEditorConfig,
+  type SupportedManagedPage,
+} from "@/features/page-content/admin/managed-page-editor.config";
 import type {
   AboutPageManagedContent,
   AppointmentPageManagedContent,
@@ -32,6 +40,10 @@ type Props = {
 };
 
 const { action, content, locale, page, previewBaseHref, localeLabel } = Astro.props;
+const editorConfig: ManagedPageEditorConfig = getManagedPageEditorConfig(
+  page as SupportedManagedPage,
+  content,
+);
 const richTextLabels = {
   bold: "Bold",
   italic: "Italic",
@@ -53,2233 +65,51 @@ const richTextLabels = {
   method="post"
   action={action}
   data-admin-section-preview-root
+  data-admin-preview-endpoint="/api/admin/pages/preview"
   data-preview-base-href={previewBaseHref}
   data-preview-locale-label={localeLabel}
 >
   <input type="hidden" name="locale" value={locale} />
+  <input type="hidden" name="pageKey" value={page} />
+  <input type="hidden" name="previewToken" value="" data-admin-preview-token />
 
   {
-    page === "about"
-      ? (() => {
-          const pageContent = content as AboutPageManagedContent;
-
-          return (
-            <>
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="about-banner"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Banner</h2>
-                    <p class="section-copy">Naslov, opis i pozadinska slika vrha stranice.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <label class="admin-form__field">
-                      <span>Naslov</span>
-                      <input
-                        class="input-control"
-                        name="bannerTitle"
-                        value={pageContent.banner.title}
-                      />
-                    </label>
-
-                    <div class="admin-form__field admin-form__field--full">
-                      <span>Opis</span>
-                      <AdminRichTextField
-                        client:load
-                        name="bannerDescription"
-                        initialValue={pageContent.banner.description}
-                        uploadUrl="/api/admin/media/upload"
-                        uploadFolder="pages/about"
-                        labels={richTextLabels}
-                      />
-                    </div>
-
-                    <AdminMediaField
-                      client:load
-                      name="bannerBackgroundImage"
-                      label="Pozadinska slika"
-                      initialValue={pageContent.banner.backgroundImage}
-                      uploadUrl="/api/admin/media/upload"
-                      uploadFolder="pages/about"
-                      uploadLabel="Otpremi sliku"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="about-showcase"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Video i kartice</h2>
-                    <p class="section-copy">Video prikaz i tri kartice ispod njega.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <label class="admin-form__field admin-form__field--full">
-                      <span>Naslov sekcije</span>
-                      <input
-                        class="input-control"
-                        name="showcaseTitle"
-                        value={pageContent.showcase.title}
-                      />
-                    </label>
-
-                    <label class="admin-form__field admin-form__field--full">
-                      <span>Video URL</span>
-                      <input
-                        class="input-control"
-                        name="showcaseVideoUrl"
-                        value={pageContent.showcase.videoUrl}
-                      />
-                    </label>
-
-                    <AdminMediaField
-                      client:load
-                      name="showcaseVideoImage"
-                      label="Poster slika videa"
-                      initialValue={pageContent.showcase.videoImage}
-                      uploadUrl="/api/admin/media/upload"
-                      uploadFolder="pages/about"
-                      uploadLabel="Otpremi sliku"
-                    />
-
-                    {pageContent.showcase.cards.map((card, index) => (
-                      <div class="admin-section-group admin-form__field--full">
-                        <h3 style="margin: 0;">Kartica {index + 1}</h3>
-                        <div class="admin-form__grid">
-                          <label class="admin-form__field">
-                            <span>Naslov</span>
-                            <input
-                              class="input-control"
-                              name={`showcaseCard${index + 1}Title`}
-                              value={card.title}
-                            />
-                          </label>
-
-                          <div class="admin-form__field admin-form__field--full">
-                            <span>Opis</span>
-                            <AdminRichTextField
-                              client:load
-                              name={`showcaseCard${index + 1}Copy`}
-                              initialValue={card.copy}
-                              uploadUrl="/api/admin/media/upload"
-                              uploadFolder="pages/about"
-                              labels={richTextLabels}
-                            />
-                          </div>
-
-                          <AdminMediaField
-                            client:load
-                            name={`showcaseCard${index + 1}Image`}
-                            label="Slika"
-                            initialValue={card.image}
-                            uploadUrl="/api/admin/media/upload"
-                            uploadFolder="pages/about"
-                            uploadLabel="Otpremi sliku"
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="about-idea"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Glavna ideja</h2>
-                    <p class="section-copy">Naslov i rich text sadržaj centralnog objašnjenja.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <label class="admin-form__field admin-form__field--full">
-                      <span>Naslov</span>
-                      <input
-                        class="input-control"
-                        name="ideaTitle"
-                        value={pageContent.idea.title}
-                      />
-                    </label>
-
-                    <div class="admin-form__field admin-form__field--full">
-                      <span>Sadržaj</span>
-                      <AdminRichTextField
-                        client:load
-                        name="ideaBody"
-                        initialValue={pageContent.idea.body}
-                        uploadUrl="/api/admin/media/upload"
-                        uploadFolder="pages/about"
-                        labels={richTextLabels}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="about-idea"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Fokus</h2>
-                    <p class="section-copy">Naslov i pet stavki u bočnoj kartici.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <label class="admin-form__field admin-form__field--full">
-                      <span>Naslov</span>
-                      <input
-                        class="input-control"
-                        name="focusTitle"
-                        value={pageContent.focus.title}
-                      />
-                    </label>
-
-                    {pageContent.focus.items.map((item, index) => (
-                      <label class="admin-form__field">
-                        <span>Stavka {index + 1}</span>
-                        <input class="input-control" name={`focusItem${index + 1}`} value={item} />
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="about-blog"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Blog sekcija</h2>
-                    <p class="section-copy">Tekstualni blok iznad poslednjih blog postova.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <label class="admin-form__field">
-                      <span>Naslov</span>
-                      <input
-                        class="input-control"
-                        name="recentTitle"
-                        value={pageContent.recent.title}
-                      />
-                    </label>
-
-                    <label class="admin-form__field">
-                      <span>Labela dugmeta</span>
-                      <input
-                        class="input-control"
-                        name="recentLabel"
-                        value={pageContent.recent.label}
-                      />
-                    </label>
-
-                    <div class="admin-form__field admin-form__field--full">
-                      <span>Opis</span>
-                      <AdminRichTextField
-                        client:load
-                        name="recentCopy"
-                        initialValue={pageContent.recent.copy}
-                        uploadUrl="/api/admin/media/upload"
-                        uploadFolder="pages/about"
-                        labels={richTextLabels}
-                      />
-                    </div>
-
-                    <label class="admin-form__field admin-form__field--full">
-                      <span>Poruka kada nema postova</span>
-                      <textarea
-                        class="input-control input-control--textarea"
-                        name="recentEmpty"
-                        rows={2}
-                      >
-                        {pageContent.recent.empty}
-                      </textarea>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </>
-          );
-        })()
-      : null
-  }
-
-  {
-    page === "biography"
-      ? (() => {
-          const pageContent = content as BiographyPageManagedContent;
-
-          return (
-            <>
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="biography-banner"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Banner</h2>
-                    <p class="section-copy">Naslovna sekcija biografije.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <label class="admin-form__field">
-                      <span>Naslov</span>
-                      <input
-                        class="input-control"
-                        name="bannerTitle"
-                        value={pageContent.banner.title}
-                      />
-                    </label>
-
-                    <div class="admin-form__field admin-form__field--full">
-                      <span>Opis</span>
-                      <AdminRichTextField
-                        client:load
-                        name="bannerDescription"
-                        initialValue={pageContent.banner.description}
-                        uploadUrl="/api/admin/media/upload"
-                        uploadFolder="pages/biography"
-                        labels={richTextLabels}
-                      />
-                    </div>
-
-                    <AdminMediaField
-                      client:load
-                      name="bannerBackgroundImage"
-                      label="Pozadinska slika"
-                      initialValue={pageContent.banner.backgroundImage}
-                      uploadUrl="/api/admin/media/upload"
-                      uploadFolder="pages/biography"
-                      uploadLabel="Otpremi sliku"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="biography-cards"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Kartice</h2>
-                    <p class="section-copy">
-                      Naslov sekcije i dinamični profili tima. Svaki profil dobija svoju javnu
-                      stranicu.
-                    </p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <label class="admin-form__field admin-form__field--full">
-                      <span>Naslov sekcije</span>
-                      <input
-                        class="input-control"
-                        name="cardsTitle"
-                        value={pageContent.cardsSection.title}
-                      />
-                    </label>
-
-                    <div class="admin-form__field admin-form__field--full">
-                      <span>Opis sekcije</span>
-                      <AdminRichTextField
-                        client:load
-                        name="cardsCopy"
-                        initialValue={pageContent.cardsSection.copy}
-                        uploadUrl="/api/admin/media/upload"
-                        uploadFolder="pages/biography"
-                        labels={richTextLabels}
-                      />
-                    </div>
-
-                    <div
-                      class="admin-form__field admin-form__field--full"
-                      data-biography-card-list
-                      data-biography-card-rich-text-labels={JSON.stringify(richTextLabels)}
-                    >
-                      {pageContent.cardsSection.cards.map((card, index) => (
-                        <div
-                          class="admin-section-group admin-form__field--full"
-                          data-biography-card-item
-                        >
-                          <div style="display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
-                            <h3 style="margin: 0;" data-biography-card-title>
-                              Profil {index + 1}
-                            </h3>
-                            <button
-                              class="button-secondary"
-                              type="button"
-                              data-biography-card-remove
-                            >
-                              Obriši profil
-                            </button>
-                          </div>
-
-                          <div class="admin-form__grid">
-                            <label class="admin-form__field">
-                              <span>Slug</span>
-                              <input
-                                class="input-control"
-                                data-biography-card-field="slug"
-                                name={`biographyCard_${index}_slug`}
-                                value={card.slug}
-                              />
-                            </label>
-
-                            <label class="admin-form__field">
-                              <span>Naslov</span>
-                              <input
-                                class="input-control"
-                                data-biography-card-field="title"
-                                name={`biographyCard_${index}_title`}
-                                value={card.title}
-                              />
-                            </label>
-
-                            <label class="admin-form__field">
-                              <span>Rola</span>
-                              <input
-                                class="input-control"
-                                data-biography-card-field="role"
-                                name={`biographyCard_${index}_role`}
-                                value={card.role}
-                              />
-                            </label>
-
-                            <div class="admin-form__field admin-form__field--full">
-                              <span>Sažetak na kartici</span>
-                              <div
-                                class="admin-biography-card-rich-text"
-                                data-biography-card-field="summary"
-                              >
-                                <textarea data-biography-card-rtf-initial hidden>
-                                  {card.summary}
-                                </textarea>
-                              </div>
-                            </div>
-
-                            <div class="admin-form__field admin-form__field--full">
-                              <span>Detalj tekst stranice</span>
-                              <div
-                                class="admin-biography-card-rich-text"
-                                data-biography-card-field="body"
-                              >
-                                <textarea data-biography-card-rtf-initial hidden>
-                                  {card.body}
-                                </textarea>
-                              </div>
-                            </div>
-
-                            <div class="admin-inline-media-field admin-form__field--full">
-                              <span>Slika</span>
-                              <input
-                                data-biography-card-field="image"
-                                data-biography-card-image-input
-                                name={`biographyCard_${index}_image`}
-                                type="hidden"
-                                value={card.image}
-                              />
-                              <div
-                                class="admin-inline-media-field__preview"
-                                data-biography-card-image-preview
-                              >
-                                {card.image ? (
-                                  <img src={card.image} alt="" loading="lazy" />
-                                ) : (
-                                  <p class="admin-inline-media-field__empty">Slika nije dodata.</p>
-                                )}
-                              </div>
-                              <div class="admin-inline-media-field__actions">
-                                <label class="button-secondary admin-inline-media-field__upload">
-                                  <span>Otpremi sliku</span>
-                                  <input
-                                    accept="image/*"
-                                    data-biography-card-upload
-                                    hidden
-                                    type="file"
-                                  />
-                                </label>
-                                <button
-                                  class="button-secondary"
-                                  data-biography-card-image-clear
-                                  type="button"
-                                >
-                                  Ukloni sliku
-                                </button>
-                              </div>
-                              <div
-                                class="admin-upload-progress"
-                                data-biography-card-image-progress
-                                hidden
-                              >
-                                <div class="admin-upload-progress__track">
-                                  <div
-                                    class="admin-upload-progress__bar"
-                                    data-biography-card-image-progress-bar
-                                    style="width: 0%;"
-                                  />
-                                </div>
-                              </div>
-                              <p
-                                class="admin-inline-media-field__status"
-                                data-biography-card-image-status
-                              />
-                            </div>
-
-                            {card.highlights.map((highlight, highlightIndex) => (
-                              <label class="admin-form__field">
-                                <span>Tag {highlightIndex + 1}</span>
-                                <input
-                                  class="input-control"
-                                  data-biography-card-field={`highlight${highlightIndex + 1}`}
-                                  name={`biographyCard_${index}_highlight${highlightIndex + 1}`}
-                                  value={highlight}
-                                />
-                              </label>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div class="admin-form__actions" style="justify-content: flex-start;">
-                      <button class="button-secondary" type="button" data-biography-card-add>
-                        Dodaj profil
-                      </button>
-                    </div>
-
-                    <template data-biography-card-template>
-                      <div
-                        class="admin-section-group admin-form__field--full"
-                        data-biography-card-item
-                      >
-                        <div style="display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
-                          <h3 style="margin: 0;" data-biography-card-title>
-                            Profil
-                          </h3>
-                          <button class="button-secondary" type="button" data-biography-card-remove>
-                            Obriši profil
-                          </button>
-                        </div>
-
-                        <div class="admin-form__grid">
-                          <label class="admin-form__field">
-                            <span>Slug</span>
-                            <input class="input-control" data-biography-card-field="slug" />
-                          </label>
-
-                          <label class="admin-form__field">
-                            <span>Naslov</span>
-                            <input class="input-control" data-biography-card-field="title" />
-                          </label>
-
-                          <label class="admin-form__field">
-                            <span>Rola</span>
-                            <input class="input-control" data-biography-card-field="role" />
-                          </label>
-
-                          <div class="admin-form__field admin-form__field--full">
-                            <span>Sažetak na kartici</span>
-                            <div
-                              class="admin-biography-card-rich-text"
-                              data-biography-card-field="summary"
-                            >
-                              <textarea data-biography-card-rtf-initial hidden />
-                            </div>
-                          </div>
-
-                          <div class="admin-form__field admin-form__field--full">
-                            <span>Detalj tekst stranice</span>
-                            <div
-                              class="admin-biography-card-rich-text"
-                              data-biography-card-field="body"
-                            >
-                              <textarea data-biography-card-rtf-initial hidden />
-                            </div>
-                          </div>
-
-                          <div class="admin-inline-media-field admin-form__field--full">
-                            <span>Slika</span>
-                            <input
-                              data-biography-card-field="image"
-                              data-biography-card-image-input
-                              type="hidden"
-                            />
-                            <div
-                              class="admin-inline-media-field__preview"
-                              data-biography-card-image-preview
-                            >
-                              <p class="admin-inline-media-field__empty">Slika nije dodata.</p>
-                            </div>
-                            <div class="admin-inline-media-field__actions">
-                              <label class="button-secondary admin-inline-media-field__upload">
-                                <span>Otpremi sliku</span>
-                                <input
-                                  accept="image/*"
-                                  data-biography-card-upload
-                                  hidden
-                                  type="file"
-                                />
-                              </label>
-                              <button
-                                class="button-secondary"
-                                data-biography-card-image-clear
-                                type="button"
-                              >
-                                Ukloni sliku
-                              </button>
-                            </div>
-                            <div
-                              class="admin-upload-progress"
-                              data-biography-card-image-progress
-                              hidden
-                            >
-                              <div class="admin-upload-progress__track">
-                                <div
-                                  class="admin-upload-progress__bar"
-                                  data-biography-card-image-progress-bar
-                                  style="width: 0%;"
-                                />
-                              </div>
-                            </div>
-                            <p
-                              class="admin-inline-media-field__status"
-                              data-biography-card-image-status
-                            />
-                          </div>
-
-                          <label class="admin-form__field">
-                            <span>Tag 1</span>
-                            <input class="input-control" data-biography-card-field="highlight1" />
-                          </label>
-
-                          <label class="admin-form__field">
-                            <span>Tag 2</span>
-                            <input class="input-control" data-biography-card-field="highlight2" />
-                          </label>
-
-                          <label class="admin-form__field">
-                            <span>Tag 3</span>
-                            <input class="input-control" data-biography-card-field="highlight3" />
-                          </label>
-                        </div>
-                      </div>
-                    </template>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="biography-approach"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Pristup radu</h2>
-                    <p class="section-copy">Donja sekcija sa slikom i CTA dugmetom.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <label class="admin-form__field admin-form__field--full">
-                      <span>Naslov</span>
-                      <input
-                        class="input-control"
-                        name="approachTitle"
-                        value={pageContent.approach.title}
-                      />
-                    </label>
-
-                    <div class="admin-form__field admin-form__field--full">
-                      <span>Opis</span>
-                      <AdminRichTextField
-                        client:load
-                        name="approachCopy"
-                        initialValue={pageContent.approach.copy}
-                        uploadUrl="/api/admin/media/upload"
-                        uploadFolder="pages/biography"
-                        labels={richTextLabels}
-                      />
-                    </div>
-
-                    {pageContent.approach.points.map((point, index) => (
-                      <label class="admin-form__field">
-                        <span>Stavka {index + 1}</span>
-                        <input
-                          class="input-control"
-                          name={`approachPoint${index + 1}`}
-                          value={point}
-                        />
-                      </label>
-                    ))}
-
-                    <AdminMediaField
-                      client:load
-                      name="approachImage"
-                      label="Slika"
-                      initialValue={pageContent.approach.image}
-                      uploadUrl="/api/admin/media/upload"
-                      uploadFolder="pages/biography"
-                      uploadLabel="Otpremi sliku"
-                    />
-
-                    <label class="admin-form__field">
-                      <span>Labela CTA dugmeta</span>
-                      <input
-                        class="input-control"
-                        name="approachCtaLabel"
-                        value={pageContent.approach.ctaLabel}
-                      />
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </>
-          );
-        })()
-      : null
-  }
-
-  {
-    page === "psychotherapy"
-      ? (() => {
-          const pageContent = content as PsychotherapyPageManagedContent;
-
-          return (
-            <>
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="psychotherapy-banner"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Banner</h2>
-                    <p class="section-copy">Naslovna sekcija stranice Pristup.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <label class="admin-form__field">
-                      <span>Naslov</span>
-                      <input
-                        class="input-control"
-                        name="bannerTitle"
-                        value={pageContent.banner.title}
-                      />
-                    </label>
-
-                    <div class="admin-form__field admin-form__field--full">
-                      <span>Opis</span>
-                      <AdminRichTextField
-                        client:load
-                        name="bannerDescription"
-                        initialValue={pageContent.banner.description}
-                        uploadUrl="/api/admin/media/upload"
-                        uploadFolder="pages/psychotherapy"
-                        labels={richTextLabels}
-                      />
-                    </div>
-
-                    <AdminMediaField
-                      client:load
-                      name="bannerBackgroundImage"
-                      label="Pozadinska slika"
-                      initialValue={pageContent.banner.backgroundImage}
-                      uploadUrl="/api/admin/media/upload"
-                      uploadFolder="pages/psychotherapy"
-                      uploadLabel="Otpremi sliku"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="psychotherapy-scope"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Opseg rada</h2>
-                    <p class="section-copy">Naslov i sedam stavki centralnog bloka.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <label class="admin-form__field admin-form__field--full">
-                      <span>Naslov bloka</span>
-                      <input
-                        class="input-control"
-                        name="scopeTitle"
-                        value={pageContent.scope.title}
-                      />
-                    </label>
-
-                    {pageContent.scope.items.map((item, index) => (
-                      <label class="admin-form__field">
-                        <span>Stavka {index + 1}</span>
-                        <input class="input-control" name={`scopeItem${index + 1}`} value={item} />
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="psychotherapy-services"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Usluge</h2>
-                    <p class="section-copy">Tri vizuelne kartice usluga.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    {pageContent.services.cards.map((card, index) => (
-                      <div class="admin-section-group admin-form__field--full">
-                        <h3 style="margin: 0;">Kartica {index + 1}</h3>
-                        <div class="admin-form__grid">
-                          <label class="admin-form__field">
-                            <span>Naslov</span>
-                            <input
-                              class="input-control"
-                              name={`service${index + 1}Title`}
-                              value={card.title}
-                            />
-                          </label>
-
-                          <div class="admin-form__field admin-form__field--full">
-                            <span>Opis</span>
-                            <AdminRichTextField
-                              client:load
-                              name={`service${index + 1}Copy`}
-                              initialValue={card.copy}
-                              uploadUrl="/api/admin/media/upload"
-                              uploadFolder="pages/psychotherapy"
-                              labels={richTextLabels}
-                            />
-                          </div>
-
-                          <AdminMediaField
-                            client:load
-                            name={`service${index + 1}Image`}
-                            label="Slika"
-                            initialValue={card.image}
-                            uploadUrl="/api/admin/media/upload"
-                            uploadFolder="pages/psychotherapy"
-                            uploadLabel="Otpremi sliku"
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="psychotherapy-booking"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Zakazivanje</h2>
-                    <p class="section-copy">Tekstualni blok i formati rada.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <label class="admin-form__field admin-form__field--full">
-                      <span>Naslov</span>
-                      <input
-                        class="input-control"
-                        name="bookingTitle"
-                        value={pageContent.booking.title}
-                      />
-                    </label>
-
-                    <div class="admin-form__field admin-form__field--full">
-                      <span>Opis</span>
-                      <AdminRichTextField
-                        client:load
-                        name="bookingCopy"
-                        initialValue={pageContent.booking.copy}
-                        uploadUrl="/api/admin/media/upload"
-                        uploadFolder="pages/psychotherapy"
-                        labels={richTextLabels}
-                      />
-                    </div>
-
-                    <label class="admin-form__field">
-                      <span>Labela formata</span>
-                      <input
-                        class="input-control"
-                        name="bookingFormatLabel"
-                        value={pageContent.booking.formatLabel}
-                      />
-                    </label>
-
-                    {pageContent.booking.formats.map((format, index) => (
-                      <label class="admin-form__field">
-                        <span>Format {index + 1}</span>
-                        <input
-                          class="input-control"
-                          name={`bookingFormat${index + 1}`}
-                          value={format}
-                        />
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="psychotherapy-faq"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">FAQ</h2>
-                    <p class="section-copy">Slika i četiri pitanja sa odgovorima.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <AdminMediaField
-                      client:load
-                      name="faqImage"
-                      label="FAQ slika"
-                      initialValue={pageContent.faq.image}
-                      uploadUrl="/api/admin/media/upload"
-                      uploadFolder="pages/psychotherapy"
-                      uploadLabel="Otpremi sliku"
-                    />
-
-                    {pageContent.faq.items.map((item, index) => (
-                      <div class="admin-section-group admin-form__field--full">
-                        <h3 style="margin: 0;">Pitanje {index + 1}</h3>
-                        <div class="admin-form__grid">
-                          <label class="admin-form__field admin-form__field--full">
-                            <span>Pitanje</span>
-                            <input
-                              class="input-control"
-                              name={`faq${index + 1}Question`}
-                              value={item.question}
-                            />
-                          </label>
-
-                          <div class="admin-form__field admin-form__field--full">
-                            <span>Odgovor</span>
-                            <AdminRichTextField
-                              client:load
-                              name={`faq${index + 1}Answer`}
-                              initialValue={item.answer}
-                              uploadUrl="/api/admin/media/upload"
-                              uploadFolder="pages/psychotherapy"
-                              labels={richTextLabels}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </>
-          );
-        })()
-      : null
-  }
-
-  {
-    page === "scope"
-      ? (() => {
-          const pageContent = content as ScopePageManagedContent;
-
-          return (
-            <>
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="scope-banner"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Banner</h2>
-                    <p class="section-copy">Naslovna sekcija stranice Oblast rada.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <label class="admin-form__field">
-                      <span>Naslov</span>
-                      <input
-                        class="input-control"
-                        name="bannerTitle"
-                        value={pageContent.banner.title}
-                      />
-                    </label>
-
-                    <div class="admin-form__field admin-form__field--full">
-                      <span>Opis</span>
-                      <AdminRichTextField
-                        client:load
-                        name="bannerDescription"
-                        initialValue={pageContent.banner.description}
-                        uploadUrl="/api/admin/media/upload"
-                        uploadFolder="pages/scope"
-                        labels={richTextLabels}
-                      />
-                    </div>
-
-                    <AdminMediaField
-                      client:load
-                      name="bannerBackgroundImage"
-                      label="Pozadinska slika"
-                      initialValue={pageContent.banner.backgroundImage}
-                      uploadUrl="/api/admin/media/upload"
-                      uploadFolder="pages/scope"
-                      uploadLabel="Otpremi sliku"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="scope-tabs"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Uvodni blok</h2>
-                    <p class="section-copy">Naslov i sedam stavki uvoda.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <label class="admin-form__field admin-form__field--full">
-                      <span>Naslov</span>
-                      <input
-                        class="input-control"
-                        name="introTitle"
-                        value={pageContent.intro.title}
-                      />
-                    </label>
-
-                    {pageContent.intro.items.map((item, index) => (
-                      <label class="admin-form__field">
-                        <span>Stavka {index + 1}</span>
-                        <input class="input-control" name={`introItem${index + 1}`} value={item} />
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="scope-tabs"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Detalj stranice</h2>
-                    <p class="section-copy">Zajednički tekst za donji deo detail stranica.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <label class="admin-form__field">
-                      <span>Naslov povezanih tema</span>
-                      <input
-                        class="input-control"
-                        name="detailRelatedTitle"
-                        value={pageContent.detail.relatedTitle}
-                      />
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="scope-focus"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Fokus sekcija</h2>
-                    <p class="section-copy">Slika, kopija i CTA za srednji blok.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <label class="admin-form__field admin-form__field--full">
-                      <span>Naslov</span>
-                      <input
-                        class="input-control"
-                        name="focusTitle"
-                        value={pageContent.focus.title}
-                      />
-                    </label>
-
-                    <div class="admin-form__field admin-form__field--full">
-                      <span>Prvi pasus</span>
-                      <AdminRichTextField
-                        client:load
-                        name="focusCopy"
-                        initialValue={pageContent.focus.copy}
-                        uploadUrl="/api/admin/media/upload"
-                        uploadFolder="pages/scope"
-                        labels={richTextLabels}
-                      />
-                    </div>
-
-                    <div class="admin-form__field admin-form__field--full">
-                      <span>Drugi pasus</span>
-                      <AdminRichTextField
-                        client:load
-                        name="focusSecondaryCopy"
-                        initialValue={pageContent.focus.secondaryCopy}
-                        uploadUrl="/api/admin/media/upload"
-                        uploadFolder="pages/scope"
-                        labels={richTextLabels}
-                      />
-                    </div>
-
-                    <AdminMediaField
-                      client:load
-                      name="focusImage"
-                      label="Slika"
-                      initialValue={pageContent.focus.image}
-                      uploadUrl="/api/admin/media/upload"
-                      uploadFolder="pages/scope"
-                      uploadLabel="Otpremi sliku"
-                    />
-
-                    <label class="admin-form__field">
-                      <span>Labela CTA</span>
-                      <input
-                        class="input-control"
-                        name="focusCtaLabel"
-                        value={pageContent.focus.ctaLabel}
-                      />
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="scope-blog"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Blog sekcija</h2>
-                    <p class="section-copy">Tekstualni blok ispod fokus sekcije.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <label class="admin-form__field">
-                      <span>Naslov</span>
-                      <input
-                        class="input-control"
-                        name="recentTitle"
-                        value={pageContent.recent.title}
-                      />
-                    </label>
-
-                    <label class="admin-form__field">
-                      <span>Labela dugmeta</span>
-                      <input
-                        class="input-control"
-                        name="recentLabel"
-                        value={pageContent.recent.label}
-                      />
-                    </label>
-
-                    <div class="admin-form__field admin-form__field--full">
-                      <span>Opis</span>
-                      <AdminRichTextField
-                        client:load
-                        name="recentCopy"
-                        initialValue={pageContent.recent.copy}
-                        uploadUrl="/api/admin/media/upload"
-                        uploadFolder="pages/scope"
-                        labels={richTextLabels}
-                      />
-                    </div>
-
-                    <label class="admin-form__field admin-form__field--full">
-                      <span>Poruka kada nema postova</span>
-                      <textarea
-                        class="input-control input-control--textarea"
-                        name="recentEmpty"
-                        rows={2}
-                      >
-                        {pageContent.recent.empty}
-                      </textarea>
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="scope-tabs"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Teme rada</h2>
-                    <p class="section-copy">
-                      Dinamični tabovi i detail sadržaj. Svaka tema automatski dobija svoju javnu
-                      stranicu.
-                    </p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <div
-                      class="admin-form__field admin-form__field--full"
-                      data-scope-tab-list
-                      data-scope-tab-rich-text-labels={JSON.stringify(richTextLabels)}
-                    >
-                      {pageContent.tabs.map((tab, index) => (
-                        <div class="admin-section-group admin-form__field--full" data-scope-tab-item>
-                          <div style="display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
-                            <h3 style="margin: 0;" data-scope-tab-title>
-                              Tema {index + 1}
-                            </h3>
-                            <button class="button-secondary" type="button" data-scope-tab-remove>
-                              Obriši temu
-                            </button>
-                          </div>
-
-                          <div class="admin-form__grid">
-                            <label class="admin-form__field">
-                              <span>Slug</span>
-                              <input
-                                class="input-control"
-                                data-scope-tab-field="id"
-                                value={tab.id}
-                              />
-                            </label>
-
-                            <label class="admin-form__field">
-                              <span>Labela</span>
-                              <input
-                                class="input-control"
-                                data-scope-tab-field="label"
-                                value={tab.label}
-                              />
-                            </label>
-
-                            <label class="admin-form__field">
-                              <span>Meta labela taba</span>
-                              <input
-                                class="input-control"
-                                data-scope-tab-field="tabMeta"
-                                value={tab.tabMeta}
-                              />
-                            </label>
-
-                            <div class="admin-inline-media-field admin-form__field--full">
-                              <span>Ikonica</span>
-                              <input
-                                data-scope-tab-field="icon"
-                                data-scope-tab-image-input="icon"
-                                type="hidden"
-                                value={tab.icon}
-                              />
-                              <div
-                                class="admin-inline-media-field__preview"
-                                data-scope-tab-image-preview="icon"
-                              >
-                                {tab.icon ? (
-                                  <img src={tab.icon} alt="" loading="lazy" />
-                                ) : (
-                                  <p class="admin-inline-media-field__empty">Slika nije dodata.</p>
-                                )}
-                              </div>
-                              <div class="admin-inline-media-field__actions">
-                                <label class="button-secondary admin-inline-media-field__upload">
-                                  <span>Otpremi sliku</span>
-                                  <input
-                                    accept="image/*"
-                                    data-scope-tab-upload="icon"
-                                    hidden
-                                    type="file"
-                                  />
-                                </label>
-                                <button
-                                  class="button-secondary"
-                                  data-scope-tab-image-clear="icon"
-                                  type="button"
-                                >
-                                  Ukloni sliku
-                                </button>
-                              </div>
-                              <div
-                                class="admin-upload-progress"
-                                data-scope-tab-image-progress="icon"
-                                hidden
-                              >
-                                <div class="admin-upload-progress__track">
-                                  <div
-                                    class="admin-upload-progress__bar"
-                                    data-scope-tab-image-progress-bar="icon"
-                                    style="width: 0%;"
-                                  />
-                                </div>
-                              </div>
-                              <p
-                                class="admin-inline-media-field__status"
-                                data-scope-tab-image-status="icon"
-                              />
-                            </div>
-
-                            <label class="admin-form__field">
-                              <span>Naslov panela</span>
-                              <input
-                                class="input-control"
-                                data-scope-tab-field="summaryTitle"
-                                value={tab.summaryTitle}
-                              />
-                            </label>
-
-                            <div class="admin-form__field admin-form__field--full">
-                              <span>Kratki opis panela</span>
-                              <div
-                                class="admin-scope-tab-rich-text"
-                                data-scope-tab-field="summaryCopy"
-                              >
-                                <textarea data-scope-tab-rtf-initial hidden>
-                                  {tab.summaryCopy}
-                                </textarea>
-                              </div>
-                            </div>
-
-                            <label class="admin-form__field">
-                              <span>Eyebrow panela</span>
-                              <input
-                                class="input-control"
-                                data-scope-tab-field="panelEyebrow"
-                                value={tab.panelEyebrow}
-                              />
-                            </label>
-
-                            <label class="admin-form__field">
-                              <span>Labela statistike</span>
-                              <input
-                                class="input-control"
-                                data-scope-tab-field="panelStatLabel"
-                                value={tab.panelStatLabel}
-                              />
-                            </label>
-
-                            <label class="admin-form__field">
-                              <span>Labela CTA u panelu</span>
-                              <input
-                                class="input-control"
-                                data-scope-tab-field="panelCtaLabel"
-                                value={tab.panelCtaLabel}
-                              />
-                            </label>
-
-                            <div class="admin-inline-media-field admin-form__field--full">
-                              <span>Detalj slika</span>
-                              <input
-                                data-scope-tab-field="detailImage"
-                                data-scope-tab-image-input="detailImage"
-                                type="hidden"
-                                value={tab.detailImage}
-                              />
-                              <div
-                                class="admin-inline-media-field__preview"
-                                data-scope-tab-image-preview="detailImage"
-                              >
-                                {tab.detailImage ? (
-                                  <img src={tab.detailImage} alt="" loading="lazy" />
-                                ) : (
-                                  <p class="admin-inline-media-field__empty">Slika nije dodata.</p>
-                                )}
-                              </div>
-                              <div class="admin-inline-media-field__actions">
-                                <label class="button-secondary admin-inline-media-field__upload">
-                                  <span>Otpremi sliku</span>
-                                  <input
-                                    accept="image/*"
-                                    data-scope-tab-upload="detailImage"
-                                    hidden
-                                    type="file"
-                                  />
-                                </label>
-                                <button
-                                  class="button-secondary"
-                                  data-scope-tab-image-clear="detailImage"
-                                  type="button"
-                                >
-                                  Ukloni sliku
-                                </button>
-                              </div>
-                              <div
-                                class="admin-upload-progress"
-                                data-scope-tab-image-progress="detailImage"
-                                hidden
-                              >
-                                <div class="admin-upload-progress__track">
-                                  <div
-                                    class="admin-upload-progress__bar"
-                                    data-scope-tab-image-progress-bar="detailImage"
-                                    style="width: 0%;"
-                                  />
-                                </div>
-                              </div>
-                              <p
-                                class="admin-inline-media-field__status"
-                                data-scope-tab-image-status="detailImage"
-                              />
-                            </div>
-
-                            <div class="admin-form__field admin-form__field--full">
-                              <span>Opis bannera detail stranice</span>
-                              <div
-                                class="admin-scope-tab-rich-text"
-                                data-scope-tab-field="detailBannerDescription"
-                              >
-                                <textarea data-scope-tab-rtf-initial hidden>
-                                  {tab.detailBannerDescription}
-                                </textarea>
-                              </div>
-                            </div>
-
-                            <label class="admin-form__field">
-                              <span>Eyebrow detail stranice</span>
-                              <input
-                                class="input-control"
-                                data-scope-tab-field="detailEyebrow"
-                                value={tab.detailEyebrow}
-                              />
-                            </label>
-
-                            <div class="admin-form__field admin-form__field--full">
-                              <span>Lead tekst</span>
-                              <div
-                                class="admin-scope-tab-rich-text"
-                                data-scope-tab-field="detailLead"
-                              >
-                                <textarea data-scope-tab-rtf-initial hidden>
-                                  {tab.detailLead}
-                                </textarea>
-                              </div>
-                            </div>
-
-                            <label class="admin-form__field">
-                              <span>Labela nazad</span>
-                              <input
-                                class="input-control"
-                                data-scope-tab-field="detailBackLabel"
-                                value={tab.detailBackLabel}
-                              />
-                            </label>
-
-                            <label class="admin-form__field">
-                              <span>Labela CTA detail stranice</span>
-                              <input
-                                class="input-control"
-                                data-scope-tab-field="detailCtaLabel"
-                                value={tab.detailCtaLabel}
-                              />
-                            </label>
-
-                            {tab.items.map((item, itemIndex) => (
-                              <>
-                                <label class="admin-form__field">
-                                  <span>Stavka {itemIndex + 1} naslov</span>
-                                  <input
-                                    class="input-control"
-                                    data-scope-tab-item-title
-                                    data-scope-tab-item-index={itemIndex}
-                                    value={item.title}
-                                  />
-                                </label>
-
-                                <div class="admin-form__field admin-form__field--full">
-                                  <span>Stavka {itemIndex + 1} opis</span>
-                                  <div
-                                    class="admin-scope-tab-item-rich-text"
-                                    data-scope-tab-item-copy
-                                    data-scope-tab-item-index={itemIndex}
-                                  >
-                                    <textarea data-scope-tab-rtf-initial hidden>
-                                      {item.copy}
-                                    </textarea>
-                                  </div>
-                                </div>
-                              </>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div class="admin-form__actions" style="justify-content: flex-start;">
-                      <button class="button-secondary" type="button" data-scope-tab-add>
-                        Dodaj temu
-                      </button>
-                    </div>
-
-                    <template data-scope-tab-template>
-                      <div class="admin-section-group admin-form__field--full" data-scope-tab-item>
-                        <div style="display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
-                          <h3 style="margin: 0;" data-scope-tab-title>
-                            Tema
-                          </h3>
-                          <button class="button-secondary" type="button" data-scope-tab-remove>
-                            Obriši temu
-                          </button>
-                        </div>
-
-                        <div class="admin-form__grid">
-                          <label class="admin-form__field">
-                            <span>Slug</span>
-                            <input class="input-control" data-scope-tab-field="id" />
-                          </label>
-
-                          <label class="admin-form__field">
-                            <span>Labela</span>
-                            <input class="input-control" data-scope-tab-field="label" />
-                          </label>
-
-                          <label class="admin-form__field">
-                            <span>Meta labela taba</span>
-                            <input class="input-control" data-scope-tab-field="tabMeta" />
-                          </label>
-
-                          <div class="admin-inline-media-field admin-form__field--full">
-                            <span>Ikonica</span>
-                            <input
-                              data-scope-tab-field="icon"
-                              data-scope-tab-image-input="icon"
-                              type="hidden"
-                            />
-                            <div
-                              class="admin-inline-media-field__preview"
-                              data-scope-tab-image-preview="icon"
-                            >
-                              <p class="admin-inline-media-field__empty">Slika nije dodata.</p>
-                            </div>
-                            <div class="admin-inline-media-field__actions">
-                              <label class="button-secondary admin-inline-media-field__upload">
-                                <span>Otpremi sliku</span>
-                                <input
-                                  accept="image/*"
-                                  data-scope-tab-upload="icon"
-                                  hidden
-                                  type="file"
-                                />
-                              </label>
-                              <button
-                                class="button-secondary"
-                                data-scope-tab-image-clear="icon"
-                                type="button"
-                              >
-                                Ukloni sliku
-                              </button>
-                            </div>
-                            <div
-                              class="admin-upload-progress"
-                              data-scope-tab-image-progress="icon"
-                              hidden
-                            >
-                              <div class="admin-upload-progress__track">
-                                <div
-                                  class="admin-upload-progress__bar"
-                                  data-scope-tab-image-progress-bar="icon"
-                                  style="width: 0%;"
-                                />
-                              </div>
-                            </div>
-                            <p
-                              class="admin-inline-media-field__status"
-                              data-scope-tab-image-status="icon"
-                            />
-                          </div>
-
-                          <label class="admin-form__field">
-                            <span>Naslov panela</span>
-                            <input class="input-control" data-scope-tab-field="summaryTitle" />
-                          </label>
-
-                          <div class="admin-form__field admin-form__field--full">
-                            <span>Kratki opis panela</span>
-                            <div
-                              class="admin-scope-tab-rich-text"
-                              data-scope-tab-field="summaryCopy"
-                            >
-                              <textarea data-scope-tab-rtf-initial hidden />
-                            </div>
-                          </div>
-
-                          <label class="admin-form__field">
-                            <span>Eyebrow panela</span>
-                            <input class="input-control" data-scope-tab-field="panelEyebrow" />
-                          </label>
-
-                          <label class="admin-form__field">
-                            <span>Labela statistike</span>
-                            <input class="input-control" data-scope-tab-field="panelStatLabel" />
-                          </label>
-
-                          <label class="admin-form__field">
-                            <span>Labela CTA u panelu</span>
-                            <input class="input-control" data-scope-tab-field="panelCtaLabel" />
-                          </label>
-
-                          <div class="admin-inline-media-field admin-form__field--full">
-                            <span>Detalj slika</span>
-                            <input
-                              data-scope-tab-field="detailImage"
-                              data-scope-tab-image-input="detailImage"
-                              type="hidden"
-                            />
-                            <div
-                              class="admin-inline-media-field__preview"
-                              data-scope-tab-image-preview="detailImage"
-                            >
-                              <p class="admin-inline-media-field__empty">Slika nije dodata.</p>
-                            </div>
-                            <div class="admin-inline-media-field__actions">
-                              <label class="button-secondary admin-inline-media-field__upload">
-                                <span>Otpremi sliku</span>
-                                <input
-                                  accept="image/*"
-                                  data-scope-tab-upload="detailImage"
-                                  hidden
-                                  type="file"
-                                />
-                              </label>
-                              <button
-                                class="button-secondary"
-                                data-scope-tab-image-clear="detailImage"
-                                type="button"
-                              >
-                                Ukloni sliku
-                              </button>
-                            </div>
-                            <div
-                              class="admin-upload-progress"
-                              data-scope-tab-image-progress="detailImage"
-                              hidden
-                            >
-                              <div class="admin-upload-progress__track">
-                                <div
-                                  class="admin-upload-progress__bar"
-                                  data-scope-tab-image-progress-bar="detailImage"
-                                  style="width: 0%;"
-                                />
-                              </div>
-                            </div>
-                            <p
-                              class="admin-inline-media-field__status"
-                              data-scope-tab-image-status="detailImage"
-                            />
-                          </div>
-
-                          <div class="admin-form__field admin-form__field--full">
-                            <span>Opis bannera detail stranice</span>
-                            <div
-                              class="admin-scope-tab-rich-text"
-                              data-scope-tab-field="detailBannerDescription"
-                            >
-                              <textarea data-scope-tab-rtf-initial hidden />
-                            </div>
-                          </div>
-
-                          <label class="admin-form__field">
-                            <span>Eyebrow detail stranice</span>
-                            <input class="input-control" data-scope-tab-field="detailEyebrow" />
-                          </label>
-
-                          <div class="admin-form__field admin-form__field--full">
-                            <span>Lead tekst</span>
-                            <div
-                              class="admin-scope-tab-rich-text"
-                              data-scope-tab-field="detailLead"
-                            >
-                              <textarea data-scope-tab-rtf-initial hidden />
-                            </div>
-                          </div>
-
-                          <label class="admin-form__field">
-                            <span>Labela nazad</span>
-                            <input class="input-control" data-scope-tab-field="detailBackLabel" />
-                          </label>
-
-                          <label class="admin-form__field">
-                            <span>Labela CTA detail stranice</span>
-                            <input class="input-control" data-scope-tab-field="detailCtaLabel" />
-                          </label>
-
-                          {[0, 1, 2].map((itemIndex) => (
-                            <>
-                              <label class="admin-form__field">
-                                <span>Stavka {itemIndex + 1} naslov</span>
-                                <input
-                                  class="input-control"
-                                  data-scope-tab-item-title
-                                  data-scope-tab-item-index={itemIndex}
-                                />
-                              </label>
-
-                              <div class="admin-form__field admin-form__field--full">
-                                <span>Stavka {itemIndex + 1} opis</span>
-                                <div
-                                  class="admin-scope-tab-item-rich-text"
-                                  data-scope-tab-item-copy
-                                  data-scope-tab-item-index={itemIndex}
-                                >
-                                  <textarea data-scope-tab-rtf-initial hidden />
-                                </div>
-                              </div>
-                            </>
-                          ))}
-                        </div>
-                      </div>
-                    </template>
-                  </div>
-                </div>
-              </div>
-            </>
-          );
-        })()
-      : null
-  }
-
-  {
-    page === "pricing"
-      ? (() => {
-          const pageContent = content as PricingPageManagedContent;
-
-          return (
-            <>
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="pricing-plans"
-                data-section-preview-copy="Ovaj blok najviše utiče na SEO i uvodni sloj stranice, pa preview otvara vrh javne strane."
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Banner i SEO tekst</h2>
-                    <p class="section-copy">
-                      Ovo se koristi za naslovni opis stranice i meta opis.
-                    </p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <label class="admin-form__field">
-                      <span>Naslov</span>
-                      <input
-                        class="input-control"
-                        name="bannerTitle"
-                        value={pageContent.banner.title}
-                      />
-                    </label>
-
-                    <div class="admin-form__field admin-form__field--full">
-                      <span>Opis</span>
-                      <AdminRichTextField
-                        client:load
-                        name="bannerDescription"
-                        initialValue={pageContent.banner.description}
-                        uploadUrl="/api/admin/media/upload"
-                        uploadFolder="pages/pricing"
-                        labels={richTextLabels}
-                      />
-                    </div>
-
-                    <AdminMediaField
-                      client:load
-                      name="bannerBackgroundImage"
-                      label="Pozadinska slika"
-                      initialValue={pageContent.banner.backgroundImage}
-                      uploadUrl="/api/admin/media/upload"
-                      uploadFolder="pages/pricing"
-                      uploadLabel="Otpremi sliku"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="pricing-plans"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Planovi</h2>
-                    <p class="section-copy">Tri cenovne kartice.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    {pageContent.plans.map((plan, index) => (
-                      <div class="admin-section-group admin-form__field--full">
-                        <h3 style="margin: 0;">Plan {index + 1}</h3>
-                        <div class="admin-form__grid">
-                          <label class="admin-form__field">
-                            <span>Naslov</span>
-                            <input
-                              class="input-control"
-                              name={`plan${index + 1}Title`}
-                              value={plan.title}
-                            />
-                          </label>
-
-                          <label class="admin-form__field">
-                            <span>Cena</span>
-                            <input
-                              class="input-control"
-                              name={`plan${index + 1}Price`}
-                              value={plan.price}
-                            />
-                          </label>
-
-                          <div class="admin-form__field admin-form__field--full">
-                            <span>Napomena za uplate iz inostranstva</span>
-                            <AdminRichTextField
-                              client:load
-                              name={`plan${index + 1}OutsideSerbiaPrice`}
-                              initialValue={plan.outsideSerbiaPrice}
-                              uploadUrl="/api/admin/media/upload"
-                              uploadFolder="pages/pricing"
-                              labels={richTextLabels}
-                            />
-                          </div>
-
-                          <label class="admin-form__field">
-                            <span>Labela CTA</span>
-                            <input
-                              class="input-control"
-                              name={`plan${index + 1}CtaLabel`}
-                              value={plan.ctaLabel}
-                            />
-                          </label>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="pricing-info"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Info kartice</h2>
-                    <p class="section-copy">Tri objašnjenja ispod planova.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    {pageContent.infoCards.map((card, index) => (
-                      <div class="admin-section-group admin-form__field--full">
-                        <h3 style="margin: 0;">Info {index + 1}</h3>
-                        <div class="admin-form__grid">
-                          <label class="admin-form__field">
-                            <span>Naslov</span>
-                            <input
-                              class="input-control"
-                              name={`info${index + 1}Title`}
-                              value={card.title}
-                            />
-                          </label>
-
-                          <div class="admin-form__field admin-form__field--full">
-                            <span>Opis</span>
-                            <AdminRichTextField
-                              client:load
-                              name={`info${index + 1}Copy`}
-                              initialValue={card.copy}
-                              uploadUrl="/api/admin/media/upload"
-                              uploadFolder="pages/pricing"
-                              labels={richTextLabels}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </>
-          );
-        })()
-      : null
-  }
-
-  {
-    page === "appointment"
-      ? (() => {
-          const pageContent = content as AppointmentPageManagedContent;
-
-          return (
-            <>
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="appointment-booking"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Banner i uvod</h2>
-                    <p class="section-copy">SEO opis i tekst u levom stupcu forme.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <label class="admin-form__field">
-                      <span>Naslov</span>
-                      <input
-                        class="input-control"
-                        name="bannerTitle"
-                        value={pageContent.banner.title}
-                      />
-                    </label>
-
-                    <div class="admin-form__field admin-form__field--full">
-                      <span>SEO opis</span>
-                      <AdminRichTextField
-                        client:load
-                        name="bannerDescription"
-                        initialValue={pageContent.banner.description}
-                        uploadUrl="/api/admin/media/upload"
-                        uploadFolder="pages/appointment"
-                        labels={richTextLabels}
-                      />
-                    </div>
-
-                    <AdminMediaField
-                      client:load
-                      name="bannerBackgroundImage"
-                      label="Pozadinska slika"
-                      initialValue={pageContent.banner.backgroundImage}
-                      uploadUrl="/api/admin/media/upload"
-                      uploadFolder="pages/appointment"
-                      uploadLabel="Otpremi sliku"
-                    />
-
-                    <label class="admin-form__field admin-form__field--full">
-                      <span>Naslov forme</span>
-                      <input
-                        class="input-control"
-                        name="bookingTitle"
-                        value={pageContent.booking.title}
-                      />
-                    </label>
-
-                    <div class="admin-form__field admin-form__field--full">
-                      <span>Uvodni tekst</span>
-                      <AdminRichTextField
-                        client:load
-                        name="bookingCopy"
-                        initialValue={pageContent.booking.copy}
-                        uploadUrl="/api/admin/media/upload"
-                        uploadFolder="pages/appointment"
-                        labels={richTextLabels}
-                      />
-                    </div>
-
-                    <label class="admin-form__field">
-                      <span>Labela formata</span>
-                      <input
-                        class="input-control"
-                        name="bookingFormatLabel"
-                        value={pageContent.booking.formatLabel}
-                      />
-                    </label>
-
-                    {pageContent.booking.formats.map((format, index) => (
-                      <label class="admin-form__field">
-                        <span>Format {index + 1}</span>
-                        <input
-                          class="input-control"
-                          name={`bookingFormat${index + 1}`}
-                          value={format}
-                        />
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="appointment-faq"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">FAQ</h2>
-                    <p class="section-copy">Slika i četiri pitanja na dnu stranice.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <AdminMediaField
-                      client:load
-                      name="faqImage"
-                      label="FAQ slika"
-                      initialValue={pageContent.faq.image}
-                      uploadUrl="/api/admin/media/upload"
-                      uploadFolder="pages/appointment"
-                      uploadLabel="Otpremi sliku"
-                    />
-
-                    {pageContent.faq.items.map((item, index) => (
-                      <div class="admin-section-group admin-form__field--full">
-                        <h3 style="margin: 0;">Pitanje {index + 1}</h3>
-                        <div class="admin-form__grid">
-                          <label class="admin-form__field admin-form__field--full">
-                            <span>Pitanje</span>
-                            <input
-                              class="input-control"
-                              name={`faq${index + 1}Question`}
-                              value={item.question}
-                            />
-                          </label>
-
-                          <div class="admin-form__field admin-form__field--full">
-                            <span>Odgovor</span>
-                            <AdminRichTextField
-                              client:load
-                              name={`faq${index + 1}Answer`}
-                              initialValue={item.answer}
-                              uploadUrl="/api/admin/media/upload"
-                              uploadFolder="pages/appointment"
-                              labels={richTextLabels}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </>
-          );
-        })()
-      : null
-  }
-
-  {
-    page === "faq"
-      ? (() => {
-          const pageContent = content as FaqPageManagedContent;
-
-          return (
-            <>
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="faq-banner"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Banner</h2>
-                    <p class="section-copy">Naslov, SEO opis i pozadinska slika FAQ stranice.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <label class="admin-form__field">
-                      <span>Naslov</span>
-                      <input
-                        class="input-control"
-                        name="bannerTitle"
-                        value={pageContent.banner.title}
-                      />
-                    </label>
-
-                    <div class="admin-form__field admin-form__field--full">
-                      <span>Opis</span>
-                      <AdminRichTextField
-                        client:load
-                        name="bannerDescription"
-                        initialValue={pageContent.banner.description}
-                        uploadUrl="/api/admin/media/upload"
-                        uploadFolder="pages/faq"
-                        labels={richTextLabels}
-                      />
-                    </div>
-
-                    <AdminMediaField
-                      client:load
-                      name="bannerBackgroundImage"
-                      label="Pozadinska slika"
-                      initialValue={pageContent.banner.backgroundImage}
-                      uploadUrl="/api/admin/media/upload"
-                      uploadFolder="pages/faq"
-                      uploadLabel="Otpremi sliku"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="faq-items"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">FAQ pitanja</h2>
-                    <p class="section-copy">Slika i četiri glavna pitanja.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <AdminMediaField
-                      client:load
-                      name="faqImage"
-                      label="FAQ slika"
-                      initialValue={pageContent.faq.image}
-                      uploadUrl="/api/admin/media/upload"
-                      uploadFolder="pages/faq"
-                      uploadLabel="Otpremi sliku"
-                    />
-
-                    {pageContent.faq.items.map((item, index) => (
-                      <div class="admin-section-group admin-form__field--full">
-                        <h3 style="margin: 0;">Pitanje {index + 1}</h3>
-                        <div class="admin-form__grid">
-                          <label class="admin-form__field admin-form__field--full">
-                            <span>Pitanje</span>
-                            <input
-                              class="input-control"
-                              name={`faq${index + 1}Question`}
-                              value={item.question}
-                            />
-                          </label>
-
-                          <div class="admin-form__field admin-form__field--full">
-                            <span>Odgovor</span>
-                            <AdminRichTextField
-                              client:load
-                              name={`faq${index + 1}Answer`}
-                              initialValue={item.answer}
-                              uploadUrl="/api/admin/media/upload"
-                              uploadFolder="pages/faq"
-                              labels={richTextLabels}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="card"
-                style="padding: 1.5rem;"
-                data-section-preview
-                data-section-preview-fragment="faq-booking"
-              >
-                <div class="page-grid">
-                  <div>
-                    <h2 style="margin: 0;">Zakazivanje blok</h2>
-                    <p class="section-copy">Tekst i formati rada ispod FAQ liste.</p>
-                  </div>
-
-                  <div class="admin-form__grid">
-                    <label class="admin-form__field admin-form__field--full">
-                      <span>Naslov</span>
-                      <input
-                        class="input-control"
-                        name="bookingTitle"
-                        value={pageContent.booking.title}
-                      />
-                    </label>
-
-                    <div class="admin-form__field admin-form__field--full">
-                      <span>Opis</span>
-                      <AdminRichTextField
-                        client:load
-                        name="bookingCopy"
-                        initialValue={pageContent.booking.copy}
-                        uploadUrl="/api/admin/media/upload"
-                        uploadFolder="pages/faq"
-                        labels={richTextLabels}
-                      />
-                    </div>
-
-                    <label class="admin-form__field">
-                      <span>Labela formata</span>
-                      <input
-                        class="input-control"
-                        name="bookingFormatLabel"
-                        value={pageContent.booking.formatLabel}
-                      />
-                    </label>
-
-                    {pageContent.booking.formats.map((format, index) => (
-                      <label class="admin-form__field">
-                        <span>Format {index + 1}</span>
-                        <input
-                          class="input-control"
-                          name={`bookingFormat${index + 1}`}
-                          value={format}
-                        />
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </>
-          );
-        })()
-      : null
+    editorConfig.sections.map((section) =>
+      section.kind === "standard" ? (
+        <AdminManagedSection
+          section={section}
+          uploadFolder={editorConfig.uploadFolder}
+          richTextLabels={richTextLabels}
+        />
+      ) : section.kind === "biographyCards" ? (
+        <AdminBiographyCardsEditor
+          fragment={section.fragment}
+          title={section.title}
+          copy={section.copy}
+          sectionTitleValue={section.sectionTitleValue}
+          sectionCopyValue={section.sectionCopyValue}
+          cards={section.cards}
+          uploadFolder={editorConfig.uploadFolder}
+          richTextLabels={richTextLabels}
+        />
+      ) : section.kind === "scopeTabs" ? (
+        <AdminScopeTabsEditor
+          fragment={section.fragment}
+          title={section.title}
+          copy={section.copy}
+          tabs={section.tabs}
+          richTextLabels={richTextLabels}
+        />
+      ) : section.kind === "repeatableText" ? (
+        <AdminRepeatableTextSection section={section} />
+      ) : (
+        <AdminRepeatableGroupSection
+          section={section}
+          uploadFolder={editorConfig.uploadFolder}
+          richTextLabels={richTextLabels}
+        />
+      ),
+    )
   }
 
   <div class="admin-form__actions admin-form__actions--floating">
@@ -2291,268 +121,473 @@ const richTextLabels = {
 </form>
 
 <script>
+  // @ts-nocheck
+  import {
+    setupAdminFormExperience,
+    notifyAdminFormValueChange,
+  } from "@/features/admin/editor/admin-form.client";
   import { mountAdminRichTextField, unmountAdminRichTextField } from "./AdminRichTextMount";
   import { uploadWithProgress } from "@/lib/http/upload-with-progress";
 
   (() => {
-    const setupFloatingSubmit = () => {
-      document.querySelectorAll("[data-admin-section-preview-root]").forEach((form) => {
-        if (!(form instanceof HTMLFormElement) || form.dataset.floatingSubmitBound === "true") {
+    const notifyForm = (form) => {
+      if (form instanceof HTMLFormElement) {
+        notifyAdminFormValueChange(form);
+      }
+    };
+
+    const setupRepeatableTextSections = () => {
+      document.querySelectorAll("[data-repeatable-text-list]").forEach((list) => {
+        if (!(list instanceof HTMLElement) || list.dataset.bound === "true") {
           return;
         }
 
-        const submitButtons = Array.from(form.querySelectorAll("[data-admin-form-submit]")).filter(
-          (button) => button instanceof HTMLButtonElement,
-        );
-        const statusNodes = Array.from(
-          form.querySelectorAll("[data-admin-form-submit-status]"),
-        ).filter((node) => node instanceof HTMLElement);
-        const pendingSources = new Map();
-        let autoSaveRequested = false;
-        let isSubmitting = false;
+        const container = list.parentElement;
+        const template = container?.querySelector("[data-repeatable-text-template]");
+        const addButton = container?.querySelector("[data-repeatable-text-add]");
+        const form = list.closest("form");
+        const itemLabel = list.dataset.repeatableItemLabel ?? "Stavka";
+        const prefix = list.dataset.repeatableNamePrefix ?? "item";
+        const minItems = Math.max(1, Number(list.dataset.repeatableMinItems ?? "1"));
 
-        const syncSubmitState = () => {
-          const hasPending = pendingSources.size > 0;
-          const message = isSubmitting
-            ? "Čuvanje u toku..."
-            : autoSaveRequested && hasPending
-              ? "Završavam upload pa čuvam izmenu slike."
-              : autoSaveRequested
-                ? "Čuvam izmenu slike..."
-                : hasPending
-                  ? "Sačekajte da se obrada slike ili videa završi."
-                  : "Sve media izmene su spremne za čuvanje.";
+        if (
+          !(template instanceof HTMLTemplateElement) ||
+          !(addButton instanceof HTMLButtonElement) ||
+          !(form instanceof HTMLFormElement)
+        ) {
+          return;
+        }
 
-          form.dataset.pendingUploads = hasPending ? "true" : "false";
+        const syncItems = () => {
+          const items = Array.from(list.querySelectorAll("[data-repeatable-text-item]"));
 
-          submitButtons.forEach((button) => {
-            button.disabled = hasPending;
-            button.setAttribute("aria-disabled", hasPending ? "true" : "false");
+          items.forEach((item, index) => {
+            if (!(item instanceof HTMLElement)) {
+              return;
+            }
+
+            const title = item.querySelector("[data-repeatable-text-title]");
+            const input = item.querySelector("[data-repeatable-text-value]");
+            const removeButton = item.querySelector("[data-repeatable-text-remove]");
+
+            if (title instanceof HTMLElement) {
+              title.textContent = `${itemLabel} ${index + 1}`;
+            }
+
+            if (input instanceof HTMLInputElement) {
+              input.name = `${prefix}_${index}`;
+            }
+
+            if (removeButton instanceof HTMLButtonElement) {
+              removeButton.disabled = items.length <= minItems;
+            }
           });
 
-          statusNodes.forEach((node) => {
-            node.textContent = message;
-            node.dataset.tone = hasPending ? "muted" : "ready";
-          });
+          notifyForm(form);
         };
 
-        const tryAutoSave = () => {
-          if (!autoSaveRequested || isSubmitting || form.dataset.pendingUploads === "true") {
+        addButton.addEventListener("click", () => {
+          list.append(template.content.cloneNode(true));
+          syncItems();
+        });
+
+        list.addEventListener("click", (event) => {
+          const target = event.target;
+
+          if (!(target instanceof HTMLElement)) {
             return;
           }
 
-          if (!form.checkValidity()) {
-            autoSaveRequested = false;
-            syncSubmitState();
+          const removeButton = target.closest("[data-repeatable-text-remove]");
+
+          if (!(removeButton instanceof HTMLButtonElement)) {
             return;
           }
 
-          requestAnimationFrame(() => form.requestSubmit());
+          const items = list.querySelectorAll("[data-repeatable-text-item]");
+
+          if (items.length <= minItems) {
+            return;
+          }
+
+          removeButton.closest("[data-repeatable-text-item]")?.remove();
+          syncItems();
+        });
+
+        syncItems();
+        list.dataset.bound = "true";
+      });
+    };
+
+    const setupRepeatableGroupSections = () => {
+      document.querySelectorAll("[data-repeatable-group-list]").forEach((list) => {
+        if (!(list instanceof HTMLElement) || list.dataset.bound === "true") {
+          return;
+        }
+
+        const container = list.parentElement;
+        const template = container?.querySelector("[data-repeatable-group-template]");
+        const addButton = container?.querySelector("[data-repeatable-group-add]");
+        const form = list.closest("form");
+        const itemLabel = list.dataset.repeatableItemLabel ?? "Stavka";
+        const prefix = list.dataset.repeatableNamePrefix ?? "item";
+        const uploadFolder = list.dataset.repeatableUploadFolder ?? "pages";
+        const minItems = Math.max(1, Number(list.dataset.repeatableMinItems ?? "1"));
+
+        if (
+          !(template instanceof HTMLTemplateElement) ||
+          !(addButton instanceof HTMLButtonElement) ||
+          !(form instanceof HTMLFormElement)
+        ) {
+          return;
+        }
+
+        let fieldTemplates = [];
+        let richTextLabels = {};
+
+        try {
+          fieldTemplates = JSON.parse(list.dataset.repeatableGroupFields ?? "[]");
+          richTextLabels = JSON.parse(list.dataset.repeatableRichTextLabels ?? "{}");
+        } catch {
+          fieldTemplates = [];
+          richTextLabels = {};
+        }
+
+        const getPendingSourceId = (item, fieldKey) => {
+          if (!(item instanceof HTMLElement) || !fieldKey) {
+            return "";
+          }
+
+          const datasetKey = `pendingSource${fieldKey[0].toUpperCase()}${fieldKey.slice(1)}`;
+
+          if (!item.dataset[datasetKey]) {
+            item.dataset[datasetKey] =
+              globalThis.crypto?.randomUUID?.() ??
+              `repeatable-group-${Date.now()}-${Math.random()}`;
+          }
+
+          return item.dataset[datasetKey] ?? "";
         };
 
-        form.addEventListener("admin:pending-media", (event) => {
-          if (!(event instanceof CustomEvent)) {
-            return;
-          }
-
-          const sourceId =
-            typeof event.detail?.sourceId === "string" ? event.detail.sourceId : undefined;
+        const setPendingUpload = (item, fieldKey, active) => {
+          const sourceId = getPendingSourceId(item, fieldKey);
 
           if (!sourceId) {
             return;
           }
 
-          if (event.detail?.active) {
-            pendingSources.set(sourceId, true);
-          } else {
-            pendingSources.delete(sourceId);
-          }
+          form.dispatchEvent(
+            new CustomEvent("admin:pending-media", {
+              detail: { active, sourceId },
+            }),
+          );
+        };
 
-          syncSubmitState();
-          tryAutoSave();
-        });
+        const createEmptyImageState = () => {
+          const empty = document.createElement("p");
+          empty.className = "admin-inline-media-field__empty";
+          empty.textContent = "Slika nije dodata.";
+          return empty;
+        };
 
-        form.addEventListener("admin:auto-save-media", () => {
-          autoSaveRequested = true;
-          syncSubmitState();
-          tryAutoSave();
-        });
+        const getImageField = (item, fieldKey) => {
+          const field = item.querySelector(`[data-repeatable-group-image-input="${fieldKey}"]`);
+          return field instanceof HTMLInputElement ? field : null;
+        };
 
-        form.addEventListener("submit", (event) => {
-          if (form.dataset.pendingUploads === "true") {
-            event.preventDefault();
-            syncSubmitState();
-            return;
-          }
+        const getImagePreview = (item, fieldKey) => {
+          const preview = item.querySelector(`[data-repeatable-group-image-preview="${fieldKey}"]`);
+          return preview instanceof HTMLElement ? preview : null;
+        };
 
-          if (isSubmitting) {
-            event.preventDefault();
-            return;
-          }
+        const getImageStatus = (item, fieldKey) => {
+          const status = item.querySelector(`[data-repeatable-group-image-status="${fieldKey}"]`);
+          return status instanceof HTMLElement ? status : null;
+        };
 
-          isSubmitting = true;
-          syncSubmitState();
-        });
+        const setImageStatus = (item, fieldKey, message = "") => {
+          const status = getImageStatus(item, fieldKey);
 
-        syncSubmitState();
-        form.dataset.floatingSubmitBound = "true";
-      });
-    };
-
-    const setupSectionPreviews = () => {
-      document.querySelectorAll("[data-admin-section-preview-root]").forEach((form) => {
-        if (!(form instanceof HTMLFormElement) || form.dataset.sectionPreviewBound === "true") {
-          return;
-        }
-
-        const baseHref = form.dataset.previewBaseHref ?? "";
-        const editorRoot = form.closest("[data-admin-page-editor]");
-        const nav = editorRoot?.querySelector("[data-admin-section-nav]");
-        const previewFrame = editorRoot?.querySelector("[data-admin-preview-iframe]");
-        const previewLink = editorRoot?.querySelector("[data-admin-preview-open]");
-        const sections = Array.from(form.children).filter(
-          (child) => child instanceof HTMLElement && child.matches("[data-section-preview]"),
-        );
-
-        const activateSection = (nextIndex) => {
-          sections.forEach((section, index) => {
-            if (!(section instanceof HTMLElement)) {
-              return;
-            }
-
-            const isActive = index === nextIndex;
-            section.classList.toggle("is-active", isActive);
-            section.classList.toggle("is-collapsed", !isActive);
-
-            const navButton = nav?.querySelector(`[data-admin-section-nav-index="${index}"]`);
-            navButton?.classList.toggle("is-active", isActive);
-            navButton?.setAttribute("aria-current", isActive ? "true" : "false");
-          });
-
-          const activeSection = sections[nextIndex];
-          if (!(activeSection instanceof HTMLElement)) {
-            return;
-          }
-
-          const fragment = activeSection.dataset.sectionPreviewFragment ?? "";
-          const href = fragment ? `${baseHref}#${fragment}` : baseHref;
-
-          if (previewFrame instanceof HTMLIFrameElement && previewFrame.src !== href) {
-            previewFrame.src = href;
-          }
-
-          if (previewLink instanceof HTMLAnchorElement) {
-            previewLink.href = href;
+          if (status) {
+            status.textContent = message;
           }
         };
 
-        sections.forEach((child, index) => {
-          if (!(child instanceof HTMLElement) || !child.matches("[data-section-preview]")) {
+        const setImageProgress = (item, fieldKey, percent = 0) => {
+          const progress = item.querySelector(
+            `[data-repeatable-group-image-progress="${fieldKey}"]`,
+          );
+          const bar = item.querySelector(
+            `[data-repeatable-group-image-progress-bar="${fieldKey}"]`,
+          );
+
+          if (progress instanceof HTMLElement) {
+            progress.hidden = false;
+          }
+
+          if (bar instanceof HTMLElement) {
+            bar.style.width = `${percent}%`;
+          }
+        };
+
+        const clearImageProgress = (item, fieldKey) => {
+          const progress = item.querySelector(
+            `[data-repeatable-group-image-progress="${fieldKey}"]`,
+          );
+          const bar = item.querySelector(
+            `[data-repeatable-group-image-progress-bar="${fieldKey}"]`,
+          );
+
+          if (progress instanceof HTMLElement) {
+            progress.hidden = true;
+          }
+
+          if (bar instanceof HTMLElement) {
+            bar.style.width = "0%";
+          }
+        };
+
+        const updateImagePreview = (item, fieldKey) => {
+          const field = getImageField(item, fieldKey);
+          const preview = getImagePreview(item, fieldKey);
+
+          if (!field || !preview) {
             return;
           }
 
-          const fragment = child.dataset.sectionPreviewFragment ?? "";
-          const href = fragment ? `${baseHref}#${fragment}` : baseHref;
-          const title =
-            child.dataset.sectionPreviewTitle ??
-            child.querySelector("h2")?.textContent?.trim() ??
-            "Preview sekcije";
-          const copy =
-            child.dataset.sectionPreviewCopy ??
-            child.querySelector(".section-copy")?.textContent?.trim() ??
-            "";
+          preview.replaceChildren();
 
-          child.classList.add("admin-section-editor");
-          child.classList.toggle("is-active", index === 0);
-          child.classList.toggle("is-collapsed", index !== 0);
-
-          const existingNodes = Array.from(child.childNodes);
-          const body = document.createElement("div");
-          body.className = "admin-section-editor__body";
-          existingNodes.forEach((node) => body.append(node));
-
-          const header = document.createElement("div");
-          header.className = "admin-section-editor__header";
-
-          const badge = document.createElement("span");
-          badge.className = "admin-section-editor__badge";
-          badge.textContent = String(index + 1).padStart(2, "0");
-
-          const meta = document.createElement("div");
-          meta.className = "admin-section-editor__meta";
-
-          const heading = document.createElement("h2");
-          heading.textContent = title;
-          meta.append(heading);
-
-          if (copy) {
-            const summary = document.createElement("p");
-            summary.className = "admin-section-editor__copy";
-            summary.textContent = copy;
-            meta.append(summary);
+          if (field.value.trim()) {
+            const image = document.createElement("img");
+            image.src = field.value.trim();
+            image.alt = "";
+            image.loading = "lazy";
+            preview.append(image);
+          } else {
+            preview.append(createEmptyImageState());
           }
 
-          const actions = document.createElement("div");
-          actions.className = "admin-section-editor__actions";
+          const clearButton = item.querySelector(
+            `[data-repeatable-group-image-clear="${fieldKey}"]`,
+          );
 
-          const toggle = document.createElement("button");
-          toggle.type = "button";
-          toggle.className = "button-primary admin-section-editor__toggle";
-          toggle.textContent = "Uredi sekciju";
-          toggle.addEventListener("click", () => activateSection(index));
+          if (clearButton instanceof HTMLButtonElement) {
+            clearButton.disabled = field.value.trim().length === 0;
+          }
+        };
 
-          const link = document.createElement("a");
-          link.className = "button-secondary";
-          link.href = href;
-          link.target = "_blank";
-          link.rel = "noreferrer";
-          link.textContent = "Otvori javnu sekciju";
+        const mountRichTextField = (field, index) => {
+          if (!(field instanceof HTMLElement)) {
+            return;
+          }
 
-          actions.append(toggle, link);
-          header.append(badge, meta, actions);
+          const fieldKey = field.dataset.repeatableGroupField;
 
-          child.replaceChildren(header, body);
+          if (!fieldKey) {
+            return;
+          }
 
-          if (nav instanceof HTMLElement) {
-            const navButton = document.createElement("button");
-            navButton.type = "button";
-            navButton.className = `admin-section-nav__button${index === 0 ? " is-active" : ""}`;
-            navButton.dataset.adminSectionNavIndex = String(index);
+          const initialField = field.querySelector("[data-repeatable-group-rtf-initial]");
+          const initialValue =
+            initialField instanceof HTMLTextAreaElement ? initialField.value : "";
 
-            const navIndex = document.createElement("span");
-            navIndex.className = "admin-section-nav__index";
-            navIndex.textContent = String(index + 1).padStart(2, "0");
+          mountAdminRichTextField(field, {
+            initialValue,
+            labels: richTextLabels,
+            name: `${prefix}_${index}_${fieldKey}`,
+            uploadFolder,
+            uploadUrl: "/api/admin/media/upload",
+          });
+        };
 
-            const navTitle = document.createElement("span");
-            navTitle.className = "admin-section-nav__title";
-            navTitle.textContent = title;
+        const uploadImage = async (item, fieldKey, file) => {
+          const field = getImageField(item, fieldKey);
 
-            navButton.append(navIndex, navTitle);
+          if (!field) {
+            return;
+          }
 
-            if (copy) {
-              const navCopy = document.createElement("span");
-              navCopy.className = "admin-section-nav__copy";
-              navCopy.textContent = copy;
-              navButton.append(navCopy);
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("folder", uploadFolder);
+
+          setImageStatus(item, fieldKey, "Otpremanje...");
+          setImageProgress(item, fieldKey, 0);
+          setPendingUpload(item, fieldKey, true);
+
+          try {
+            const data = await uploadWithProgress({
+              formData,
+              url: "/api/admin/media/upload",
+              onProgress: (percent) => {
+                setImageProgress(item, fieldKey, percent);
+                setImageStatus(item, fieldKey, `Otpremanje... ${percent}%`);
+              },
+            });
+
+            if (!data?.url || typeof data.url !== "string") {
+              setImageStatus(item, fieldKey, "Upload nije uspeo.");
+              clearImageProgress(item, fieldKey);
+              return;
             }
 
-            navButton.addEventListener("click", () => activateSection(index));
-            nav.append(navButton);
+            field.value = data.url;
+            updateImagePreview(item, fieldKey);
+            setImageStatus(item, fieldKey, "Slika je otpremljena.");
+            setImageProgress(item, fieldKey, 100);
+            notifyForm(form);
+            form.dispatchEvent(
+              new CustomEvent("admin:auto-save-media", {
+                detail: { sourceId: getPendingSourceId(item, fieldKey) },
+              }),
+            );
+          } catch {
+            setImageStatus(item, fieldKey, "Upload nije uspeo.");
+            clearImageProgress(item, fieldKey);
+          } finally {
+            setPendingUpload(item, fieldKey, false);
           }
+        };
 
-          child.addEventListener(
-            "invalid",
-            (event) => {
-              if (event.target instanceof HTMLElement) {
-                activateSection(index);
+        const syncItems = () => {
+          const items = Array.from(list.querySelectorAll("[data-repeatable-group-item]"));
+
+          items.forEach((item, index) => {
+            if (!(item instanceof HTMLElement)) {
+              return;
+            }
+
+            const title = item.querySelector("[data-repeatable-group-title]");
+            const removeButton = item.querySelector("[data-repeatable-group-remove]");
+
+            if (title instanceof HTMLElement) {
+              title.textContent = `${itemLabel} ${index + 1}`;
+            }
+
+            if (removeButton instanceof HTMLButtonElement) {
+              removeButton.disabled = items.length <= minItems;
+            }
+
+            fieldTemplates.forEach((fieldTemplate) => {
+              const field = item.querySelector(
+                `[data-repeatable-group-field="${fieldTemplate.key}"]`,
+              );
+
+              if (!(field instanceof HTMLElement)) {
+                return;
               }
-            },
-            true,
-          );
+
+              if (field.classList.contains("admin-repeatable-group-rich-text")) {
+                mountRichTextField(field, index);
+                return;
+              }
+
+              if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
+                field.name = `${prefix}_${index}_${fieldTemplate.key}`;
+              }
+
+              if (fieldTemplate.kind === "media") {
+                updateImagePreview(item, fieldTemplate.key);
+              }
+            });
+          });
+
+          notifyForm(form);
+        };
+
+        addButton.addEventListener("click", () => {
+          list.append(template.content.cloneNode(true));
+          syncItems();
         });
 
-        activateSection(0);
-        form.dataset.sectionPreviewBound = "true";
+        list.addEventListener("click", (event) => {
+          const target = event.target;
+
+          if (!(target instanceof HTMLElement)) {
+            return;
+          }
+
+          const clearButton = target.closest("[data-repeatable-group-image-clear]");
+
+          if (clearButton instanceof HTMLButtonElement) {
+            const item = clearButton.closest("[data-repeatable-group-item]");
+            const fieldKey = clearButton.dataset.repeatableGroupImageClear;
+
+            if (!(item instanceof HTMLElement) || !fieldKey) {
+              return;
+            }
+
+            const field = getImageField(item, fieldKey);
+
+            if (!field) {
+              return;
+            }
+
+            field.value = "";
+            setImageStatus(item, fieldKey, "");
+            clearImageProgress(item, fieldKey);
+            updateImagePreview(item, fieldKey);
+            notifyForm(form);
+            return;
+          }
+
+          const removeButton = target.closest("[data-repeatable-group-remove]");
+
+          if (!(removeButton instanceof HTMLButtonElement)) {
+            return;
+          }
+
+          const items = list.querySelectorAll("[data-repeatable-group-item]");
+
+          if (items.length <= minItems) {
+            return;
+          }
+
+          const item = removeButton.closest("[data-repeatable-group-item]");
+
+          if (item instanceof HTMLElement) {
+            item.querySelectorAll(".admin-repeatable-group-rich-text").forEach((field) => {
+              if (field instanceof HTMLElement) {
+                unmountAdminRichTextField(field);
+              }
+            });
+
+            fieldTemplates
+              .filter((fieldTemplate) => fieldTemplate.kind === "media")
+              .forEach((fieldTemplate) => {
+                setPendingUpload(item, fieldTemplate.key, false);
+              });
+
+            item.remove();
+            syncItems();
+          }
+        });
+
+        list.addEventListener("change", (event) => {
+          const target = event.target;
+
+          if (
+            !(target instanceof HTMLInputElement) ||
+            !target.matches("[data-repeatable-group-upload]")
+          ) {
+            return;
+          }
+
+          const item = target.closest("[data-repeatable-group-item]");
+          const fieldKey = target.dataset.repeatableGroupUpload;
+          const file = target.files?.[0];
+
+          target.value = "";
+
+          if (!file || !(item instanceof HTMLElement) || !fieldKey) {
+            return;
+          }
+
+          void uploadImage(item, fieldKey, file);
+        });
+
+        syncItems();
+        list.dataset.bound = "true";
       });
     };
 
@@ -2748,6 +783,7 @@ const richTextLabels = {
           updateCardImagePreview(card);
           setCardImageStatus(card, "Slika je otpremljena.");
           setCardImageProgress(card, 100);
+          notifyForm(form);
           form.dispatchEvent(
             new CustomEvent("admin:auto-save-media", {
               detail: { sourceId: getPendingSourceId(card) },
@@ -2759,6 +795,46 @@ const richTextLabels = {
         } finally {
           setPendingUpload(card, false);
         }
+      };
+
+      const syncCardHighlights = (card, cardIndex) => {
+        if (!(card instanceof HTMLElement)) {
+          return;
+        }
+
+        const highlightList = card.querySelector("[data-biography-highlight-list]");
+
+        if (!(highlightList instanceof HTMLElement)) {
+          return;
+        }
+
+        const minItems = Math.max(
+          1,
+          Number(highlightList.dataset.biographyHighlightMinItems ?? "1"),
+        );
+        const items = Array.from(highlightList.querySelectorAll("[data-biography-highlight-item]"));
+
+        items.forEach((item, highlightIndex) => {
+          if (!(item instanceof HTMLElement)) {
+            return;
+          }
+
+          const title = item.querySelector("[data-biography-highlight-title]");
+          const input = item.querySelector("[data-biography-highlight-value]");
+          const removeButton = item.querySelector("[data-biography-highlight-remove]");
+
+          if (title instanceof HTMLElement) {
+            title.textContent = `Tag ${highlightIndex + 1}`;
+          }
+
+          if (input instanceof HTMLInputElement) {
+            input.name = `biographyCard_${cardIndex}_highlight_${highlightIndex}`;
+          }
+
+          if (removeButton instanceof HTMLButtonElement) {
+            removeButton.disabled = items.length <= minItems;
+          }
+        });
       };
 
       const syncCards = () => {
@@ -2801,7 +877,10 @@ const richTextLabels = {
           });
 
           updateCardImagePreview(item);
+          syncCardHighlights(item, index);
         });
+
+        notifyForm(form);
       };
 
       addButton.addEventListener("click", () => {
@@ -2835,6 +914,57 @@ const richTextLabels = {
           setCardImageStatus(card, "");
           clearCardImageProgress(card);
           updateCardImagePreview(card);
+          notifyForm(form);
+          return;
+        }
+
+        const addHighlightButton = target.closest("[data-biography-highlight-add]");
+
+        if (addHighlightButton instanceof HTMLButtonElement) {
+          const card = addHighlightButton.closest("[data-biography-card-item]");
+          const highlightList = card?.querySelector("[data-biography-highlight-list]");
+          const highlightTemplate = card?.querySelector("[data-biography-highlight-template]");
+
+          if (
+            !(card instanceof HTMLElement) ||
+            !(highlightList instanceof HTMLElement) ||
+            !(highlightTemplate instanceof HTMLTemplateElement)
+          ) {
+            return;
+          }
+
+          highlightList.append(highlightTemplate.content.cloneNode(true));
+          syncCards();
+          return;
+        }
+
+        const removeHighlightButton = target.closest("[data-biography-highlight-remove]");
+
+        if (removeHighlightButton instanceof HTMLButtonElement) {
+          const card = removeHighlightButton.closest("[data-biography-card-item]");
+          const highlightList = card?.querySelector("[data-biography-highlight-list]");
+          const highlightItem = removeHighlightButton.closest("[data-biography-highlight-item]");
+
+          if (
+            !(card instanceof HTMLElement) ||
+            !(highlightList instanceof HTMLElement) ||
+            !(highlightItem instanceof HTMLElement)
+          ) {
+            return;
+          }
+
+          const items = highlightList.querySelectorAll("[data-biography-highlight-item]");
+          const minItems = Math.max(
+            1,
+            Number(highlightList.dataset.biographyHighlightMinItems ?? "1"),
+          );
+
+          if (items.length <= minItems) {
+            return;
+          }
+
+          highlightItem.remove();
+          syncCards();
           return;
         }
 
@@ -3110,6 +1240,7 @@ const richTextLabels = {
           updateTabImagePreview(tab, fieldName);
           setTabImageStatus(tab, fieldName, "Slika je otpremljena.");
           setTabImageProgress(tab, fieldName, 100);
+          notifyForm(form);
           form.dispatchEvent(
             new CustomEvent("admin:auto-save-media", {
               detail: { sourceId: getPendingSourceId(tab, fieldName) },
@@ -3183,6 +1314,8 @@ const richTextLabels = {
           updateTabImagePreview(item, "icon");
           updateTabImagePreview(item, "detailImage");
         });
+
+        notifyForm(form);
       };
 
       addButton.addEventListener("click", () => {
@@ -3217,6 +1350,7 @@ const richTextLabels = {
           setTabImageStatus(tab, fieldName, "");
           clearTabImageProgress(tab, fieldName);
           updateTabImagePreview(tab, fieldName);
+          notifyForm(form);
           return;
         }
 
@@ -3273,13 +1407,15 @@ const richTextLabels = {
       list.dataset.bound = "true";
     };
 
-    setupFloatingSubmit();
-    setupSectionPreviews();
-    setupBiographyCards();
-    setupScopeTabs();
-    document.addEventListener("astro:page-load", setupFloatingSubmit);
-    document.addEventListener("astro:page-load", setupSectionPreviews);
-    document.addEventListener("astro:page-load", setupBiographyCards);
-    document.addEventListener("astro:page-load", setupScopeTabs);
+    const init = () => {
+      setupAdminFormExperience();
+      setupRepeatableTextSections();
+      setupRepeatableGroupSections();
+      setupBiographyCards();
+      setupScopeTabs();
+    };
+
+    init();
+    document.addEventListener("astro:page-load", init);
   })();
 </script>

@@ -6,10 +6,11 @@ import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
   locale: SiteLocale;
+  content?: Awaited<ReturnType<typeof pageContentService.getFaqPageData>>;
 };
 
-const { locale } = Astro.props;
-const content = await pageContentService.getFaqPageData(locale);
+const { locale, content: previewContent } = Astro.props;
+const content = previewContent ?? (await pageContentService.getFaqPageData(locale));
 ---
 
 <PageBanner {...content.banner} sectionId="faq-banner" />

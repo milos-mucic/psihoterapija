@@ -44,10 +44,13 @@ const heroTitleRichTextLabels = {
   method="post"
   action={action}
   data-admin-section-preview-root
+  data-admin-preview-endpoint="/api/admin/pages/preview"
   data-preview-base-href={previewBaseHref}
   data-preview-locale-label={localeLabel}
 >
   <input type="hidden" name="locale" value={locale} />
+  <input type="hidden" name="pageKey" value="home" />
+  <input type="hidden" name="previewToken" value="" data-admin-preview-token />
 
   <div class="card" style="padding: 1.5rem;">
     <div class="admin-form__grid">
@@ -575,272 +578,15 @@ const heroTitleRichTextLabels = {
   </div>
 </form>
 
-<script is:inline>
+<script>
+  import { setupAdminFormExperience } from "@/features/admin/editor/admin-form.client";
+
   (() => {
-    const setupFloatingSubmit = () => {
-      document.querySelectorAll("[data-admin-section-preview-root]").forEach((form) => {
-        if (!(form instanceof HTMLFormElement) || form.dataset.floatingSubmitBound === "true") {
-          return;
-        }
-
-        const submitButtons = Array.from(form.querySelectorAll("[data-admin-form-submit]")).filter(
-          (button) => button instanceof HTMLButtonElement,
-        );
-        const statusNodes = Array.from(
-          form.querySelectorAll("[data-admin-form-submit-status]"),
-        ).filter((node) => node instanceof HTMLElement);
-        const pendingSources = new Map();
-        let autoSaveRequested = false;
-        let isSubmitting = false;
-
-        const syncSubmitState = () => {
-          const hasPending = pendingSources.size > 0;
-          const message = isSubmitting
-            ? "Čuvanje u toku..."
-            : autoSaveRequested && hasPending
-              ? "Završavam upload pa čuvam izmenu slike."
-              : autoSaveRequested
-                ? "Čuvam izmenu slike..."
-                : hasPending
-                  ? "Sačekajte da se obrada slike ili videa završi."
-                  : "Sve media izmene su spremne za čuvanje.";
-
-          form.dataset.pendingUploads = hasPending ? "true" : "false";
-
-          submitButtons.forEach((button) => {
-            button.disabled = hasPending;
-            button.setAttribute("aria-disabled", hasPending ? "true" : "false");
-          });
-
-          statusNodes.forEach((node) => {
-            node.textContent = message;
-            node.dataset.tone = hasPending ? "muted" : "ready";
-          });
-        };
-
-        const tryAutoSave = () => {
-          if (!autoSaveRequested || isSubmitting || form.dataset.pendingUploads === "true") {
-            return;
-          }
-
-          if (!form.checkValidity()) {
-            autoSaveRequested = false;
-            syncSubmitState();
-            return;
-          }
-
-          requestAnimationFrame(() => form.requestSubmit());
-        };
-
-        form.addEventListener("admin:pending-media", (event) => {
-          if (!(event instanceof CustomEvent)) {
-            return;
-          }
-
-          const sourceId =
-            typeof event.detail?.sourceId === "string" ? event.detail.sourceId : undefined;
-
-          if (!sourceId) {
-            return;
-          }
-
-          if (event.detail?.active) {
-            pendingSources.set(sourceId, true);
-          } else {
-            pendingSources.delete(sourceId);
-          }
-
-          syncSubmitState();
-          tryAutoSave();
-        });
-
-        form.addEventListener("admin:auto-save-media", () => {
-          autoSaveRequested = true;
-          syncSubmitState();
-          tryAutoSave();
-        });
-
-        form.addEventListener("submit", (event) => {
-          if (form.dataset.pendingUploads === "true") {
-            event.preventDefault();
-            syncSubmitState();
-            return;
-          }
-
-          if (isSubmitting) {
-            event.preventDefault();
-            return;
-          }
-
-          isSubmitting = true;
-          syncSubmitState();
-        });
-
-        syncSubmitState();
-        form.dataset.floatingSubmitBound = "true";
-      });
+    const init = () => {
+      setupAdminFormExperience();
     };
 
-    const setupSectionPreviews = () => {
-      document.querySelectorAll("[data-admin-section-preview-root]").forEach((form) => {
-        if (!(form instanceof HTMLFormElement) || form.dataset.sectionPreviewBound === "true") {
-          return;
-        }
-
-        const baseHref = form.dataset.previewBaseHref ?? "";
-        const editorRoot = form.closest("[data-admin-page-editor]");
-        const nav = editorRoot?.querySelector("[data-admin-section-nav]");
-        const previewFrame = editorRoot?.querySelector("[data-admin-preview-iframe]");
-        const previewLink = editorRoot?.querySelector("[data-admin-preview-open]");
-        const sections = Array.from(form.children).filter(
-          (child) => child instanceof HTMLElement && child.matches("[data-section-preview]"),
-        );
-
-        const activateSection = (nextIndex) => {
-          sections.forEach((section, index) => {
-            if (!(section instanceof HTMLElement)) {
-              return;
-            }
-
-            const isActive = index === nextIndex;
-            section.classList.toggle("is-active", isActive);
-            section.classList.toggle("is-collapsed", !isActive);
-
-            const navButton = nav?.querySelector(`[data-admin-section-nav-index="${index}"]`);
-            navButton?.classList.toggle("is-active", isActive);
-            navButton?.setAttribute("aria-current", isActive ? "true" : "false");
-          });
-
-          const activeSection = sections[nextIndex];
-          if (!(activeSection instanceof HTMLElement)) {
-            return;
-          }
-
-          const fragment = activeSection.dataset.sectionPreviewFragment ?? "";
-          const href = fragment ? `${baseHref}#${fragment}` : baseHref;
-
-          if (previewFrame instanceof HTMLIFrameElement && previewFrame.src !== href) {
-            previewFrame.src = href;
-          }
-
-          if (previewLink instanceof HTMLAnchorElement) {
-            previewLink.href = href;
-          }
-        };
-
-        sections.forEach((child, index) => {
-          if (!(child instanceof HTMLElement) || !child.matches("[data-section-preview]")) {
-            return;
-          }
-
-          const fragment = child.dataset.sectionPreviewFragment ?? "";
-          const href = fragment ? `${baseHref}#${fragment}` : baseHref;
-          const title =
-            child.dataset.sectionPreviewTitle ??
-            child.querySelector("h2")?.textContent?.trim() ??
-            "Preview sekcije";
-          const copy =
-            child.dataset.sectionPreviewCopy ??
-            child.querySelector(".section-copy")?.textContent?.trim() ??
-            "";
-
-          child.classList.add("admin-section-editor");
-          child.classList.toggle("is-active", index === 0);
-          child.classList.toggle("is-collapsed", index !== 0);
-
-          const existingNodes = Array.from(child.childNodes);
-          const body = document.createElement("div");
-          body.className = "admin-section-editor__body";
-          existingNodes.forEach((node) => body.append(node));
-
-          const header = document.createElement("div");
-          header.className = "admin-section-editor__header";
-
-          const badge = document.createElement("span");
-          badge.className = "admin-section-editor__badge";
-          badge.textContent = String(index + 1).padStart(2, "0");
-
-          const meta = document.createElement("div");
-          meta.className = "admin-section-editor__meta";
-
-          const heading = document.createElement("h2");
-          heading.textContent = title;
-          meta.append(heading);
-
-          if (copy) {
-            const summary = document.createElement("p");
-            summary.className = "admin-section-editor__copy";
-            summary.textContent = copy;
-            meta.append(summary);
-          }
-
-          const actions = document.createElement("div");
-          actions.className = "admin-section-editor__actions";
-
-          const toggle = document.createElement("button");
-          toggle.type = "button";
-          toggle.className = "button-primary admin-section-editor__toggle";
-          toggle.textContent = "Uredi sekciju";
-          toggle.addEventListener("click", () => activateSection(index));
-
-          const link = document.createElement("a");
-          link.className = "button-secondary";
-          link.href = href;
-          link.target = "_blank";
-          link.rel = "noreferrer";
-          link.textContent = "Otvori javnu sekciju";
-
-          actions.append(toggle, link);
-          header.append(badge, meta, actions);
-
-          child.replaceChildren(header, body);
-
-          if (nav instanceof HTMLElement) {
-            const navButton = document.createElement("button");
-            navButton.type = "button";
-            navButton.className = `admin-section-nav__button${index === 0 ? " is-active" : ""}`;
-            navButton.dataset.adminSectionNavIndex = String(index);
-
-            const navIndex = document.createElement("span");
-            navIndex.className = "admin-section-nav__index";
-            navIndex.textContent = String(index + 1).padStart(2, "0");
-
-            const navTitle = document.createElement("span");
-            navTitle.className = "admin-section-nav__title";
-            navTitle.textContent = title;
-
-            navButton.append(navIndex, navTitle);
-
-            if (copy) {
-              const navCopy = document.createElement("span");
-              navCopy.className = "admin-section-nav__copy";
-              navCopy.textContent = copy;
-              navButton.append(navCopy);
-            }
-
-            navButton.addEventListener("click", () => activateSection(index));
-            nav.append(navButton);
-          }
-
-          child.addEventListener(
-            "invalid",
-            (event) => {
-              if (event.target instanceof HTMLElement) {
-                activateSection(index);
-              }
-            },
-            true,
-          );
-        });
-
-        activateSection(0);
-        form.dataset.sectionPreviewBound = "true";
-      });
-    };
-
-    setupFloatingSubmit();
-    setupSectionPreviews();
-    document.addEventListener("astro:page-load", setupFloatingSubmit);
-    document.addEventListener("astro:page-load", setupSectionPreviews);
+    init();
+    document.addEventListener("astro:page-load", init);
   })();
 </script>

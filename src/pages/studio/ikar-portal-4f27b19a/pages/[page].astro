@@ -1,9 +1,9 @@
 ---
 import { AdminPasswordModal } from "@/components/components/AdminPasswordModal";
 import AdminManagedPageForm from "@/components/components/AdminManagedPageForm.astro";
-import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import { adminAuthService } from "@/features/admin/auth/admin-auth.service";
+import { getAdminPreviewHref } from "@/features/page-content/admin/page-route-map";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import type { PageKey } from "@/features/page-content/types/page-content.types";
 import { adminConfig } from "@/lib/config/admin";
@@ -58,24 +58,7 @@ const saved = Astro.url.searchParams.get("saved") === "1";
 const error = Astro.url.searchParams.get("error");
 const localeLabel = locale === "sr-cyrl" ? "Ćirilica" : "Latinica";
 const config = pageConfig[page];
-const previewHref = (() => {
-  switch (page) {
-    case "about":
-      return localizePath(locale, "/o-nama/");
-    case "biography":
-      return localizePath(locale, "/biografija/");
-    case "psychotherapy":
-      return localizePath(locale, "/psihoterapija/");
-    case "scope":
-      return localizePath(locale, "/oblast-rada/");
-    case "pricing":
-      return localizePath(locale, "/cena/");
-    case "appointment":
-      return localizePath(locale, "/zakazivanje/");
-    case "faq":
-      return localizePath(locale, "/pitanja/");
-  }
-})();
+const previewHref = getAdminPreviewHref(page, locale);
 
 const content = authenticated
   ? await (async () => {
@@ -146,48 +129,6 @@ const content = authenticated
 
         {content ? (
           <div class="admin-editor-layout" data-admin-page-editor>
-            <aside class="admin-editor-layout__aside">
-              <div class="card admin-preview-panel">
-                <div class="admin-preview-panel__head">
-                  <div>
-                    <p class="admin-kicker">Live Preview</p>
-                    <h3>Javna strana</h3>
-                  </div>
-                  <a
-                    class="button-secondary"
-                    href={previewHref}
-                    target="_blank"
-                    rel="noreferrer"
-                    data-admin-preview-open
-                  >
-                    Otvori stranu
-                  </a>
-                </div>
-
-                <div class="admin-preview-panel__viewport">
-                  <iframe
-                    class="admin-preview-panel__frame"
-                    src={previewHref}
-                    title={`Preview strane ${config.title}`}
-                    loading="lazy"
-                    data-admin-preview-iframe
-                  ></iframe>
-                </div>
-              </div>
-
-              <div class="card admin-section-nav-card">
-                <div class="admin-section-nav-card__head">
-                  <p class="admin-kicker">Edit Mode</p>
-                  <h3>Sekcije stranice</h3>
-                  <p class="section-copy">
-                    Uređuje se jedna sekcija u fokusu, dok su ostale sabijene radi preglednosti.
-                  </p>
-                </div>
-
-                <div class="admin-section-nav" data-admin-section-nav></div>
-              </div>
-            </aside>
-
             <div class="admin-editor-layout__form">
               <AdminManagedPageForm
                 action={`/api/admin/pages/${page}`}

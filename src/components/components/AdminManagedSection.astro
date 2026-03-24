@@ -1,0 +1,62 @@
+---
+import AdminManagedField from "@/components/components/AdminManagedField.astro";
+import type {
+  ManagedPageEditorFieldGroup,
+  ManagedPageEditorField,
+  ManagedPageEditorStandardSection,
+} from "@/features/page-content/admin/managed-page-editor.config";
+
+type Props = {
+  section: ManagedPageEditorStandardSection;
+  uploadFolder: string;
+  richTextLabels: Record<string, string>;
+};
+
+const { section, uploadFolder, richTextLabels } = Astro.props;
+
+const isGroupEntry = (
+  entry: ManagedPageEditorField | ManagedPageEditorFieldGroup,
+): entry is ManagedPageEditorFieldGroup => entry.kind === "group";
+---
+
+<div
+  class="card"
+  style="padding: 1.5rem;"
+  data-section-preview
+  data-section-preview-fragment={section.fragment}
+  data-section-preview-copy={section.previewCopy}
+>
+  <div class="page-grid">
+    <div>
+      <h2 style="margin: 0;">{section.title}</h2>
+      <p class="section-copy">{section.copy}</p>
+    </div>
+
+    <div class="admin-form__grid">
+      {
+        section.entries.map((entry) =>
+          isGroupEntry(entry) ? (
+            <div class="admin-section-group admin-form__field--full">
+              <h3 style="margin: 0;">{entry.title}</h3>
+              <div class="admin-form__grid">
+                {entry.fields.map((field) => (
+                  <AdminManagedField
+                    field={field}
+                    uploadFolder={uploadFolder}
+                    richTextLabels={richTextLabels}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <AdminManagedField
+              field={entry}
+              uploadFolder={uploadFolder}
+              richTextLabels={richTextLabels}
+            />
+          ),
+        )
+      }
+    </div>
+  </div>
+</div>

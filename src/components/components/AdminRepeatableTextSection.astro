@@ -1,0 +1,77 @@
+---
+import type { ManagedPageEditorRepeatableTextSection } from "@/features/page-content/admin/managed-page-editor.config";
+
+type Props = {
+  section: ManagedPageEditorRepeatableTextSection;
+};
+
+const { section } = Astro.props;
+---
+
+<div
+  class="card"
+  style="padding: 1.5rem;"
+  data-section-preview
+  data-section-preview-fragment={section.fragment}
+>
+  <div class="page-grid">
+    <div>
+      <h2 style="margin: 0;">{section.title}</h2>
+      <p class="section-copy">{section.copy}</p>
+    </div>
+
+    <div class="admin-form__grid">
+      <div
+        class="admin-form__field admin-form__field--full"
+        data-repeatable-text-list
+        data-repeatable-item-label={section.itemLabel}
+        data-repeatable-name-prefix={section.itemNamePrefix}
+        data-repeatable-min-items={section.minItems ?? 1}
+      >
+        {
+          section.values.map((value, index) => (
+            <div class="admin-section-group admin-form__field--full" data-repeatable-text-item>
+              <div style="display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                <h3 style="margin: 0;" data-repeatable-text-title>
+                  {section.itemLabel} {index + 1}
+                </h3>
+                <button class="button-secondary" type="button" data-repeatable-text-remove>
+                  Ukloni
+                </button>
+              </div>
+
+              <label class="admin-form__field admin-form__field--full">
+                <span>{section.itemLabel}</span>
+                <input class="input-control" data-repeatable-text-value value={value} />
+              </label>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="admin-form__actions" style="justify-content: flex-start;">
+        <button class="button-secondary" type="button" data-repeatable-text-add>
+          {section.addButtonLabel}
+        </button>
+      </div>
+
+      <template data-repeatable-text-template>
+        <div class="admin-section-group admin-form__field--full" data-repeatable-text-item>
+          <div style="display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+            <h3 style="margin: 0;" data-repeatable-text-title>
+              {section.itemLabel}
+            </h3>
+            <button class="button-secondary" type="button" data-repeatable-text-remove>
+              Ukloni
+            </button>
+          </div>
+
+          <label class="admin-form__field admin-form__field--full">
+            <span>{section.itemLabel}</span>
+            <input class="input-control" data-repeatable-text-value />
+          </label>
+        </div>
+      </template>
+    </div>
+  </div>
+</div>

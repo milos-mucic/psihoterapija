@@ -253,3 +253,16 @@ export type PageContentRecord = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type ManagedPageContentMap = {
+  home: HomePageManagedContent;
+  about: AboutPageManagedContent;
+  biography: BiographyPageManagedContent;
+  psychotherapy: PsychotherapyPageManagedContent;
+  scope: ScopePageManagedContent;
+  pricing: PricingPageManagedContent;
+  appointment: AppointmentPageManagedContent;
+  faq: FaqPageManagedContent;
+};
+
+export type AnyManagedPageContent = ManagedPageContentMap[PageKey];

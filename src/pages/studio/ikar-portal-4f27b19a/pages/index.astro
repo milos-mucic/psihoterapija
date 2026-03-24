@@ -2,53 +2,14 @@
 import { AdminPasswordModal } from "@/components/components/AdminPasswordModal";
 import { getDictionary } from "@/features/i18n/translate";
 import { adminAuthService } from "@/features/admin/auth/admin-auth.service";
+import { pageDashboardService } from "@/features/page-content/admin/page-dashboard.service";
 import { adminConfig } from "@/lib/config/admin";
 import AdminLayout from "@/components/components/AdminLayout.astro";
 
 const dictionary = getDictionary("sr-latn");
 const authenticated = adminAuthService.isAuthenticated(Astro.cookies);
-const pageLinks = [
-  {
-    slug: "home",
-    title: dictionary.admin.pages.homeTitle,
-    copy: dictionary.admin.pages.homeCopy,
-  },
-  {
-    slug: "about",
-    title: "O nama",
-    copy: "Video sekcija, glavno objašnjenje kabineta i blog blok.",
-  },
-  {
-    slug: "biography",
-    title: "Biografija",
-    copy: "Stručni profil, kartice i pristup radu.",
-  },
-  {
-    slug: "psychotherapy",
-    title: "Pristup",
-    copy: "Naslovna sekcija, opseg rada, usluge i FAQ.",
-  },
-  {
-    slug: "scope",
-    title: "Oblast rada",
-    copy: "Uvod, fokus sekcija i sve detail teme.",
-  },
-  {
-    slug: "pricing",
-    title: "Cena",
-    copy: "Cenovne kartice i dodatna pojašnjenja.",
-  },
-  {
-    slug: "appointment",
-    title: "Zakazivanje",
-    copy: "Uvod uz formu i donji FAQ blok.",
-  },
-  {
-    slug: "faq",
-    title: "Pitanja",
-    copy: "FAQ lista i blok za zakazivanje.",
-  },
-];
+const pageOverview = authenticated ? await pageDashboardService.listPages() : [];
+const pageStats = authenticated ? pageDashboardService.getStats(pageOverview) : undefined;
 ---
 
 <AdminLayout title={dictionary.admin.pages.title}>
@@ -61,19 +22,67 @@ const pageLinks = [
             <h2>{dictionary.admin.pages.title}</h2>
             <p class="section-copy">{dictionary.admin.pages.copy}</p>
           </div>
+
+          {pageStats ? (
+            <div class="admin-stat-strip">
+              <div class="admin-stat-pill">
+                <span class="admin-stat-pill__label">Stranice</span>
+                <strong>{pageStats.totalPages}</strong>
+              </div>
+              <div class="admin-stat-pill">
+                <span class="admin-stat-pill__label">Needs Translation</span>
+                <strong>{pageStats.pagesNeedingTranslation}</strong>
+              </div>
+              <div class="admin-stat-pill">
+                <span class="admin-stat-pill__label">Missing Image</span>
+                <strong>{pageStats.pagesWithMissingImages}</strong>
+              </div>
+              <div class="admin-stat-pill">
+                <span class="admin-stat-pill__label">Unpublished</span>
+                <strong>{pageStats.pagesWithUnpublishedChanges}</strong>
+              </div>
+            </div>
+          ) : null}
         </div>
 
-        <div class="admin-tile-grid admin-tile-grid--pages">
-          {pageLinks.map((page) => (
-            <a class="card admin-tile" href={`${adminConfig.basePath}/pages/${page.slug}/`}>
-              <p class="admin-tile__eyebrow">Page</p>
-              <h3>{page.title}</h3>
-              <p class="admin-tile__copy">{page.copy}</p>
-              <span class="admin-tile__footer">
-                Uredi stranicu
-                <span class="admin-tile__arrow">↗</span>
-              </span>
-            </a>
+        <div class="admin-page-dashboard">
+          {pageOverview.map((page) => (
+            <article class="card admin-page-card">
+              <div class="admin-page-card__head">
+                <div>
+                  <p class="admin-tile__eyebrow">Page</p>
+                  <h3>{page.title}</h3>
+                  <p class="admin-tile__copy">{page.copy}</p>
+                </div>
+              </div>
+
+              <div class="admin-page-card__locale-list">
+                {page.locales.map((locale) => (
+                  <section class="admin-page-locale">
+                    <div class="admin-page-locale__head">
+                      <div>
+                        <h4>{locale.label}</h4>
+                        <p>{locale.updatedAtLabel}</p>
+                      </div>
+                    </div>
+
+                    <div class="admin-page-locale__actions">
+                      <a class="button-secondary" href={locale.editorHref}>
+                        Uredi
+                      </a>
+                      <a
+                        class="button-secondary"
+                        href={locale.publicHref}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Javna strana
+                      </a>
+                    </div>
+                  </section>
+                ))}
+              </div>
+            </article>
           ))}
         </div>
       </div>

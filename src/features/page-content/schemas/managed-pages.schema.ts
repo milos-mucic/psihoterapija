@@ -42,13 +42,35 @@ const textCardSchema = z.object({
   copy: richTextRequired,
 });
 
+const toInputRecord = (input: unknown) =>
+  typeof input === "object" && input !== null ? (input as Record<string, unknown>) : {};
+
+const getIndexedFieldMatches = (input: Record<string, unknown>, expression: RegExp) => {
+  const indexes = new Set<number>();
+
+  for (const key of Object.keys(input)) {
+    const match = expression.exec(key);
+
+    if (match) {
+      indexes.add(Number(match[1]));
+    }
+  }
+
+  return Array.from(indexes).sort((left, right) => left - right);
+};
+
+const getIndexedTextValues = (input: Record<string, unknown>, prefix: string) =>
+  getIndexedFieldMatches(input, new RegExp(`^${prefix}_(\\d+)$`)).map((index) =>
+    requiredText.parse(input[`${prefix}_${index}`]),
+  );
+
 export const aboutPageManagedContentSchema: z.ZodType<AboutPageManagedContent> = z.object({
   banner: bannerSchema,
   showcase: z.object({
     title: requiredText,
     videoUrl: requiredText,
     videoImage: requiredText,
-    cards: z.array(mediaTextCardSchema).length(3),
+    cards: z.array(mediaTextCardSchema).min(1),
   }),
   idea: z.object({
     title: requiredText,
@@ -56,7 +78,7 @@ export const aboutPageManagedContentSchema: z.ZodType<AboutPageManagedContent> =
   }),
   focus: z.object({
     title: requiredText,
-    items: z.array(requiredText).length(5),
+    items: z.array(requiredText).min(1),
   }),
   recent: z.object({
     title: requiredText,
@@ -73,23 +95,9 @@ const aboutPageFormSchema = z.object({
   showcaseTitle: requiredText,
   showcaseVideoUrl: requiredText,
   showcaseVideoImage: requiredText,
-  showcaseCard1Title: requiredText,
-  showcaseCard1Copy: richTextRequired,
-  showcaseCard1Image: requiredText,
-  showcaseCard2Title: requiredText,
-  showcaseCard2Copy: richTextRequired,
-  showcaseCard2Image: requiredText,
-  showcaseCard3Title: requiredText,
-  showcaseCard3Copy: richTextRequired,
-  showcaseCard3Image: requiredText,
   ideaTitle: requiredText,
   ideaBody: richTextRequired,
   focusTitle: requiredText,
-  focusItem1: requiredText,
-  focusItem2: requiredText,
-  focusItem3: requiredText,
-  focusItem4: requiredText,
-  focusItem5: requiredText,
   recentTitle: requiredText,
   recentCopy: richTextRequired,
   recentLabel: requiredText,
@@ -101,6 +109,15 @@ export const parseAboutPageManagedContent = (input: unknown) =>
 
 export const parseAboutPageManagedContentForm = (input: unknown): AboutPageManagedContent => {
   const parsed = aboutPageFormSchema.parse(input);
+  const values = toInputRecord(input);
+  const showcaseCards = getIndexedFieldMatches(values, /^showcaseCard_(\d+)_title$/).map((index) =>
+    mediaTextCardSchema.parse({
+      title: values[`showcaseCard_${index}_title`],
+      copy: values[`showcaseCard_${index}_copy`],
+      image: values[`showcaseCard_${index}_image`],
+    }),
+  );
+  const focusItems = getIndexedTextValues(values, "focusItem");
 
   return aboutPageManagedContentSchema.parse({
     banner: {
@@ -112,23 +129,7 @@ export const parseAboutPageManagedContentForm = (input: unknown): AboutPageManag
       title: parsed.showcaseTitle,
       videoUrl: parsed.showcaseVideoUrl,
       videoImage: parsed.showcaseVideoImage,
-      cards: [
-        {
-          title: parsed.showcaseCard1Title,
-          copy: parsed.showcaseCard1Copy,
-          image: parsed.showcaseCard1Image,
-        },
-        {
-          title: parsed.showcaseCard2Title,
-          copy: parsed.showcaseCard2Copy,
-          image: parsed.showcaseCard2Image,
-        },
-        {
-          title: parsed.showcaseCard3Title,
-          copy: parsed.showcaseCard3Copy,
-          image: parsed.showcaseCard3Image,
-        },
-      ],
+      cards: showcaseCards,
     },
     idea: {
       title: parsed.ideaTitle,
@@ -136,13 +137,7 @@ export const parseAboutPageManagedContentForm = (input: unknown): AboutPageManag
     },
     focus: {
       title: parsed.focusTitle,
-      items: [
-        parsed.focusItem1,
-        parsed.focusItem2,
-        parsed.focusItem3,
-        parsed.focusItem4,
-        parsed.focusItem5,
-      ],
+      items: focusItems,
     },
     recent: {
       title: parsed.recentTitle,
@@ -160,7 +155,7 @@ const biographyCardSchema = z.object({
   summary: richTextRequired,
   body: richTextRequired,
   image: requiredText,
-  highlights: z.array(requiredText).length(3),
+  highlights: z.array(requiredText).min(1),
 });
 
 export const biographyPageManagedContentSchema: z.ZodType<BiographyPageManagedContent> = z.object({
@@ -179,7 +174,7 @@ export const biographyPageManagedContentSchema: z.ZodType<BiographyPageManagedCo
   approach: z.object({
     title: requiredText,
     copy: richTextRequired,
-    points: z.array(requiredText).length(3),
+    points: z.array(requiredText).min(1),
     image: requiredText,
     ctaLabel: requiredText,
   }),
@@ -193,9 +188,6 @@ const biographyPageFormSchema = z.object({
   cardsCopy: richTextRequired,
   approachTitle: requiredText,
   approachCopy: richTextRequired,
-  approachPoint1: requiredText,
-  approachPoint2: requiredText,
-  approachPoint3: requiredText,
   approachImage: requiredText,
   approachCtaLabel: requiredText,
 });
@@ -222,6 +214,9 @@ const toBiographyCard = (
   index: number,
 ): BiographyProfileManagedContent => {
   const prefix = `biographyCard_${index}_`;
+  const highlights = getIndexedFieldMatches(input, new RegExp(`^${prefix}highlight_(\\d+)$`)).map(
+    (highlightIndex) => requiredText.parse(input[`${prefix}highlight_${highlightIndex}`]),
+  );
 
   return biographyCardSchema.parse({
     slug: input[`${prefix}slug`],
@@ -230,11 +225,7 @@ const toBiographyCard = (
     summary: input[`${prefix}summary`],
     body: input[`${prefix}body`],
     image: input[`${prefix}image`],
-    highlights: [
-      input[`${prefix}highlight1`],
-      input[`${prefix}highlight2`],
-      input[`${prefix}highlight3`],
-    ],
+    highlights,
   });
 };
 
@@ -242,8 +233,9 @@ export const parseBiographyPageManagedContentForm = (
   input: unknown,
 ): BiographyPageManagedContent => {
   const parsed = biographyPageFormSchema.parse(input);
-  const values = parsed as Record<string, unknown>;
+  const values = toInputRecord(input);
   const cards = getBiographyCardIndexes(values).map((index) => toBiographyCard(values, index));
+  const approachPoints = getIndexedTextValues(values, "approachPoint");
 
   return biographyPageManagedContentSchema.parse({
     banner: {
@@ -259,7 +251,7 @@ export const parseBiographyPageManagedContentForm = (
     approach: {
       title: parsed.approachTitle,
       copy: parsed.approachCopy,
-      points: [parsed.approachPoint1, parsed.approachPoint2, parsed.approachPoint3],
+      points: approachPoints,
       image: parsed.approachImage,
       ctaLabel: parsed.approachCtaLabel,
     },
@@ -271,19 +263,19 @@ export const psychotherapyPageManagedContentSchema: z.ZodType<PsychotherapyPageM
     banner: bannerSchema,
     scope: z.object({
       title: requiredText,
-      items: z.array(requiredText).length(7),
+      items: z.array(requiredText).min(1),
     }),
     services: z.object({
-      cards: z.array(mediaTextCardSchema).length(3),
+      cards: z.array(mediaTextCardSchema).min(1),
     }),
     booking: z.object({
       title: requiredText,
       copy: richTextRequired,
       formatLabel: requiredText,
-      formats: z.array(requiredText).length(3),
+      formats: z.array(requiredText).min(1),
     }),
     faq: z.object({
-      items: z.array(faqItemSchema).length(4),
+      items: z.array(faqItemSchema).min(1),
       image: requiredText,
     }),
   });
@@ -293,37 +285,10 @@ const psychotherapyPageFormSchema = z.object({
   bannerDescription: richTextRequired,
   bannerBackgroundImage: requiredText,
   scopeTitle: requiredText,
-  scopeItem1: requiredText,
-  scopeItem2: requiredText,
-  scopeItem3: requiredText,
-  scopeItem4: requiredText,
-  scopeItem5: requiredText,
-  scopeItem6: requiredText,
-  scopeItem7: requiredText,
-  service1Title: requiredText,
-  service1Copy: richTextRequired,
-  service1Image: requiredText,
-  service2Title: requiredText,
-  service2Copy: richTextRequired,
-  service2Image: requiredText,
-  service3Title: requiredText,
-  service3Copy: richTextRequired,
-  service3Image: requiredText,
   bookingTitle: requiredText,
   bookingCopy: richTextRequired,
   bookingFormatLabel: requiredText,
-  bookingFormat1: requiredText,
-  bookingFormat2: requiredText,
-  bookingFormat3: requiredText,
   faqImage: requiredText,
-  faq1Question: requiredText,
-  faq1Answer: richTextRequired,
-  faq2Question: requiredText,
-  faq2Answer: richTextRequired,
-  faq3Question: requiredText,
-  faq3Answer: richTextRequired,
-  faq4Question: requiredText,
-  faq4Answer: richTextRequired,
 });
 
 export const parsePsychotherapyPageManagedContent = (input: unknown) =>
@@ -333,6 +298,22 @@ export const parsePsychotherapyPageManagedContentForm = (
   input: unknown,
 ): PsychotherapyPageManagedContent => {
   const parsed = psychotherapyPageFormSchema.parse(input);
+  const values = toInputRecord(input);
+  const scopeItems = getIndexedTextValues(values, "scopeItem");
+  const serviceCards = getIndexedFieldMatches(values, /^serviceCard_(\d+)_title$/).map((index) =>
+    mediaTextCardSchema.parse({
+      title: values[`serviceCard_${index}_title`],
+      copy: values[`serviceCard_${index}_copy`],
+      image: values[`serviceCard_${index}_image`],
+    }),
+  );
+  const bookingFormats = getIndexedTextValues(values, "bookingFormat");
+  const faqItems = getIndexedFieldMatches(values, /^faqItem_(\d+)_question$/).map((index) =>
+    faqItemSchema.parse({
+      question: values[`faqItem_${index}_question`],
+      answer: values[`faqItem_${index}_answer`],
+    }),
+  );
 
   return psychotherapyPageManagedContentSchema.parse({
     banner: {
@@ -342,49 +323,20 @@ export const parsePsychotherapyPageManagedContentForm = (
     },
     scope: {
       title: parsed.scopeTitle,
-      items: [
-        parsed.scopeItem1,
-        parsed.scopeItem2,
-        parsed.scopeItem3,
-        parsed.scopeItem4,
-        parsed.scopeItem5,
-        parsed.scopeItem6,
-        parsed.scopeItem7,
-      ],
+      items: scopeItems,
     },
     services: {
-      cards: [
-        {
-          title: parsed.service1Title,
-          copy: parsed.service1Copy,
-          image: parsed.service1Image,
-        },
-        {
-          title: parsed.service2Title,
-          copy: parsed.service2Copy,
-          image: parsed.service2Image,
-        },
-        {
-          title: parsed.service3Title,
-          copy: parsed.service3Copy,
-          image: parsed.service3Image,
-        },
-      ],
+      cards: serviceCards,
     },
     booking: {
       title: parsed.bookingTitle,
       copy: parsed.bookingCopy,
       formatLabel: parsed.bookingFormatLabel,
-      formats: [parsed.bookingFormat1, parsed.bookingFormat2, parsed.bookingFormat3],
+      formats: bookingFormats,
     },
     faq: {
       image: parsed.faqImage,
-      items: [
-        { question: parsed.faq1Question, answer: parsed.faq1Answer },
-        { question: parsed.faq2Question, answer: parsed.faq2Answer },
-        { question: parsed.faq3Question, answer: parsed.faq3Answer },
-        { question: parsed.faq4Question, answer: parsed.faq4Answer },
-      ],
+      items: faqItems,
     },
   });
 };
@@ -412,7 +364,7 @@ export const scopePageManagedContentSchema: z.ZodType<ScopePageManagedContent> =
   banner: bannerSchema,
   intro: z.object({
     title: requiredText,
-    items: z.array(requiredText).length(7),
+    items: z.array(requiredText).min(1),
   }),
   tabs: z
     .array(scopeTabSchema)
@@ -444,13 +396,6 @@ const scopePageFormSchema = z.object({
   bannerDescription: richTextRequired,
   bannerBackgroundImage: requiredText,
   introTitle: requiredText,
-  introItem1: requiredText,
-  introItem2: requiredText,
-  introItem3: requiredText,
-  introItem4: requiredText,
-  introItem5: requiredText,
-  introItem6: requiredText,
-  introItem7: requiredText,
   detailRelatedTitle: requiredText,
   focusTitle: requiredText,
   focusCopy: richTextRequired,
@@ -521,8 +466,9 @@ export const parseScopePageManagedContent = (input: unknown) =>
 
 export const parseScopePageManagedContentForm = (input: unknown): ScopePageManagedContent => {
   const parsed = scopePageFormSchema.parse(input);
-  const values = parsed as Record<string, unknown>;
+  const values = toInputRecord(input);
   const tabs = getScopeTabIndexes(values).map((tabIndex) => toScopeTab(values, tabIndex));
+  const introItems = getIndexedTextValues(values, "introItem");
 
   return scopePageManagedContentSchema.parse({
     banner: {
@@ -532,15 +478,7 @@ export const parseScopePageManagedContentForm = (input: unknown): ScopePageManag
     },
     intro: {
       title: parsed.introTitle,
-      items: [
-        parsed.introItem1,
-        parsed.introItem2,
-        parsed.introItem3,
-        parsed.introItem4,
-        parsed.introItem5,
-        parsed.introItem6,
-        parsed.introItem7,
-      ],
+      items: introItems,
     },
     tabs,
     detail: {
@@ -562,43 +500,23 @@ export const parseScopePageManagedContentForm = (input: unknown): ScopePageManag
   });
 };
 
+const pricingPlanSchema = z.object({
+  title: requiredText,
+  price: requiredText,
+  outsideSerbiaPrice: requiredText,
+  ctaLabel: requiredText,
+});
+
 export const pricingPageManagedContentSchema: z.ZodType<PricingPageManagedContent> = z.object({
   banner: bannerSchema,
-  plans: z
-    .array(
-      z.object({
-        title: requiredText,
-        price: requiredText,
-        outsideSerbiaPrice: requiredText,
-        ctaLabel: requiredText,
-      }),
-    )
-    .length(3),
-  infoCards: z.array(textCardSchema).length(3),
+  plans: z.array(pricingPlanSchema).min(1),
+  infoCards: z.array(textCardSchema).min(1),
 });
 
 const pricingPageFormSchema = z.object({
   bannerTitle: requiredText,
   bannerDescription: richTextRequired,
   bannerBackgroundImage: requiredText,
-  plan1Title: requiredText,
-  plan1Price: requiredText,
-  plan1OutsideSerbiaPrice: richTextRequired,
-  plan1CtaLabel: requiredText,
-  plan2Title: requiredText,
-  plan2Price: requiredText,
-  plan2OutsideSerbiaPrice: richTextRequired,
-  plan2CtaLabel: requiredText,
-  plan3Title: requiredText,
-  plan3Price: requiredText,
-  plan3OutsideSerbiaPrice: richTextRequired,
-  plan3CtaLabel: requiredText,
-  info1Title: requiredText,
-  info1Copy: richTextRequired,
-  info2Title: requiredText,
-  info2Copy: richTextRequired,
-  info3Title: requiredText,
-  info3Copy: richTextRequired,
 });
 
 export const parsePricingPageManagedContent = (input: unknown) =>
@@ -606,6 +524,21 @@ export const parsePricingPageManagedContent = (input: unknown) =>
 
 export const parsePricingPageManagedContentForm = (input: unknown): PricingPageManagedContent => {
   const parsed = pricingPageFormSchema.parse(input);
+  const values = toInputRecord(input);
+  const plans = getIndexedFieldMatches(values, /^pricingPlan_(\d+)_title$/).map((index) =>
+    pricingPlanSchema.parse({
+      title: values[`pricingPlan_${index}_title`],
+      price: values[`pricingPlan_${index}_price`],
+      outsideSerbiaPrice: values[`pricingPlan_${index}_outsideSerbiaPrice`],
+      ctaLabel: values[`pricingPlan_${index}_ctaLabel`],
+    }),
+  );
+  const infoCards = getIndexedFieldMatches(values, /^pricingInfo_(\d+)_title$/).map((index) =>
+    textCardSchema.parse({
+      title: values[`pricingInfo_${index}_title`],
+      copy: values[`pricingInfo_${index}_copy`],
+    }),
+  );
 
   return pricingPageManagedContentSchema.parse({
     banner: {
@@ -613,31 +546,8 @@ export const parsePricingPageManagedContentForm = (input: unknown): PricingPageM
       description: parsed.bannerDescription,
       backgroundImage: parsed.bannerBackgroundImage,
     },
-    plans: [
-      {
-        title: parsed.plan1Title,
-        price: parsed.plan1Price,
-        outsideSerbiaPrice: parsed.plan1OutsideSerbiaPrice,
-        ctaLabel: parsed.plan1CtaLabel,
-      },
-      {
-        title: parsed.plan2Title,
-        price: parsed.plan2Price,
-        outsideSerbiaPrice: parsed.plan2OutsideSerbiaPrice,
-        ctaLabel: parsed.plan2CtaLabel,
-      },
-      {
-        title: parsed.plan3Title,
-        price: parsed.plan3Price,
-        outsideSerbiaPrice: parsed.plan3OutsideSerbiaPrice,
-        ctaLabel: parsed.plan3CtaLabel,
-      },
-    ],
-    infoCards: [
-      { title: parsed.info1Title, copy: parsed.info1Copy },
-      { title: parsed.info2Title, copy: parsed.info2Copy },
-      { title: parsed.info3Title, copy: parsed.info3Copy },
-    ],
+    plans,
+    infoCards,
   });
 };
 
@@ -648,10 +558,10 @@ export const appointmentPageManagedContentSchema: z.ZodType<AppointmentPageManag
       title: requiredText,
       copy: requiredText,
       formatLabel: requiredText,
-      formats: z.array(requiredText).length(3),
+      formats: z.array(requiredText).min(1),
     }),
     faq: z.object({
-      items: z.array(faqItemSchema).length(4),
+      items: z.array(faqItemSchema).min(1),
       image: requiredText,
     }),
   });
@@ -663,18 +573,7 @@ const appointmentPageFormSchema = z.object({
   bookingTitle: requiredText,
   bookingCopy: richTextRequired,
   bookingFormatLabel: requiredText,
-  bookingFormat1: requiredText,
-  bookingFormat2: requiredText,
-  bookingFormat3: requiredText,
   faqImage: requiredText,
-  faq1Question: requiredText,
-  faq1Answer: richTextRequired,
-  faq2Question: requiredText,
-  faq2Answer: richTextRequired,
-  faq3Question: requiredText,
-  faq3Answer: richTextRequired,
-  faq4Question: requiredText,
-  faq4Answer: richTextRequired,
 });
 
 export const parseAppointmentPageManagedContent = (input: unknown) =>
@@ -684,6 +583,14 @@ export const parseAppointmentPageManagedContentForm = (
   input: unknown,
 ): AppointmentPageManagedContent => {
   const parsed = appointmentPageFormSchema.parse(input);
+  const values = toInputRecord(input);
+  const bookingFormats = getIndexedTextValues(values, "bookingFormat");
+  const faqItems = getIndexedFieldMatches(values, /^faqItem_(\d+)_question$/).map((index) =>
+    faqItemSchema.parse({
+      question: values[`faqItem_${index}_question`],
+      answer: values[`faqItem_${index}_answer`],
+    }),
+  );
 
   return appointmentPageManagedContentSchema.parse({
     banner: {
@@ -695,16 +602,11 @@ export const parseAppointmentPageManagedContentForm = (
       title: parsed.bookingTitle,
       copy: parsed.bookingCopy,
       formatLabel: parsed.bookingFormatLabel,
-      formats: [parsed.bookingFormat1, parsed.bookingFormat2, parsed.bookingFormat3],
+      formats: bookingFormats,
     },
     faq: {
       image: parsed.faqImage,
-      items: [
-        { question: parsed.faq1Question, answer: parsed.faq1Answer },
-        { question: parsed.faq2Question, answer: parsed.faq2Answer },
-        { question: parsed.faq3Question, answer: parsed.faq3Answer },
-        { question: parsed.faq4Question, answer: parsed.faq4Answer },
-      ],
+      items: faqItems,
     },
   });
 };
@@ -712,14 +614,14 @@ export const parseAppointmentPageManagedContentForm = (
 export const faqPageManagedContentSchema: z.ZodType<FaqPageManagedContent> = z.object({
   banner: bannerSchema,
   faq: z.object({
-    items: z.array(faqItemSchema).length(4),
+    items: z.array(faqItemSchema).min(1),
     image: requiredText,
   }),
   booking: z.object({
     title: requiredText,
     copy: requiredText,
     formatLabel: requiredText,
-    formats: z.array(requiredText).length(3),
+    formats: z.array(requiredText).min(1),
   }),
 });
 
@@ -728,20 +630,9 @@ const faqPageFormSchema = z.object({
   bannerDescription: richTextRequired,
   bannerBackgroundImage: requiredText,
   faqImage: requiredText,
-  faq1Question: requiredText,
-  faq1Answer: richTextRequired,
-  faq2Question: requiredText,
-  faq2Answer: richTextRequired,
-  faq3Question: requiredText,
-  faq3Answer: richTextRequired,
-  faq4Question: requiredText,
-  faq4Answer: richTextRequired,
   bookingTitle: requiredText,
   bookingCopy: richTextRequired,
   bookingFormatLabel: requiredText,
-  bookingFormat1: requiredText,
-  bookingFormat2: requiredText,
-  bookingFormat3: requiredText,
 });
 
 export const parseFaqPageManagedContent = (input: unknown) =>
@@ -749,6 +640,14 @@ export const parseFaqPageManagedContent = (input: unknown) =>
 
 export const parseFaqPageManagedContentForm = (input: unknown): FaqPageManagedContent => {
   const parsed = faqPageFormSchema.parse(input);
+  const values = toInputRecord(input);
+  const faqItems = getIndexedFieldMatches(values, /^faqItem_(\d+)_question$/).map((index) =>
+    faqItemSchema.parse({
+      question: values[`faqItem_${index}_question`],
+      answer: values[`faqItem_${index}_answer`],
+    }),
+  );
+  const bookingFormats = getIndexedTextValues(values, "bookingFormat");
 
   return faqPageManagedContentSchema.parse({
     banner: {
@@ -758,18 +657,13 @@ export const parseFaqPageManagedContentForm = (input: unknown): FaqPageManagedCo
     },
     faq: {
       image: parsed.faqImage,
-      items: [
-        { question: parsed.faq1Question, answer: parsed.faq1Answer },
-        { question: parsed.faq2Question, answer: parsed.faq2Answer },
-        { question: parsed.faq3Question, answer: parsed.faq3Answer },
-        { question: parsed.faq4Question, answer: parsed.faq4Answer },
-      ],
+      items: faqItems,
     },
     booking: {
       title: parsed.bookingTitle,
       copy: parsed.bookingCopy,
       formatLabel: parsed.bookingFormatLabel,
-      formats: [parsed.bookingFormat1, parsed.bookingFormat2, parsed.bookingFormat3],
+      formats: bookingFormats,
     },
   });
 };

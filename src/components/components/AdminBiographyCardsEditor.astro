@@ -1,0 +1,383 @@
+---
+import { AdminRichTextField } from "@/components/components/AdminRichTextField";
+import type { AdminRichTextFieldProps } from "@/components/components/AdminRichTextField";
+import type { BiographyProfileManagedContent } from "@/features/page-content/types/page-content.types";
+
+type Props = {
+  fragment: string;
+  title: string;
+  copy: string;
+  sectionTitleValue: string;
+  sectionCopyValue: string;
+  cards: BiographyProfileManagedContent[];
+  uploadFolder: string;
+  richTextLabels: AdminRichTextFieldProps["labels"];
+};
+
+const {
+  fragment,
+  title,
+  copy,
+  sectionTitleValue,
+  sectionCopyValue,
+  cards,
+  uploadFolder,
+  richTextLabels,
+} = Astro.props;
+---
+
+<div
+  class="card"
+  style="padding: 1.5rem;"
+  data-section-preview
+  data-section-preview-fragment={fragment}
+>
+  <div class="page-grid">
+    <div>
+      <h2 style="margin: 0;">{title}</h2>
+      <p class="section-copy">{copy}</p>
+    </div>
+
+    <div class="admin-form__grid">
+      <div class="admin-form__field admin-form__field--full">
+        <div class="admin-form__grid">
+          <label class="admin-form__field admin-form__field--full">
+            <span>Naslov sekcije</span>
+            <input
+              class="input-control"
+              name="cardsTitle"
+              value={sectionTitleValue}
+              data-biography-section-title
+            />
+          </label>
+        </div>
+      </div>
+
+      <div class="admin-form__field admin-form__field--full">
+        <span>Opis sekcije</span>
+        <div data-biography-section-copy-field>
+          <AdminRichTextField
+            client:load
+            name="cardsCopy"
+            initialValue={sectionCopyValue}
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder={uploadFolder}
+            labels={richTextLabels}
+          />
+        </div>
+      </div>
+
+      <div
+        class="admin-form__field admin-form__field--full"
+        data-biography-card-list
+        data-biography-card-rich-text-labels={JSON.stringify(richTextLabels)}
+      >
+        {
+          cards.map((card, index) => (
+            <div class="admin-section-group admin-form__field--full" data-biography-card-item>
+              <div style="display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                <h3 style="margin: 0;" data-biography-card-title>
+                  Profil {index + 1}
+                </h3>
+                <button class="button-secondary" type="button" data-biography-card-remove>
+                  Obriši profil
+                </button>
+              </div>
+
+              <div class="admin-form__grid">
+                <label class="admin-form__field">
+                  <span>Slug</span>
+                  <input
+                    class="input-control"
+                    data-biography-card-field="slug"
+                    name={`biographyCard_${index}_slug`}
+                    value={card.slug}
+                  />
+                </label>
+
+                <label class="admin-form__field">
+                  <span>Naslov</span>
+                  <input
+                    class="input-control"
+                    data-biography-card-field="title"
+                    name={`biographyCard_${index}_title`}
+                    value={card.title}
+                  />
+                </label>
+
+                <label class="admin-form__field">
+                  <span>Rola</span>
+                  <input
+                    class="input-control"
+                    data-biography-card-field="role"
+                    name={`biographyCard_${index}_role`}
+                    value={card.role}
+                  />
+                </label>
+
+                <div class="admin-form__field admin-form__field--full">
+                  <span>Sažetak na kartici</span>
+                  <div class="admin-biography-card-rich-text" data-biography-card-field="summary">
+                    <textarea data-biography-card-rtf-initial hidden>
+                      {card.summary}
+                    </textarea>
+                  </div>
+                </div>
+
+                <div class="admin-form__field admin-form__field--full">
+                  <span>Detalj tekst stranice</span>
+                  <div class="admin-biography-card-rich-text" data-biography-card-field="body">
+                    <textarea data-biography-card-rtf-initial hidden>
+                      {card.body}
+                    </textarea>
+                  </div>
+                </div>
+
+                <div class="admin-inline-media-field admin-form__field--full">
+                  <span>Slika</span>
+                  <input
+                    data-biography-card-field="image"
+                    data-biography-card-image-input
+                    name={`biographyCard_${index}_image`}
+                    type="hidden"
+                    value={card.image}
+                  />
+                  <div class="admin-inline-media-field__preview" data-biography-card-image-preview>
+                    {card.image ? (
+                      <img src={card.image} alt="" loading="lazy" />
+                    ) : (
+                      <p class="admin-inline-media-field__empty">Slika nije dodata.</p>
+                    )}
+                  </div>
+                  <div class="admin-inline-media-field__actions">
+                    <label class="button-secondary admin-inline-media-field__upload">
+                      <span>Otpremi sliku</span>
+                      <input accept="image/*" data-biography-card-upload hidden type="file" />
+                    </label>
+                    <button class="button-secondary" data-biography-card-image-clear type="button">
+                      Ukloni sliku
+                    </button>
+                  </div>
+                  <div class="admin-upload-progress" data-biography-card-image-progress hidden>
+                    <div class="admin-upload-progress__track">
+                      <div
+                        class="admin-upload-progress__bar"
+                        data-biography-card-image-progress-bar
+                        style="width: 0%;"
+                      />
+                    </div>
+                  </div>
+                  <p class="admin-inline-media-field__status" data-biography-card-image-status />
+                </div>
+
+                <div
+                  class="admin-form__field admin-form__field--full"
+                  data-biography-highlight-list
+                  data-biography-highlight-min-items="1"
+                >
+                  <div style="display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                    <span>Tagovi profila</span>
+                    <button class="button-secondary" type="button" data-biography-highlight-add>
+                      Dodaj tag
+                    </button>
+                  </div>
+
+                  {card.highlights.map((highlight, highlightIndex) => (
+                    <div
+                      class="admin-section-group admin-form__field--full"
+                      data-biography-highlight-item
+                    >
+                      <div style="display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                        <h4 style="margin: 0;" data-biography-highlight-title>
+                          Tag {highlightIndex + 1}
+                        </h4>
+                        <button
+                          class="button-secondary"
+                          type="button"
+                          data-biography-highlight-remove
+                        >
+                          Ukloni
+                        </button>
+                      </div>
+
+                      <label class="admin-form__field admin-form__field--full">
+                        <span>Tag</span>
+                        <input
+                          class="input-control"
+                          data-biography-highlight-value
+                          value={highlight}
+                        />
+                      </label>
+                    </div>
+                  ))}
+
+                  <template data-biography-highlight-template>
+                    <div
+                      class="admin-section-group admin-form__field--full"
+                      data-biography-highlight-item
+                    >
+                      <div style="display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                        <h4 style="margin: 0;" data-biography-highlight-title>
+                          Tag
+                        </h4>
+                        <button
+                          class="button-secondary"
+                          type="button"
+                          data-biography-highlight-remove
+                        >
+                          Ukloni
+                        </button>
+                      </div>
+
+                      <label class="admin-form__field admin-form__field--full">
+                        <span>Tag</span>
+                        <input class="input-control" data-biography-highlight-value />
+                      </label>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="admin-form__actions" style="justify-content: flex-start;">
+        <button class="button-secondary" type="button" data-biography-card-add>
+          Dodaj profil
+        </button>
+      </div>
+
+      <template data-biography-card-template>
+        <div class="admin-section-group admin-form__field--full" data-biography-card-item>
+          <div
+            style="display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; flex-wrap: wrap;"
+          >
+            <h3 style="margin: 0;" data-biography-card-title>Profil</h3>
+            <button class="button-secondary" type="button" data-biography-card-remove>
+              Obriši profil
+            </button>
+          </div>
+
+          <div class="admin-form__grid">
+            <label class="admin-form__field">
+              <span>Slug</span>
+              <input class="input-control" data-biography-card-field="slug" />
+            </label>
+
+            <label class="admin-form__field">
+              <span>Naslov</span>
+              <input class="input-control" data-biography-card-field="title" />
+            </label>
+
+            <label class="admin-form__field">
+              <span>Rola</span>
+              <input class="input-control" data-biography-card-field="role" />
+            </label>
+
+            <div class="admin-form__field admin-form__field--full">
+              <span>Sažetak na kartici</span>
+              <div class="admin-biography-card-rich-text" data-biography-card-field="summary">
+                <textarea data-biography-card-rtf-initial hidden></textarea>
+              </div>
+            </div>
+
+            <div class="admin-form__field admin-form__field--full">
+              <span>Detalj tekst stranice</span>
+              <div class="admin-biography-card-rich-text" data-biography-card-field="body">
+                <textarea data-biography-card-rtf-initial hidden></textarea>
+              </div>
+            </div>
+
+            <div class="admin-inline-media-field admin-form__field--full">
+              <span>Slika</span>
+              <input
+                data-biography-card-field="image"
+                data-biography-card-image-input
+                type="hidden"
+              />
+              <div class="admin-inline-media-field__preview" data-biography-card-image-preview>
+                <p class="admin-inline-media-field__empty">Slika nije dodata.</p>
+              </div>
+              <div class="admin-inline-media-field__actions">
+                <label class="button-secondary admin-inline-media-field__upload">
+                  <span>Otpremi sliku</span>
+                  <input accept="image/*" data-biography-card-upload hidden type="file" />
+                </label>
+                <button class="button-secondary" data-biography-card-image-clear type="button">
+                  Ukloni sliku
+                </button>
+              </div>
+              <div class="admin-upload-progress" data-biography-card-image-progress hidden>
+                <div class="admin-upload-progress__track">
+                  <div
+                    class="admin-upload-progress__bar"
+                    data-biography-card-image-progress-bar
+                    style="width: 0%;"
+                  >
+                  </div>
+                </div>
+              </div>
+              <p class="admin-inline-media-field__status" data-biography-card-image-status></p>
+            </div>
+
+            <div
+              class="admin-form__field admin-form__field--full"
+              data-biography-highlight-list
+              data-biography-highlight-min-items="1"
+            >
+              <div
+                style="display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; flex-wrap: wrap;"
+              >
+                <span>Tagovi profila</span>
+                <button class="button-secondary" type="button" data-biography-highlight-add>
+                  Dodaj tag
+                </button>
+              </div>
+
+              <div
+                class="admin-section-group admin-form__field--full"
+                data-biography-highlight-item
+              >
+                <div
+                  style="display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; flex-wrap: wrap;"
+                >
+                  <h4 style="margin: 0;" data-biography-highlight-title>Tag 1</h4>
+                  <button class="button-secondary" type="button" data-biography-highlight-remove>
+                    Ukloni
+                  </button>
+                </div>
+
+                <label class="admin-form__field admin-form__field--full">
+                  <span>Tag</span>
+                  <input class="input-control" data-biography-highlight-value />
+                </label>
+              </div>
+
+              <template data-biography-highlight-template>
+                <div
+                  class="admin-section-group admin-form__field--full"
+                  data-biography-highlight-item
+                >
+                  <div
+                    style="display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; flex-wrap: wrap;"
+                  >
+                    <h4 style="margin: 0;" data-biography-highlight-title>Tag</h4>
+                    <button class="button-secondary" type="button" data-biography-highlight-remove>
+                      Ukloni
+                    </button>
+                  </div>
+
+                  <label class="admin-form__field admin-form__field--full">
+                    <span>Tag</span>
+                    <input class="input-control" data-biography-highlight-value />
+                  </label>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</div>

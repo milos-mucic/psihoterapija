@@ -8,10 +8,11 @@ import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
   locale: SiteLocale;
+  content?: Awaited<ReturnType<typeof pageContentService.getPsychotherapyPageData>>;
 };
 
-const { locale } = Astro.props;
-const content = await pageContentService.getPsychotherapyPageData(locale);
+const { locale, content: previewContent } = Astro.props;
+const content = previewContent ?? (await pageContentService.getPsychotherapyPageData(locale));
 const dictionary = getDictionary(locale);
 ---
 

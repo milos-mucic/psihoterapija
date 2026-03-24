@@ -61,6 +61,13 @@ export class AstroDbPageContentRepository implements PageContentRepository {
     return row ? toRecord(row) : undefined;
   }
 
+  async listAll() {
+    await ensurePageContentSchema();
+
+    const rows = await db.select().from(PageContent);
+    return rows.map((row) => toRecord(row));
+  }
+
   async upsert(pageKey: PageKey, locale: SiteLocale, content: unknown) {
     await ensurePageContentSchema();
 

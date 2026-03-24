@@ -1,0 +1,186 @@
+---
+import BaseLayout from "@/components/components/BaseLayout.astro";
+import AboutPage from "@/components/pages/AboutPage.astro";
+import AppointmentPage from "@/components/pages/AppointmentPage.astro";
+import BiographyPage from "@/components/pages/BiographyPage.astro";
+import FaqPage from "@/components/pages/FaqPage.astro";
+import PricingPage from "@/components/pages/PricingPage.astro";
+import PsychotherapyPage from "@/components/pages/PsychotherapyPage.astro";
+import ScopePage from "@/components/pages/ScopePage.astro";
+import HomeHeroSection from "@/components/sections/HomeHeroSection.astro";
+import HomePageContent from "@/components/sections/HomePageContent.astro";
+import { blogService } from "@/features/blog/services/blog.service";
+import { adminAuthService } from "@/features/admin/auth/admin-auth.service";
+import { getPublicPageHref } from "@/features/page-content/admin/page-route-map";
+import { getDictionary } from "@/features/i18n/translate";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
+import type { PageKey } from "@/features/page-content/types/page-content.types";
+import { siteConfig, type SiteLocale } from "@/lib/config/site";
+
+export const prerender = false;
+
+const supportedPages = new Set<PageKey>([
+  "home",
+  "about",
+  "biography",
+  "psychotherapy",
+  "scope",
+  "pricing",
+  "appointment",
+  "faq",
+]);
+
+if (!adminAuthService.isAuthenticated(Astro.cookies)) {
+  return new Response("Unauthorized", { status: 401 });
+}
+
+const pageParam = Astro.params.page as PageKey | undefined;
+
+if (!pageParam || !supportedPages.has(pageParam)) {
+  return new Response("Not found", { status: 404 });
+}
+
+const localeParam = Astro.url.searchParams.get("locale");
+const locale: SiteLocale = localeParam === "sr-cyrl" ? "sr-cyrl" : "sr-latn";
+const token = Astro.url.searchParams.get("token");
+const dictionary = getDictionary(locale);
+const publicHref = getPublicPageHref(pageParam, locale);
+const homeContent =
+  pageParam === "home"
+    ? ((await pageContentService.getPreviewPageData("home", locale, token)) as Awaited<
+        ReturnType<typeof pageContentService.getHomePageData>
+      >)
+    : undefined;
+const homePosts =
+  pageParam === "home" ? (await blogService.listPublishedPosts(locale)).slice(0, 3) : [];
+
+const aboutContent =
+  pageParam === "about"
+    ? ((await pageContentService.getPreviewPageData("about", locale, token)) as Awaited<
+        ReturnType<typeof pageContentService.getAboutPageData>
+      >)
+    : undefined;
+
+const biographyContent =
+  pageParam === "biography"
+    ? ((await pageContentService.getPreviewPageData("biography", locale, token)) as Awaited<
+        ReturnType<typeof pageContentService.getBiographyPageData>
+      >)
+    : undefined;
+
+const psychotherapyContent =
+  pageParam === "psychotherapy"
+    ? ((await pageContentService.getPreviewPageData("psychotherapy", locale, token)) as Awaited<
+        ReturnType<typeof pageContentService.getPsychotherapyPageData>
+      >)
+    : undefined;
+
+const scopeContent =
+  pageParam === "scope"
+    ? ((await pageContentService.getPreviewPageData("scope", locale, token)) as Awaited<
+        ReturnType<typeof pageContentService.getScopePageData>
+      >)
+    : undefined;
+
+const pricingContent =
+  pageParam === "pricing"
+    ? ((await pageContentService.getPreviewPageData("pricing", locale, token)) as Awaited<
+        ReturnType<typeof pageContentService.getPricingPageData>
+      >)
+    : undefined;
+
+const appointmentContent =
+  pageParam === "appointment"
+    ? ((await pageContentService.getPreviewPageData("appointment", locale, token)) as Awaited<
+        ReturnType<typeof pageContentService.getAppointmentPageData>
+      >)
+    : undefined;
+
+const faqContent =
+  pageParam === "faq"
+    ? ((await pageContentService.getPreviewPageData("faq", locale, token)) as Awaited<
+        ReturnType<typeof pageContentService.getFaqPageData>
+      >)
+    : undefined;
+---
+
+{
+  pageParam === "home" && homeContent ? (
+    <BaseLayout
+      title={dictionary.meta.home.title}
+      description={dictionary.meta.home.description}
+      locale={locale}
+      canonicalPath={publicHref}
+    >
+      <HomeHeroSection
+        titleHtml={homeContent.hero.titleHtml}
+        description={homeContent.hero.description}
+        primaryAction={homeContent.hero.primaryAction}
+        secondaryAction={homeContent.hero.secondaryAction}
+      />
+
+      <HomePageContent locale={locale} content={homeContent} posts={homePosts} />
+    </BaseLayout>
+  ) : pageParam === "about" && aboutContent ? (
+    <BaseLayout
+      title={dictionary.meta.about.title}
+      description={aboutContent.banner.description || dictionary.meta.about.description}
+      locale={locale}
+      canonicalPath={publicHref}
+    >
+      <AboutPage locale={locale} content={aboutContent} />
+    </BaseLayout>
+  ) : pageParam === "biography" && biographyContent ? (
+    <BiographyPage locale={locale} content={biographyContent} />
+  ) : pageParam === "psychotherapy" && psychotherapyContent ? (
+    <BaseLayout
+      title={dictionary.meta.psychotherapy.title}
+      description={
+        psychotherapyContent.banner.description || dictionary.meta.psychotherapy.description
+      }
+      locale={locale}
+      canonicalPath={publicHref}
+    >
+      <PsychotherapyPage locale={locale} content={psychotherapyContent} />
+    </BaseLayout>
+  ) : pageParam === "scope" && scopeContent ? (
+    <BaseLayout
+      title={`${dictionary.nav.therapyLinks.scope} | ${siteConfig.name}`}
+      description={scopeContent.banner.description ?? dictionary.meta.psychotherapy.description}
+      locale={locale}
+      canonicalPath={publicHref}
+    >
+      <ScopePage locale={locale} content={scopeContent} />
+    </BaseLayout>
+  ) : pageParam === "pricing" && pricingContent ? (
+    <BaseLayout
+      title={`${dictionary.nav.therapyLinks.pricing} | ${siteConfig.name}`}
+      description={pricingContent.banner.description ?? dictionary.meta.appointment.description}
+      locale={locale}
+      canonicalPath={publicHref}
+    >
+      <PricingPage locale={locale} content={pricingContent} />
+    </BaseLayout>
+  ) : pageParam === "appointment" && appointmentContent ? (
+    <BaseLayout
+      title={dictionary.meta.appointment.title}
+      description={appointmentContent.banner.description || dictionary.meta.appointment.description}
+      locale={locale}
+      canonicalPath={publicHref}
+      appBarTone="light"
+    >
+      <AppointmentPage locale={locale} content={appointmentContent} />
+    </BaseLayout>
+  ) : pageParam === "faq" && faqContent ? (
+    <BaseLayout
+      title={dictionary.meta.faq.title}
+      description={faqContent.banner.description || dictionary.meta.faq.description}
+      locale={locale}
+      canonicalPath={publicHref}
+      appBarTone="dark"
+      appBarOverlay={true}
+    >
+      <FaqPage locale={locale} content={faqContent} />
+    </BaseLayout>
+  ) : null
+}

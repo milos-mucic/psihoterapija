@@ -4,10 +4,11 @@ import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
   locale: SiteLocale;
+  content?: Awaited<ReturnType<typeof pageContentService.getPricingPageData>>;
 };
 
-const { locale } = Astro.props;
-const content = await pageContentService.getPricingPageData(locale);
+const { locale, content: previewContent } = Astro.props;
+const content = previewContent ?? (await pageContentService.getPricingPageData(locale));
 ---
 
 <section id="pricing-plans" class="page-section pricing-page__plans-section">

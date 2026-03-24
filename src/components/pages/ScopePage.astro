@@ -8,10 +8,11 @@ import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
   locale: SiteLocale;
+  content?: Awaited<ReturnType<typeof pageContentService.getScopePageData>>;
 };
 
-const { locale } = Astro.props;
-const content = await pageContentService.getScopePageData(locale);
+const { locale, content: previewContent } = Astro.props;
+const content = previewContent ?? (await pageContentService.getScopePageData(locale));
 const dictionary = getDictionary(locale);
 const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
 const scopeTabListLabel = locale === "sr-cyrl" ? "Кључне теме" : "Ključne teme";
@@ -40,8 +41,7 @@ const scopeTabsNextLabel = locale === "sr-cyrl" ? "Следећа тема" : "S
               stroke="currentColor"
               stroke-linecap="round"
               stroke-linejoin="round"
-              stroke-width="1.9"
-            />
+              stroke-width="1.9"></path>
           </svg>
         </button>
 
@@ -95,8 +95,7 @@ const scopeTabsNextLabel = locale === "sr-cyrl" ? "Следећа тема" : "S
               stroke="currentColor"
               stroke-linecap="round"
               stroke-linejoin="round"
-              stroke-width="1.9"
-            />
+              stroke-width="1.9"></path>
           </svg>
         </button>
       </div>
@@ -166,17 +165,18 @@ const scopeTabsNextLabel = locale === "sr-cyrl" ? "Следећа тема" : "S
                       <p>{scopeTabListLabel}</p>
                     </div>
                     <div class="scope-page__tab-points-grid">
-                      {
-                        tab.items.map((item, itemIndex) => (
-                          <article class="scope-page__tab-point">
-                            <span class="scope-page__tab-point-index">
-                              {String(itemIndex + 1).padStart(2, "0")}
-                            </span>
-                            <h4>{item.title}</h4>
-                            <div class="scope-page__tab-point-copy richtext-shell" set:html={item.copy} />
-                          </article>
-                        ))
-                      }
+                      {tab.items.map((item, itemIndex) => (
+                        <article class="scope-page__tab-point">
+                          <span class="scope-page__tab-point-index">
+                            {String(itemIndex + 1).padStart(2, "0")}
+                          </span>
+                          <h4>{item.title}</h4>
+                          <div
+                            class="scope-page__tab-point-copy richtext-shell"
+                            set:html={item.copy}
+                          />
+                        </article>
+                      ))}
                     </div>
                   </div>
                 </div>

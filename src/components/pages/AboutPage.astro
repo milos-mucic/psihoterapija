@@ -8,11 +8,12 @@ import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
   locale: SiteLocale;
+  content?: Awaited<ReturnType<typeof pageContentService.getAboutPageData>>;
 };
 
-const { locale } = Astro.props;
+const { locale, content: previewContent } = Astro.props;
 const dictionary = getDictionary(locale);
-const content = await pageContentService.getAboutPageData(locale);
+const content = previewContent ?? (await pageContentService.getAboutPageData(locale));
 const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
 const videoIdMatch = content.showcaseVideoHref.match(/[?&]v=([^&]+)/);
 const aboutVideoEmbedSrc = videoIdMatch

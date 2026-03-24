@@ -8,12 +8,13 @@ import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
   locale: SiteLocale;
+  content?: Awaited<ReturnType<typeof pageContentService.getBiographyPageData>>;
 };
 
-const { locale } = Astro.props;
+const { locale, content: previewContent } = Astro.props;
 const dictionary = getDictionary(locale);
 const canonicalPath = localizePath(locale, "/biografija/");
-const content = await pageContentService.getBiographyPageData(locale);
+const content = previewContent ?? (await pageContentService.getBiographyPageData(locale));
 ---
 
 <BaseLayout
