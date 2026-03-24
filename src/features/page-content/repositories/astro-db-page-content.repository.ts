@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { PageContent, db, eq, and } from "astro:db";
+import { sql } from "drizzle-orm";
 import type { PageContentRepository } from "@/features/page-content/repositories/page-content.repository";
 import type { PageContentRecord, PageKey } from "@/features/page-content/types/page-content.types";
 import type { SiteLocale } from "@/lib/config/site";
@@ -22,8 +23,34 @@ const toRecord = (row: {
   updatedAt: toDate(row.updatedAt),
 });
 
+let ensurePageContentSchemaPromise: Promise<void> | undefined;
+
+const ensurePageContentSchema = async () => {
+  if (!ensurePageContentSchemaPromise) {
+    ensurePageContentSchemaPromise = (async () => {
+      await db.run(
+        sql.raw(
+          'CREATE TABLE IF NOT EXISTS "PageContent" ("id" text PRIMARY KEY, "pageKey" text NOT NULL, "locale" text NOT NULL, "content" text NOT NULL, "createdAt" text NOT NULL, "updatedAt" text NOT NULL)',
+        ),
+      );
+      await db.run(
+        sql.raw(
+          'CREATE UNIQUE INDEX IF NOT EXISTS "PageContent_locale_pageKey_idx" ON "PageContent" ("locale", "pageKey")',
+        ),
+      );
+    })().catch((error) => {
+      ensurePageContentSchemaPromise = undefined;
+      throw error;
+    });
+  }
+
+  return ensurePageContentSchemaPromise;
+};
+
 export class AstroDbPageContentRepository implements PageContentRepository {
   async get(pageKey: PageKey, locale: SiteLocale) {
+    await ensurePageContentSchema();
+
     const rows = await db
       .select()
       .from(PageContent)
@@ -35,6 +62,8 @@ export class AstroDbPageContentRepository implements PageContentRepository {
   }
 
   async upsert(pageKey: PageKey, locale: SiteLocale, content: unknown) {
+    await ensurePageContentSchema();
+
     const existing = await this.get(pageKey, locale);
     const now = new Date();
 
