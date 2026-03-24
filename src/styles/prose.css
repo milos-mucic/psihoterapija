@@ -5,6 +5,13 @@
   color: var(--foreground);
 }
 
+.prose-shell::after,
+.richtext-shell::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
 .prose-shell h2,
 .prose-shell h3,
 .prose-shell h4,
@@ -94,4 +101,51 @@
   border-radius: 14px;
   margin: 0 0 1.2rem;
   border: 1px solid var(--line);
+}
+
+.prose-shell img.richtext-image,
+.richtext-shell img.richtext-image {
+  display: block;
+  max-width: 100%;
+}
+
+.prose-shell img.richtext-image--center,
+.richtext-shell img.richtext-image--center {
+  margin-inline: auto;
+}
+
+.prose-shell img.richtext-image--wide,
+.richtext-shell img.richtext-image--wide {
+  width: min(100%, 82%);
+  margin-inline: auto;
+}
+
+.prose-shell img.richtext-image--full,
+.richtext-shell img.richtext-image--full {
+  width: 100% !important;
+}
+
+.prose-shell img.richtext-image--wrap-left,
+.richtext-shell img.richtext-image--wrap-left {
+  float: left;
+  width: min(100%, 44%);
+  margin: 0.2rem 1.35rem 1rem 0;
+}
+
+.prose-shell img.richtext-image--wrap-right,
+.richtext-shell img.richtext-image--wrap-right {
+  float: right;
+  width: min(100%, 44%);
+  margin: 0.2rem 0 1rem 1.35rem;
+}
+
+@media (max-width: 840px) {
+  .prose-shell img.richtext-image--wrap-left,
+  .prose-shell img.richtext-image--wrap-right,
+  .richtext-shell img.richtext-image--wrap-left,
+  .richtext-shell img.richtext-image--wrap-right {
+    float: none;
+    width: 100% !important;
+    margin: 0 0 1.2rem;
+  }
 }

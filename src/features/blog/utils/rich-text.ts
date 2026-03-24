@@ -23,7 +23,7 @@ const inlineRichTextAllowedTags = ["br", "strong", "b", "em", "i", "u", "a"];
 
 const allowedAttributes: sanitizeHtml.IOptions["allowedAttributes"] = {
   a: ["href", "target", "rel"],
-  img: ["src", "alt", "title", "width", "height", "loading"],
+  img: ["src", "alt", "title", "width", "height", "loading", "class", "style", "data-layout", "data-width-pct"],
 };
 
 const escapeHtml = (value: string) =>
@@ -130,6 +130,11 @@ export const sanitizeRichTextHtml = (input: string) => {
   return sanitizeHtml(prepared, {
     allowedTags: richTextAllowedTags,
     allowedAttributes,
+    allowedStyles: {
+      img: {
+        width: [/^\d+(\.\d+)?%$/],
+      },
+    },
     allowedSchemes: ["http", "https", "data"],
     allowedSchemesByTag: {
       img: ["http", "https", "data"],

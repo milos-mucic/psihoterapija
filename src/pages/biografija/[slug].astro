@@ -1,18 +1,8 @@
 ---
-export const prerender = true;
-
 import BaseLayout from "@/components/components/BaseLayout.astro";
 import BiographyProfilePage from "@/components/pages/BiographyProfilePage.astro";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import { siteConfig } from "@/lib/config/site";
-
-export async function getStaticPaths() {
-  const biography = await pageContentService.getManagedBiographyContent("sr-latn");
-
-  return biography.cardsSection.cards.map((card) => ({
-    params: { slug: card.slug },
-  }));
-}
 
 const locale = "sr-latn";
 const { slug } = Astro.params;

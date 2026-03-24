@@ -90,16 +90,21 @@ export type AdminRichTextFieldProps = {
 type Props = AdminRichTextFieldProps;
 type EditorMode = NonNullable<Props["mode"]>;
 type ToolbarBlockType = "paragraph" | "h2" | "h3" | "quote" | "ul" | "ol";
+type ImageLayout = "center" | "wide" | "full" | "wrap-left" | "wrap-right";
 type InsertImagePayload = {
   altText: string;
   src: string;
+  layout?: ImageLayout;
+  widthPct?: number;
 };
 type SerializedImageNode = Spread<
   {
     altText: string;
+    layout: ImageLayout;
     src: string;
+    widthPct: number;
     type: "image";
-    version: 1;
+    version: 2;
   },
   SerializedLexicalNode
 >;
@@ -150,6 +155,9 @@ const imageMimeAccept = "image/*";
 const imageMaxBytes = 1_000_000;
 const imageScales = [1, 0.92, 0.84, 0.76, 0.68];
 const imageQualities = [0.92, 0.84, 0.76, 0.68, 0.6, 0.52, 0.44];
+const defaultImageLayout: ImageLayout = "center";
+const defaultImageWidthPct = 100;
+const clampImageWidthPct = (value: number) => Math.max(25, Math.min(100, Math.round(value)));
 const INSERT_IMAGE_COMMAND = createCommand<InsertImagePayload>();
 const canUseDomParser = () => typeof window !== "undefined" && typeof DOMParser !== "undefined";
 
@@ -313,46 +321,139 @@ const convertImageElement = (domNode: Node): DOMConversionOutput | null => {
   return {
     node: $createImageNode({
       altText: domNode.getAttribute("alt") ?? "",
+      layout:
+        domNode.dataset.layout === "wide" ||
+        domNode.dataset.layout === "full" ||
+        domNode.dataset.layout === "wrap-left" ||
+        domNode.dataset.layout === "wrap-right"
+          ? domNode.dataset.layout
+          : defaultImageLayout,
       src,
+      widthPct: (() => {
+        const widthValue =
+          domNode.dataset.widthPct ?? domNode.style.width.replace(/%$/, "").trim() ?? "";
+        const parsedWidth = Number(widthValue);
+        return Number.isFinite(parsedWidth) ? clampImageWidthPct(parsedWidth) : defaultImageWidthPct;
+      })(),
     }),
   };
 };
 
-function ImageComponent({ altText, nodeKey, src }: InsertImagePayload & { nodeKey: NodeKey }) {
+function ImageComponent({
+  altText,
+  layout,
+  nodeKey,
+  src,
+  widthPct,
+}: InsertImagePayload & { nodeKey: NodeKey }) {
   const [editor] = useLexicalComposerContext();
 
   return (
-    <figure className="admin-rtf__image">
+    <figure
+      className={`admin-rtf__image admin-rtf__image--${layout}`}
+      style={{ width: `${widthPct}%` }}
+    >
       <img src={src} alt={altText} />
-      <button
-        className="admin-rtf__image-remove"
-        type="button"
-        onClick={() => {
-          editor.update(() => {
-            const node = $getNodeByKey(nodeKey);
+      <div className="admin-rtf__image-controls">
+        <label className="admin-rtf__image-control admin-rtf__image-control--full">
+          <span>Alt</span>
+          <input
+            className="input-control"
+            type="text"
+            value={altText}
+            onChange={(event) => {
+              const nextValue = event.target.value;
 
-            if ($isImageNode(node)) {
-              node.remove();
-            }
-          });
-        }}
-      >
-        Remove
-      </button>
+              editor.update(() => {
+                const node = $getNodeByKey(nodeKey);
+
+                if ($isImageNode(node)) {
+                  node.setAltText(nextValue);
+                }
+              });
+            }}
+          />
+        </label>
+
+        <label className="admin-rtf__image-control">
+          <span>Layout</span>
+          <select
+            className="input-control"
+            value={layout}
+            onChange={(event) => {
+              const nextLayout = event.target.value as ImageLayout;
+
+              editor.update(() => {
+                const node = $getNodeByKey(nodeKey);
+
+                if ($isImageNode(node)) {
+                  node.setLayout(nextLayout);
+                }
+              });
+            }}
+          >
+            <option value="center">Centar</option>
+            <option value="wide">Široko</option>
+            <option value="full">Puna širina</option>
+            <option value="wrap-left">Levo uz tekst</option>
+            <option value="wrap-right">Desno uz tekst</option>
+          </select>
+        </label>
+
+        <label className="admin-rtf__image-control">
+          <span>Širina {widthPct}%</span>
+          <input
+            type="range"
+            min="25"
+            max="100"
+            step="5"
+            value={widthPct}
+            onChange={(event) => {
+              const nextWidth = clampImageWidthPct(Number(event.target.value));
+
+              editor.update(() => {
+                const node = $getNodeByKey(nodeKey);
+
+                if ($isImageNode(node)) {
+                  node.setWidthPct(nextWidth);
+                }
+              });
+            }}
+          />
+        </label>
+
+        <button
+          className="admin-rtf__image-remove"
+          type="button"
+          onClick={() => {
+            editor.update(() => {
+              const node = $getNodeByKey(nodeKey);
+
+              if ($isImageNode(node)) {
+                node.remove();
+              }
+            });
+          }}
+        >
+          Remove
+        </button>
+      </div>
     </figure>
   );
 }
 
 class ImageNode extends DecoratorNode<JSX.Element> {
   __altText: string;
+  __layout: ImageLayout;
   __src: string;
+  __widthPct: number;
 
   static getType() {
     return "image";
   }
 
   static clone(node: ImageNode) {
-    return new ImageNode(node.__src, node.__altText, node.__key);
+    return new ImageNode(node.__src, node.__altText, node.__layout, node.__widthPct, node.__key);
   }
 
   static importDOM(): DOMConversionMap | null {
@@ -367,20 +468,49 @@ class ImageNode extends DecoratorNode<JSX.Element> {
   static importJSON(serializedNode: SerializedImageNode) {
     return $createImageNode({
       altText: serializedNode.altText,
+      layout: serializedNode.layout,
       src: serializedNode.src,
+      widthPct: serializedNode.widthPct,
     });
   }
 
-  constructor(src: string, altText = "", key?: NodeKey) {
+  constructor(
+    src: string,
+    altText = "",
+    layout: ImageLayout = defaultImageLayout,
+    widthPct = defaultImageWidthPct,
+    key?: NodeKey,
+  ) {
     super(key);
     this.__src = src;
     this.__altText = altText;
+    this.__layout = layout;
+    this.__widthPct = clampImageWidthPct(widthPct);
+  }
+
+  setAltText(altText: string) {
+    const writable = this.getWritable();
+    writable.__altText = altText;
+  }
+
+  setLayout(layout: ImageLayout) {
+    const writable = this.getWritable();
+    writable.__layout = layout;
+  }
+
+  setWidthPct(widthPct: number) {
+    const writable = this.getWritable();
+    writable.__widthPct = clampImageWidthPct(widthPct);
   }
 
   exportDOM(): DOMExportOutput {
     const element = document.createElement("img");
     element.setAttribute("src", this.__src);
     element.setAttribute("loading", "lazy");
+    element.setAttribute("class", `richtext-image richtext-image--${this.__layout}`);
+    element.setAttribute("data-layout", this.__layout);
+    element.setAttribute("data-width-pct", String(this.__widthPct));
+    element.style.width = `${this.__widthPct}%`;
 
     if (this.__altText) {
       element.setAttribute("alt", this.__altText);
@@ -393,9 +523,11 @@ class ImageNode extends DecoratorNode<JSX.Element> {
     return {
       ...super.exportJSON(),
       altText: this.__altText,
+      layout: this.__layout,
       src: this.__src,
+      widthPct: this.__widthPct,
       type: "image",
-      version: 1,
+      version: 2,
     };
   }
 
@@ -418,11 +550,24 @@ class ImageNode extends DecoratorNode<JSX.Element> {
   }
 
   decorate() {
-    return <ImageComponent altText={this.__altText} nodeKey={this.__key} src={this.__src} />;
+    return (
+      <ImageComponent
+        altText={this.__altText}
+        layout={this.__layout}
+        nodeKey={this.__key}
+        src={this.__src}
+        widthPct={this.__widthPct}
+      />
+    );
   }
 }
 
-const $createImageNode = ({ altText, src }: InsertImagePayload) => new ImageNode(src, altText);
+const $createImageNode = ({
+  altText,
+  layout = defaultImageLayout,
+  src,
+  widthPct = defaultImageWidthPct,
+}: InsertImagePayload) => new ImageNode(src, altText, layout, widthPct);
 const $isImageNode = (node: LexicalNode | null | undefined): node is ImageNode =>
   node instanceof ImageNode;
 

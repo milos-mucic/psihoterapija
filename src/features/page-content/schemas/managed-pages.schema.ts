@@ -405,7 +405,7 @@ const scopeTabSchema = z.object({
   detailLead: richTextRequired,
   detailBackLabel: requiredText,
   detailCtaLabel: requiredText,
-  items: z.array(textCardSchema).length(3),
+  items: z.array(textCardSchema).min(1),
 });
 
 export const scopePageManagedContentSchema: z.ZodType<ScopePageManagedContent> = z.object({
@@ -414,7 +414,13 @@ export const scopePageManagedContentSchema: z.ZodType<ScopePageManagedContent> =
     title: requiredText,
     items: z.array(requiredText).length(7),
   }),
-  tabs: z.array(scopeTabSchema).length(4),
+  tabs: z
+    .array(scopeTabSchema)
+    .min(1)
+    .refine(
+      (tabs) => new Set(tabs.map((tab) => tab.id)).size === tabs.length,
+      "Slugovi tema moraju biti jedinstveni.",
+    ),
   detail: z.object({
     relatedTitle: requiredText,
   }),
@@ -455,136 +461,68 @@ const scopePageFormSchema = z.object({
   recentCopy: richTextRequired,
   recentLabel: requiredText,
   recentEmpty: requiredText,
-  tab1Id: requiredText,
-  tab1Label: requiredText,
-  tab1Meta: requiredText,
-  tab1Icon: requiredText,
-  tab1SummaryTitle: requiredText,
-  tab1SummaryCopy: richTextRequired,
-  tab1PanelEyebrow: requiredText,
-  tab1PanelStatLabel: requiredText,
-  tab1PanelCtaLabel: requiredText,
-  tab1DetailImage: requiredText,
-  tab1DetailBannerDescription: richTextRequired,
-  tab1DetailEyebrow: requiredText,
-  tab1DetailLead: richTextRequired,
-  tab1DetailBackLabel: requiredText,
-  tab1DetailCtaLabel: requiredText,
-  tab1Item1Title: requiredText,
-  tab1Item1Copy: richTextRequired,
-  tab1Item2Title: requiredText,
-  tab1Item2Copy: richTextRequired,
-  tab1Item3Title: requiredText,
-  tab1Item3Copy: richTextRequired,
-  tab2Id: requiredText,
-  tab2Label: requiredText,
-  tab2Meta: requiredText,
-  tab2Icon: requiredText,
-  tab2SummaryTitle: requiredText,
-  tab2SummaryCopy: richTextRequired,
-  tab2PanelEyebrow: requiredText,
-  tab2PanelStatLabel: requiredText,
-  tab2PanelCtaLabel: requiredText,
-  tab2DetailImage: requiredText,
-  tab2DetailBannerDescription: richTextRequired,
-  tab2DetailEyebrow: requiredText,
-  tab2DetailLead: richTextRequired,
-  tab2DetailBackLabel: requiredText,
-  tab2DetailCtaLabel: requiredText,
-  tab2Item1Title: requiredText,
-  tab2Item1Copy: richTextRequired,
-  tab2Item2Title: requiredText,
-  tab2Item2Copy: richTextRequired,
-  tab2Item3Title: requiredText,
-  tab2Item3Copy: richTextRequired,
-  tab3Id: requiredText,
-  tab3Label: requiredText,
-  tab3Meta: requiredText,
-  tab3Icon: requiredText,
-  tab3SummaryTitle: requiredText,
-  tab3SummaryCopy: richTextRequired,
-  tab3PanelEyebrow: requiredText,
-  tab3PanelStatLabel: requiredText,
-  tab3PanelCtaLabel: requiredText,
-  tab3DetailImage: requiredText,
-  tab3DetailBannerDescription: richTextRequired,
-  tab3DetailEyebrow: requiredText,
-  tab3DetailLead: richTextRequired,
-  tab3DetailBackLabel: requiredText,
-  tab3DetailCtaLabel: requiredText,
-  tab3Item1Title: requiredText,
-  tab3Item1Copy: richTextRequired,
-  tab3Item2Title: requiredText,
-  tab3Item2Copy: richTextRequired,
-  tab3Item3Title: requiredText,
-  tab3Item3Copy: richTextRequired,
-  tab4Id: requiredText,
-  tab4Label: requiredText,
-  tab4Meta: requiredText,
-  tab4Icon: requiredText,
-  tab4SummaryTitle: requiredText,
-  tab4SummaryCopy: richTextRequired,
-  tab4PanelEyebrow: requiredText,
-  tab4PanelStatLabel: requiredText,
-  tab4PanelCtaLabel: requiredText,
-  tab4DetailImage: requiredText,
-  tab4DetailBannerDescription: richTextRequired,
-  tab4DetailEyebrow: requiredText,
-  tab4DetailLead: richTextRequired,
-  tab4DetailBackLabel: requiredText,
-  tab4DetailCtaLabel: requiredText,
-  tab4Item1Title: requiredText,
-  tab4Item1Copy: richTextRequired,
-  tab4Item2Title: requiredText,
-  tab4Item2Copy: richTextRequired,
-  tab4Item3Title: requiredText,
-  tab4Item3Copy: richTextRequired,
 });
 
-const toScopeTab = (
-  parsed: z.infer<typeof scopePageFormSchema>,
-  prefix: "tab1" | "tab2" | "tab3" | "tab4",
-) => {
-  const values = parsed as Record<string, string>;
+const getScopeTabIndexes = (input: Record<string, unknown>) => {
+  const indexes = new Set<number>();
 
-  return {
-    id: values[`${prefix}Id`],
-    label: values[`${prefix}Label`],
-    tabMeta: values[`${prefix}Meta`],
-    icon: values[`${prefix}Icon`],
-    summaryTitle: values[`${prefix}SummaryTitle`],
-    summaryCopy: values[`${prefix}SummaryCopy`],
-    panelEyebrow: values[`${prefix}PanelEyebrow`],
-    panelStatLabel: values[`${prefix}PanelStatLabel`],
-    panelCtaLabel: values[`${prefix}PanelCtaLabel`],
-    detailImage: values[`${prefix}DetailImage`],
-    detailBannerDescription: values[`${prefix}DetailBannerDescription`],
-    detailEyebrow: values[`${prefix}DetailEyebrow`],
-    detailLead: values[`${prefix}DetailLead`],
-    detailBackLabel: values[`${prefix}DetailBackLabel`],
-    detailCtaLabel: values[`${prefix}DetailCtaLabel`],
-    items: [
-      {
-        title: values[`${prefix}Item1Title`],
-        copy: values[`${prefix}Item1Copy`],
-      },
-      {
-        title: values[`${prefix}Item2Title`],
-        copy: values[`${prefix}Item2Copy`],
-      },
-      {
-        title: values[`${prefix}Item3Title`],
-        copy: values[`${prefix}Item3Copy`],
-      },
-    ],
-  };
+  for (const key of Object.keys(input)) {
+    const match = /^scopeTab_(\d+)_id$/.exec(key);
+
+    if (match) {
+      indexes.add(Number(match[1]));
+    }
+  }
+
+  return Array.from(indexes).sort((left, right) => left - right);
 };
+
+const getScopeTabItemIndexes = (input: Record<string, unknown>, tabIndex: number) => {
+  const indexes = new Set<number>();
+
+  for (const key of Object.keys(input)) {
+    const match = new RegExp(`^scopeTab_${tabIndex}_item_(\\d+)_title$`).exec(key);
+
+    if (match) {
+      indexes.add(Number(match[1]));
+    }
+  }
+
+  return Array.from(indexes).sort((left, right) => left - right);
+};
+
+const toScopeTab = (input: Record<string, unknown>, tabIndex: number) =>
+  scopeTabSchema.parse({
+    id: input[`scopeTab_${tabIndex}_id`],
+    label: input[`scopeTab_${tabIndex}_label`],
+    tabMeta: input[`scopeTab_${tabIndex}_tabMeta`],
+    icon: input[`scopeTab_${tabIndex}_icon`],
+    summaryTitle: input[`scopeTab_${tabIndex}_summaryTitle`],
+    summaryCopy: input[`scopeTab_${tabIndex}_summaryCopy`],
+    panelEyebrow: input[`scopeTab_${tabIndex}_panelEyebrow`],
+    panelStatLabel: input[`scopeTab_${tabIndex}_panelStatLabel`],
+    panelCtaLabel: input[`scopeTab_${tabIndex}_panelCtaLabel`],
+    detailImage: input[`scopeTab_${tabIndex}_detailImage`],
+    detailBannerDescription: input[`scopeTab_${tabIndex}_detailBannerDescription`],
+    detailEyebrow: input[`scopeTab_${tabIndex}_detailEyebrow`],
+    detailLead: input[`scopeTab_${tabIndex}_detailLead`],
+    detailBackLabel: input[`scopeTab_${tabIndex}_detailBackLabel`],
+    detailCtaLabel: input[`scopeTab_${tabIndex}_detailCtaLabel`],
+    items: getScopeTabItemIndexes(input, tabIndex).map((itemIndex) =>
+      textCardSchema.parse({
+        title: input[`scopeTab_${tabIndex}_item_${itemIndex}_title`],
+        copy: input[`scopeTab_${tabIndex}_item_${itemIndex}_copy`],
+      }),
+    ),
+  });
 
 export const parseScopePageManagedContent = (input: unknown) =>
   scopePageManagedContentSchema.parse(input);
 
 export const parseScopePageManagedContentForm = (input: unknown): ScopePageManagedContent => {
   const parsed = scopePageFormSchema.parse(input);
+  const values = parsed as Record<string, unknown>;
+  const tabs = getScopeTabIndexes(values).map((tabIndex) => toScopeTab(values, tabIndex));
 
   return scopePageManagedContentSchema.parse({
     banner: {
@@ -604,12 +542,7 @@ export const parseScopePageManagedContentForm = (input: unknown): ScopePageManag
         parsed.introItem7,
       ],
     },
-    tabs: [
-      toScopeTab(parsed, "tab1"),
-      toScopeTab(parsed, "tab2"),
-      toScopeTab(parsed, "tab3"),
-      toScopeTab(parsed, "tab4"),
-    ],
+    tabs,
     detail: {
       relatedTitle: parsed.detailRelatedTitle,
     },

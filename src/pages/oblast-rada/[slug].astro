@@ -1,19 +1,9 @@
 ---
-export const prerender = true;
-
 import BaseLayout from "@/components/components/BaseLayout.astro";
 import ScopeDetailPage from "@/components/pages/ScopeDetailPage.astro";
 import { getDictionary } from "@/features/i18n/translate";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import { siteConfig } from "@/lib/config/site";
-
-export async function getStaticPaths() {
-  const scope = await pageContentService.getManagedScopeContent("sr-latn");
-
-  return scope.tabs.map((tab) => ({
-    params: { slug: tab.id },
-  }));
-}
 
 const locale = "sr-latn";
 const { slug } = Astro.params;
