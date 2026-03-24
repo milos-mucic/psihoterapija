@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
-import type { JSX } from "react";
+import type { JSX, PointerEvent as ReactPointerEvent } from "react";
 import { $generateHtmlFromNodes, $generateNodesFromDOM } from "@lexical/html";
 import { LinkNode, TOGGLE_LINK_COMMAND, $isLinkNode } from "@lexical/link";
 import {
@@ -19,6 +19,7 @@ import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
+import { useLexicalNodeSelection } from "@lexical/react/useLexicalNodeSelection";
 import { uploadWithProgress } from "@/lib/http/upload-with-progress";
 import {
   $createHeadingNode,
@@ -37,14 +38,21 @@ import {
   $getSelection,
   $insertNodes,
   $isDecoratorNode,
+  $isElementNode,
+  $isNodeSelection,
   $isParagraphNode,
   $isRangeSelection,
+  $isTextNode,
+  CLICK_COMMAND,
   CAN_REDO_COMMAND,
   CAN_UNDO_COMMAND,
   COMMAND_PRIORITY_EDITOR,
+  COMMAND_PRIORITY_LOW,
   createCommand,
   DecoratorNode,
   FORMAT_TEXT_COMMAND,
+  KEY_BACKSPACE_COMMAND,
+  KEY_DELETE_COMMAND,
   REDO_COMMAND,
   SELECTION_CHANGE_COMMAND,
   UNDO_COMMAND,
@@ -91,6 +99,7 @@ type Props = AdminRichTextFieldProps;
 type EditorMode = NonNullable<Props["mode"]>;
 type ToolbarBlockType = "paragraph" | "h2" | "h3" | "quote" | "ul" | "ol";
 type ImageLayout = "center" | "wide" | "full" | "wrap-left" | "wrap-right";
+type ImageResizeEdge = "left" | "right";
 type InsertImagePayload = {
   altText: string;
   src: string;
@@ -225,6 +234,48 @@ const normalizeInlineEditorHtml = (value: string) => {
 const normalizeEditorHtml = (value: string, mode: EditorMode) =>
   mode === "inline" ? normalizeInlineEditorHtml(value) : normalizeFullEditorHtml(value);
 
+const appendImportedNodesToRoot = (nodes: LexicalNode[]) => {
+  const root = $getRoot();
+  let currentParagraph: ReturnType<typeof $createParagraphNode> | null = null;
+
+  root.clear();
+
+  const appendInlineNode = (node: LexicalNode) => {
+    if (currentParagraph === null) {
+      currentParagraph = $createParagraphNode();
+      root.append(currentParagraph);
+    }
+
+    currentParagraph.append(node);
+  };
+
+  for (const node of nodes) {
+    if ($isDecoratorNode(node)) {
+      currentParagraph = null;
+      root.append(node);
+      continue;
+    }
+
+    if ($isElementNode(node) && !node.isInline()) {
+      currentParagraph = null;
+      root.append(node);
+      continue;
+    }
+
+    if ($isTextNode(node) || ($isElementNode(node) && node.isInline()) || node.getType() === "linebreak") {
+      appendInlineNode(node);
+      continue;
+    }
+
+    currentParagraph = null;
+    root.append(node);
+  }
+
+  if (root.getChildrenSize() === 0) {
+    root.append($createParagraphNode());
+  }
+};
+
 const getInitialEditorHtml = (value: string, mode: EditorMode) => {
   const normalized = value.trim();
 
@@ -347,96 +398,200 @@ function ImageComponent({
   widthPct,
 }: InsertImagePayload & { nodeKey: NodeKey }) {
   const [editor] = useLexicalComposerContext();
+  const [isSelected, setSelected, clearSelection] = useLexicalNodeSelection(nodeKey);
+  const figureRef = useRef<HTMLElement | null>(null);
+  const resizeSessionRef = useRef<{ cleanup: () => void } | null>(null);
+
+  const updateWidthPct = useCallback(
+    (nextWidthPct: number) => {
+      editor.update(() => {
+        const node = $getNodeByKey(nodeKey);
+
+        if ($isImageNode(node)) {
+          node.setWidthPct(nextWidthPct);
+        }
+      });
+    },
+    [editor, nodeKey],
+  );
+
+  const removeImage = useCallback(() => {
+    editor.update(() => {
+      const node = $getNodeByKey(nodeKey);
+
+      if ($isImageNode(node)) {
+        node.remove();
+      }
+    });
+  }, [editor, nodeKey]);
+
+  const stopResize = useCallback(() => {
+    const activeSession = resizeSessionRef.current;
+
+    if (!activeSession) {
+      return;
+    }
+
+    activeSession.cleanup();
+    resizeSessionRef.current = null;
+    document.body.style.removeProperty("cursor");
+    document.body.style.removeProperty("user-select");
+  }, []);
+
+  useEffect(() => () => stopResize(), [stopResize]);
+
+  useEffect(
+    () =>
+      mergeRegister(
+        editor.registerCommand(
+          CLICK_COMMAND,
+          (event) => {
+            const figure = figureRef.current;
+
+            if (!(event.target instanceof Node) || !figure?.contains(event.target)) {
+              return false;
+            }
+
+            event.preventDefault();
+
+            if (event.shiftKey) {
+              setSelected(!isSelected);
+            } else {
+              clearSelection();
+              setSelected(true);
+            }
+
+            return true;
+          },
+          COMMAND_PRIORITY_LOW,
+        ),
+        editor.registerCommand(
+          KEY_BACKSPACE_COMMAND,
+          (event) => {
+            const selection = $getSelection();
+
+            if (!isSelected || !$isNodeSelection(selection)) {
+              return false;
+            }
+
+            event.preventDefault();
+            removeImage();
+            return true;
+          },
+          COMMAND_PRIORITY_LOW,
+        ),
+        editor.registerCommand(
+          KEY_DELETE_COMMAND,
+          (event) => {
+            const selection = $getSelection();
+
+            if (!isSelected || !$isNodeSelection(selection)) {
+              return false;
+            }
+
+            event.preventDefault();
+            removeImage();
+            return true;
+          },
+          COMMAND_PRIORITY_LOW,
+        ),
+      ),
+    [clearSelection, editor, isSelected, removeImage, setSelected],
+  );
+
+  const startResize = useCallback(
+    (event: ReactPointerEvent<HTMLSpanElement>, edge: ImageResizeEdge) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      stopResize();
+      clearSelection();
+      setSelected(true);
+
+      const rootWidth =
+        editor.getRootElement()?.getBoundingClientRect().width ??
+        figureRef.current?.getBoundingClientRect().width ??
+        0;
+
+      if (rootWidth <= 0) {
+        return;
+      }
+
+      const pointerTarget = event.currentTarget;
+      const startX = event.clientX;
+      const initialWidthPct = widthPct;
+
+      const handlePointerMove = (moveEvent: PointerEvent) => {
+        const deltaPx = moveEvent.clientX - startX;
+        const signedDeltaPx = edge === "right" ? deltaPx : -deltaPx;
+        const nextWidthPct = clampImageWidthPct(initialWidthPct + (signedDeltaPx / rootWidth) * 100);
+
+        updateWidthPct(nextWidthPct);
+      };
+
+      const handlePointerEnd = () => {
+        pointerTarget.releasePointerCapture?.(event.pointerId);
+        window.removeEventListener("pointermove", handlePointerMove);
+        window.removeEventListener("pointerup", handlePointerEnd);
+        window.removeEventListener("pointercancel", handlePointerEnd);
+        document.body.style.removeProperty("cursor");
+        document.body.style.removeProperty("user-select");
+
+        if (resizeSessionRef.current?.cleanup === handlePointerEnd) {
+          resizeSessionRef.current = null;
+        }
+      };
+
+      pointerTarget.setPointerCapture?.(event.pointerId);
+      document.body.style.cursor = "ew-resize";
+      document.body.style.userSelect = "none";
+      window.addEventListener("pointermove", handlePointerMove);
+      window.addEventListener("pointerup", handlePointerEnd);
+      window.addEventListener("pointercancel", handlePointerEnd);
+      resizeSessionRef.current = { cleanup: handlePointerEnd };
+    },
+    [clearSelection, editor, setSelected, stopResize, updateWidthPct, widthPct],
+  );
 
   return (
     <figure
-      className={`admin-rtf__image admin-rtf__image--${layout}`}
+      ref={figureRef}
+      className={`admin-rtf__image admin-rtf__image--${layout}${isSelected ? " is-selected" : ""}`}
+      data-selected={isSelected ? "true" : undefined}
+      onClick={(event) => {
+        event.preventDefault();
+      }}
       style={{ width: `${widthPct}%` }}
     >
-      <img src={src} alt={altText} />
-      <div className="admin-rtf__image-controls">
-        <label className="admin-rtf__image-control admin-rtf__image-control--full">
-          <span>Alt</span>
-          <input
-            className="input-control"
-            type="text"
-            value={altText}
-            onChange={(event) => {
-              const nextValue = event.target.value;
-
-              editor.update(() => {
-                const node = $getNodeByKey(nodeKey);
-
-                if ($isImageNode(node)) {
-                  node.setAltText(nextValue);
-                }
-              });
-            }}
-          />
-        </label>
-
-        <label className="admin-rtf__image-control">
-          <span>Layout</span>
-          <select
-            className="input-control"
-            value={layout}
-            onChange={(event) => {
-              const nextLayout = event.target.value as ImageLayout;
-
-              editor.update(() => {
-                const node = $getNodeByKey(nodeKey);
-
-                if ($isImageNode(node)) {
-                  node.setLayout(nextLayout);
-                }
-              });
-            }}
-          >
-            <option value="center">Centar</option>
-            <option value="wide">Široko</option>
-            <option value="full">Puna širina</option>
-            <option value="wrap-left">Levo uz tekst</option>
-            <option value="wrap-right">Desno uz tekst</option>
-          </select>
-        </label>
-
-        <label className="admin-rtf__image-control">
-          <span>Širina {widthPct}%</span>
-          <input
-            type="range"
-            min="25"
-            max="100"
-            step="5"
-            value={widthPct}
-            onChange={(event) => {
-              const nextWidth = clampImageWidthPct(Number(event.target.value));
-
-              editor.update(() => {
-                const node = $getNodeByKey(nodeKey);
-
-                if ($isImageNode(node)) {
-                  node.setWidthPct(nextWidth);
-                }
-              });
-            }}
-          />
-        </label>
-
-        <button
-          className="admin-rtf__image-remove"
-          type="button"
-          onClick={() => {
-            editor.update(() => {
-              const node = $getNodeByKey(nodeKey);
-
-              if ($isImageNode(node)) {
-                node.remove();
-              }
-            });
-          }}
-        >
-          Remove
-        </button>
+      <div className="admin-rtf__image-frame">
+        <img draggable={false} src={src} alt={altText} />
+        {isSelected ? (
+          <>
+            <span className="admin-rtf__image-size">{widthPct}%</span>
+            <span
+              aria-hidden="true"
+              className="admin-rtf__image-handle admin-rtf__image-handle--left"
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+              }}
+              onPointerDown={(event) => {
+                void startResize(event, "left");
+              }}
+            />
+            <span
+              aria-hidden="true"
+              className="admin-rtf__image-handle admin-rtf__image-handle--right"
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+              }}
+              onPointerDown={(event) => {
+                void startResize(event, "right");
+              }}
+            />
+          </>
+        ) : null}
       </div>
     </figure>
   );
@@ -1174,14 +1329,7 @@ export function AdminRichTextField({
                 "text/html",
               );
               const nodes = $generateNodesFromDOM(editor, dom);
-              const root = $getRoot();
-
-              root.clear();
-              root.append(...nodes);
-
-              if (root.getChildrenSize() === 0) {
-                root.append($createParagraphNode());
-              }
+              appendImportedNodesToRoot(nodes);
             }
           : undefined,
     }),

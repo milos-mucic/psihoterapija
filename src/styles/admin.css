@@ -694,6 +694,12 @@
   grid-column: 1 / -1;
 }
 
+.admin-form__field:has(> .admin-rtf),
+.admin-form__field:has(> .admin-biography-card-rich-text),
+.admin-form__field:has(> .admin-scope-tab-rich-text) {
+  grid-column: 1 / -1;
+}
+
 .admin-form__actions {
   display: flex;
   justify-content: flex-end;
@@ -1063,8 +1069,7 @@
 }
 
 .admin-rtf__image {
-  display: grid;
-  gap: 0.75rem;
+  position: relative;
   margin: 0 0 1rem;
 }
 
@@ -1073,39 +1078,61 @@
   max-width: min(26rem, 70%);
 }
 
-.admin-rtf__image-controls {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
-  gap: 0.75rem;
-  align-items: end;
+.admin-rtf__image-frame {
+  position: relative;
+  border-radius: 0.7rem;
+  overflow: visible;
 }
 
-.admin-rtf__image-control {
-  display: grid;
-  gap: 0.35rem;
+.admin-rtf__image.is-selected .admin-rtf__image-frame {
+  outline: 2px solid rgb(var(--primary-rgb) / 0.42);
+  outline-offset: 0.2rem;
 }
 
-.admin-rtf__image-control--full {
-  grid-column: 1 / -1;
+.admin-rtf__image-size {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  z-index: 2;
+  padding: 0.22rem 0.5rem;
+  border-radius: 999px;
+  background: rgb(17 24 39 / 0.82);
+  color: #fff;
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1;
+  pointer-events: none;
 }
 
-.admin-rtf__image-control span {
-  font-size: 0.82rem;
-  color: #4b5563;
+.admin-rtf__image-handle {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  width: 0.95rem;
+  height: 3.6rem;
+  border: 1px solid rgb(148 163 184 / 0.7);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.96);
+  box-shadow: 0 8px 22px rgb(15 23 42 / 0.16);
+  transform: translateY(-50%);
+  cursor: ew-resize;
+  touch-action: none;
 }
 
-.admin-rtf__image-control input[type="range"] {
-  width: 100%;
+.admin-rtf__image-handle::after {
+  content: "";
+  position: absolute;
+  inset: 0.75rem 0.34rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #cbd5e1, #64748b);
 }
 
-.admin-rtf__image-remove {
-  width: fit-content;
-  border: 1px solid var(--line);
-  border-radius: 0.45rem;
-  background: #fff;
-  color: #111827;
-  padding: 0.4rem 0.7rem;
-  cursor: pointer;
+.admin-rtf__image-handle--left {
+  left: -0.55rem;
+}
+
+.admin-rtf__image-handle--right {
+  right: -0.55rem;
 }
 
 .admin-rtf__editor img {
@@ -1113,12 +1140,6 @@
   height: auto;
   display: block;
   border-radius: 0.5rem;
-}
-
-@media (max-width: 840px) {
-  .admin-rtf__image-controls {
-    grid-template-columns: 1fr;
-  }
 }
 
 .admin-rtf__status,

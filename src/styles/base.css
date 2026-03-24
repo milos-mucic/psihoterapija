@@ -1739,8 +1739,12 @@ body.appbar-drawer-open {
 }
 
 @media (max-width: 720px) {
-  body:not(.home-route) main {
+  body:not(.home-route):not(.appbar-overlay-route) main {
     padding-top: 5.4rem;
+  }
+
+  body.appbar-overlay-route main {
+    padding-top: 0;
   }
 
   body.appbar-overlay-route .page-banner {
