@@ -7,8 +7,8 @@ import type { SiteLocale } from "@/lib/config/site";
 type LinkCard = {
   title: string;
   copy: string;
-  href: string;
-  label: string;
+  href?: string;
+  label?: string;
 };
 
 type HomeServiceCard = LinkCard & {
@@ -83,6 +83,26 @@ export type HomePageData = {
 
 const toParagraphHtml = (value: string) => sanitizeRichTextHtml(value);
 
+const ensureServiceItems = (
+  locale: SiteLocale,
+  items: HomePageManagedContent["services"]["items"],
+) => {
+  const dictionaryItems = getDictionary(locale).homePage.services.items;
+  const defaultImages = [
+    "/legacy/images/White-Icon-2.png",
+    "/legacy/images/mirrored/logo-service-3.png",
+    "/legacy/images/White-Icon-1.png",
+  ];
+
+  return Array.from({ length: 3 }, (_, index) => ({
+    title: items[index]?.title ?? dictionaryItems[index]?.title ?? "",
+    copy:
+      items[index]?.copy ??
+      toParagraphHtml(dictionaryItems[index]?.copy ?? ""),
+    image: items[index]?.image ?? defaultImages[index] ?? defaultImages[0],
+  }));
+};
+
 const toCombinedRichTextHtml = (paragraphs: string[], bullets: string[]) => {
   const paragraphHtml = paragraphs.map((paragraph) => `<p>${paragraph}</p>`).join("");
   const listHtml =
@@ -120,18 +140,23 @@ export const getDefaultHomePageManagedContent = (locale: SiteLocale): HomePageMa
     services: {
       title: content.services.title,
       copy: toParagraphHtml(content.services.copy),
-      items: [
+      items: ensureServiceItems(locale, [
         {
           title: content.services.items[0].title,
           copy: toParagraphHtml(content.services.items[0].copy),
           image: "/legacy/images/White-Icon-2.png",
         },
         {
+          title: content.services.items[1].title,
+          copy: toParagraphHtml(content.services.items[1].copy),
+          image: "/legacy/images/mirrored/logo-service-3.png",
+        },
+        {
           title: content.services.items[2].title,
           copy: toParagraphHtml(content.services.items[2].copy),
           image: "/legacy/images/White-Icon-1.png",
         },
-      ],
+      ]),
     },
     themes: {
       title: content.themes.title,
@@ -188,6 +213,7 @@ export const buildHomePageData = (
   content: HomePageManagedContent,
 ): HomePageData => {
   const dictionary = getDictionary(locale);
+  const serviceItems = ensureServiceItems(locale, content.services.items);
 
   return {
     seo: content.seo,
@@ -212,7 +238,7 @@ export const buildHomePageData = (
     about: {
       title: content.about.title,
       body: content.about.body,
-      href: localizePath(locale, "/o-nama/"),
+      href: localizePath(locale, "/biografija/nemanja-zajkeskovic/"),
       label: content.about.label,
       image: content.about.image,
     },
@@ -221,13 +247,18 @@ export const buildHomePageData = (
       copy: content.services.copy,
       items: [
         {
-          ...content.services.items[0],
-          href: localizePath(locale, "/psihoterapija/"),
+          ...serviceItems[0],
+          href: localizePath(locale, "/usluge/psihoterapija/"),
           label: dictionary.homePage.services.items[0].label,
         },
         {
-          ...content.services.items[1],
-          href: localizePath(locale, "/zakazivanje/"),
+          ...serviceItems[1],
+          href: localizePath(locale, "/usluge/psiholosko-savetovanje/"),
+          label: dictionary.homePage.services.items[1].label,
+        },
+        {
+          ...serviceItems[2],
+          href: localizePath(locale, "/usluge/konsultacije/"),
           label: dictionary.homePage.services.items[2].label,
         },
       ],

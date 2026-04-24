@@ -58,7 +58,8 @@ export const homePageManagedContentSchema: z.ZodType<HomePageManagedContent> = z
           image: requiredText,
         }),
       )
-      .length(2),
+      .min(2)
+      .max(3),
   }),
   themes: z.object({
     title: requiredText,
@@ -125,6 +126,9 @@ const formPayloadSchema = z.object({
   service2Title: requiredText,
   service2Copy: richTextRequired,
   service2Image: requiredText,
+  service3Title: requiredText,
+  service3Copy: richTextRequired,
+  service3Image: requiredText,
   themesTitle: requiredText,
   theme1Title: requiredText,
   theme1Copy: richTextRequired,
@@ -206,6 +210,11 @@ export const parseHomePageManagedContentForm = (input: unknown): HomePageManaged
           title: parsed.service2Title,
           copy: parsed.service2Copy,
           image: parsed.service2Image,
+        },
+        {
+          title: parsed.service3Title,
+          copy: parsed.service3Copy,
+          image: parsed.service3Image,
         },
       ],
     },

@@ -1,0 +1,29 @@
+---
+import BaseLayout from "@/components/components/BaseLayout.astro";
+import ServiceDetailPage from "@/components/pages/ServiceDetailPage.astro";
+import {
+  getServiceDetailData,
+  serviceDetailSlugs,
+  type ServiceDetailSlug,
+} from "@/data/fixtures/service-details";
+
+export const getStaticPaths = () =>
+  serviceDetailSlugs.map((slug) => ({
+    params: { slug },
+  }));
+
+const locale = "sr-cyrl";
+const slug = Astro.params.slug as ServiceDetailSlug;
+const content = getServiceDetailData(locale, slug);
+---
+
+<BaseLayout
+  title={content.seo.title}
+  description={content.seo.description}
+  locale={locale}
+  canonicalPath={`/cir/usluge/${slug}/`}
+  appBarTone="dark"
+  appBarOverlay={true}
+>
+  <ServiceDetailPage locale={locale} slug={slug} />
+</BaseLayout>

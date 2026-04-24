@@ -1,5 +1,7 @@
 ---
+import AppointmentForm from "@/components/components/AppointmentForm.astro";
 import PageBanner from "@/components/sections/PageBanner.astro";
+import { getDictionary } from "@/features/i18n/translate";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import type { SiteLocale } from "@/lib/config/site";
 
@@ -10,6 +12,8 @@ type Props = {
 
 const { locale, slug } = Astro.props;
 const content = await pageContentService.getBiographyProfilePageData(locale, slug);
+const appointmentContent = await pageContentService.getAppointmentPageData(locale);
+const dictionary = getDictionary(locale);
 
 if (!content) {
   throw new Error(`Missing biography profile data for slug: ${slug}`);
@@ -56,6 +60,26 @@ if (!content) {
   <div class="container container--narrow">
     <div class="biography-profile-page__body-card" data-reveal="up">
       <div class="richtext-shell" set:html={content.profile.body} />
+    </div>
+  </div>
+</section>
+
+<section class="home-section home-section--tight biography-profile-page__booking">
+  <div class="container">
+    <div class="home-booking biography-profile-page__booking-grid">
+      <div class="home-booking__intro" data-reveal="up">
+        <h2>{dictionary.common.biographyBookingTitle}</h2>
+        <div class="richtext-shell" set:html={appointmentContent.introCopy} />
+      </div>
+
+      <div data-reveal="up" style="--reveal-delay: 90ms;">
+        <AppointmentForm
+          locale={locale}
+          labels={dictionary.forms}
+          formatLabel={appointmentContent.formatLabel}
+          formats={appointmentContent.formats}
+        />
+      </div>
     </div>
   </div>
 </section>
@@ -189,6 +213,14 @@ if (!content) {
   .biography-profile-page__body-card p {
     color: var(--foreground);
     line-height: 1.75;
+  }
+
+  .biography-profile-page__booking {
+    padding-top: 0.5rem;
+  }
+
+  .biography-profile-page__booking-grid {
+    gap: clamp(1.4rem, 4vw, 2.1rem);
   }
 
   .biography-profile-page__related-grid {

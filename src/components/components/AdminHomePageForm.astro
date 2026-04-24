@@ -1,6 +1,7 @@
 ---
 import { AdminMediaField } from "@/components/components/AdminMediaField";
 import { AdminRichTextField } from "@/components/components/AdminRichTextField";
+import { getDictionary } from "@/features/i18n/translate";
 import type { HomePageManagedContent } from "@/features/page-content/types/page-content.types";
 import type { SiteLocale } from "@/lib/config/site";
 
@@ -37,6 +38,28 @@ const heroTitleRichTextLabels = {
   ...richTextLabels,
   placeholder: "Naslov hero sekcije",
 };
+const defaultServiceItems = [
+  {
+    title: getDictionary(locale).homePage.services.items[0].title,
+    copy: `<p>${getDictionary(locale).homePage.services.items[0].copy}</p>`,
+    image: "/legacy/images/White-Icon-2.png",
+  },
+  {
+    title: getDictionary(locale).homePage.services.items[1].title,
+    copy: `<p>${getDictionary(locale).homePage.services.items[1].copy}</p>`,
+    image: "/legacy/images/mirrored/logo-service-3.png",
+  },
+  {
+    title: getDictionary(locale).homePage.services.items[2].title,
+    copy: `<p>${getDictionary(locale).homePage.services.items[2].copy}</p>`,
+    image: "/legacy/images/White-Icon-1.png",
+  },
+];
+const normalizedServiceItems = Array.from({ length: 3 }, (_, index) => ({
+  title: content.services.items[index]?.title ?? defaultServiceItems[index].title,
+  copy: content.services.items[index]?.copy ?? defaultServiceItems[index].copy,
+  image: content.services.items[index]?.image ?? defaultServiceItems[index].image,
+}));
 ---
 
 <form
@@ -273,7 +296,7 @@ const heroTitleRichTextLabels = {
         </div>
 
         {
-          content.services.items.map((item, index) => (
+          normalizedServiceItems.map((item, index) => (
             <div class="admin-section-group admin-form__field--full">
               <h3 style="margin: 0;">Kartica {index + 1}</h3>
               <div class="admin-form__grid">

@@ -5,10 +5,10 @@
     "appbarPrimaryNav": "Glavna navigacija",
     "localeSwitch": "Prebacivanje pisma",
     "toggleNavigation": "Otvori navigaciju",
-    "footerNav": "Navigacija u podnožju"
+    "footerNav": "Navigacija u podnoÅ¾ju"
   },
   "nav": {
-    "home": "Početna",
+    "home": "PoÄetna",
     "about": "O nama",
     "psychotherapy": "Psihoterapija",
     "blog": "Blog",
@@ -18,7 +18,7 @@
     "appointment": "Zakazivanje",
     "admin": "Admin",
     "aboutLinks": {
-      "about": "O nama",
+      "about": "Na?a ideja",
       "biography": "Biografija"
     },
     "therapyLinks": {
@@ -31,24 +31,24 @@
   },
   "meta": {
     "home": {
-      "title": "Početna | Psihoterapijski kabinet Ikar",
-      "description": "Centar posvećen psihodinamskoj psihoterapiji, usmeren ka razumevanju dubljih uzroka emocionalnih poteškoća i postizanju trajnih psiholoških promena."
+      "title": "PoÄetna | Psihoterapijski kabinet Ikar",
+      "description": "Centar posveÄ‡en psihodinamskoj psihoterapiji, usmeren ka razumevanju dubljih uzroka emocionalnih poteÅ¡koÄ‡a i postizanju trajnih psiholoÅ¡kih promena."
     },
     "about": {
       "title": "O nama | Psihoterapijski kabinet Ikar",
-      "description": "Na stranici ispod možete naći dodatne informacije o našem kabinetu."
+      "description": "Na stranici ispod moÅ¾ete naÄ‡i dodatne informacije o naÅ¡em kabinetu."
     },
     "psychotherapy": {
       "title": "Psihoterapija | Psihoterapijski kabinet Ikar",
-      "description": "U našem kabinetu bavimo se psihodinamskom psihoterapijom, koja je dubinski orijentisana na razumevanje i razrešavanje uzroka, a ne samo posledica psiholoških teškoća."
+      "description": "U naÅ¡em kabinetu bavimo se psihodinamskom psihoterapijom, koja je dubinski orijentisana na razumevanje i razreÅ¡avanje uzroka, a ne samo posledica psiholoÅ¡kih teÅ¡koÄ‡a."
     },
     "faq": {
       "title": "Pitanja | Psihoterapijski kabinet Ikar",
-      "description": "Ovde možete pronaći odgovore na najčešće postavljena pitanja."
+      "description": "Ovde moÅ¾ete pronaÄ‡i odgovore na najÄeÅ¡Ä‡e postavljena pitanja."
     },
     "contact": {
       "title": "Kontakt | Psihoterapijski kabinet Ikar",
-      "description": "Ova stranica namenjena je prvom kontaktu, informisanju i postavljanju pitanja u cilju razjašnjavanja nedoumica koje imate."
+      "description": "Ova stranica namenjena je prvom kontaktu, informisanju i postavljanju pitanja u cilju razjaÅ¡njavanja nedoumica koje imate."
     },
     "biography": {
       "title": "Biografija | Psihoterapijski kabinet Ikar",
@@ -56,11 +56,11 @@
     },
     "appointment": {
       "title": "Zakazivanje | Psihoterapijski kabinet Ikar",
-      "description": "Ovde možete poslati upit za savetodavni, psihoterapijski ili konsultativni termin, a naš tim će Vam se javiti u najkraćem mogućem roku."
+      "description": "Ovde moÅ¾ete poslati upit za savetodavni, psihoterapijski ili konsultativni termin, a naÅ¡ tim Ä‡e Vam se javiti u najkraÄ‡em moguÄ‡em roku."
     },
     "blog": {
       "title": "Blog | Psihoterapijski kabinet Ikar",
-      "description": "Tekstovi iz oblasti psihologije i psihoterapije dostupni su kroz naš blog."
+      "description": "Tekstovi iz oblasti psihologije i psihoterapije dostupni su kroz naÅ¡ blog."
     },
     "admin": {
       "layoutDescription": "Skriveni admin segment za blog i prijave.",
@@ -71,19 +71,19 @@
   },
   "blog": {
     "title": "Blog",
-    "description": "Tekstovi iz oblasti psihologije i psihoterapije dostupni su kroz naš blog.",
+    "description": "Tekstovi iz oblasti psihologije i psihoterapije dostupni su kroz naÅ¡ blog.",
     "recentLabel": "Najnoviji tekstovi",
-    "readMoreLabel": "Pročitajte tekst",
+    "readMoreLabel": "ProÄitajte tekst",
     "defaultTag": "Psihoterapija",
     "index": {
-      "bannerDescription": "U ovoj sekciji možete pronaći psihološke tekstove o temama koje su Vam interesantne, napisane iz naše perspektive.",
+      "bannerDescription": "U ovoj sekciji moÅ¾ete pronaÄ‡i psiholoÅ¡ke tekstove o temama koje su Vam interesantne, napisane iz naÅ¡e perspektive.",
       "allPosts": "Svi tekstovi",
       "postsLabel": "teksta",
       "searchTitle": "Pretraga",
-      "searchPlaceholder": "Unesite ključnu reč",
-      "searchAction": "Pretraži",
+      "searchPlaceholder": "Unesite kljuÄnu reÄ",
+      "searchAction": "PretraÅ¾i",
       "recentTitle": "Najskoriji postovi",
-      "keywordsTitle": "Ključne reči",
+      "keywordsTitle": "KljuÄne reÄi",
       "allKeywords": "Sve",
       "noResults": "Nema tekstova za izabrani keyword."
     }
@@ -95,16 +95,16 @@
     "message": "Poruka",
     "formatLabel": "Izaberite format rada",
     "chooseOption": "Izaberite",
-    "submitContact": "Pošalji poruku",
-    "submitAppointment": "Pošalji prijavu",
-    "success": "Poruka je uspešno poslata.",
-    "error": "Došlo je do greške. Pokušajte ponovo."
+    "submitContact": "PoÅ¡alji poruku",
+    "submitAppointment": "PoÅ¡alji prijavu",
+    "success": "Poruka je uspeÅ¡no poslata.",
+    "error": "DoÅ¡lo je do greÅ¡ke. PokuÅ¡ajte ponovo."
   },
   "api": {
     "invalidSubmission": "Podaci nisu validni.",
-    "submissionSaveFailed": "Neuspešno čuvanje prijave.",
+    "submissionSaveFailed": "NeuspeÅ¡no Äuvanje prijave.",
     "adminAccessDenied": "Pristup nije odobren.",
-    "adminWrongPassword": "Pogrešna šifra."
+    "adminWrongPassword": "PogreÅ¡na Å¡ifra."
   },
   "common": {
     "noItemsFound": "No items found.",
@@ -115,103 +115,107 @@
     "viewPage": "Pogledaj stranicu",
     "scopeTabList": "Kljucne teme",
     "scopeTabPrev": "Prethodna tema",
-    "scopeTabNext": "Sledeca tema"
+    "scopeTabNext": "Sledeca tema",
+    "serviceSummaryTitle": "Ukratko",
+    "serviceBookingTitle": "Unesite svoje podatke kako biste zakazali termin",
+    "serviceBookingCopy": "Ako Vam ovaj format rada deluje kao dobar izbor, po?aljite nam osnovne informacije i javi?emo Vam se u najkra?em mogu?em roku.",
+    "biographyBookingTitle": "Unesite svoje podatke kako biste zakazali termin sa terapeutom"
   },
   "footer": {
     "contactEyebrow": "Kontakt",
-    "tagline": "Smirena, premium i održiva osnova za psihoterapijski sajt.",
+    "tagline": "Smirena, premium i odrÅ¾iva osnova za psihoterapijski sajt.",
     "sitemapTitle": "Sitemap",
     "navigationTitle": "Navigacija",
-    "supportTitle": "Podrška",
-    "socialTitle": "Društvene mreže",
+    "supportTitle": "PodrÅ¡ka",
+    "socialTitle": "DruÅ¡tvene mreÅ¾e",
     "instagramLabel": "Instagram",
     "instagramPlaceholder": "Profil uskoro"
   },
   "homePage": {
     "hero": {
       "titleHtml": "Psihoterapijski centar<br /><em>Ikar</em>",
-      "description": "Centar posvećen psihodinamskoj psihoterapiji, usmeren ka razumevanju dubljih uzroka emocionalnih poteškoća i postizanju trajnih psiholoških promena.",
+      "description": "Centar posveÄ‡en psihodinamskoj psihoterapiji, usmeren ka razumevanju dubljih uzroka emocionalnih poteÅ¡koÄ‡a i postizanju trajnih psiholoÅ¡kih promena.",
       "primaryActionLabel": "Zakazivanje",
       "secondaryActionLabel": "O nama"
     },
     "prompt": {
-      "title": "Kako možemo da Vam pomognemo?",
-      "copy": "Za bilo kakva pitanja ili nedoumice, pošaljite nam poruku.",
+      "title": "Kako moÅ¾emo da Vam pomognemo?",
+      "copy": "Za bilo kakva pitanja ili nedoumice, poÅ¡aljite nam poruku.",
       "label": "Kontakt"
     },
     "about": {
-      "title": "Ja sam Nemanja Zajkešković, psihodinamski psihoterapeut",
+      "title": "Ja sam Nemanja ZajkeÅ¡koviÄ‡, psihodinamski psihoterapeut",
       "paragraphs": [
-        "Master psiholog i psihodinamski psihoterapeut sa višegodišnjim iskustvom u radu sa anksioznim i depresivnim stanjima, opsesivnim stanjima, poremećajima ličnosti, krizama identiteta, ponavljanjem destruktivnih životnih obrazaca i hroničnim problemima u odnosima sa drugima."
+        "Master psiholog i psihodinamski psihoterapeut sa viÅ¡egodiÅ¡njim iskustvom u radu sa anksioznim i depresivnim stanjima, opsesivnim stanjima, poremeÄ‡ajima liÄnosti, krizama identiteta, ponavljanjem destruktivnih Å¾ivotnih obrazaca i hroniÄnim problemima u odnosima sa drugima."
       ],
       "bullets": [
-        "U radu fokusiran na dugotrajan psihoterapijski proces u cilju dubinskih promena i restrukturacije ličnosti.",
-        "Koristimo terapijski odnos kao centralni instrument promene i razumevanja lične istorije, unutrašnjih konflikata i pogleda na svet."
+        "U radu fokusiran na dugotrajan psihoterapijski proces u cilju dubinskih promena i restrukturacije liÄnosti.",
+        "Koristimo terapijski odnos kao centralni instrument promene i razumevanja liÄne istorije, unutraÅ¡njih konflikata i pogleda na svet."
       ],
       "label": "Biografija"
     },
     "services": {
-      "title": "Psihodinamska psihoterapija i psihološko savetovanje",
-      "copy": "U našem centru, pored psihološkog savetovanja i psihodinamske psihoterapije, možete zakazati i konsultativne termine.",
+      "title": "Psihodinamska psihoterapija i psiholoÅ¡ko savetovanje",
+      "copy": "U naÅ¡em centru, pored psiholoÅ¡kog savetovanja i psihodinamske psihoterapije, moÅ¾ete zakazati i konsultativne termine.",
       "items": [
         {
           "title": "Psihoterapijske seanse",
-          "copy": "Psihoterapija se bavi dubljim uzrocima emocionalnih i ponašajnih problema, u cilju stvaranja trajnih psiholoških promena.",
-          "label": "Zakažite termin"
+          "copy": "Psihoterapija se bavi dubljim uzrocima emocionalnih i ponaÅ¡ajnih problema, u cilju stvaranja trajnih psiholoÅ¡kih promena.",
+          "label": "ZakaÅ¾ite termin"
         },
         {
-          "title": "Psihološko savetovanje",
-          "copy": "Psihološko savetovanje pruža konkretnu podršku u trenucima stresa, kriza ili dilema, bez ulaska u dublji psihološki rad. Kraćeg je trajanja.",
-          "label": "Zakažite termin"
+          "title": "PsiholoÅ¡ko savetovanje",
+          "copy": "PsiholoÅ¡ko savetovanje pruÅ¾a konkretnu podrÅ¡ku u trenucima stresa, kriza ili dilema, bez ulaska u dublji psiholoÅ¡ki rad. KraÄ‡eg je trajanja.",
+          "label": "ZakaÅ¾ite termin"
         },
         {
           "title": "Konsultacije",
-          "copy": "Konsultacije su namenjene onima koji žele da razjasne dileme, dobiju osnovne informacije o psihoterapiji ili procene koji oblik podrške im je potreban.",
-          "label": "Zakažite termin"
+          "copy": "Konsultacije su namenjene onima koji Å¾ele da razjasne dileme, dobiju osnovne informacije o psihoterapiji ili procene koji oblik podrÅ¡ke im je potreban.",
+          "label": "ZakaÅ¾ite termin"
         }
       ]
     },
     "promo": {
-      "title": "Zakažite besplatan uvodni Zoom ili Skype razgovor od 15 minuta",
+      "title": "ZakaÅ¾ite besplatan uvodni Zoom ili Skype razgovor od 15 minuta",
       "label": "Kontakt"
     },
     "themes": {
-      "title": "Učestale teme sa kojima se susrećemo u radu",
+      "title": "UÄestale teme sa kojima se susreÄ‡emo u radu",
       "items": [
         {
           "title": "Anksioznost i depresivna stanja",
-          "copy": "Kada se napetost, strah ili osećaj bezvoljnosti ponavljaju i počinju da oblikuju svakodnevicu.",
-          "label": "Saznajte više"
+          "copy": "Kada se napetost, strah ili oseÄ‡aj bezvoljnosti ponavljaju i poÄinju da oblikuju svakodnevicu.",
+          "label": "Saznajte viÅ¡e"
         },
         {
           "title": "Problemi u odnosima",
-          "copy": "Ponavljajući konflikti, distanca, strah od bliskosti ili teškoće u postavljanju granica.",
-          "label": "Saznajte više"
+          "copy": "PonavljajuÄ‡i konflikti, distanca, strah od bliskosti ili teÅ¡koÄ‡e u postavljanju granica.",
+          "label": "Saznajte viÅ¡e"
         },
         {
-          "title": "Krize identiteta i životni prelazi",
-          "copy": "Trenuci u kojima stari obrasci više ne funkcionišu, a novi još nisu dobili jasan oblik.",
-          "label": "Saznajte više"
+          "title": "Krize identiteta i Å¾ivotni prelazi",
+          "copy": "Trenuci u kojima stari obrasci viÅ¡e ne funkcioniÅ¡u, a novi joÅ¡ nisu dobili jasan oblik.",
+          "label": "Saznajte viÅ¡e"
         }
       ]
     },
     "reasons": {
-      "title": "Zašto izabrati baš naš centar?",
-      "copy": "Psihoterapijski centar Ikar u svom radu je primarno usmeren na dugoročnu psihoterapiju, jer verujemo da se dubinske i trajne promene ne postižu kroz brze intervencije, već kroz kontinuiran proces.",
+      "title": "ZaÅ¡to izabrati baÅ¡ naÅ¡ centar?",
+      "copy": "Psihoterapijski centar Ikar u svom radu je primarno usmeren na dugoroÄnu psihoterapiju, jer verujemo da se dubinske i trajne promene ne postiÅ¾u kroz brze intervencije, veÄ‡ kroz kontinuiran proces.",
       "items": [
         {
-          "title": "Naš pristup",
-          "copy": "Psihodinamski pristup omogućava rad sa širokim spektrom emocionalnih stanja i ponavljajućih obrazaca koji otežavaju svakodnevno funkcionisanje.",
-          "label": "Više o pristupu"
+          "title": "NaÅ¡ pristup",
+          "copy": "Psihodinamski pristup omoguÄ‡ava rad sa Å¡irokim spektrom emocionalnih stanja i ponavljajuÄ‡ih obrazaca koji oteÅ¾avaju svakodnevno funkcionisanje.",
+          "label": "ViÅ¡e o pristupu"
         },
         {
-          "title": "Profesionalni okvir i jasnoća",
-          "copy": "Rad se odvija u jasno definisanom i etički utemeljenom okviru, sa stabilnim pravilima i doslednošću.",
-          "label": "Česta pitanja"
+          "title": "Profesionalni okvir i jasnoÄ‡a",
+          "copy": "Rad se odvija u jasno definisanom i etiÄki utemeljenom okviru, sa stabilnim pravilima i doslednoÅ¡Ä‡u.",
+          "label": "ÄŒesta pitanja"
         },
         {
           "title": "Transparentnost i otvorenost",
-          "copy": "Sam proces, ciljevi i dinamika terapije mogu se preispitivati radi jasnoće i usmeravanja rada.",
+          "copy": "Sam proces, ciljevi i dinamika terapije mogu se preispitivati radi jasnoÄ‡e i usmeravanja rada.",
           "label": "Postavite pitanje"
         }
       ],
@@ -219,37 +223,41 @@
     },
     "booking": {
       "title": "Unesite neophodne informacije kako biste zakazali termin",
-      "copy": "Prvi kontakt nam pomaže da razumemo kontekst, predložimo format rada i dogovorimo naredni korak.",
+      "copy": "Prvi kontakt nam pomaÅ¾e da razumemo kontekst, predloÅ¾imo format rada i dogovorimo naredni korak.",
       "formatLabel": "Izaberite format rada",
-      "formats": ["Psihodinamska psihoterapija", "Psihološko savetovanje", "Konsultacije"]
+      "formats": [
+        "Psihodinamska psihoterapija",
+        "PsiholoÅ¡ko savetovanje",
+        "Konsultacije"
+      ]
     },
     "recent": {
-      "title": "Najnovije objave na našem sajtu",
+      "title": "Najnovije objave na naÅ¡em sajtu",
       "copy": "Budite u toku sa novim tekstovima iz oblasti psihologije i psihoterapije.",
       "label": "Sve objave",
-      "empty": "Novi tekstovi stižu uskoro."
+      "empty": "Novi tekstovi stiÅ¾u uskoro."
     }
   },
   "pages": {
     "about": {
       "banner": {
         "title": "Ko smo mi?",
-        "description": "Na stranici ispod možete naći dodatne informacije o našem kabinetu."
+        "description": "Na stranici ispod moÅ¾ete naÄ‡i dodatne informacije o naÅ¡em kabinetu."
       },
       "showcaseTitle": "Psihoterapijski kabinet 'Ikar'",
       "showcaseEmptyLabel": "No items found.",
-      "ideaTitle": "Glavna ideja našeg kabineta",
-      "ideaHtml": "U savremenoj psihološkoj praksi razvijenih zemalja, psihoterapija predstavlja pravno standardizovan i odgovoran vid pomoći, zasnovan na jasnim teorijskim okvirima, kliničkom iskustvu i etičkim principima<strong>. </strong>U našoj zemlji, međutim, ona je i dalje često praćena konfuzijom, mistikom i nejasnim očekivanjima, kao i različitim pristupima koji se predstavljaju kao terapijski, a koji neretko nemaju trajno ili stvarno dejstvo, najčešće na uštrb samih klijenata i pacijenata.<br><br>Naš rad je u širem smislu prevashodno usmeren ka osvetljavanju toga šta psihoterapija jeste, ali i šta ona nije. Smatramo da je edukacija javnosti sastavni deo svakog ozbiljnog terapijskog procesa, jer samo kroz razumevanje moguće je uspostaviti realna očekivanja, osećaj sigurnosti i poverenje u rad koji se odvija. Psihološko zdravlje se ne može posmatrati izdvojeno od društvenog konteksta, jer ne postoje psihološki zdrave osobe u sredini koja je u osnovi nezdrava.<br><br>U užem smislu, naš cilj se ogleda u profesionalnom i odgovornom psihoterapijskom radu, zasnovanom na intervencijama koje su klijentima zaista potrebne. U fokusu su individualnost, lične granice i kompleksnost svake psihološke pojave. Ne bavimo se „tretmanom bolesti“ u apstraktnom smislu koristeći tehnike ili alate, jer na psihoterapiju ne dolazi <em>dijagnoza</em>, već čovek. Upravo zato je naš pristup uvek prilagođen pojedincu i, što je najbitnije, on je pre svega ljudski.<br><br>Nijedan psihoterapijski proces nije identičan, jer nijedna osoba i nijedan životni put nisu isti.<br><br>Psihoterapiju razumemo kao proces koji zahteva vreme, kontinuitet i spremnost za susret sa sopstvenim emocijama, a ne kao mesto gde će psihoterapeut ponuditi brzo ili univerzalno rešenje.",
+      "ideaTitle": "Glavna ideja naÅ¡eg kabineta",
+      "ideaHtml": "U savremenoj psiholoÅ¡koj praksi razvijenih zemalja, psihoterapija predstavlja pravno standardizovan i odgovoran vid pomoÄ‡i, zasnovan na jasnim teorijskim okvirima, kliniÄkom iskustvu i etiÄkim principima<strong>. </strong>U naÅ¡oj zemlji, meÄ‘utim, ona je i dalje Äesto praÄ‡ena konfuzijom, mistikom i nejasnim oÄekivanjima, kao i razliÄitim pristupima koji se predstavljaju kao terapijski, a koji neretko nemaju trajno ili stvarno dejstvo, najÄeÅ¡Ä‡e na uÅ¡trb samih klijenata i pacijenata.<br><br>NaÅ¡ rad je u Å¡irem smislu prevashodno usmeren ka osvetljavanju toga Å¡ta psihoterapija jeste, ali i Å¡ta ona nije. Smatramo da je edukacija javnosti sastavni deo svakog ozbiljnog terapijskog procesa, jer samo kroz razumevanje moguÄ‡e je uspostaviti realna oÄekivanja, oseÄ‡aj sigurnosti i poverenje u rad koji se odvija. PsiholoÅ¡ko zdravlje se ne moÅ¾e posmatrati izdvojeno od druÅ¡tvenog konteksta, jer ne postoje psiholoÅ¡ki zdrave osobe u sredini koja je u osnovi nezdrava.<br><br>U uÅ¾em smislu, naÅ¡ cilj se ogleda u profesionalnom i odgovornom psihoterapijskom radu, zasnovanom na intervencijama koje su klijentima zaista potrebne. U fokusu su individualnost, liÄne granice i kompleksnost svake psiholoÅ¡ke pojave. Ne bavimo se â€žtretmanom bolestiâ€œ u apstraktnom smislu koristeÄ‡i tehnike ili alate, jer na psihoterapiju ne dolazi <em>dijagnoza</em>, veÄ‡ Äovek. Upravo zato je naÅ¡ pristup uvek prilagoÄ‘en pojedincu i, Å¡to je najbitnije, on je pre svega ljudski.<br><br>Nijedan psihoterapijski proces nije identiÄan, jer nijedna osoba i nijedan Å¾ivotni put nisu isti.<br><br>Psihoterapiju razumemo kao proces koji zahteva vreme, kontinuitet i spremnost za susret sa sopstvenim emocijama, a ne kao mesto gde Ä‡e psihoterapeut ponuditi brzo ili univerzalno reÅ¡enje.",
       "focusTitle": "Bavimo se:",
       "focusItems": [
-        "Poremećajima ličnosti",
+        "PoremeÄ‡ajima liÄnosti",
         "Anksioznim stanjima",
         "Depresivnim stanjima",
-        "Hroničnim poteškoćama u odnosima i vezama",
+        "HroniÄnim poteÅ¡koÄ‡ama u odnosima i vezama",
         "Krizama identiteta, traumama i gubicima"
       ],
-      "recentTitle": "Najnovije objave na našem sajtu",
-      "recentCopy": "Budite u toku sa najnovijim istraživanjima u oblasti psihologije i psihoterapije.",
+      "recentTitle": "Najnovije objave na naÅ¡em sajtu",
+      "recentCopy": "Budite u toku sa najnovijim istraÅ¾ivanjima u oblasti psihologije i psihoterapije.",
       "recentLabel": "View all posts",
       "recentReadMoreLabel": "Read more",
       "recentEmptyLabel": "No items found."
@@ -257,107 +265,119 @@
     "psychotherapy": {
       "banner": {
         "title": "Psihoterapijski pristup",
-        "description": "U našem kabinetu bavimo se psihodinamskom psihoterapijom, koja je dubinski orijentisana na razumevanje i razrešavanje uzroka, a ne samo posledica psiholoških teškoća. Ona omogućava rad sa širokim spektrom mentalnih bolesti i psiholoških problema."
+        "description": "U naÅ¡em kabinetu bavimo se psihodinamskom psihoterapijom, koja je dubinski orijentisana na razumevanje i razreÅ¡avanje uzroka, a ne samo posledica psiholoÅ¡kih teÅ¡koÄ‡a. Ona omoguÄ‡ava rad sa Å¡irokim spektrom mentalnih bolesti i psiholoÅ¡kih problema."
       },
       "scopeTitle": "Opseg rada",
       "scopeItems": [
-        "Anksiozna stanja i poremećaji",
-        "Depresivna stanja i poremećaji",
-        "Poremećaji ličnosti",
-        "Hronične poteškoće u odnosima i vezama",
-        "Psihotični poremećaji",
+        "Anksiozna stanja i poremeÄ‡aji",
+        "Depresivna stanja i poremeÄ‡aji",
+        "PoremeÄ‡aji liÄnosti",
+        "HroniÄne poteÅ¡koÄ‡e u odnosima i vezama",
+        "PsihotiÄni poremeÄ‡aji",
         "Gubitak, trauma, krize identiteta",
-        "Ponavljanje destruktivnih životnih obrazaca"
+        "Ponavljanje destruktivnih Å¾ivotnih obrazaca"
       ],
       "servicesEmptyLabel": "No items found.",
       "bookingTitleHtml": "Neophodne informacije <br>o zakazivanju termina",
       "formatLabel": "Izaberite format rada",
-      "formats": ["Psihodinamska psihoterapija", "Psihološko savetovanje", "Konsultacije"],
+      "formats": [
+        "Psihodinamska psihoterapija",
+        "PsiholoÅ¡ko savetovanje",
+        "Konsultacije"
+      ],
       "faqs": [
         {
-          "question": "Koja je razlika između psihologa i psihoterapeuta?",
-          "answer": "U Republici Srbiji, psiholog se postaje tako što osoba završi osnovne studije psihologije, dok je psihoterapeut onaj koji je i nakon završenih osnovnih studija završio dodatnu psihoterapijsku edukaciju u trajanju od minimum četiri do šest godina."
+          "question": "Koja je razlika izmeÄ‘u psihologa i psihoterapeuta?",
+          "answer": "U Republici Srbiji, psiholog se postaje tako Å¡to osoba zavrÅ¡i osnovne studije psihologije, dok je psihoterapeut onaj koji je i nakon zavrÅ¡enih osnovnih studija zavrÅ¡io dodatnu psihoterapijsku edukaciju u trajanju od minimum Äetiri do Å¡est godina."
         },
         {
           "question": "Kako da znam da mi je potrebna psihoterapija?",
-          "answer": "O psihoterapiji možete razmišljati ako doživljavate emocionalne poteškoće, imate dijagnostifikovani određeni mentalni poremećaj ili generalno prolazite kroz težak životni period. Takođe, psihoterapija može služiti ličnom razvoju, istraživanju i povećanju zadovoljstva životom."
+          "answer": "O psihoterapiji moÅ¾ete razmiÅ¡ljati ako doÅ¾ivljavate emocionalne poteÅ¡koÄ‡e, imate dijagnostifikovani odreÄ‘eni mentalni poremeÄ‡aj ili generalno prolazite kroz teÅ¾ak Å¾ivotni period. TakoÄ‘e, psihoterapija moÅ¾e sluÅ¾iti liÄnom razvoju, istraÅ¾ivanju i poveÄ‡anju zadovoljstva Å¾ivotom."
         },
         {
           "question": "Koliko traje psihoterapija?",
-          "answer": "Psihoterapija nema unapred definisano trajanje, jer napredak u terapijskom procesu ne zavisi od vremena, već od rada i truda koji se ulažu u sam proces. Okvirno, psihoterapija može trajati od nekoliko meseci pa sve do nekoliko godina."
+          "answer": "Psihoterapija nema unapred definisano trajanje, jer napredak u terapijskom procesu ne zavisi od vremena, veÄ‡ od rada i truda koji se ulaÅ¾u u sam proces. Okvirno, psihoterapija moÅ¾e trajati od nekoliko meseci pa sve do nekoliko godina."
         },
         {
           "question": "Kako izgleda prvi susret sa psihoterapeutom?",
-          "answer": "U dogovoreno vreme i mesto dolazite na psihoterapijsku seansu gde će Vas psihoterapeut sačekati. Nije potrebna nikakva prethodna priprema, samo volja za razgovorom. Na prvoj seansi govorićete i o svim potrebnim tehničkim informacijama za dalji rad."
+          "answer": "U dogovoreno vreme i mesto dolazite na psihoterapijsku seansu gde Ä‡e Vas psihoterapeut saÄekati. Nije potrebna nikakva prethodna priprema, samo volja za razgovorom. Na prvoj seansi govoriÄ‡ete i o svim potrebnim tehniÄkim informacijama za dalji rad."
         }
       ]
     },
     "faq": {
       "banner": {
         "title": "Pitanja",
-        "description": "Ovde možete pronaći odgovore na najčešće postavljena pitanja."
+        "description": "Ovde moÅ¾ete pronaÄ‡i odgovore na najÄeÅ¡Ä‡e postavljena pitanja."
       },
       "items": [
         {
-          "question": "Da li je moguće „izlečiti se“ bez psihoterapije?",
-          "answer": "Neke životne krize moguće je prebroditi uz lične resurse i podršku bliskih ljudi, ali psihoterapija može značajno pomoći ako se teškoće ponavljaju ili postaju preopterećujuće."
+          "question": "Da li je moguÄ‡e â€žizleÄiti seâ€œ bez psihoterapije?",
+          "answer": "Neke Å¾ivotne krize moguÄ‡e je prebroditi uz liÄne resurse i podrÅ¡ku bliskih ljudi, ali psihoterapija moÅ¾e znaÄajno pomoÄ‡i ako se teÅ¡koÄ‡e ponavljaju ili postaju preoptereÄ‡ujuÄ‡e."
         },
         {
           "question": "Kako da znam da mi je potrebna terapija?",
-          "answer": "Kada osetite da se napetost, tuga, strahovi ili problemi u odnosima ponavljaju i počinju da oblikuju svakodnevni život, vredi razmisliti o razgovoru sa stručnim licem."
+          "answer": "Kada osetite da se napetost, tuga, strahovi ili problemi u odnosima ponavljaju i poÄinju da oblikuju svakodnevni Å¾ivot, vredi razmisliti o razgovoru sa struÄnim licem."
         },
         {
-          "question": "Šta je kognitivno-bihejvioralna terapija (KBT) i kako funkcioniše?",
-          "answer": "KBT je terapijski pravac koji povezuje misli, emocije i ponašanje. Kroz strukturisan rad pomaže da prepoznate obrasce koji održavaju teškoće i da razvijete funkcionalnije načine reagovanja."
+          "question": "Å ta je kognitivno-bihejvioralna terapija (KBT) i kako funkcioniÅ¡e?",
+          "answer": "KBT je terapijski pravac koji povezuje misli, emocije i ponaÅ¡anje. Kroz strukturisan rad pomaÅ¾e da prepoznate obrasce koji odrÅ¾avaju teÅ¡koÄ‡e i da razvijete funkcionalnije naÄine reagovanja."
         },
         {
           "question": "Kako mogu efikasno upravljati stresom?",
-          "answer": "Upravljanje stresom podrazumeva kombinaciju navika: redovan san, fizičku aktivnost, jasnije granice, tehnike regulacije disanja i pravovremeno traženje stručne podrške kada opterećenje postane preveliko."
+          "answer": "Upravljanje stresom podrazumeva kombinaciju navika: redovan san, fiziÄku aktivnost, jasnije granice, tehnike regulacije disanja i pravovremeno traÅ¾enje struÄne podrÅ¡ke kada optereÄ‡enje postane preveliko."
         }
       ],
       "bookingTitle": "Unesite neophodne informacije kako biste zakazali termin",
       "formatLabel": "Izaberite format rada",
-      "formats": ["Psihodinamska psihoterapija", "Psihološko savetovanje", "Konsultacije"]
+      "formats": [
+        "Psihodinamska psihoterapija",
+        "PsiholoÅ¡ko savetovanje",
+        "Konsultacije"
+      ]
     },
     "contact": {
       "banner": {
         "title": "Kontaktirajte nas"
       },
-      "introTitle": "Psihološke poteškoće ne morate rešavati sami",
-      "introCopy": "Ova stranica namenjena je prvom kontaktu, informisanju i postavljanju pitanja, sve u cilju razjašnjavanja nedoumica koje imate.",
-      "formTitle": "Kako možemo da Vam pomognemo?",
+      "introTitle": "PsiholoÅ¡ke poteÅ¡koÄ‡e ne morate reÅ¡avati sami",
+      "introCopy": "Ova stranica namenjena je prvom kontaktu, informisanju i postavljanju pitanja, sve u cilju razjaÅ¡njavanja nedoumica koje imate.",
+      "formTitle": "Kako moÅ¾emo da Vam pomognemo?",
       "contactLabels": {
         "phone": "Broj telefona:",
         "email": "E-mail:",
-        "socials": "Društvene mreže:"
+        "socials": "DruÅ¡tvene mreÅ¾e:"
       },
-      "officesTitle": "Naše prostorije",
-      "officesCopy": "Psihoterapijski prostor igra bitnu ulogu u psihoterapiji, te je kod nas osmišljen kako bi pružio neupadljivo, mirno, diskretno i sigurno okruženje za rad."
+      "officesTitle": "NaÅ¡e prostorije",
+      "officesCopy": "Psihoterapijski prostor igra bitnu ulogu u psihoterapiji, te je kod nas osmiÅ¡ljen kako bi pruÅ¾io neupadljivo, mirno, diskretno i sigurno okruÅ¾enje za rad."
     },
     "appointment": {
       "banner": {
         "title": "Zakazivanje",
-        "description": "Ovde možete poslati upit za savetodavni, psihoterapijski ili konsultativni termin, a naš tim će Vam se javiti u najkraćem mogućem roku."
+        "description": "Ovde moÅ¾ete poslati upit za savetodavni, psihoterapijski ili konsultativni termin, a naÅ¡ tim Ä‡e Vam se javiti u najkraÄ‡em moguÄ‡em roku."
       },
       "formTitle": "Unesite svoje podatke",
       "formatLabel": "Izaberite format rada",
-      "formats": ["Psihodinamska psihoterapija", "Psihološko savetovanje", "Konsultacije"],
+      "formats": [
+        "Psihodinamska psihoterapija",
+        "PsiholoÅ¡ko savetovanje",
+        "Konsultacije"
+      ],
       "faqs": [
         {
-          "question": "Koja je razlika između psihološkog savetovanja, psihodinamske psihoterapije i stručnih konsultacija?",
-          "answer": "Razlika se ogleda u stepenu dubine rada i ciljevima koje želimo da postignemo. Stručne konsultacije služe za razjašnjavanje dilema i procenu oblika podrške koji je potreban. Psihološko savetovanje pruža konkretnu podršku u situacijama stresa i kriza i obično je kraćeg trajanja, dok je psihodinamska psihoterapija usmerena na razumevanje dubljih uzroka emocionalnih i ponašajnih poteškoća, u cilju trajnih psiholoških i strukturalnih promena."
+          "question": "Koja je razlika izmeÄ‘u psiholoÅ¡kog savetovanja, psihodinamske psihoterapije i struÄnih konsultacija?",
+          "answer": "Razlika se ogleda u stepenu dubine rada i ciljevima koje Å¾elimo da postignemo. StruÄne konsultacije sluÅ¾e za razjaÅ¡njavanje dilema i procenu oblika podrÅ¡ke koji je potreban. PsiholoÅ¡ko savetovanje pruÅ¾a konkretnu podrÅ¡ku u situacijama stresa i kriza i obiÄno je kraÄ‡eg trajanja, dok je psihodinamska psihoterapija usmerena na razumevanje dubljih uzroka emocionalnih i ponaÅ¡ajnih poteÅ¡koÄ‡a, u cilju trajnih psiholoÅ¡kih i strukturalnih promena."
         },
         {
-          "question": "Da li se psihoterapija odvija uživo ili online?",
-          "answer": "Psihoterapija se može odvijati i uživo i online, u zavisnosti od Vaših potreba i preferencija. U određenim slučajevima koristimo oba formata kako bi održali kontinuitet terapijskog rada, a izbor pravimo zajedno u skladu sa Vašom situacijom i mogućnostima."
+          "question": "Da li se psihoterapija odvija uÅ¾ivo ili online?",
+          "answer": "Psihoterapija se moÅ¾e odvijati i uÅ¾ivo i online, u zavisnosti od VaÅ¡ih potreba i preferencija. U odreÄ‘enim sluÄajevima koristimo oba formata kako bi odrÅ¾ali kontinuitet terapijskog rada, a izbor pravimo zajedno u skladu sa VaÅ¡om situacijom i moguÄ‡nostima."
         },
         {
           "question": "Da li psihoterapijska seansa ima strukturu i plan ili samo pratimo tok konverzacije?",
-          "answer": "Seansa psihodinamske psihoterapije nema jasnu i konkretnu strukturu koju prati. Vi donosite temu za razgovor ili pitanja na koja želite odgovor, i razgovor se postepeno razvija. Psihoterapeut je tu da Vam pomogne i da Vas usmeri, kako bi zajedno došli do potrebnog zaključka. U početku psihoterapije, psihoterapeut je aktivniji učesnik, ali kako vreme odmiče i klijent bolje počinje da razume prirodu procesa, on preuzima vođstvo u njemu."
+          "answer": "Seansa psihodinamske psihoterapije nema jasnu i konkretnu strukturu koju prati. Vi donosite temu za razgovor ili pitanja na koja Å¾elite odgovor, i razgovor se postepeno razvija. Psihoterapeut je tu da Vam pomogne i da Vas usmeri, kako bi zajedno doÅ¡li do potrebnog zakljuÄka. U poÄetku psihoterapije, psihoterapeut je aktivniji uÄesnik, ali kako vreme odmiÄe i klijent bolje poÄinje da razume prirodu procesa, on preuzima voÄ‘stvo u njemu."
         },
         {
-          "question": "Da li mogu da prekinem terapijski proces kada god poželim?",
-          "answer": "Da, terapiju možete prekinuti u svakom trenutku. Ipak, preporučljivo je da o toj odluci razgovaramo tokom seanse, kako bismo razumeli razloge i proces završili na način koji je za Vas jasan i zaokružen. Završetak terapije je takođe deo terapijskog procesa i važno je da bude promišljen."
+          "question": "Da li mogu da prekinem terapijski proces kada god poÅ¾elim?",
+          "answer": "Da, terapiju moÅ¾ete prekinuti u svakom trenutku. Ipak, preporuÄljivo je da o toj odluci razgovaramo tokom seanse, kako bismo razumeli razloge i proces zavrÅ¡ili na naÄin koji je za Vas jasan i zaokruÅ¾en. ZavrÅ¡etak terapije je takoÄ‘e deo terapijskog procesa i vaÅ¾no je da bude promiÅ¡ljen."
         }
       ]
     }
@@ -374,32 +394,32 @@
     },
     "entry": {
       "title": "Skriveni admin ulaz",
-      "copy": "Ovaj ulaz nije javno linkovan. Nakon validne šifre postavlja se HttpOnly cookie za dalji pristup admin rutama."
+      "copy": "Ovaj ulaz nije javno linkovan. Nakon validne Å¡ifre postavlja se HttpOnly cookie za dalji pristup admin rutama."
     },
     "login": {
       "eyebrow": "Admin pristup",
-      "title": "Unesite šifru",
-      "copy": "Ovo je jednostavan, pragmatičan gate za skriveni admin segment.",
-      "placeholder": "Admin šifra",
+      "title": "Unesite Å¡ifru",
+      "copy": "Ovo je jednostavan, pragmatiÄan gate za skriveni admin segment.",
+      "placeholder": "Admin Å¡ifra",
       "submit": "Otvori admin"
     },
     "dashboard": {
       "title": "Kontrolna tabla",
-      "copy": "Prijave, blog postovi i sadržaj stranica se čuvaju u lokalnoj SQLite bazi. Iz admin panela možete uređivati sadržaj bez menjanja layout-a i CSS-a.",
+      "copy": "Prijave, blog postovi i sadrÅ¾aj stranica se Äuvaju u lokalnoj SQLite bazi. Iz admin panela moÅ¾ete ureÄ‘ivati sadrÅ¾aj bez menjanja layout-a i CSS-a.",
       "pagesTitle": "Stranice",
-      "pagesCopy": "Uređivanje teksta i medija za javne stranice sajta.",
+      "pagesCopy": "UreÄ‘ivanje teksta i medija za javne stranice sajta.",
       "blogManagementTitle": "Upravljanje blogom",
-      "blogManagementCopy": "Kreiranje, uređivanje i brisanje blog postova.",
+      "blogManagementCopy": "Kreiranje, ureÄ‘ivanje i brisanje blog postova.",
       "submissionsTitle": "Prijave",
       "submissionsCopy": "Pregled poslatih kontakt i appointment prijava."
     },
     "pages": {
       "title": "Stranice",
-      "copy": "Ovde uređujete sadržaj javnih stranica. Redosled polja prati redosled prikaza na samoj stranici.",
-      "homeTitle": "Početna strana",
-      "homeCopy": "Tekstovi, slike i video za početnu stranu, odvojeno po pismu.",
+      "copy": "Ovde ureÄ‘ujete sadrÅ¾aj javnih stranica. Redosled polja prati redosled prikaza na samoj stranici.",
+      "homeTitle": "PoÄetna strana",
+      "homeCopy": "Tekstovi, slike i video za poÄetnu stranu, odvojeno po pismu.",
       "messages": {
-        "saved": "Izmene početne strane su sačuvane.",
+        "saved": "Izmene poÄetne strane su saÄuvane.",
         "validationError": "Unos nije validan. Proverite obavezna polja i medija URL-ove."
       }
     },
@@ -408,7 +428,7 @@
       "copy": "Lista svih blog postova iz SQLite baze.",
       "newPost": "Novi post",
       "empty": "Nema postova.",
-      "archiveConfirm": "Da li ste sigurni da želite da arhivirate ovaj post?",
+      "archiveConfirm": "Da li ste sigurni da Å¾elite da arhivirate ovaj post?",
       "headers": {
         "title": "Naslov",
         "locale": "Locale",
@@ -420,28 +440,28 @@
         "view": "Pogledaj objavu",
         "edit": "Uredi objavu",
         "archive": "Arhiviraj objavu",
-        "archived": "Objava je već arhivirana",
+        "archived": "Objava je veÄ‡ arhivirana",
         "unavailable": "Objava nije javno dostupna"
       }
     },
     "blogNew": {
       "title": "Novi blog post",
-      "copy": "Unesite sadržaj novog posta. Ako je slug prazan, biće automatski generisan iz naslova.",
+      "copy": "Unesite sadrÅ¾aj novog posta. Ako je slug prazan, biÄ‡e automatski generisan iz naslova.",
       "submit": "Sacuvaj post"
     },
     "blogEdit": {
-      "copy": "Na ovoj stranici možete izmeniti sadržaj, metadata polja i status posta.",
-      "submit": "Sačuvaj izmene",
-      "delete": "Obriši post",
+      "copy": "Na ovoj stranici moÅ¾ete izmeniti sadrÅ¾aj, metadata polja i status posta.",
+      "submit": "SaÄuvaj izmene",
+      "delete": "ObriÅ¡i post",
       "backToList": "Nazad na listu postova",
-      "deleteConfirm": "Da li ste sigurni da želite da obrišete ovaj post?",
+      "deleteConfirm": "Da li ste sigurni da Å¾elite da obriÅ¡ete ovaj post?",
       "deleteHint": "Brisanje je trajno i uklanja post iz javnog bloga.",
       "labels": {
         "status": "Status",
         "locale": "Locale",
         "published": "Objavljeno"
       },
-      "notFound": "Post nije pronađen."
+      "notFound": "Post nije pronaÄ‘en."
     },
     "blogForm": {
       "labels": {
@@ -485,8 +505,8 @@
       }
     },
     "blogMessages": {
-      "created": "Novi post je uspešno kreiran.",
-      "saved": "Izmene su sačuvane.",
+      "created": "Novi post je uspeÅ¡no kreiran.",
+      "saved": "Izmene su saÄuvane.",
       "validationError": "Unos nije validan. Proveri obavezna polja.",
       "slugConflict": "Vec postoji post sa istim slug-om za izabrani locale.",
       "deleted": "Post je obrisan.",
@@ -494,7 +514,7 @@
     },
     "submissions": {
       "title": "Prijave i poruke",
-      "copy": "Ove stavke se čuvaju u lokalnoj SQLite bazi i spremne su za kasniju migraciju na udaljenu bazu.",
+      "copy": "Ove stavke se Äuvaju u lokalnoj SQLite bazi i spremne su za kasniju migraciju na udaljenu bazu.",
       "headers": {
         "type": "Tip",
         "name": "Ime",
@@ -503,7 +523,7 @@
         "date": "Datum",
         "details": "Detalji"
       },
-      "empty": "Još nema prijava."
+      "empty": "JoÅ¡ nema prijava."
     },
     "submissionDetails": {
       "labels": {
@@ -514,7 +534,7 @@
         "created": "Kreirano",
         "message": "Poruka"
       },
-      "notFound": "Prijava nije pronađena."
+      "notFound": "Prijava nije pronaÄ‘ena."
     }
   }
 }

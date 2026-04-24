@@ -71,15 +71,16 @@ const homeVideoSrc = youtubeVideoId
     <div class="home-services">
       <div class="home-services__layout">
         <div class="home-services__intro" data-reveal="up">
-          <h2>{content.services.title}</h2>
+          <h2 class="home-visually-hidden">{content.services.title}</h2>
           <div class="home-richtext home-richtext--light" set:html={content.services.copy} />
         </div>
 
         <div class="home-services__cards">
           {
             content.services.items.map((item, index) => (
-              <article
+              <a
                 class="home-service-card"
+                href={item.href ?? "#"}
                 data-reveal="up"
                 style={`--reveal-delay: ${90 + index * 90}ms;`}
               >
@@ -97,8 +98,29 @@ const homeVideoSrc = youtubeVideoId
                     class="home-service-copy home-richtext home-richtext--light"
                     set:html={item.copy}
                   />
+                  {
+                    item.label ? (
+                      <span class="home-inline-link home-inline-link--light home-inline-link--icon">
+                        <span>{item.label}</span>
+                        <svg
+                          class="home-inline-link__icon"
+                          aria-hidden="true"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                        >
+                          <path
+                            d="M7 17L17 7M9 7H17V15"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="1.9"
+                          />
+                        </svg>
+                      </span>
+                    ) : null
+                  }
                 </div>
-              </article>
+              </a>
             ))
           }
         </div>
@@ -177,9 +199,8 @@ const homeVideoSrc = youtubeVideoId
         <div class="home-reason-list">
           {
             content.reasons.items.map((item, index) => (
-              <a
+              <article
                 class="home-reason-panel"
-                href={item.href}
                 data-reveal="up"
                 style={`--reveal-delay: ${index * 90}ms;`}
               >
@@ -187,27 +208,10 @@ const homeVideoSrc = youtubeVideoId
                 <div class="home-reason-panel__content">
                   <div class="home-reason-panel__top">
                     <h3>{item.title}</h3>
-                    <span class="home-inline-link home-inline-link--light home-inline-link--icon">
-                      <span>{item.label}</span>
-                      <svg
-                        class="home-inline-link__icon"
-                        aria-hidden="true"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <path
-                          d="M7 17L17 7M9 7H17V15"
-                          stroke="currentColor"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="1.9"
-                        />
-                      </svg>
-                    </span>
                   </div>
                   <div class="home-richtext home-richtext--light" set:html={item.copy} />
                 </div>
-              </a>
+              </article>
             ))
           }
         </div>
@@ -348,9 +352,6 @@ const homeVideoSrc = youtubeVideoId
       <div class="home-booking__intro" data-reveal="up">
         <h2>{content.booking.title}</h2>
         <div class="home-richtext" set:html={content.booking.copy} />
-        <div class="home-booking__formats">
-          {content.booking.formats.map((format) => <span class="home-pill">{format}</span>)}
-        </div>
       </div>
 
       <div data-reveal="up" style="--reveal-delay: 90ms;">

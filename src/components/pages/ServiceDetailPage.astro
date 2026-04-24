@@ -1,0 +1,164 @@
+﻿---
+import AppointmentForm from "@/components/components/AppointmentForm.astro";
+import FaqAccordionSection from "@/components/sections/FaqAccordionSection.astro";
+import PageBanner from "@/components/sections/PageBanner.astro";
+import { getServiceDetailData, type ServiceDetailSlug } from "@/data/fixtures/service-details";
+import { getDictionary } from "@/features/i18n/translate";
+import type { SiteLocale } from "@/lib/config/site";
+
+type Props = {
+  locale: SiteLocale;
+  slug: ServiceDetailSlug;
+};
+
+const { locale, slug } = Astro.props;
+const dictionary = getDictionary(locale);
+const content = getServiceDetailData(locale, slug);
+const formats = dictionary.pages.appointment.formats;
+const formatLabel = dictionary.pages.appointment.formatLabel;
+const summaryTitle = dictionary.common.serviceSummaryTitle;
+const bookingTitle = dictionary.common.serviceBookingTitle;
+const bookingCopy = dictionary.common.serviceBookingCopy;
+---
+
+<div class="service-detail-page__banner">
+  <PageBanner {...content.banner} />
+</div>
+
+<section class="page-section service-detail-page__intro">
+  <div class="container">
+    <div class="service-detail-page__grid">
+      <div class="service-detail-page__copy" data-reveal="up">
+        <p class="service-detail-page__eyebrow">{content.banner.title}</p>
+        <h2>{content.intro.title}</h2>
+        <div class="service-detail-page__body richtext-shell" set:html={content.intro.body} />
+      </div>
+
+      <aside class="service-detail-page__aside" data-reveal="up" style="--reveal-delay: 90ms;">
+        <img src={content.intro.image} alt="" loading="lazy" data-image-component />
+        <div class="service-detail-page__aside-card">
+          <h3>{summaryTitle}</h3>
+          <ul>
+            {content.intro.highlights.map((item) => <li>{item}</li>)}
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="home-section home-section--tight service-detail-page__booking">
+  <div class="container">
+    <div class="home-booking service-detail-page__booking-grid">
+      <div class="home-booking__intro" data-reveal="up">
+        <h2>{bookingTitle}</h2>
+        <p>{bookingCopy}</p>
+      </div>
+
+      <div data-reveal="up" style="--reveal-delay: 90ms;">
+        <AppointmentForm
+          locale={locale}
+          labels={dictionary.forms}
+          formatLabel={formatLabel}
+          formats={formats}
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+<FaqAccordionSection items={content.faqs} image={content.intro.image} sectionId="service-faq" />
+
+<style>
+  .service-detail-page__banner :global(.page-banner) {
+    background: none;
+    padding: 10px 0 clamp(1.9rem, 4vw, 2.5rem);
+  }
+
+  .service-detail-page__banner :global(.page-banner__content) {
+    align-items: center;
+    gap: 0.85rem 1.7rem;
+  }
+
+  .service-detail-page__banner :global(.page-banner h1) {
+    font-size: clamp(2.15rem, 4vw, 3.35rem);
+  }
+
+  .service-detail-page__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.9fr);
+    gap: clamp(1.5rem, 5vw, 3rem);
+    align-items: start;
+  }
+
+  .service-detail-page__copy,
+  .service-detail-page__aside {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .service-detail-page__eyebrow {
+    margin: 0;
+    color: var(--primary);
+    font-size: 0.86rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .service-detail-page__copy h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.08;
+  }
+
+  .service-detail-page__body :global(p),
+  .service-detail-page__body :global(ul),
+  .service-detail-page__body :global(ol) {
+    margin: 0;
+    line-height: 1.75;
+  }
+
+  .service-detail-page__aside img {
+    width: 100%;
+    min-height: 18rem;
+    border-radius: 1rem;
+    object-fit: cover;
+    box-shadow: 0 22px 52px rgba(16, 47, 48, 0.12);
+  }
+
+  .service-detail-page__aside-card {
+    padding: 1.4rem;
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 18px 44px rgba(16, 47, 48, 0.08);
+  }
+
+  .service-detail-page__aside-card h3 {
+    margin-bottom: 0.85rem;
+  }
+
+  .service-detail-page__aside-card ul {
+    display: grid;
+    gap: 0.8rem;
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+
+  .service-detail-page__aside-card li {
+    line-height: 1.6;
+  }
+
+  .service-detail-page__booking {
+    padding-top: 0.5rem;
+  }
+
+  .service-detail-page__booking-grid {
+    gap: clamp(1.4rem, 4vw, 2.1rem);
+  }
+
+  @media (max-width: 960px) {
+    .service-detail-page__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

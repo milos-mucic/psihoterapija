@@ -19,10 +19,11 @@ const latnHref = currentWithoutPrefix;
 const cyrlHref = `${getLocalePrefix("sr-cyrl")}${currentWithoutPrefix}`.replace("//", "/");
 const isActivePath = (href: string) =>
   href === "/" ? pathname === href : pathname.startsWith(href);
+const primaryBiographyHref = localizePath(locale, "/biografija/nemanja-zajkeskovic/");
 
 const aboutLinks = [
   { label: dictionary.nav.aboutLinks.about, href: localizePath(locale, "/o-nama/") },
-  { label: dictionary.nav.aboutLinks.biography, href: localizePath(locale, "/biografija/") },
+  { label: dictionary.nav.aboutLinks.biography, href: primaryBiographyHref },
 ];
 
 const therapyLinks = [

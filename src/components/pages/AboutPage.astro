@@ -15,79 +15,21 @@ const { locale, content: previewContent } = Astro.props;
 const dictionary = getDictionary(locale);
 const content = previewContent ?? (await pageContentService.getAboutPageData(locale));
 const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
-const videoIdMatch = content.showcaseVideoHref.match(/[?&]v=([^&]+)/);
-const aboutVideoEmbedSrc = videoIdMatch
-  ? `https://www.youtube.com/embed/${videoIdMatch[1]}?autoplay=1&rel=0`
-  : content.showcaseVideoHref;
 ---
 
-<div class="about-legacy">
+<div class="about-page">
   <PageBanner {...content.banner} sectionId="about-banner" />
 
-  <section id="about-showcase" class="about-legacy__showcase">
-    <div class="about-legacy__container">
-      <div class="about-legacy__showcase-title" data-reveal="up">
-        <h2>{content.showcaseTitle}</h2>
-      </div>
-
-      <button
-        type="button"
-        class="about-legacy__video-card"
-        data-about-video-open
-        data-video-src={aboutVideoEmbedSrc}
-        aria-label={content.showcaseTitle}
-        data-reveal="grow"
-        style={`--about-video-image: url("${content.showcaseVideoImage}")`}
-      >
-        <span class="about-legacy__video-center">
-          <span class="about-legacy__video-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M8 6.5v11l9-5.5-9-5.5Z"></path>
-            </svg>
-          </span>
-          <span class="about-legacy__video-core"></span>
-          <span class="about-legacy__video-ring"></span>
-        </span>
-      </button>
-
-      <div class="collection-list-wrapper-services" data-reveal="up" style="--reveal-delay: 120ms;">
-        <div role="list" class="collection-list-services">
-          {
-            content.showcaseCards.map((card, index) => (
-              <article
-                role="listitem"
-                class="collection-item-service"
-                style={`--reveal-delay: ${120 + index * 90}ms;`}
-              >
-                <img
-                  src={card.image}
-                  alt={card.title}
-                  loading="lazy"
-                  class="about-legacy__service-icon"
-                  data-image-component
-                />
-                <a href={card.href} class="service-name-wrapper">
-                  <h3 class="service-name">{card.title}</h3>
-                </a>
-                <div class="richtext-shell" set:html={card.copy} />
-              </article>
-            ))
-          }
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="about-idea" class="about-legacy__section">
-    <div class="about-legacy__container">
-      <div class="about-legacy__split">
-        <div class="about-legacy__copy" data-reveal="up">
+  <section id="about-idea" class="page-section about-page__idea">
+    <div class="container">
+      <div class="about-page__split">
+        <div class="about-page__copy" data-reveal="up">
           <h2>{content.ideaTitle}</h2>
-          <div class="about-legacy__rich-text richtext-shell" set:html={content.ideaHtml} />
+          <div class="about-page__rich-text richtext-shell" set:html={content.ideaHtml} />
         </div>
 
-        <aside class="about-legacy__focus-card" data-reveal="right">
-          <div class="about-legacy__focus-title">
+        <aside class="about-page__focus-card" data-reveal="right" style="--reveal-delay: 90ms;">
+          <div class="about-page__focus-title">
             <h3>{content.focusTitle}</h3>
           </div>
           <ul>
@@ -168,664 +110,71 @@ const aboutVideoEmbedSrc = videoIdMatch
   </section>
 </div>
 
-<dialog class="about-video-dialog" data-about-video-dialog>
-  <div class="about-video-dialog__surface">
-    <button
-      type="button"
-      class="about-video-dialog__close"
-      data-about-video-close
-      aria-label={dictionary.common.close}
-    >
-      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
-        <path
-          d="M6 6L18 18M18 6L6 18"
-          stroke="currentColor"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"></path>
-      </svg>
-    </button>
-    <div class="about-video-dialog__frame">
-      <iframe
-        data-about-video-iframe
-        title={content.showcaseTitle}
-        allow="autoplay; fullscreen; picture-in-picture"></iframe>
-    </div>
-  </div>
-</dialog>
-
-<script>
-  (() => {
-    const setupAboutVideo = () => {
-      const dialog = document.querySelector("[data-about-video-dialog]");
-      const openButton = document.querySelector("[data-about-video-open]");
-      const closeButton = document.querySelector("[data-about-video-close]");
-      const iframe = document.querySelector("[data-about-video-iframe]");
-
-      if (
-        !(dialog instanceof HTMLDialogElement) ||
-        !(openButton instanceof HTMLElement) ||
-        !(closeButton instanceof HTMLElement) ||
-        !(iframe instanceof HTMLIFrameElement) ||
-        dialog.dataset.bound === "true"
-      ) {
-        return;
-      }
-
-      const closeDialog = () => {
-        dialog.close();
-      };
-
-      openButton.addEventListener("click", () => {
-        const src = openButton.dataset.videoSrc;
-        if (!src) return;
-
-        iframe.src = src;
-        dialog.showModal();
-      });
-
-      closeButton.addEventListener("click", closeDialog);
-
-      dialog.addEventListener("click", (event) => {
-        if (event.target === dialog) {
-          closeDialog();
-        }
-      });
-
-      dialog.addEventListener("close", () => {
-        iframe.src = "";
-      });
-
-      dialog.dataset.bound = "true";
-    };
-
-    setupAboutVideo();
-  })();
-</script>
-
 <style>
-  .about-legacy {
-    color: var(--foreground);
+  .about-page__idea {
+    padding-top: 0.5rem;
   }
 
-  .about-legacy__container {
-    width: min(calc(100% - 1.875rem), 75rem);
-    margin: 0 auto;
-  }
-
-  .about-legacy__banner-copy :global(p),
-  .about-legacy__banner-copy :global(ul),
-  .about-legacy__banner-copy :global(ol) {
-    margin: 0;
-  }
-
-  .about-legacy__banner {
-    background-image:
-      linear-gradient(rgba(22, 60, 61, 0.1), rgba(22, 60, 61, 0.1)),
-      linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), var(--about-banner-image, none);
-    background-position: center top;
-    background-repeat: no-repeat;
-    background-size: cover;
-    padding: 10rem 0 2.4375rem;
-  }
-
-  .about-legacy__banner-grid {
+  .about-page__split {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.92fr);
-    gap: 1.25rem;
-    align-items: center;
+    grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.9fr);
+    gap: clamp(1.5rem, 5vw, 3rem);
+    align-items: start;
   }
 
-  .about-legacy__banner h1 {
-    color: var(--white);
-    font-size: clamp(3.35rem, 7vw, 5.3rem);
-    line-height: 1;
+  .about-page__copy {
+    display: grid;
+    gap: 1rem;
   }
 
-  .about-legacy__banner p {
-    color: var(--white);
-    font-size: 1.25rem;
-    line-height: 1.5;
-  }
-
-  .about-legacy__banner-copy,
-  .about-legacy__banner-copy :global(*) {
-    color: var(--white);
-  }
-
-  .about-legacy__showcase {
-    background-color: #f9f9fa;
-    padding: 2.5rem 0;
-  }
-
-  .about-legacy__showcase-title {
-    max-width: 56rem;
-    margin: 0 auto 3.75rem;
-    text-align: center;
-  }
-
-  .about-legacy__showcase-title h2,
-  .about-legacy__copy h2,
-  .about-legacy__posts-copy h2 {
+  .about-page__copy h2 {
     font-size: clamp(2.2rem, 4vw, 3.5rem);
     line-height: 1.05;
   }
 
-  .about-legacy__showcase-title h2 {
-    white-space: nowrap;
-  }
-
-  .about-legacy__video-card {
-    position: relative;
-    display: grid;
-    place-items: center;
-    width: 100%;
-    min-height: 27.5rem;
-    padding: 0;
-    border: 0;
-    border-radius: 12px;
-    overflow: hidden;
-    cursor: pointer;
-    background-image:
-      linear-gradient(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.08)), var(--about-video-image);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-  }
-
-  .about-legacy__video-card::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.34));
-  }
-
-  .about-legacy__video-center {
-    position: relative;
-    z-index: 1;
-    display: inline-grid;
-    place-items: center;
-    width: 5.875rem;
-    height: 5.875rem;
-  }
-
-  .about-legacy__video-card:hover .about-legacy__video-ring {
-    transform: translate(-50%, -50%) scale(1);
-  }
-
-  .about-legacy__video-icon,
-  .about-legacy__video-core,
-  .about-legacy__video-ring {
-    position: absolute;
-    inset: 50% auto auto 50%;
-    transform: translate(-50%, -50%);
-  }
-
-  .about-legacy__video-icon {
-    z-index: 2;
-    color: var(--primary);
-    width: 1.5rem;
-    height: 1.5rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .about-legacy__video-icon svg {
-    width: 100%;
-    height: 100%;
-  }
-
-  .about-legacy__video-core {
-    width: 5rem;
-    height: 5rem;
-    border-radius: 999px;
-    background: var(--white);
-  }
-
-  .about-legacy__video-ring {
-    z-index: 3;
-    width: 5.875rem;
-    height: 5.875rem;
-    border: 3px solid var(--white);
-    border-radius: 999px;
-    background: transparent;
-    transition: all 300ms ease;
-    transform: translate(-50%, -50%) scale(0.85);
-  }
-
-  .collection-list-wrapper-services {
-    width: 100%;
-    margin-top: 2.5rem;
-  }
-
-  .collection-list-services {
-    display: flex;
-    justify-content: space-between;
-    gap: 2.5rem;
-    width: 100%;
-  }
-
-  .collection-item-service {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1 1 0;
-    padding-inline: 0.625rem;
-    text-align: center;
-  }
-
-  .about-legacy__service-icon {
-    width: auto;
-    height: auto;
-    max-width: 100%;
-  }
-
-  .service-name-wrapper {
-    display: flex;
-    justify-content: center;
-    width: 90%;
-    margin-top: 0.625rem;
-  }
-
-  .service-name {
-    width: 91%;
-    font-size: 1.45rem;
-    line-height: 1.15;
-    text-transform: none;
-    transition: color 300ms ease;
-  }
-
-  .service-name:hover {
-    color: var(--paragraph-gray);
-  }
-
-  .collection-item-service p {
-    margin-top: 0.5rem;
-    line-height: 1.7;
-  }
-
-  .about-legacy__section {
-    padding: 6.25rem 0 0;
-  }
-
-  .about-legacy__split {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 2rem;
-  }
-
-  .about-legacy__copy {
-    width: 55%;
-  }
-
-  .about-legacy__rich-text {
-    margin-top: 1.875rem;
-    color: var(--muted);
-    font-size: 1rem;
+  .about-page__rich-text,
+  .about-page__rich-text :global(p),
+  .about-page__rich-text :global(ul),
+  .about-page__rich-text :global(ol) {
+    margin: 0;
     line-height: 1.8;
   }
 
-  .about-legacy__rich-text :global(strong),
-  .about-legacy__rich-text :global(em) {
-    color: inherit;
-  }
-
-  .about-legacy__focus-card {
-    width: 40%;
-    border-radius: 12px;
+  .about-page__focus-card {
+    display: grid;
+    gap: 1rem;
+    border-radius: 1rem;
     background: var(--primary);
-    padding: 2.5rem 2.8125rem;
+    padding: 2rem;
+    box-shadow: 0 18px 44px rgba(16, 47, 48, 0.12);
   }
 
-  .about-legacy__focus-title {
-    display: flex;
-    align-items: flex-end;
-    margin-bottom: 1.25rem;
-  }
-
-  .about-legacy__focus-title h3 {
+  .about-page__focus-title h3 {
     color: var(--white);
     font-size: 1.85rem;
     line-height: 1.1;
   }
 
-  .about-legacy__focus-card ul {
+  .about-page__focus-card ul {
     display: grid;
-    gap: 1.5625rem;
+    gap: 1rem;
     margin: 0;
     padding-left: 1.25rem;
     color: var(--primary-light);
   }
 
-  .about-legacy__focus-card li {
+  .about-page__focus-card li {
     display: list-item;
-    list-style: disc;
     line-height: 1.6;
   }
 
-  .about-legacy__focus-card li::marker {
+  .about-page__focus-card li::marker {
     color: var(--primary-light);
   }
 
-  .about-legacy__posts-header {
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-end;
-    gap: 2rem;
-    margin-bottom: 3.75rem;
-  }
-
-  .about-legacy__posts-copy {
-    display: flex;
-    flex-direction: column;
-    width: 70%;
-    gap: 0.875rem;
-  }
-
-  .about-legacy__posts-copy p {
-    font-size: 1.25rem;
-    line-height: 1.5;
-  }
-
-  .about-legacy__posts-action {
-    display: flex;
-    justify-content: flex-end;
-    width: 30%;
-  }
-
-  .about-legacy__button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--primary);
-    border-radius: 8px;
-    background: var(--primary);
-    color: var(--white);
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    line-height: 1.3;
-    transition:
-      background-color 300ms ease,
-      color 300ms ease,
-      transform 180ms ease;
-  }
-
-  .about-legacy__button:hover {
-    background: transparent;
-    color: var(--primary);
-    transform: translateY(-1px);
-  }
-
-  .about-legacy__posts-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 2.5rem;
-  }
-
-  .about-legacy__post-image {
-    display: block;
-    width: 100%;
-    height: 15.625rem;
-    overflow: hidden;
-    border-radius: 12px;
-  }
-
-  .about-legacy__post-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 400ms ease;
-  }
-
-  .about-legacy__post:hover .about-legacy__post-image img {
-    transform: scale(1.04);
-  }
-
-  .about-legacy__post-body {
-    display: flex;
-    flex-direction: column;
-    margin-top: 1.25rem;
-  }
-
-  .about-legacy__post-body h3 {
-    font-size: 1.55rem;
-    line-height: 1.15;
-    transition: color 300ms ease;
-  }
-
-  .about-legacy__post-body a:hover h3 {
-    color: var(--paragraph-gray);
-  }
-
-  .about-legacy__post-body p {
-    margin-top: 0.875rem;
-    line-height: 1.7;
-  }
-
-  .about-legacy__post-link {
-    margin-top: 1.25rem;
-  }
-
-  .about-legacy__post-link a {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.625rem;
-  }
-
-  .about-legacy__post-link a:hover {
-    opacity: 0.7;
-  }
-
-  .about-legacy__post-link span {
-    font-size: 0.8125rem;
-    line-height: 1;
-  }
-
-  .about-legacy__posts-empty {
-    display: grid;
-    place-items: center;
-    min-height: 8rem;
-    text-align: center;
-  }
-
-  .about-legacy__mobile-action {
-    display: none;
-    margin-top: 2.5rem;
-  }
-
-  .about-video-dialog {
-    inset: 0;
-    width: min(92vw, 62rem);
-    max-width: none;
-    margin: auto;
-    padding: 0;
-    border: 0;
-    background: transparent;
-  }
-
-  .about-video-dialog::backdrop {
-    background: rgba(7, 19, 20, 0.78);
-    backdrop-filter: blur(10px);
-  }
-
-  .about-video-dialog__surface {
-    position: relative;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 1.25rem;
-    background: #0d2021;
-    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
-  }
-
-  .about-video-dialog__close {
-    position: absolute;
-    top: 0.9rem;
-    right: 0.9rem;
-    z-index: 2;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    padding: 0;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 999px;
-    background: rgba(11, 29, 30, 0.82);
-    color: var(--white);
-    cursor: pointer;
-    transition:
-      background-color 200ms ease-in-out,
-      transform 200ms ease-in-out,
-      border-color 200ms ease-in-out;
-  }
-
-  .about-video-dialog__close:hover {
-    border-color: rgba(189, 217, 170, 0.32);
-    background: rgba(18, 47, 48, 0.94);
-    transform: translateY(-1px);
-  }
-
-  .about-video-dialog__close svg {
-    width: 1.1rem;
-    height: 1.1rem;
-  }
-
-  .about-video-dialog__frame {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-  }
-
-  .about-video-dialog__frame iframe {
-    width: 100%;
-    height: 100%;
-    border: 0;
-  }
-
-  @media (max-width: 991px) {
-    .about-legacy__banner {
-      padding: 8.75rem 0 2.4375rem;
-    }
-
-    .about-legacy__banner-grid,
-    .about-legacy__split,
-    .about-legacy__posts-header {
+  @media (max-width: 960px) {
+    .about-page__split {
       grid-template-columns: 1fr;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .about-legacy__copy,
-    .about-legacy__focus-card,
-    .about-legacy__posts-copy,
-    .about-legacy__posts-action {
-      width: 100%;
-    }
-
-    .about-legacy__focus-card {
-      padding: 2rem;
-    }
-
-    .about-legacy__posts-action {
-      justify-content: flex-start;
-    }
-
-    .collection-list-services {
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      row-gap: 2.5rem;
-    }
-
-    .collection-item-service {
-      width: 47%;
-      flex: 0 0 47%;
-    }
-
-    .service-name-wrapper {
-      width: 85%;
-    }
-  }
-
-  @media (max-width: 767px) {
-    .about-legacy__banner {
-      padding: 5.8rem 0 2rem;
-    }
-
-    .about-legacy__showcase {
-      padding-top: 2.5rem;
-      padding-bottom: 2.5rem;
-    }
-
-    .about-legacy__section {
-      padding-top: 4rem;
-    }
-
-    .about-legacy__showcase-title {
-      margin-bottom: 2rem;
-    }
-
-    .about-legacy__showcase-title h2 {
-      white-space: normal;
-    }
-
-    .about-legacy__video-card {
-      min-height: 20rem;
-    }
-
-    .about-legacy__posts-grid {
-      grid-template-columns: 1fr;
-      gap: 2rem;
-    }
-
-    .about-legacy__posts-copy p {
-      font-size: 1.05rem;
-    }
-
-    .about-legacy__posts-action {
-      display: none;
-    }
-
-    .about-legacy__mobile-action {
-      display: block;
-    }
-
-    .collection-item-service {
-      width: 100%;
-      flex-basis: 100%;
-      padding-inline: 0;
-    }
-
-    .about-video-dialog {
-      width: min(94vw, 62rem);
-    }
-
-    .about-video-dialog__close {
-      top: 0.75rem;
-      right: 0.75rem;
-      width: 2.5rem;
-      height: 2.5rem;
-    }
-  }
-
-  @media (max-width: 479px) {
-    .about-legacy__banner h1 {
-      font-size: clamp(2.7rem, 16vw, 3.6rem);
-    }
-
-    .about-legacy__banner p {
-      font-size: 1.05rem;
-    }
-
-    .about-legacy__focus-card {
-      padding: 1.5rem 1.375rem;
-    }
-
-    .about-legacy__focus-title h3,
-    .about-legacy__post-body h3 {
-      font-size: 1.75rem;
     }
   }
 </style>
