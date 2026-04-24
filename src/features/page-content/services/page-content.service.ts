@@ -2,8 +2,10 @@ import { buildHomePageData, getDefaultHomePageManagedContent } from "@/data/fixt
 import {
   buildAboutPageData,
   buildAppointmentPageData,
+  buildBlogIndexPageData,
   buildBiographyPageData,
   buildBiographyDetailPageData,
+  buildContactPageData,
   buildFaqPageData,
   buildPricingPageData,
   buildPsychotherapyPageData,
@@ -11,7 +13,9 @@ import {
   buildScopePageData,
   getDefaultAboutPageManagedContent,
   getDefaultAppointmentPageManagedContent,
+  getDefaultBlogIndexPageManagedContent,
   getDefaultBiographyPageManagedContent,
+  getDefaultContactPageManagedContent,
   getDefaultFaqPageManagedContent,
   getDefaultPricingPageManagedContent,
   getDefaultPsychotherapyPageManagedContent,
@@ -23,8 +27,12 @@ import {
   parseAboutPageManagedContentForm,
   parseAppointmentPageManagedContent,
   parseAppointmentPageManagedContentForm,
+  parseBlogIndexPageManagedContent,
+  parseBlogIndexPageManagedContentForm,
   parseBiographyPageManagedContent,
   parseBiographyPageManagedContentForm,
+  parseContactPageManagedContent,
+  parseContactPageManagedContentForm,
   parseFaqPageManagedContent,
   parseFaqPageManagedContentForm,
   parsePricingPageManagedContent,
@@ -42,7 +50,9 @@ import type {
   AboutPageManagedContent,
   AnyManagedPageContent,
   AppointmentPageManagedContent,
+  BlogIndexPageManagedContent,
   BiographyPageManagedContent,
+  ContactPageManagedContent,
   FaqPageManagedContent,
   HomePageManagedContent,
   ManagedPageContentMap,
@@ -77,6 +87,10 @@ const parseManagedPageContentForm = <TPageKey extends PageKey>(
       return parseAppointmentPageManagedContentForm(input) as ManagedPageContentMap[TPageKey];
     case "faq":
       return parseFaqPageManagedContentForm(input) as ManagedPageContentMap[TPageKey];
+    case "contact":
+      return parseContactPageManagedContentForm(input) as ManagedPageContentMap[TPageKey];
+    case "blog":
+      return parseBlogIndexPageManagedContentForm(input) as ManagedPageContentMap[TPageKey];
   }
 };
 
@@ -102,6 +116,10 @@ const buildManagedPageData = <TPageKey extends PageKey>(
       return buildAppointmentPageData(locale, content as AppointmentPageManagedContent);
     case "faq":
       return buildFaqPageData(locale, content as FaqPageManagedContent);
+    case "contact":
+      return buildContactPageData(locale, content as ContactPageManagedContent);
+    case "blog":
+      return buildBlogIndexPageData(locale, content as BlogIndexPageManagedContent);
   }
 };
 
@@ -158,6 +176,10 @@ export const pageContentService = {
         return (await this.getManagedAppointmentContent(locale)) as ManagedPageContentMap[TPageKey];
       case "faq":
         return (await this.getManagedFaqContent(locale)) as ManagedPageContentMap[TPageKey];
+      case "contact":
+        return (await this.getManagedContactContent(locale)) as ManagedPageContentMap[TPageKey];
+      case "blog":
+        return (await this.getManagedBlogIndexContent(locale)) as ManagedPageContentMap[TPageKey];
     }
   },
   savePreviewDraft<TPageKey extends PageKey>(
@@ -202,6 +224,10 @@ export const pageContentService = {
         return await this.getAppointmentPageData(locale);
       case "faq":
         return await this.getFaqPageData(locale);
+      case "contact":
+        return await this.getContactPageData(locale);
+      case "blog":
+        return await this.getBlogIndexPageData(locale);
     }
   },
   async getManagedHomeContent(locale: SiteLocale): Promise<HomePageManagedContent> {
@@ -382,6 +408,50 @@ export const pageContentService = {
     const content = parseFaqPageManagedContentForm(input);
     await repository.upsert("faq", locale, content);
     pagePreviewService.clearDrafts("faq", locale);
+    return content;
+  },
+  async getManagedContactContent(locale: SiteLocale): Promise<ContactPageManagedContent> {
+    const record = await repository.get("contact", locale);
+
+    if (!record) {
+      return getDefaultContactPageManagedContent(locale);
+    }
+
+    try {
+      return parseContactPageManagedContent(record.content);
+    } catch {
+      return getDefaultContactPageManagedContent(locale);
+    }
+  },
+  async getContactPageData(locale: SiteLocale) {
+    return buildContactPageData(locale, await this.getManagedContactContent(locale));
+  },
+  async updateContactContent(locale: SiteLocale, input: unknown) {
+    const content = parseContactPageManagedContentForm(input);
+    await repository.upsert("contact", locale, content);
+    pagePreviewService.clearDrafts("contact", locale);
+    return content;
+  },
+  async getManagedBlogIndexContent(locale: SiteLocale): Promise<BlogIndexPageManagedContent> {
+    const record = await repository.get("blog", locale);
+
+    if (!record) {
+      return getDefaultBlogIndexPageManagedContent(locale);
+    }
+
+    try {
+      return parseBlogIndexPageManagedContent(record.content);
+    } catch {
+      return getDefaultBlogIndexPageManagedContent(locale);
+    }
+  },
+  async getBlogIndexPageData(locale: SiteLocale) {
+    return buildBlogIndexPageData(locale, await this.getManagedBlogIndexContent(locale));
+  },
+  async updateBlogIndexContent(locale: SiteLocale, input: unknown) {
+    const content = parseBlogIndexPageManagedContentForm(input);
+    await repository.upsert("blog", locale, content);
+    pagePreviewService.clearDrafts("blog", locale);
     return content;
   },
 };

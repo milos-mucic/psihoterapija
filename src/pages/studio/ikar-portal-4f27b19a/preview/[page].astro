@@ -2,7 +2,9 @@
 import BaseLayout from "@/components/components/BaseLayout.astro";
 import AboutPage from "@/components/pages/AboutPage.astro";
 import AppointmentPage from "@/components/pages/AppointmentPage.astro";
+import BlogIndexPage from "@/components/pages/BlogIndexPage.astro";
 import BiographyPage from "@/components/pages/BiographyPage.astro";
+import ContactPage from "@/components/pages/ContactPage.astro";
 import FaqPage from "@/components/pages/FaqPage.astro";
 import PricingPage from "@/components/pages/PricingPage.astro";
 import PsychotherapyPage from "@/components/pages/PsychotherapyPage.astro";
@@ -12,10 +14,9 @@ import HomePageContent from "@/components/sections/HomePageContent.astro";
 import { blogService } from "@/features/blog/services/blog.service";
 import { adminAuthService } from "@/features/admin/auth/admin-auth.service";
 import { getPublicPageHref } from "@/features/page-content/admin/page-route-map";
-import { getDictionary } from "@/features/i18n/translate";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import type { PageKey } from "@/features/page-content/types/page-content.types";
-import { siteConfig, type SiteLocale } from "@/lib/config/site";
+import type { SiteLocale } from "@/lib/config/site";
 
 export const prerender = false;
 
@@ -28,6 +29,8 @@ const supportedPages = new Set<PageKey>([
   "pricing",
   "appointment",
   "faq",
+  "contact",
+  "blog",
 ]);
 
 if (!adminAuthService.isAuthenticated(Astro.cookies)) {
@@ -43,7 +46,6 @@ if (!pageParam || !supportedPages.has(pageParam)) {
 const localeParam = Astro.url.searchParams.get("locale");
 const locale: SiteLocale = localeParam === "sr-cyrl" ? "sr-cyrl" : "sr-latn";
 const token = Astro.url.searchParams.get("token");
-const dictionary = getDictionary(locale);
 const publicHref = getPublicPageHref(pageParam, locale);
 const homeContent =
   pageParam === "home"
@@ -102,13 +104,30 @@ const faqContent =
         ReturnType<typeof pageContentService.getFaqPageData>
       >)
     : undefined;
+
+const contactContent =
+  pageParam === "contact"
+    ? ((await pageContentService.getPreviewPageData("contact", locale, token)) as Awaited<
+        ReturnType<typeof pageContentService.getContactPageData>
+      >)
+    : undefined;
+
+const blogIndexContent =
+  pageParam === "blog"
+    ? ((await pageContentService.getPreviewPageData("blog", locale, token)) as Awaited<
+        ReturnType<typeof pageContentService.getBlogIndexPageData>
+      >)
+    : undefined;
+
+const blogIndexPosts =
+  pageParam === "blog" ? await blogService.listPublishedPosts(locale) : [];
 ---
 
 {
   pageParam === "home" && homeContent ? (
     <BaseLayout
-      title={dictionary.meta.home.title}
-      description={dictionary.meta.home.description}
+      title={homeContent.seo.title}
+      description={homeContent.seo.description}
       locale={locale}
       canonicalPath={publicHref}
     >
@@ -123,8 +142,8 @@ const faqContent =
     </BaseLayout>
   ) : pageParam === "about" && aboutContent ? (
     <BaseLayout
-      title={dictionary.meta.about.title}
-      description={aboutContent.banner.description || dictionary.meta.about.description}
+      title={aboutContent.seo.title}
+      description={aboutContent.seo.description}
       locale={locale}
       canonicalPath={publicHref}
     >
@@ -134,10 +153,8 @@ const faqContent =
     <BiographyPage locale={locale} content={biographyContent} />
   ) : pageParam === "psychotherapy" && psychotherapyContent ? (
     <BaseLayout
-      title={dictionary.meta.psychotherapy.title}
-      description={
-        psychotherapyContent.banner.description || dictionary.meta.psychotherapy.description
-      }
+      title={psychotherapyContent.seo.title}
+      description={psychotherapyContent.seo.description}
       locale={locale}
       canonicalPath={publicHref}
     >
@@ -145,8 +162,8 @@ const faqContent =
     </BaseLayout>
   ) : pageParam === "scope" && scopeContent ? (
     <BaseLayout
-      title={`${dictionary.nav.therapyLinks.scope} | ${siteConfig.name}`}
-      description={scopeContent.banner.description ?? dictionary.meta.psychotherapy.description}
+      title={scopeContent.seo.title}
+      description={scopeContent.seo.description}
       locale={locale}
       canonicalPath={publicHref}
     >
@@ -154,8 +171,8 @@ const faqContent =
     </BaseLayout>
   ) : pageParam === "pricing" && pricingContent ? (
     <BaseLayout
-      title={`${dictionary.nav.therapyLinks.pricing} | ${siteConfig.name}`}
-      description={pricingContent.banner.description ?? dictionary.meta.appointment.description}
+      title={pricingContent.seo.title}
+      description={pricingContent.seo.description}
       locale={locale}
       canonicalPath={publicHref}
     >
@@ -163,8 +180,8 @@ const faqContent =
     </BaseLayout>
   ) : pageParam === "appointment" && appointmentContent ? (
     <BaseLayout
-      title={dictionary.meta.appointment.title}
-      description={appointmentContent.banner.description || dictionary.meta.appointment.description}
+      title={appointmentContent.seo.title}
+      description={appointmentContent.seo.description}
       locale={locale}
       canonicalPath={publicHref}
       appBarTone="light"
@@ -173,14 +190,34 @@ const faqContent =
     </BaseLayout>
   ) : pageParam === "faq" && faqContent ? (
     <BaseLayout
-      title={dictionary.meta.faq.title}
-      description={faqContent.banner.description || dictionary.meta.faq.description}
+      title={faqContent.seo.title}
+      description={faqContent.seo.description}
       locale={locale}
       canonicalPath={publicHref}
       appBarTone="dark"
       appBarOverlay={true}
     >
       <FaqPage locale={locale} content={faqContent} />
+    </BaseLayout>
+  ) : pageParam === "contact" && contactContent ? (
+    <BaseLayout
+      title={contactContent.seo.title}
+      description={contactContent.seo.description}
+      locale={locale}
+      canonicalPath={publicHref}
+    >
+      <ContactPage locale={locale} content={contactContent} />
+    </BaseLayout>
+  ) : pageParam === "blog" && blogIndexContent ? (
+    <BaseLayout
+      title={blogIndexContent.seo.title}
+      description={blogIndexContent.seo.description}
+      locale={locale}
+      canonicalPath={publicHref}
+      appBarTone="dark"
+      appBarOverlay={true}
+    >
+      <BlogIndexPage locale={locale} posts={blogIndexPosts} content={blogIndexContent} />
     </BaseLayout>
   ) : null
 }

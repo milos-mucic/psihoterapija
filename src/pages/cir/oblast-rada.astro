@@ -3,18 +3,15 @@ export const prerender = true;
 
 import BaseLayout from "@/components/components/BaseLayout.astro";
 import ScopePage from "@/components/pages/ScopePage.astro";
-import { getDictionary } from "@/features/i18n/translate";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
-import { siteConfig } from "@/lib/config/site";
 
 const locale = "sr-cyrl";
-const dictionary = getDictionary(locale);
 const content = await pageContentService.getScopePageData(locale);
 ---
 
 <BaseLayout
-  title={`${dictionary.nav.therapyLinks.scope} | ${siteConfig.name}`}
-  description={content.banner.description ?? dictionary.meta.psychotherapy.description}
+  title={content.seo.title}
+  description={content.seo.description}
   locale={locale}
   canonicalPath="/cir/oblast-rada/"
 >

@@ -4,19 +4,17 @@ export const prerender = true;
 import HomeHeroSection from "@/components/sections/HomeHeroSection.astro";
 import HomePageContent from "@/components/sections/HomePageContent.astro";
 import { blogService } from "@/features/blog/services/blog.service";
-import { getDictionary } from "@/features/i18n/translate";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import BaseLayout from "@/components/components/BaseLayout.astro";
 
 const locale = "sr-cyrl";
-const dictionary = getDictionary(locale);
 const content = await pageContentService.getHomePageData(locale);
 const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
 ---
 
 <BaseLayout
-  title={dictionary.meta.home.title}
-  description={dictionary.meta.home.description}
+  title={content.seo.title}
+  description={content.seo.description}
   locale={locale}
   canonicalPath="/cir/"
 >

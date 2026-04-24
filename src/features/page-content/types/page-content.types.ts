@@ -8,7 +8,14 @@ export type PageKey =
   | "scope"
   | "pricing"
   | "appointment"
-  | "faq";
+  | "faq"
+  | "contact"
+  | "blog";
+
+export type PageSeoManagedContent = {
+  title: string;
+  description: string;
+};
 
 export type PageBannerManagedContent = {
   title: string;
@@ -51,6 +58,7 @@ export type HomeEditableMediaCard = HomeEditableLinkCard & {
 };
 
 export type HomePageManagedContent = {
+  seo: PageSeoManagedContent;
   hero: {
     titleHtml: string;
     description: string;
@@ -104,6 +112,7 @@ export type HomePageManagedContent = {
 };
 
 export type AboutPageManagedContent = {
+  seo: PageSeoManagedContent;
   banner: PageBannerManagedContent;
   showcase: {
     title: string;
@@ -128,6 +137,7 @@ export type AboutPageManagedContent = {
 };
 
 export type BiographyPageManagedContent = {
+  seo: PageSeoManagedContent;
   banner: PageBannerManagedContent;
   cardsSection: {
     title: string;
@@ -144,6 +154,7 @@ export type BiographyPageManagedContent = {
 };
 
 export type PsychotherapyPageManagedContent = {
+  seo: PageSeoManagedContent;
   banner: PageBannerManagedContent;
   scope: {
     title: string;
@@ -165,6 +176,7 @@ export type PsychotherapyPageManagedContent = {
 };
 
 export type ScopePageManagedContent = {
+  seo: PageSeoManagedContent;
   banner: PageBannerManagedContent;
   intro: {
     title: string;
@@ -207,6 +219,7 @@ export type ScopePageManagedContent = {
 };
 
 export type PricingPageManagedContent = {
+  seo: PageSeoManagedContent;
   banner: PageBannerManagedContent;
   plans: Array<{
     title: string;
@@ -218,6 +231,7 @@ export type PricingPageManagedContent = {
 };
 
 export type AppointmentPageManagedContent = {
+  seo: PageSeoManagedContent;
   banner: PageBannerManagedContent;
   booking: {
     title: string;
@@ -232,6 +246,7 @@ export type AppointmentPageManagedContent = {
 };
 
 export type FaqPageManagedContent = {
+  seo: PageSeoManagedContent;
   banner: PageBannerManagedContent;
   faq: {
     items: ManagedFaqItem[];
@@ -243,6 +258,45 @@ export type FaqPageManagedContent = {
     formatLabel: string;
     formats: string[];
   };
+};
+
+export type ContactSocialLinkManagedContent = {
+  platform: string;
+  label: string;
+  href: string;
+};
+
+export type ContactPageManagedContent = {
+  seo: PageSeoManagedContent;
+  banner: PageBannerManagedContent;
+  introTitle: string;
+  introCopy: string;
+  formTitle: string;
+  contactLabels: {
+    phone: string;
+    email: string;
+    socials: string;
+  };
+  phone: string;
+  email: string;
+  socialLinks: ContactSocialLinkManagedContent[];
+  officesTitle: string;
+  officesCopy: string;
+  officeGallery: string[];
+};
+
+export type BlogIndexPageManagedContent = {
+  seo: PageSeoManagedContent;
+  banner: PageBannerManagedContent;
+  allPostsTitle: string;
+  postsLabel: string;
+  searchTitle: string;
+  searchPlaceholder: string;
+  searchActionLabel: string;
+  recentTitle: string;
+  keywordsTitle: string;
+  allKeywordsLabel: string;
+  noResultsText: string;
 };
 
 export type PageContentRecord = {
@@ -263,6 +317,8 @@ export type ManagedPageContentMap = {
   pricing: PricingPageManagedContent;
   appointment: AppointmentPageManagedContent;
   faq: FaqPageManagedContent;
+  contact: ContactPageManagedContent;
+  blog: BlogIndexPageManagedContent;
 };
 
 export type AnyManagedPageContent = ManagedPageContentMap[PageKey];

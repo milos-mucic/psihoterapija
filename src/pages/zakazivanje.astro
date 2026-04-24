@@ -2,18 +2,16 @@
 export const prerender = true;
 
 import AppointmentPage from "@/components/pages/AppointmentPage.astro";
-import { getDictionary } from "@/features/i18n/translate";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import BaseLayout from "@/components/components/BaseLayout.astro";
 
 const locale = "sr-latn";
-const dictionary = getDictionary(locale);
 const content = await pageContentService.getAppointmentPageData(locale);
 ---
 
 <BaseLayout
-  title={dictionary.meta.appointment.title}
-  description={content.banner.description || dictionary.meta.appointment.description}
+  title={content.seo.title}
+  description={content.seo.description}
   locale={locale}
   canonicalPath="/zakazivanje/"
   appBarTone="light"

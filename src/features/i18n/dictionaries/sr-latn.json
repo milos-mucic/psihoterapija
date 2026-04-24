@@ -112,7 +112,10 @@
     "cancel": "Odustani",
     "close": "Zatvori",
     "officeRoom": "Prostorija",
-    "viewPage": "Pogledaj stranicu"
+    "viewPage": "Pogledaj stranicu",
+    "scopeTabList": "Kljucne teme",
+    "scopeTabPrev": "Prethodna tema",
+    "scopeTabNext": "Sledeca tema"
   },
   "footer": {
     "contactEyebrow": "Kontakt",

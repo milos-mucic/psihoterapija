@@ -15,6 +15,8 @@ const supportedPages = new Set<PageKey>([
   "pricing",
   "appointment",
   "faq",
+  "contact",
+  "blog",
 ]);
 
 const toPayload = async (request: Request) => {
@@ -41,6 +43,7 @@ export const POST: APIRoute = async (context) => {
   const token = typeof payload.previewToken === "string" ? payload.previewToken : undefined;
 
   if (!pageKey || !supportedPages.has(pageKey)) {
+    // i18n-exempt
     return new Response(JSON.stringify({ message: "Unsupported page." }), { status: 400 });
   }
 
@@ -65,6 +68,7 @@ export const POST: APIRoute = async (context) => {
     );
   } catch (error) {
     if (error instanceof ZodError) {
+      // i18n-exempt
       return new Response(JSON.stringify({ message: "Preview payload is invalid." }), {
         status: 422,
         headers: {
@@ -74,6 +78,7 @@ export const POST: APIRoute = async (context) => {
     }
 
     console.error(error);
+    // i18n-exempt
     return new Response(JSON.stringify({ message: "Preview update failed." }), {
       status: 500,
       headers: {

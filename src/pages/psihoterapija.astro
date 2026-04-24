@@ -2,18 +2,16 @@
 export const prerender = true;
 
 import PsychotherapyPage from "@/components/pages/PsychotherapyPage.astro";
-import { getDictionary } from "@/features/i18n/translate";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import BaseLayout from "@/components/components/BaseLayout.astro";
 
 const locale = "sr-latn";
-const dictionary = getDictionary(locale);
 const content = await pageContentService.getPsychotherapyPageData(locale);
 ---
 
 <BaseLayout
-  title={dictionary.meta.psychotherapy.title}
-  description={content.banner.description || dictionary.meta.psychotherapy.description}
+  title={content.seo.title}
+  description={content.seo.description}
   locale={locale}
   canonicalPath="/psihoterapija/"
 >

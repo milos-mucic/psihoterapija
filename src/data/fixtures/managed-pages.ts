@@ -3,6 +3,7 @@ import {
   getAboutPageData,
   getAppointmentPageData,
   getBiographyPageData,
+  getContactPageData,
   getFaqPageData,
   getPricingPageData,
   getPsychotherapyPageData,
@@ -12,14 +13,17 @@ import {
 import type {
   AboutPageManagedContent,
   AppointmentPageManagedContent,
+  BlogIndexPageManagedContent,
   BiographyPageManagedContent,
+  ContactPageManagedContent,
   FaqPageManagedContent,
   PricingPageManagedContent,
   PsychotherapyPageManagedContent,
   ScopePageManagedContent,
 } from "@/features/page-content/types/page-content.types";
 import { localizePath } from "@/features/i18n/locale";
-import type { SiteLocale } from "@/lib/config/site";
+import { getDictionary } from "@/features/i18n/translate";
+import { siteConfig, type SiteLocale } from "@/lib/config/site";
 
 const aboutShowcaseHrefs = ["/zakazivanje/", "/psihoterapija/", "/psihoterapija/"];
 const defaultScopeSlugs = [
@@ -31,8 +35,13 @@ const defaultScopeSlugs = [
 
 export const getDefaultAboutPageManagedContent = (locale: SiteLocale): AboutPageManagedContent => {
   const content = getAboutPageData(locale);
+  const dictionary = getDictionary(locale);
 
   return {
+    seo: {
+      title: dictionary.meta.about.title,
+      description: dictionary.meta.about.description,
+    },
     banner: {
       title: content.banner.title,
       description: content.banner.description ?? "",
@@ -66,6 +75,7 @@ export const getDefaultAboutPageManagedContent = (locale: SiteLocale): AboutPage
 };
 
 export const buildAboutPageData = (locale: SiteLocale, content: AboutPageManagedContent) => ({
+  seo: content.seo,
   banner: {
     title: content.banner.title,
     description: content.banner.description,
@@ -95,8 +105,13 @@ export const getDefaultBiographyPageManagedContent = (
   locale: SiteLocale,
 ): BiographyPageManagedContent => {
   const content = getBiographyPageData(locale);
+  const dictionary = getDictionary(locale);
 
   return {
+    seo: {
+      title: dictionary.meta.biography.title,
+      description: dictionary.meta.biography.description,
+    },
     banner: {
       title: content.banner.title,
       description: content.banner.description ?? "",
@@ -129,6 +144,7 @@ export const buildBiographyPageData = (
   locale: SiteLocale,
   content: BiographyPageManagedContent,
 ) => ({
+  seo: content.seo,
   banner: {
     title: content.banner.title,
     description: content.banner.description,
@@ -186,8 +202,13 @@ export const getDefaultPsychotherapyPageManagedContent = (
 ): PsychotherapyPageManagedContent => {
   const content = getPsychotherapyPageData(locale);
   const home = getHomePageData(locale);
+  const dictionary = getDictionary(locale);
 
   return {
+    seo: {
+      title: dictionary.meta.psychotherapy.title,
+      description: dictionary.meta.psychotherapy.description,
+    },
     banner: {
       title: content.banner.title,
       description: content.banner.description ?? "",
@@ -224,6 +245,7 @@ export const buildPsychotherapyPageData = (
   locale: SiteLocale,
   content: PsychotherapyPageManagedContent,
 ) => ({
+  seo: content.seo,
   banner: {
     title: content.banner.title,
     description: content.banner.description,
@@ -254,8 +276,13 @@ export const buildPsychotherapyPageData = (
 export const getDefaultScopePageManagedContent = (locale: SiteLocale): ScopePageManagedContent => {
   const content = getScopePageData(locale);
   const firstDetail = getScopeDetailPageData(locale, defaultScopeSlugs[0]);
+  const dictionary = getDictionary(locale);
 
   return {
+    seo: {
+      title: `${dictionary.nav.therapyLinks.scope} | ${siteConfig.name}`,
+      description: content.banner.description ?? "",
+    },
     banner: {
       title: content.banner.title,
       description: content.banner.description ?? "",
@@ -303,6 +330,7 @@ export const getDefaultScopePageManagedContent = (locale: SiteLocale): ScopePage
 };
 
 export const buildScopePageData = (locale: SiteLocale, content: ScopePageManagedContent) => ({
+  seo: content.seo,
   banner: {
     title: content.banner.title,
     description: content.banner.description,
@@ -373,8 +401,13 @@ export const getDefaultPricingPageManagedContent = (
   locale: SiteLocale,
 ): PricingPageManagedContent => {
   const content = getPricingPageData(locale);
+  const dictionary = getDictionary(locale);
 
   return {
+    seo: {
+      title: `${dictionary.nav.therapyLinks.pricing} | ${siteConfig.name}`,
+      description: content.banner.description ?? "",
+    },
     banner: {
       title: content.banner.title,
       description: content.banner.description ?? "",
@@ -391,6 +424,7 @@ export const getDefaultPricingPageManagedContent = (
 };
 
 export const buildPricingPageData = (locale: SiteLocale, content: PricingPageManagedContent) => ({
+  seo: content.seo,
   banner: {
     title: content.banner.title,
     description: content.banner.description,
@@ -409,8 +443,13 @@ export const getDefaultAppointmentPageManagedContent = (
   locale: SiteLocale,
 ): AppointmentPageManagedContent => {
   const content = getAppointmentPageData(locale);
+  const dictionary = getDictionary(locale);
 
   return {
+    seo: {
+      title: dictionary.meta.appointment.title,
+      description: dictionary.meta.appointment.description,
+    },
     banner: {
       title: content.banner.title,
       description: content.banner.description ?? "",
@@ -436,6 +475,7 @@ export const buildAppointmentPageData = (
   _locale: SiteLocale,
   content: AppointmentPageManagedContent,
 ) => ({
+  seo: content.seo,
   banner: {
     title: content.banner.title,
     description: content.banner.description,
@@ -456,8 +496,13 @@ export const buildAppointmentPageData = (
 
 export const getDefaultFaqPageManagedContent = (locale: SiteLocale): FaqPageManagedContent => {
   const content = getFaqPageData(locale);
+  const dictionary = getDictionary(locale);
 
   return {
+    seo: {
+      title: dictionary.meta.faq.title,
+      description: dictionary.meta.faq.description,
+    },
     banner: {
       title: content.banner.title,
       description: content.banner.description ?? "",
@@ -480,6 +525,7 @@ export const getDefaultFaqPageManagedContent = (locale: SiteLocale): FaqPageMana
 };
 
 export const buildFaqPageData = (_locale: SiteLocale, content: FaqPageManagedContent) => ({
+  seo: content.seo,
   banner: {
     title: content.banner.title,
     description: content.banner.description,
@@ -496,4 +542,129 @@ export const buildFaqPageData = (_locale: SiteLocale, content: FaqPageManagedCon
   bookingCopy: content.booking.copy,
   formatLabel: content.booking.formatLabel,
   formats: content.booking.formats,
+});
+
+export const getDefaultContactPageManagedContent = (
+  locale: SiteLocale,
+): ContactPageManagedContent => {
+  const content = getContactPageData(locale);
+  const dictionary = getDictionary(locale);
+  const bannerDescription =
+    "description" in content.banner && typeof content.banner.description === "string"
+      ? content.banner.description
+      : "";
+
+  return {
+    seo: {
+      title: dictionary.meta.contact.title,
+      description: dictionary.meta.contact.description,
+    },
+    banner: {
+      title: content.banner.title,
+      description: bannerDescription,
+      backgroundImage: content.banner.backgroundImage ?? "",
+    },
+    introTitle: content.introTitle,
+    introCopy: content.introCopy,
+    formTitle: content.formTitle,
+    contactLabels: content.contactLabels,
+    phone: siteConfig.contactPhone,
+    email: siteConfig.contactEmail,
+    socialLinks: [
+      {
+        platform: "facebook",
+        label: locale === "sr-cyrl" ? "Фејсбук профил" : "Fejsbuk profil",
+        href: "https://www.facebook.com/",
+      },
+      {
+        platform: "instagram",
+        label: locale === "sr-cyrl" ? "Инстаграм профил" : "Instagram profil",
+        href: "https://www.instagram.com/",
+      },
+      {
+        platform: "linkedin",
+        label: locale === "sr-cyrl" ? "Линкедин профил" : "LinkedIn profil",
+        href: "https://www.linkedin.com/",
+      },
+    ],
+    officesTitle: content.officesTitle,
+    officesCopy: content.officesCopy,
+    officeGallery: [
+      "/legacy/images/Office-1-1_1Office 1 (1).webp",
+      "/legacy/images/Office-2-1_1Office 2 (1).webp",
+      "/legacy/images/Office-3-1_1Office 3 (1).webp",
+    ],
+  };
+};
+
+export const buildContactPageData = (_locale: SiteLocale, content: ContactPageManagedContent) => ({
+  seo: content.seo,
+  banner: {
+    title: content.banner.title,
+    description: content.banner.description,
+    backgroundImage: content.banner.backgroundImage,
+    theme: "dark" as const,
+    align: "center" as const,
+  },
+  introTitle: content.introTitle,
+  introCopy: content.introCopy,
+  formTitle: content.formTitle,
+  contactLabels: content.contactLabels,
+  phone: content.phone,
+  email: content.email,
+  socialLinks: content.socialLinks,
+  officesTitle: content.officesTitle,
+  officesCopy: content.officesCopy,
+  officeGallery: content.officeGallery,
+});
+
+export const getDefaultBlogIndexPageManagedContent = (
+  locale: SiteLocale,
+): BlogIndexPageManagedContent => {
+  const dictionary = getDictionary(locale);
+  const ui = dictionary.blog.index;
+
+  return {
+    seo: {
+      title: dictionary.meta.blog.title,
+      description: dictionary.meta.blog.description,
+    },
+    banner: {
+      title: dictionary.blog.title,
+      description: ui.bannerDescription,
+      backgroundImage: "/legacy/images/blog-header-hero.svg",
+    },
+    allPostsTitle: ui.allPosts,
+    postsLabel: ui.postsLabel,
+    searchTitle: ui.searchTitle,
+    searchPlaceholder: ui.searchPlaceholder,
+    searchActionLabel: ui.searchAction,
+    recentTitle: ui.recentTitle,
+    keywordsTitle: ui.keywordsTitle,
+    allKeywordsLabel: ui.allKeywords,
+    noResultsText: ui.noResults,
+  };
+};
+
+export const buildBlogIndexPageData = (
+  _locale: SiteLocale,
+  content: BlogIndexPageManagedContent,
+) => ({
+  seo: content.seo,
+  banner: {
+    title: content.banner.title,
+    description: content.banner.description,
+    backgroundImage: content.banner.backgroundImage,
+    theme: "dark" as const,
+    align: "split" as const,
+  },
+  allPostsTitle: content.allPostsTitle,
+  postsLabel: content.postsLabel,
+  searchTitle: content.searchTitle,
+  searchPlaceholder: content.searchPlaceholder,
+  searchActionLabel: content.searchActionLabel,
+  recentTitle: content.recentTitle,
+  keywordsTitle: content.keywordsTitle,
+  allKeywordsLabel: content.allKeywordsLabel,
+  noResultsText: content.noResultsText,
 });

@@ -1,8 +1,10 @@
 import type {
   AboutPageManagedContent,
   AppointmentPageManagedContent,
+  BlogIndexPageManagedContent,
   BiographyPageManagedContent,
   BiographyProfileManagedContent,
+  ContactPageManagedContent,
   FaqPageManagedContent,
   PageKey,
   PricingPageManagedContent,
@@ -132,7 +134,9 @@ type ManagedPageEditorContent =
   | ScopePageManagedContent
   | PricingPageManagedContent
   | AppointmentPageManagedContent
-  | FaqPageManagedContent;
+  | FaqPageManagedContent
+  | ContactPageManagedContent
+  | BlogIndexPageManagedContent;
 
 const text = (
   name: string,
@@ -194,9 +198,25 @@ const group = (title: string, fields: ManagedPageEditorField[]): ManagedPageEdit
   fields,
 });
 
+const seoSection = (
+  value: { title: string; description: string },
+  options: { fragment: string; previewCopy?: string } = { fragment: "seo" },
+): ManagedPageEditorStandardSection => ({
+  kind: "standard",
+  fragment: options.fragment,
+  title: "SEO",
+  copy: "Naslov i meta opis koje Astro isporucuje pretrazivacima i deljenju na drustvenim mrezama.",
+  previewCopy: options.previewCopy,
+  entries: [
+    text("seoTitle", "SEO naslov", value.title, { full: true }),
+    textarea("seoDescription", "Meta opis", value.description, { full: true, rows: 3 }),
+  ],
+});
+
 const buildAboutEditor = (content: AboutPageManagedContent): ManagedPageEditorConfig => ({
   uploadFolder: "pages/about",
   sections: [
+    seoSection(content.seo, { fragment: "about-banner" }),
     {
       kind: "standard",
       fragment: "about-banner",
@@ -287,6 +307,7 @@ const buildAboutEditor = (content: AboutPageManagedContent): ManagedPageEditorCo
 const buildBiographyEditor = (content: BiographyPageManagedContent): ManagedPageEditorConfig => ({
   uploadFolder: "pages/biography",
   sections: [
+    seoSection(content.seo, { fragment: "biography-banner" }),
     {
       kind: "standard",
       fragment: "biography-banner",
@@ -338,6 +359,7 @@ const buildPsychotherapyEditor = (
 ): ManagedPageEditorConfig => ({
   uploadFolder: "pages/psychotherapy",
   sections: [
+    seoSection(content.seo, { fragment: "psychotherapy-banner" }),
     {
       kind: "standard",
       fragment: "psychotherapy-banner",
@@ -440,6 +462,7 @@ const buildPsychotherapyEditor = (
 const buildScopeEditor = (content: ScopePageManagedContent): ManagedPageEditorConfig => ({
   uploadFolder: "pages/scope",
   sections: [
+    seoSection(content.seo, { fragment: "scope-banner" }),
     {
       kind: "standard",
       fragment: "scope-banner",
@@ -516,6 +539,7 @@ const buildScopeEditor = (content: ScopePageManagedContent): ManagedPageEditorCo
 const buildPricingEditor = (content: PricingPageManagedContent): ManagedPageEditorConfig => ({
   uploadFolder: "pages/pricing",
   sections: [
+    seoSection(content.seo, { fragment: "pricing-plans" }),
     {
       kind: "standard",
       fragment: "pricing-plans",
@@ -582,6 +606,7 @@ const buildAppointmentEditor = (
 ): ManagedPageEditorConfig => ({
   uploadFolder: "pages/appointment",
   sections: [
+    seoSection(content.seo, { fragment: "appointment-booking" }),
     {
       kind: "standard",
       fragment: "appointment-booking",
@@ -638,6 +663,7 @@ const buildAppointmentEditor = (
 const buildFaqEditor = (content: FaqPageManagedContent): ManagedPageEditorConfig => ({
   uploadFolder: "pages/faq",
   sections: [
+    seoSection(content.seo, { fragment: "faq-banner" }),
     {
       kind: "standard",
       fragment: "faq-banner",
@@ -699,6 +725,120 @@ const buildFaqEditor = (content: FaqPageManagedContent): ManagedPageEditorConfig
   ],
 });
 
+const buildContactEditor = (content: ContactPageManagedContent): ManagedPageEditorConfig => ({
+  uploadFolder: "pages/contact",
+  sections: [
+    seoSection(content.seo, { fragment: "contact-banner" }),
+    {
+      kind: "standard",
+      fragment: "contact-banner",
+      title: "Banner",
+      copy: "Naslov, opis i pozadinska slika kontakt stranice.",
+      entries: [
+        text("bannerTitle", "Naslov", content.banner.title),
+        richText("bannerDescription", "Opis", content.banner.description),
+        media("bannerBackgroundImage", "Pozadinska slika", content.banner.backgroundImage),
+      ],
+    },
+    {
+      kind: "standard",
+      fragment: "contact-details",
+      title: "Kontakt uvod",
+      copy: "Uvodni tekst, forma i osnovni kontakt podaci.",
+      entries: [
+        text("introTitle", "Naslov uvoda", content.introTitle),
+        richText("introCopy", "Opis uvoda", content.introCopy),
+        text("formTitle", "Naslov forme", content.formTitle),
+        text("contactLabelPhone", "Labela telefon", content.contactLabels.phone),
+        text("contactLabelEmail", "Labela email", content.contactLabels.email),
+        text("contactLabelSocials", "Labela drustvene mreze", content.contactLabels.socials),
+        text("phone", "Telefon", content.phone),
+        text("email", "Email", content.email),
+      ],
+    },
+    {
+      kind: "repeatableGroup",
+      fragment: "contact-details",
+      title: "Drustvene mreze",
+      copy: "Dodajte mreze koje zelite da prikazete na kontakt stranici.",
+      itemLabel: "Mreza",
+      itemNamePrefix: "socialLink",
+      addButtonLabel: "Dodaj mrezu",
+      minItems: 1,
+      fields: [
+        { key: "platform", kind: "text", label: "Platforma" },
+        { key: "label", kind: "text", label: "ARIA labela" },
+        { key: "href", kind: "text", label: "URL", full: true },
+      ],
+      items: content.socialLinks.map((item) => ({
+        platform: item.platform,
+        label: item.label,
+        href: item.href,
+      })),
+    },
+    {
+      kind: "standard",
+      fragment: "contact-offices",
+      title: "Prostor",
+      copy: "Naslov i opis galerije prostora.",
+      entries: [
+        text("officesTitle", "Naslov sekcije", content.officesTitle),
+        richText("officesCopy", "Opis sekcije", content.officesCopy),
+      ],
+    },
+    {
+      kind: "repeatableGroup",
+      fragment: "contact-offices",
+      title: "Galerija prostora",
+      copy: "Dodajte ili uklonite fotografije kancelarije.",
+      itemLabel: "Fotografija",
+      itemNamePrefix: "officeGallery",
+      addButtonLabel: "Dodaj fotografiju",
+      minItems: 1,
+      fields: [{ key: "image", kind: "media", label: "Slika" }],
+      items: content.officeGallery.map((image) => ({ image })),
+    },
+  ],
+});
+
+const buildBlogIndexEditor = (content: BlogIndexPageManagedContent): ManagedPageEditorConfig => ({
+  uploadFolder: "pages/blog",
+  sections: [
+    seoSection(content.seo, { fragment: "blog-banner" }),
+    {
+      kind: "standard",
+      fragment: "blog-banner",
+      title: "Banner",
+      copy: "Naslovna sekcija blog listing strane.",
+      entries: [
+        text("bannerTitle", "Naslov", content.banner.title),
+        richText("bannerDescription", "Opis", content.banner.description),
+        media("bannerBackgroundImage", "Pozadinska slika", content.banner.backgroundImage),
+      ],
+    },
+    {
+      kind: "standard",
+      fragment: "blog-index",
+      title: "Lista i filteri",
+      copy: "Tekstovi za listu postova, pretragu i filtere.",
+      entries: [
+        text("allPostsTitle", "Naslov liste", content.allPostsTitle),
+        text("postsLabel", "Labela brojaca postova", content.postsLabel),
+        text("searchTitle", "Naslov pretrage", content.searchTitle),
+        text("searchPlaceholder", "Placeholder pretrage", content.searchPlaceholder),
+        text("searchActionLabel", "Labela dugmeta pretrage", content.searchActionLabel),
+        text("recentTitle", "Naslov recent sekcije", content.recentTitle),
+        text("keywordsTitle", "Naslov keyword sekcije", content.keywordsTitle),
+        text("allKeywordsLabel", "Labela svih keyworda", content.allKeywordsLabel),
+        textarea("noResultsText", "Poruka bez rezultata", content.noResultsText, {
+          full: true,
+          rows: 3,
+        }),
+      ],
+    },
+  ],
+});
+
 export const getManagedPageEditorConfig = (
   page: SupportedManagedPage,
   content: ManagedPageEditorContent,
@@ -718,5 +858,9 @@ export const getManagedPageEditorConfig = (
       return buildAppointmentEditor(content as AppointmentPageManagedContent);
     case "faq":
       return buildFaqEditor(content as FaqPageManagedContent);
+    case "contact":
+      return buildContactEditor(content as ContactPageManagedContent);
+    case "blog":
+      return buildBlogIndexEditor(content as BlogIndexPageManagedContent);
   }
 };

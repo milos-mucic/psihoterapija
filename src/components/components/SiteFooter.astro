@@ -1,6 +1,7 @@
 ---
 import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
 import { siteConfig, type SiteLocale } from "@/lib/config/site";
 
 type Props = {
@@ -9,11 +10,11 @@ type Props = {
 
 const { locale } = Astro.props;
 const dictionary = getDictionary(locale);
-const galleryImages = [
-  "/legacy/images/1_11.webp",
-  "/legacy/images/2_12.webp",
-  "/legacy/images/3_13.webp",
-];
+const contactContent = await pageContentService.getContactPageData(locale);
+const primarySocial =
+  contactContent.socialLinks.find((link) => link.platform === "instagram") ??
+  contactContent.socialLinks[0];
+const galleryImages = contactContent.officeGallery.slice(0, 3);
 const footerPrimaryLinks = [
   { label: dictionary.nav.home, href: localizePath(locale, "/") },
   { label: dictionary.nav.about, href: localizePath(locale, "/o-nama/") },
@@ -50,9 +51,9 @@ const footerSupportLinks = [
             data-image-component
           />
           <div class="footer-contact-list">
-            <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>
-            <a href={`tel:${siteConfig.contactPhone.replace(/\s+/g, "")}`}
-              >{siteConfig.contactPhone}</a
+            <a href={`mailto:${contactContent.email}`}>{contactContent.email}</a>
+            <a href={`tel:${contactContent.phone.replace(/\s+/g, "")}`}
+              >{contactContent.phone}</a
             >
           </div>
         </div>
@@ -79,7 +80,13 @@ const footerSupportLinks = [
         <div class="footer-aside">
           <div class="footer-social">
             <p class="footer-section-title">{dictionary.footer.socialTitle}</p>
-            <div class="footer-social-link" aria-label={dictionary.footer.instagramLabel}>
+            <a
+              class="footer-social-link"
+              href={primarySocial?.href ?? "#"}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={primarySocial?.label ?? dictionary.footer.instagramLabel}
+            >
               <span class="footer-social-link__icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                   <rect x="3.5" y="3.5" width="17" height="17" rx="5"></rect>
@@ -88,10 +95,10 @@ const footerSupportLinks = [
                 </svg>
               </span>
               <span class="footer-social-link__copy">
-                <strong>{dictionary.footer.instagramLabel}</strong>
-                <span>{dictionary.footer.instagramPlaceholder}</span>
+                <strong>{primarySocial?.label ?? dictionary.footer.instagramLabel}</strong>
+                <span>{primarySocial?.href ?? dictionary.footer.instagramPlaceholder}</span>
               </span>
-            </div>
+            </a>
           </div>
 
           <div class="footer-gallery" aria-hidden="true">

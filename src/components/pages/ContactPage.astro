@@ -1,65 +1,44 @@
 ---
-import PageBanner from "@/components/sections/PageBanner.astro";
 import ContactForm from "@/components/components/ContactForm.astro";
-import { getContactPageData, officeGallery } from "@/data/fixtures/public-pages";
+import PageBanner from "@/components/sections/PageBanner.astro";
 import { getDictionary } from "@/features/i18n/translate";
-import { siteConfig, type SiteLocale } from "@/lib/config/site";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
+import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
   locale: SiteLocale;
+  content?: Awaited<ReturnType<typeof pageContentService.getContactPageData>>;
 };
 
-const { locale } = Astro.props;
-const content = getContactPageData(locale);
+const { locale, content: previewContent } = Astro.props;
+const content = previewContent ?? (await pageContentService.getContactPageData(locale));
 const dictionary = getDictionary(locale);
-const isCyrillic = locale === "sr-cyrl";
-
-const socialLinks = [
-  {
-    href: "https://www.facebook.com/",
-    icon: "facebook",
-    label: isCyrillic ? "Фејсбук профил" : "Fejsbuk profil",
-  },
-  {
-    href: "https://www.instagram.com/",
-    icon: "instagram",
-    label: isCyrillic ? "Инстаграм профил" : "Instagram profil",
-  },
-  {
-    href: "https://www.linkedin.com/",
-    icon: "linkedin",
-    label: isCyrillic ? "Линкедин профил" : "LinkedIn profil",
-  },
-];
 ---
 
 <PageBanner {...content.banner} />
 
-<section class="page-section">
+<section id="contact-details" class="page-section">
   <div class="container">
     <div class="contact-layout">
       <div class="contact-details">
         <h2>{content.introTitle}</h2>
-        <p>{content.introCopy}</p>
+        <div class="richtext-shell" set:html={content.introCopy} />
 
         <div class="contact-details__grid">
           <article class="contact-details__card" data-reveal="up">
             <h3>{content.contactLabels.phone}</h3>
             <a
               class="page-inline-link page-inline-link--plain"
-              href={`tel:${siteConfig.contactPhone.replace(/\s+/g, "")}`}
+              href={`tel:${content.phone.replace(/\s+/g, "")}`}
             >
-              {siteConfig.contactPhone}
+              {content.phone}
             </a>
           </article>
 
           <article class="contact-details__card" data-reveal="up" style="--reveal-delay: 80ms;">
             <h3>{content.contactLabels.email}</h3>
-            <a
-              class="page-inline-link page-inline-link--plain"
-              href={`mailto:${siteConfig.contactEmail}`}
-            >
-              {siteConfig.contactEmail}
+            <a class="page-inline-link page-inline-link--plain" href={`mailto:${content.email}`}>
+              {content.email}
             </a>
           </article>
         </div>
@@ -68,14 +47,14 @@ const socialLinks = [
           <h3>{content.contactLabels.socials}</h3>
           <div class="contact-socials__icons">
             {
-              socialLinks.map((link) => (
+              content.socialLinks.map((link) => (
                 <a href={link.href} target="_blank" rel="noreferrer" aria-label={link.label}>
                   {
-                    link.icon === "facebook" ? (
+                    link.platform === "facebook" ? (
                       <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M13.5 21v-7h2.4l.4-3h-2.8V9.2c0-.9.3-1.6 1.7-1.6H16V4.9c-.4-.1-1.2-.2-2.2-.2-2.2 0-3.8 1.4-3.8 4V11H7.5v3H10v7h3.5Z" />
                       </svg>
-                    ) : link.icon === "instagram" ? (
+                    ) : link.platform === "instagram" ? (
                       <svg
                         aria-hidden="true"
                         viewBox="0 0 24 24"
@@ -108,16 +87,16 @@ const socialLinks = [
   </div>
 </section>
 
-<section class="page-section page-section--soft">
+<section id="contact-offices" class="page-section page-section--soft">
   <div class="container">
     <div class="page-section__header">
       <h2>{content.officesTitle}</h2>
-      <p>{content.officesCopy}</p>
+      <div class="richtext-shell" set:html={content.officesCopy} />
     </div>
 
     <div class="office-gallery">
       {
-        officeGallery.map((image, index) => (
+        content.officeGallery.map((image, index) => (
           <article
             class="office-gallery__card"
             data-reveal="up"

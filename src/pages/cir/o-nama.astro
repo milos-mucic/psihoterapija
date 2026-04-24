@@ -2,18 +2,16 @@
 export const prerender = true;
 
 import AboutPage from "@/components/pages/AboutPage.astro";
-import { getDictionary } from "@/features/i18n/translate";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import BaseLayout from "@/components/components/BaseLayout.astro";
 
 const locale = "sr-cyrl";
-const dictionary = getDictionary(locale);
 const content = await pageContentService.getAboutPageData(locale);
 ---
 
 <BaseLayout
-  title={dictionary.meta.about.title}
-  description={content.banner.description || dictionary.meta.about.description}
+  title={content.seo.title}
+  description={content.seo.description}
   locale={locale}
   canonicalPath="/cir/o-nama/"
 >

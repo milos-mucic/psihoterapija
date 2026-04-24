@@ -3,8 +3,10 @@ import { sanitizeRichTextHtml } from "@/features/blog/utils/rich-text";
 import type {
   AboutPageManagedContent,
   AppointmentPageManagedContent,
+  BlogIndexPageManagedContent,
   BiographyProfileManagedContent,
   BiographyPageManagedContent,
+  ContactPageManagedContent,
   FaqPageManagedContent,
   PricingPageManagedContent,
   PsychotherapyPageManagedContent,
@@ -24,6 +26,11 @@ const bannerSchema = z.object({
   title: requiredText,
   description: richTextRequired,
   backgroundImage: optionalText,
+});
+
+const seoSchema = z.object({
+  title: requiredText,
+  description: requiredText,
 });
 
 const faqItemSchema = z.object({
@@ -65,6 +72,7 @@ const getIndexedTextValues = (input: Record<string, unknown>, prefix: string) =>
   );
 
 export const aboutPageManagedContentSchema: z.ZodType<AboutPageManagedContent> = z.object({
+  seo: seoSchema,
   banner: bannerSchema,
   showcase: z.object({
     title: requiredText,
@@ -89,6 +97,8 @@ export const aboutPageManagedContentSchema: z.ZodType<AboutPageManagedContent> =
 });
 
 const aboutPageFormSchema = z.object({
+  seoTitle: requiredText,
+  seoDescription: requiredText,
   bannerTitle: requiredText,
   bannerDescription: richTextRequired,
   bannerBackgroundImage: requiredText,
@@ -120,6 +130,10 @@ export const parseAboutPageManagedContentForm = (input: unknown): AboutPageManag
   const focusItems = getIndexedTextValues(values, "focusItem");
 
   return aboutPageManagedContentSchema.parse({
+    seo: {
+      title: parsed.seoTitle,
+      description: parsed.seoDescription,
+    },
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -159,6 +173,7 @@ const biographyCardSchema = z.object({
 });
 
 export const biographyPageManagedContentSchema: z.ZodType<BiographyPageManagedContent> = z.object({
+  seo: seoSchema,
   banner: bannerSchema,
   cardsSection: z.object({
     title: requiredText,
@@ -181,6 +196,8 @@ export const biographyPageManagedContentSchema: z.ZodType<BiographyPageManagedCo
 });
 
 const biographyPageFormSchema = z.object({
+  seoTitle: requiredText,
+  seoDescription: requiredText,
   bannerTitle: requiredText,
   bannerDescription: richTextRequired,
   bannerBackgroundImage: optionalText,
@@ -238,6 +255,10 @@ export const parseBiographyPageManagedContentForm = (
   const approachPoints = getIndexedTextValues(values, "approachPoint");
 
   return biographyPageManagedContentSchema.parse({
+    seo: {
+      title: parsed.seoTitle,
+      description: parsed.seoDescription,
+    },
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -260,6 +281,7 @@ export const parseBiographyPageManagedContentForm = (
 
 export const psychotherapyPageManagedContentSchema: z.ZodType<PsychotherapyPageManagedContent> =
   z.object({
+    seo: seoSchema,
     banner: bannerSchema,
     scope: z.object({
       title: requiredText,
@@ -281,6 +303,8 @@ export const psychotherapyPageManagedContentSchema: z.ZodType<PsychotherapyPageM
   });
 
 const psychotherapyPageFormSchema = z.object({
+  seoTitle: requiredText,
+  seoDescription: requiredText,
   bannerTitle: requiredText,
   bannerDescription: richTextRequired,
   bannerBackgroundImage: requiredText,
@@ -316,6 +340,10 @@ export const parsePsychotherapyPageManagedContentForm = (
   );
 
   return psychotherapyPageManagedContentSchema.parse({
+    seo: {
+      title: parsed.seoTitle,
+      description: parsed.seoDescription,
+    },
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -361,6 +389,7 @@ const scopeTabSchema = z.object({
 });
 
 export const scopePageManagedContentSchema: z.ZodType<ScopePageManagedContent> = z.object({
+  seo: seoSchema,
   banner: bannerSchema,
   intro: z.object({
     title: requiredText,
@@ -392,6 +421,8 @@ export const scopePageManagedContentSchema: z.ZodType<ScopePageManagedContent> =
 });
 
 const scopePageFormSchema = z.object({
+  seoTitle: requiredText,
+  seoDescription: requiredText,
   bannerTitle: requiredText,
   bannerDescription: richTextRequired,
   bannerBackgroundImage: requiredText,
@@ -471,6 +502,10 @@ export const parseScopePageManagedContentForm = (input: unknown): ScopePageManag
   const introItems = getIndexedTextValues(values, "introItem");
 
   return scopePageManagedContentSchema.parse({
+    seo: {
+      title: parsed.seoTitle,
+      description: parsed.seoDescription,
+    },
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -508,12 +543,15 @@ const pricingPlanSchema = z.object({
 });
 
 export const pricingPageManagedContentSchema: z.ZodType<PricingPageManagedContent> = z.object({
+  seo: seoSchema,
   banner: bannerSchema,
   plans: z.array(pricingPlanSchema).min(1),
   infoCards: z.array(textCardSchema).min(1),
 });
 
 const pricingPageFormSchema = z.object({
+  seoTitle: requiredText,
+  seoDescription: requiredText,
   bannerTitle: requiredText,
   bannerDescription: richTextRequired,
   bannerBackgroundImage: requiredText,
@@ -541,6 +579,10 @@ export const parsePricingPageManagedContentForm = (input: unknown): PricingPageM
   );
 
   return pricingPageManagedContentSchema.parse({
+    seo: {
+      title: parsed.seoTitle,
+      description: parsed.seoDescription,
+    },
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -553,6 +595,7 @@ export const parsePricingPageManagedContentForm = (input: unknown): PricingPageM
 
 export const appointmentPageManagedContentSchema: z.ZodType<AppointmentPageManagedContent> =
   z.object({
+    seo: seoSchema,
     banner: bannerSchema,
     booking: z.object({
       title: requiredText,
@@ -567,6 +610,8 @@ export const appointmentPageManagedContentSchema: z.ZodType<AppointmentPageManag
   });
 
 const appointmentPageFormSchema = z.object({
+  seoTitle: requiredText,
+  seoDescription: requiredText,
   bannerTitle: requiredText,
   bannerDescription: richTextRequired,
   bannerBackgroundImage: requiredText,
@@ -593,6 +638,10 @@ export const parseAppointmentPageManagedContentForm = (
   );
 
   return appointmentPageManagedContentSchema.parse({
+    seo: {
+      title: parsed.seoTitle,
+      description: parsed.seoDescription,
+    },
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -612,6 +661,7 @@ export const parseAppointmentPageManagedContentForm = (
 };
 
 export const faqPageManagedContentSchema: z.ZodType<FaqPageManagedContent> = z.object({
+  seo: seoSchema,
   banner: bannerSchema,
   faq: z.object({
     items: z.array(faqItemSchema).min(1),
@@ -626,6 +676,8 @@ export const faqPageManagedContentSchema: z.ZodType<FaqPageManagedContent> = z.o
 });
 
 const faqPageFormSchema = z.object({
+  seoTitle: requiredText,
+  seoDescription: requiredText,
   bannerTitle: requiredText,
   bannerDescription: richTextRequired,
   bannerBackgroundImage: requiredText,
@@ -650,6 +702,10 @@ export const parseFaqPageManagedContentForm = (input: unknown): FaqPageManagedCo
   const bookingFormats = getIndexedTextValues(values, "bookingFormat");
 
   return faqPageManagedContentSchema.parse({
+    seo: {
+      title: parsed.seoTitle,
+      description: parsed.seoDescription,
+    },
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -665,5 +721,153 @@ export const parseFaqPageManagedContentForm = (input: unknown): FaqPageManagedCo
       formatLabel: parsed.bookingFormatLabel,
       formats: bookingFormats,
     },
+  });
+};
+
+const socialLinkSchema = z.object({
+  platform: requiredText,
+  label: requiredText,
+  href: requiredText,
+});
+
+export const contactPageManagedContentSchema: z.ZodType<ContactPageManagedContent> = z.object({
+  seo: seoSchema,
+  banner: bannerSchema,
+  introTitle: requiredText,
+  introCopy: richTextRequired,
+  formTitle: requiredText,
+  contactLabels: z.object({
+    phone: requiredText,
+    email: requiredText,
+    socials: requiredText,
+  }),
+  phone: requiredText,
+  email: requiredText,
+  socialLinks: z.array(socialLinkSchema).min(1),
+  officesTitle: requiredText,
+  officesCopy: richTextRequired,
+  officeGallery: z.array(requiredText).min(1),
+});
+
+const contactPageFormSchema = z.object({
+  seoTitle: requiredText,
+  seoDescription: requiredText,
+  bannerTitle: requiredText,
+  bannerDescription: richTextRequired,
+  bannerBackgroundImage: requiredText,
+  introTitle: requiredText,
+  introCopy: richTextRequired,
+  formTitle: requiredText,
+  contactLabelPhone: requiredText,
+  contactLabelEmail: requiredText,
+  contactLabelSocials: requiredText,
+  phone: requiredText,
+  email: requiredText,
+  officesTitle: requiredText,
+  officesCopy: richTextRequired,
+});
+
+export const parseContactPageManagedContent = (input: unknown) =>
+  contactPageManagedContentSchema.parse(input);
+
+export const parseContactPageManagedContentForm = (input: unknown): ContactPageManagedContent => {
+  const parsed = contactPageFormSchema.parse(input);
+  const values = toInputRecord(input);
+  const socialLinks = getIndexedFieldMatches(values, /^socialLink_(\d+)_platform$/).map((index) =>
+    socialLinkSchema.parse({
+      platform: values[`socialLink_${index}_platform`],
+      label: values[`socialLink_${index}_label`],
+      href: values[`socialLink_${index}_href`],
+    }),
+  );
+  const officeGallery = getIndexedFieldMatches(values, /^officeGallery_(\d+)_image$/).map(
+    (index) => requiredText.parse(values[`officeGallery_${index}_image`]),
+  );
+
+  return contactPageManagedContentSchema.parse({
+    seo: {
+      title: parsed.seoTitle,
+      description: parsed.seoDescription,
+    },
+    banner: {
+      title: parsed.bannerTitle,
+      description: parsed.bannerDescription,
+      backgroundImage: parsed.bannerBackgroundImage,
+    },
+    introTitle: parsed.introTitle,
+    introCopy: parsed.introCopy,
+    formTitle: parsed.formTitle,
+    contactLabels: {
+      phone: parsed.contactLabelPhone,
+      email: parsed.contactLabelEmail,
+      socials: parsed.contactLabelSocials,
+    },
+    phone: parsed.phone,
+    email: parsed.email,
+    socialLinks,
+    officesTitle: parsed.officesTitle,
+    officesCopy: parsed.officesCopy,
+    officeGallery,
+  });
+};
+
+export const blogIndexPageManagedContentSchema: z.ZodType<BlogIndexPageManagedContent> = z.object({
+  seo: seoSchema,
+  banner: bannerSchema,
+  allPostsTitle: requiredText,
+  postsLabel: requiredText,
+  searchTitle: requiredText,
+  searchPlaceholder: requiredText,
+  searchActionLabel: requiredText,
+  recentTitle: requiredText,
+  keywordsTitle: requiredText,
+  allKeywordsLabel: requiredText,
+  noResultsText: requiredText,
+});
+
+const blogIndexPageFormSchema = z.object({
+  seoTitle: requiredText,
+  seoDescription: requiredText,
+  bannerTitle: requiredText,
+  bannerDescription: richTextRequired,
+  bannerBackgroundImage: requiredText,
+  allPostsTitle: requiredText,
+  postsLabel: requiredText,
+  searchTitle: requiredText,
+  searchPlaceholder: requiredText,
+  searchActionLabel: requiredText,
+  recentTitle: requiredText,
+  keywordsTitle: requiredText,
+  allKeywordsLabel: requiredText,
+  noResultsText: requiredText,
+});
+
+export const parseBlogIndexPageManagedContent = (input: unknown) =>
+  blogIndexPageManagedContentSchema.parse(input);
+
+export const parseBlogIndexPageManagedContentForm = (
+  input: unknown,
+): BlogIndexPageManagedContent => {
+  const parsed = blogIndexPageFormSchema.parse(input);
+
+  return blogIndexPageManagedContentSchema.parse({
+    seo: {
+      title: parsed.seoTitle,
+      description: parsed.seoDescription,
+    },
+    banner: {
+      title: parsed.bannerTitle,
+      description: parsed.bannerDescription,
+      backgroundImage: parsed.bannerBackgroundImage,
+    },
+    allPostsTitle: parsed.allPostsTitle,
+    postsLabel: parsed.postsLabel,
+    searchTitle: parsed.searchTitle,
+    searchPlaceholder: parsed.searchPlaceholder,
+    searchActionLabel: parsed.searchActionLabel,
+    recentTitle: parsed.recentTitle,
+    keywordsTitle: parsed.keywordsTitle,
+    allKeywordsLabel: parsed.allKeywordsLabel,
+    noResultsText: parsed.noResultsText,
   });
 };

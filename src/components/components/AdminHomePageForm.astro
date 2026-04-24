@@ -77,6 +77,34 @@ const heroTitleRichTextLabels = {
   >
     <div class="page-grid">
       <div>
+        <h2 style="margin: 0;">SEO</h2>
+        <p class="section-copy">Astro i dalje renderuje meta tagove, ali tekst sada dolazi iz CMS-a.</p>
+      </div>
+
+      <div class="admin-form__grid">
+        <label class="admin-form__field admin-form__field--full">
+          <span>SEO naslov</span>
+          <input class="input-control" name="seoTitle" value={content.seo.title} />
+        </label>
+
+        <label class="admin-form__field admin-form__field--full">
+          <span>Meta opis</span>
+          <textarea class="input-control input-control--textarea" name="seoDescription" rows={3}
+            >{content.seo.description}</textarea
+          >
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="card"
+    style="padding: 1.5rem;"
+    data-section-preview
+    data-section-preview-fragment="home-hero"
+  >
+    <div class="page-grid">
+      <div>
         <h2 style="margin: 0;">Hero sekcija</h2>
         <p class="section-copy">Naslov i opis sada koriste isti Lexical rich text editor.</p>
       </div>

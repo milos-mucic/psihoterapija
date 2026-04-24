@@ -41,6 +41,14 @@ const pageConfig = {
     title: "Pitanja",
     copy: "FAQ pitanja, slika i blok za zakazivanje.",
   },
+  contact: {
+    title: "Kontakt",
+    copy: "Kontakt uvod, podaci, drustvene mreze i galerija prostora.",
+  },
+  blog: {
+    title: "Blog listing",
+    copy: "SEO, banner i tekstovi za listu blog postova.",
+  },
 } as const satisfies Record<SupportedPage, { title: string; copy: string }>;
 
 const pageParam = Astro.params.page as SupportedPage | undefined;
@@ -77,6 +85,10 @@ const content = authenticated
           return pageContentService.getManagedAppointmentContent(locale);
         case "faq":
           return pageContentService.getManagedFaqContent(locale);
+        case "contact":
+          return pageContentService.getManagedContactContent(locale);
+        case "blog":
+          return pageContentService.getManagedBlogIndexContent(locale);
       }
     })()
   : undefined;

@@ -2,18 +2,18 @@
 export const prerender = true;
 
 import ContactPage from "@/components/pages/ContactPage.astro";
-import { getDictionary } from "@/features/i18n/translate";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
 import BaseLayout from "@/components/components/BaseLayout.astro";
 
 const locale = "sr-latn";
-const dictionary = getDictionary(locale);
+const content = await pageContentService.getContactPageData(locale);
 ---
 
 <BaseLayout
-  title={dictionary.meta.contact.title}
-  description={dictionary.meta.contact.description}
+  title={content.seo.title}
+  description={content.seo.description}
   locale={locale}
   canonicalPath="/kontakt/"
 >
-  <ContactPage locale={locale} />
+  <ContactPage locale={locale} content={content} />
 </BaseLayout>

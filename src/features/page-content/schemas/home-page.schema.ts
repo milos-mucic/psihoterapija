@@ -26,6 +26,10 @@ const optionalText = z.union([z.string(), z.undefined(), z.null()]).transform((v
 });
 
 export const homePageManagedContentSchema: z.ZodType<HomePageManagedContent> = z.object({
+  seo: z.object({
+    title: requiredText,
+    description: requiredText,
+  }),
   hero: z.object({
     titleHtml: inlineRichTextRequired,
     description: richTextRequired,
@@ -100,6 +104,8 @@ export const homePageManagedContentSchema: z.ZodType<HomePageManagedContent> = z
 });
 
 const formPayloadSchema = z.object({
+  seoTitle: requiredText,
+  seoDescription: requiredText,
   heroTitleHtml: inlineRichTextRequired,
   heroDescription: requiredText,
   heroPrimaryActionLabel: requiredText,
@@ -166,6 +172,10 @@ export const parseHomePageManagedContentForm = (input: unknown): HomePageManaged
   const parsed = formPayloadSchema.parse(input);
 
   return homePageManagedContentSchema.parse({
+    seo: {
+      title: parsed.seoTitle,
+      description: parsed.seoDescription,
+    },
     hero: {
       titleHtml: parsed.heroTitleHtml,
       description: parsed.heroDescription,

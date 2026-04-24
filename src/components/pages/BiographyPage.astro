@@ -18,8 +18,8 @@ const content = previewContent ?? (await pageContentService.getBiographyPageData
 ---
 
 <BaseLayout
-  title={dictionary.meta.biography.title}
-  description={dictionary.meta.biography.description}
+  title={content.seo.title}
+  description={content.seo.description}
   locale={locale}
   canonicalPath={canonicalPath}
   appBarTone="dark"

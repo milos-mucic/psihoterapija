@@ -12,7 +12,9 @@ import {
 import type {
   AboutPageManagedContent,
   AppointmentPageManagedContent,
+  BlogIndexPageManagedContent,
   BiographyPageManagedContent,
+  ContactPageManagedContent,
   FaqPageManagedContent,
   PageKey,
   PricingPageManagedContent,
@@ -33,7 +35,9 @@ type Props = {
     | ScopePageManagedContent
     | PricingPageManagedContent
     | AppointmentPageManagedContent
-    | FaqPageManagedContent;
+    | FaqPageManagedContent
+    | ContactPageManagedContent
+    | BlogIndexPageManagedContent;
   locale: SiteLocale;
   previewBaseHref: string;
   localeLabel: string;

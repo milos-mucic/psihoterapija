@@ -3,21 +3,21 @@ export const prerender = false;
 
 import BlogIndexPage from "@/components/pages/BlogIndexPage.astro";
 import { blogService } from "@/features/blog/services/blog.service";
-import { getDictionary } from "@/features/i18n/translate";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
 import BaseLayout from "@/components/components/BaseLayout.astro";
 
 const locale = "sr-cyrl";
-const dictionary = getDictionary(locale);
+const content = await pageContentService.getBlogIndexPageData(locale);
 const posts = await blogService.listPublishedPosts(locale);
 ---
 
 <BaseLayout
-  title={dictionary.meta.blog.title}
-  description={dictionary.meta.blog.description}
+  title={content.seo.title}
+  description={content.seo.description}
   locale={locale}
   canonicalPath="/cir/blog/"
   appBarTone="dark"
   appBarOverlay={true}
 >
-  <BlogIndexPage locale={locale} posts={posts} />
+  <BlogIndexPage locale={locale} posts={posts} content={content} />
 </BaseLayout>

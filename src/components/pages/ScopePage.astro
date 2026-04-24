@@ -15,9 +15,9 @@ const { locale, content: previewContent } = Astro.props;
 const content = previewContent ?? (await pageContentService.getScopePageData(locale));
 const dictionary = getDictionary(locale);
 const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
-const scopeTabListLabel = locale === "sr-cyrl" ? "Кључне теме" : "Ključne teme";
-const scopeTabsPrevLabel = locale === "sr-cyrl" ? "Претходна тема" : "Prethodna tema";
-const scopeTabsNextLabel = locale === "sr-cyrl" ? "Следећа тема" : "Sledeća tema";
+const scopeTabListLabel = dictionary.common.scopeTabList;
+const scopeTabsPrevLabel = dictionary.common.scopeTabPrev;
+const scopeTabsNextLabel = dictionary.common.scopeTabNext;
 ---
 
 <div id="scope-banner" class="scope-page__banner">

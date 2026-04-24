@@ -54,6 +54,16 @@ const pageDefinitions: Array<{ pageKey: PageKey; title: string; copy: string }> 
     title: "Pitanja",
     copy: "FAQ lista i blok za zakazivanje.",
   },
+  {
+    pageKey: "contact",
+    title: "Kontakt",
+    copy: "Kontakt detalji, mreze i galerija prostora.",
+  },
+  {
+    pageKey: "blog",
+    title: "Blog",
+    copy: "SEO, banner i filteri za listing blog postova.",
+  },
 ];
 
 const localeLabels: Record<SiteLocale, string> = {
@@ -162,7 +172,7 @@ export type PageDashboardSummary = {
 export const pageDashboardService = {
   async listPages(): Promise<PageDashboardSummary[]> {
     const storedRecords = await pageContentService.listStoredPageContentRecords();
-    const recordMap = new Map(
+    const recordMap = new Map<string, PageContentRecord>(
       storedRecords.map((record) => [getRecordKey(record.pageKey, record.locale), record]),
     );
 

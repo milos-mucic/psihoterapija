@@ -13,6 +13,8 @@ const supportedPages = new Set([
   "pricing",
   "appointment",
   "faq",
+  "contact",
+  "blog",
 ]);
 
 const toPayload = async (request: Request) => {
@@ -65,6 +67,12 @@ export const POST: APIRoute = async (context) => {
         break;
       case "faq":
         await pageContentService.updateFaqContent(localeValue, payload);
+        break;
+      case "contact":
+        await pageContentService.updateContactContent(localeValue, payload);
+        break;
+      case "blog":
+        await pageContentService.updateBlogIndexContent(localeValue, payload);
         break;
       default:
         return context.redirect(`${adminConfig.basePath}/pages/`);

@@ -48,7 +48,12 @@ const initialAppBarTone = appBarTone ?? derivedAppBarTone;
 <!doctype html>
 <html lang={locale === "sr-cyrl" ? "sr-Cyrl-RS" : "sr-Latn-RS"}>
   <head>
-    <SeoHead title={title} description={description} canonicalPath={canonicalPath} />
+    <SeoHead
+      title={title}
+      description={description}
+      canonicalPath={canonicalPath}
+      locale={locale}
+    />
     <slot name="head" />
   </head>
   <body

@@ -2,18 +2,16 @@
 export const prerender = true;
 
 import FaqPage from "@/components/pages/FaqPage.astro";
-import { getDictionary } from "@/features/i18n/translate";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import BaseLayout from "@/components/components/BaseLayout.astro";
 
 const locale = "sr-cyrl";
-const dictionary = getDictionary(locale);
 const content = await pageContentService.getFaqPageData(locale);
 ---
 
 <BaseLayout
-  title={dictionary.meta.faq.title}
-  description={content.banner.description || dictionary.meta.faq.description}
+  title={content.seo.title}
+  description={content.seo.description}
   locale={locale}
   canonicalPath="/cir/pitanja/"
   appBarTone="dark"

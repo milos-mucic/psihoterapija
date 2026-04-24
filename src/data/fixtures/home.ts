@@ -20,6 +20,10 @@ type HomeThemeCard = LinkCard & {
 };
 
 export type HomePageData = {
+  seo: {
+    title: string;
+    description: string;
+  };
   hero: {
     titleHtml: string;
     description: string;
@@ -89,8 +93,13 @@ const toCombinedRichTextHtml = (paragraphs: string[], bullets: string[]) => {
 
 export const getDefaultHomePageManagedContent = (locale: SiteLocale): HomePageManagedContent => {
   const content = getDictionary(locale).homePage;
+  const dictionary = getDictionary(locale);
 
   return {
+    seo: {
+      title: dictionary.meta.home.title,
+      description: dictionary.meta.home.description,
+    },
     hero: {
       titleHtml: sanitizeInlineRichTextHtml(content.hero.titleHtml),
       description: toParagraphHtml(content.hero.description),
@@ -181,6 +190,7 @@ export const buildHomePageData = (
   const dictionary = getDictionary(locale);
 
   return {
+    seo: content.seo,
     hero: {
       titleHtml: content.hero.titleHtml,
       description: content.hero.description,

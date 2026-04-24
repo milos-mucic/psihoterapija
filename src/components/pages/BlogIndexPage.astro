@@ -3,16 +3,19 @@ import PageBanner from "@/components/sections/PageBanner.astro";
 import { extractPlainTextFromHtml } from "@/features/blog/utils/rich-text";
 import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
 import type { BlogListItem } from "@/features/blog/types/blog.types";
 import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
   locale: SiteLocale;
   posts: BlogListItem[];
+  content?: Awaited<ReturnType<typeof pageContentService.getBlogIndexPageData>>;
 };
 
-const { locale, posts } = Astro.props;
+const { locale, posts, content: previewContent } = Astro.props;
 const dictionary = getDictionary(locale);
+const content = previewContent ?? (await pageContentService.getBlogIndexPageData(locale));
 const recentPosts = posts.slice(0, 3);
 const keywordSet = new Set<string>();
 
@@ -26,27 +29,22 @@ posts.forEach((post) => {
 });
 
 const keywords = Array.from(keywordSet);
-const ui = dictionary.blog.index;
 ---
 
 <PageBanner
-  title={dictionary.blog.title}
-  description={ui.bannerDescription}
-  theme="dark"
-  align="split"
+  {...content.banner}
   sectionId="blog-banner"
-  backgroundImage="/legacy/images/blog-header-hero.svg"
 />
 
-<section class="page-section blog-index" data-blog-index>
+<section id="blog-index" class="page-section blog-index" data-blog-index>
   <div class="container">
     <div class="blog-index__layout">
       <div class="blog-index__main">
         <div class="blog-index__main-head" data-reveal="up">
-          <h2>{ui.allPosts}</h2>
+          <h2>{content.allPostsTitle}</h2>
           <p>
             <span data-blog-count>{posts.length}</span>
-            {ui.postsLabel}
+            {content.postsLabel}
           </p>
         </div>
 
@@ -111,29 +109,29 @@ const ui = dictionary.blog.index;
         </div>
 
         <div class="blog-index__empty" data-blog-empty hidden>
-          {ui.noResults}
+          {content.noResultsText}
         </div>
       </div>
 
       <aside class="blog-index__sidebar">
         <div class="blog-index__panel" data-reveal="up">
-          <h4>{ui.searchTitle}</h4>
+          <h4>{content.searchTitle}</h4>
           <form class="blog-index__search-form" data-blog-search-form>
             <input
               class="blog-index__search-input"
               type="search"
               data-blog-search-input
-              placeholder={ui.searchPlaceholder}
+              placeholder={content.searchPlaceholder}
               autocomplete="off"
             />
             <button class="button-primary blog-index__search-submit" type="submit">
-              {ui.searchAction}
+              {content.searchActionLabel}
             </button>
           </form>
         </div>
 
         <div class="blog-index__panel" data-reveal="up" style="--reveal-delay: 80ms;">
-          <h4>{ui.recentTitle}</h4>
+          <h4>{content.recentTitle}</h4>
           <div class="blog-index__recent-list">
             {
               recentPosts.map((post) => (
@@ -167,10 +165,10 @@ const ui = dictionary.blog.index;
         </div>
 
         <div class="blog-index__panel" data-reveal="up" style="--reveal-delay: 140ms;">
-          <h4>{ui.keywordsTitle}</h4>
+          <h4>{content.keywordsTitle}</h4>
           <div class="blog-index__keywords-list">
             <button type="button" class="blog-index__keyword-chip is-active" data-blog-tag="">
-              {ui.allKeywords}
+              {content.allKeywordsLabel}
             </button>
             {
               keywords.map((keyword) => (

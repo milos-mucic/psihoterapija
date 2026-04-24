@@ -20,6 +20,10 @@ export const getPublicPageHref = (pageKey: PageKey, locale: SiteLocale) => {
       return localizePath(locale, "/zakazivanje/");
     case "faq":
       return localizePath(locale, "/pitanja/");
+    case "contact":
+      return localizePath(locale, "/kontakt/");
+    case "blog":
+      return localizePath(locale, "/blog/");
   }
 };
 
