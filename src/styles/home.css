@@ -6,6 +6,10 @@
   padding-top: 2rem;
 }
 
+#home-prompt.home-section {
+  padding-bottom: 1.8rem;
+}
+
 .home-section--dark {
   background: linear-gradient(180deg, #163c3d 0%, #102f30 100%);
   color: var(--white);
@@ -106,7 +110,7 @@
 .home-about {
   display: grid;
   grid-template-columns: minmax(18rem, 35rem) minmax(0, 1fr);
-  gap: 2rem;
+  gap: 1.35rem;
   align-items: center;
 }
 
