@@ -85,7 +85,7 @@
       "recentTitle": "Najskoriji postovi",
       "keywordsTitle": "Ključne reči",
       "allKeywords": "Sve",
-      "noResults": "Nema tekstova za izabrani keyword."
+      "noResults": "Nema tekstova za izabranu ključnu reč."
     }
   },
   "forms": {
@@ -107,8 +107,8 @@
     "adminWrongPassword": "Pogrešna šifra."
   },
   "common": {
-    "noItemsFound": "No items found.",
-    "play": "Play",
+    "noItemsFound": "Nema stavki.",
+    "play": "Pusti",
     "cancel": "Odustani",
     "close": "Zatvori",
     "officeRoom": "Prostorija",
@@ -245,7 +245,7 @@
         "description": "Na stranici ispod možete naći dodatne informacije o našem kabinetu."
       },
       "showcaseTitle": "Psihoterapijski kabinet 'Ikar'",
-      "showcaseEmptyLabel": "No items found.",
+      "showcaseEmptyLabel": "Nema stavki.",
       "ideaTitle": "Glavna ideja našeg kabineta",
       "ideaHtml": "U savremenoj psihološkoj praksi razvijenih zemalja, psihoterapija predstavlja pravno standardizovan i odgovoran vid pomoći, zasnovan na jasnim teorijskim okvirima, kliničkom iskustvu i etičkim principima<strong>. </strong>U našoj zemlji, međutim, ona je i dalje često praćena konfuzijom, mistikom i nejasnim očekivanjima, kao i različitim pristupima koji se predstavljaju kao terapijski, a koji neretko nemaju trajno ili stvarno dejstvo, najčešće na uštrb samih klijenata i pacijenata.<br><br>Naš rad je u širem smislu prevashodno usmeren ka osvetljavanju toga šta psihoterapija jeste, ali i šta ona nije. Smatramo da je edukacija javnosti sastavni deo svakog ozbiljnog terapijskog procesa, jer samo kroz razumevanje moguće je uspostaviti realna očekivanja, osećaj sigurnosti i poverenje u rad koji se odvija. Psihološko zdravlje se ne može posmatrati izdvojeno od društvenog konteksta, jer ne postoje psihološki zdrave osobe u sredini koja je u osnovi nezdrava.<br><br>U užem smislu, naš cilj se ogleda u profesionalnom i odgovornom psihoterapijskom radu, zasnovanom na intervencijama koje su klijentima zaista potrebne. U fokusu su individualnost, lične granice i kompleksnost svake psihološke pojave. Ne bavimo se „tretmanom bolesti“ u apstraktnom smislu koristeći tehnike ili alate, jer na psihoterapiju ne dolazi <em>dijagnoza</em>, već čovek. Upravo zato je naš pristup uvek prilagođen pojedincu i, što je najbitnije, on je pre svega ljudski.<br><br>Nijedan psihoterapijski proces nije identičan, jer nijedna osoba i nijedan životni put nisu isti.<br><br>Psihoterapiju razumemo kao proces koji zahteva vreme, kontinuitet i spremnost za susret sa sopstvenim emocijama, a ne kao mesto gde će psihoterapeut ponuditi brzo ili univerzalno rešenje.",
       "focusTitle": "Bavimo se:",
@@ -258,9 +258,9 @@
       ],
       "recentTitle": "Najnovije objave na našem sajtu",
       "recentCopy": "Budite u toku sa najnovijim istraživanjima u oblasti psihologije i psihoterapije.",
-      "recentLabel": "View all posts",
-      "recentReadMoreLabel": "Read more",
-      "recentEmptyLabel": "No items found."
+      "recentLabel": "Sve objave",
+      "recentReadMoreLabel": "Pročitajte više",
+      "recentEmptyLabel": "Nema objava."
     },
     "psychotherapy": {
       "banner": {
@@ -277,7 +277,7 @@
         "Gubitak, trauma, krize identiteta",
         "Ponavljanje destruktivnih životnih obrazaca"
       ],
-      "servicesEmptyLabel": "No items found.",
+      "servicesEmptyLabel": "Nema stavki.",
       "bookingTitleHtml": "Neophodne informacije <br>o zakazivanju termina",
       "formatLabel": "Izaberite format rada",
       "formats": [
