@@ -13,6 +13,6 @@ const blog = defineCollection({
     tags: z.array(z.string()).default([]),
     status: z.enum(["draft", "published", "archived"]).default("published"),
   }),
-});
+}); 
 
 export const collections = { blog };
