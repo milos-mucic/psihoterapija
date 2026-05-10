@@ -24,6 +24,7 @@ export type HomePageData = {
     title: string;
     description: string;
   };
+  hiddenBlocks: string[];
   hero: {
     titleHtml: string;
     description: string;
@@ -217,6 +218,7 @@ export const buildHomePageData = (
 
   return {
     seo: content.seo,
+    hiddenBlocks: content.hiddenBlocks ?? [],
     hero: {
       titleHtml: content.hero.titleHtml,
       description: content.hero.description,

@@ -59,6 +59,7 @@ export type HomeEditableMediaCard = HomeEditableLinkCard & {
 
 export type HomePageManagedContent = {
   seo: PageSeoManagedContent;
+  hiddenBlocks?: string[];
   hero: {
     titleHtml: string;
     description: string;
@@ -113,6 +114,7 @@ export type HomePageManagedContent = {
 
 export type AboutPageManagedContent = {
   seo: PageSeoManagedContent;
+  hiddenBlocks?: string[];
   banner: PageBannerManagedContent;
   showcase: {
     title: string;
@@ -138,6 +140,7 @@ export type AboutPageManagedContent = {
 
 export type BiographyPageManagedContent = {
   seo: PageSeoManagedContent;
+  hiddenBlocks?: string[];
   banner: PageBannerManagedContent;
   cardsSection: {
     title: string;
@@ -155,6 +158,7 @@ export type BiographyPageManagedContent = {
 
 export type PsychotherapyPageManagedContent = {
   seo: PageSeoManagedContent;
+  hiddenBlocks?: string[];
   banner: PageBannerManagedContent;
   scope: {
     title: string;
@@ -177,6 +181,7 @@ export type PsychotherapyPageManagedContent = {
 
 export type ScopePageManagedContent = {
   seo: PageSeoManagedContent;
+  hiddenBlocks?: string[];
   banner: PageBannerManagedContent;
   intro: {
     title: string;
@@ -220,6 +225,7 @@ export type ScopePageManagedContent = {
 
 export type PricingPageManagedContent = {
   seo: PageSeoManagedContent;
+  hiddenBlocks?: string[];
   banner: PageBannerManagedContent;
   plans: Array<{
     title: string;
@@ -232,6 +238,7 @@ export type PricingPageManagedContent = {
 
 export type AppointmentPageManagedContent = {
   seo: PageSeoManagedContent;
+  hiddenBlocks?: string[];
   banner: PageBannerManagedContent;
   booking: {
     title: string;
@@ -247,6 +254,7 @@ export type AppointmentPageManagedContent = {
 
 export type FaqPageManagedContent = {
   seo: PageSeoManagedContent;
+  hiddenBlocks?: string[];
   banner: PageBannerManagedContent;
   faq: {
     items: ManagedFaqItem[];
@@ -268,6 +276,7 @@ export type ContactSocialLinkManagedContent = {
 
 export type ContactPageManagedContent = {
   seo: PageSeoManagedContent;
+  hiddenBlocks?: string[];
   banner: PageBannerManagedContent;
   introTitle: string;
   introCopy: string;
@@ -287,6 +296,7 @@ export type ContactPageManagedContent = {
 
 export type BlogIndexPageManagedContent = {
   seo: PageSeoManagedContent;
+  hiddenBlocks?: string[];
   banner: PageBannerManagedContent;
   allPostsTitle: string;
   postsLabel: string;

@@ -1,11 +1,13 @@
 ---
+import AdminBlockVisibilityToggle from "@/components/components/AdminBlockVisibilityToggle.astro";
 import type { ManagedPageEditorRepeatableTextSection } from "@/features/page-content/admin/managed-page-editor.config";
 
 type Props = {
   section: ManagedPageEditorRepeatableTextSection;
+  visibilityToggle?: { fragment: string; hidden: boolean };
 };
 
-const { section } = Astro.props;
+const { section, visibilityToggle } = Astro.props;
 ---
 
 <div
@@ -14,6 +16,9 @@ const { section } = Astro.props;
   data-section-preview
   data-section-preview-fragment={section.fragment}
 >
+  {visibilityToggle ? (
+    <AdminBlockVisibilityToggle fragment={visibilityToggle.fragment} hidden={visibilityToggle.hidden} />
+  ) : null}
   <div class="page-grid">
     <div>
       <h2 style="margin: 0;">{section.title}</h2>

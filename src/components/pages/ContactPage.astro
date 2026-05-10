@@ -15,8 +15,11 @@ const content = previewContent ?? (await pageContentService.getContactPageData(l
 const dictionary = getDictionary(locale);
 ---
 
-<PageBanner {...content.banner} />
+{!content.hiddenBlocks?.includes("contact-banner") && (
+  <PageBanner {...content.banner} />
+)}
 
+{!content.hiddenBlocks?.includes("contact-details") && (
 <section id="contact-details" class="page-section">
   <div class="container">
     <div class="contact-layout">
@@ -86,7 +89,9 @@ const dictionary = getDictionary(locale);
     </div>
   </div>
 </section>
+)}
 
+{!content.hiddenBlocks?.includes("contact-offices") && (
 <section id="contact-offices" class="page-section page-section--soft">
   <div class="container">
     <div class="page-section__header">
@@ -119,3 +124,4 @@ const dictionary = getDictionary(locale);
     </div>
   </div>
 </section>
+)}

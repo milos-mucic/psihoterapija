@@ -1,4 +1,5 @@
 ---
+import AdminBlockVisibilityToggle from "@/components/components/AdminBlockVisibilityToggle.astro";
 import { AdminRichTextField } from "@/components/components/AdminRichTextField";
 import type { AdminRichTextFieldProps } from "@/components/components/AdminRichTextField";
 import type { BiographyProfileManagedContent } from "@/features/page-content/types/page-content.types";
@@ -12,6 +13,7 @@ type Props = {
   cards: BiographyProfileManagedContent[];
   uploadFolder: string;
   richTextLabels: AdminRichTextFieldProps["labels"];
+  visibilityToggle?: { fragment: string; hidden: boolean };
 };
 
 const {
@@ -23,6 +25,7 @@ const {
   cards,
   uploadFolder,
   richTextLabels,
+  visibilityToggle,
 } = Astro.props;
 ---
 
@@ -32,6 +35,9 @@ const {
   data-section-preview
   data-section-preview-fragment={fragment}
 >
+  {visibilityToggle ? (
+    <AdminBlockVisibilityToggle fragment={visibilityToggle.fragment} hidden={visibilityToggle.hidden} />
+  ) : null}
   <div class="page-grid">
     <div>
       <h2 style="margin: 0;">{title}</h2>

@@ -18,12 +18,14 @@ const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
   locale={locale}
   canonicalPath="/cir/"
 >
-  <HomeHeroSection
-    titleHtml={content.hero.titleHtml}
-    description={content.hero.description}
-    primaryAction={content.hero.primaryAction}
-    secondaryAction={content.hero.secondaryAction}
-  />
+  {!content.hiddenBlocks?.includes("home-hero") && (
+    <HomeHeroSection
+      titleHtml={content.hero.titleHtml}
+      description={content.hero.description}
+      primaryAction={content.hero.primaryAction}
+      secondaryAction={content.hero.secondaryAction}
+    />
+  )}
 
   <HomePageContent locale={locale} content={content} posts={posts} />
 </BaseLayout>

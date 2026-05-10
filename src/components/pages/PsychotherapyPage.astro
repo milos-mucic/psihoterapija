@@ -22,6 +22,7 @@ const scopeTabsNextLabel = dictionary.common.scopeTabNext;
 const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/session-banner.webp";
 ---
 
+{!content.hiddenBlocks?.includes("psychotherapy-banner") && (
 <div id="psychotherapy-banner" class="psychotherapy-page__banner">
   <PageBanner {...content.banner} />
 </div>
@@ -40,7 +41,9 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
     </article>
   </div>
 </section>
+)}
 
+{!content.hiddenBlocks?.includes("psychotherapy-scope") && (
 <section id="psychotherapy-tabs" class="page-section psychotherapy-page__tabs-section">
   <div class="container">
     <div class="psychotherapy-page__tabs" data-scope-tabs>
@@ -199,6 +202,7 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
     </div>
   </div>
 </section>
+)}
 
 <section id="psychotherapy-blog" class="home-section home-section--tight">
   <div class="container">

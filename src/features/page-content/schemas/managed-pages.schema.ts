@@ -49,8 +49,25 @@ const textCardSchema = z.object({
   copy: richTextRequired,
 });
 
+const hiddenBlocksSchema = z.array(z.string().trim().min(1)).default([]);
+
 const toInputRecord = (input: unknown) =>
   typeof input === "object" && input !== null ? (input as Record<string, unknown>) : {};
+
+export const collectHiddenBlocksFromForm = (input: Record<string, unknown>): string[] => {
+  const expression = /^blockHidden_(.+)$/;
+  const fragments = new Set<string>();
+
+  for (const key of Object.keys(input)) {
+    const match = expression.exec(key);
+
+    if (match && input[key] === "1") {
+      fragments.add(match[1]);
+    }
+  }
+
+  return Array.from(fragments);
+};
 
 const getIndexedFieldMatches = (input: Record<string, unknown>, expression: RegExp) => {
   const indexes = new Set<number>();
@@ -73,6 +90,7 @@ const getIndexedTextValues = (input: Record<string, unknown>, prefix: string) =>
 
 export const aboutPageManagedContentSchema: z.ZodType<AboutPageManagedContent> = z.object({
   seo: seoSchema,
+  hiddenBlocks: hiddenBlocksSchema,
   banner: bannerSchema,
   showcase: z.object({
     title: requiredText,
@@ -134,6 +152,7 @@ export const parseAboutPageManagedContentForm = (input: unknown): AboutPageManag
       title: parsed.seoTitle,
       description: parsed.seoDescription,
     },
+    hiddenBlocks: collectHiddenBlocksFromForm(values),
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -174,6 +193,7 @@ const biographyCardSchema = z.object({
 
 export const biographyPageManagedContentSchema: z.ZodType<BiographyPageManagedContent> = z.object({
   seo: seoSchema,
+  hiddenBlocks: hiddenBlocksSchema,
   banner: bannerSchema,
   cardsSection: z.object({
     title: requiredText,
@@ -259,6 +279,7 @@ export const parseBiographyPageManagedContentForm = (
       title: parsed.seoTitle,
       description: parsed.seoDescription,
     },
+    hiddenBlocks: collectHiddenBlocksFromForm(values),
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -282,6 +303,7 @@ export const parseBiographyPageManagedContentForm = (
 export const psychotherapyPageManagedContentSchema: z.ZodType<PsychotherapyPageManagedContent> =
   z.object({
     seo: seoSchema,
+    hiddenBlocks: hiddenBlocksSchema,
     banner: bannerSchema,
     scope: z.object({
       title: requiredText,
@@ -344,6 +366,7 @@ export const parsePsychotherapyPageManagedContentForm = (
       title: parsed.seoTitle,
       description: parsed.seoDescription,
     },
+    hiddenBlocks: collectHiddenBlocksFromForm(values),
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -390,6 +413,7 @@ const scopeTabSchema = z.object({
 
 export const scopePageManagedContentSchema: z.ZodType<ScopePageManagedContent> = z.object({
   seo: seoSchema,
+  hiddenBlocks: hiddenBlocksSchema,
   banner: bannerSchema,
   intro: z.object({
     title: requiredText,
@@ -506,6 +530,7 @@ export const parseScopePageManagedContentForm = (input: unknown): ScopePageManag
       title: parsed.seoTitle,
       description: parsed.seoDescription,
     },
+    hiddenBlocks: collectHiddenBlocksFromForm(values),
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -544,6 +569,7 @@ const pricingPlanSchema = z.object({
 
 export const pricingPageManagedContentSchema: z.ZodType<PricingPageManagedContent> = z.object({
   seo: seoSchema,
+  hiddenBlocks: hiddenBlocksSchema,
   banner: bannerSchema,
   plans: z.array(pricingPlanSchema).min(1),
   infoCards: z.array(textCardSchema).min(1),
@@ -583,6 +609,7 @@ export const parsePricingPageManagedContentForm = (input: unknown): PricingPageM
       title: parsed.seoTitle,
       description: parsed.seoDescription,
     },
+    hiddenBlocks: collectHiddenBlocksFromForm(values),
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -596,6 +623,7 @@ export const parsePricingPageManagedContentForm = (input: unknown): PricingPageM
 export const appointmentPageManagedContentSchema: z.ZodType<AppointmentPageManagedContent> =
   z.object({
     seo: seoSchema,
+    hiddenBlocks: hiddenBlocksSchema,
     banner: bannerSchema,
     booking: z.object({
       title: requiredText,
@@ -642,6 +670,7 @@ export const parseAppointmentPageManagedContentForm = (
       title: parsed.seoTitle,
       description: parsed.seoDescription,
     },
+    hiddenBlocks: collectHiddenBlocksFromForm(values),
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -662,6 +691,7 @@ export const parseAppointmentPageManagedContentForm = (
 
 export const faqPageManagedContentSchema: z.ZodType<FaqPageManagedContent> = z.object({
   seo: seoSchema,
+  hiddenBlocks: hiddenBlocksSchema,
   banner: bannerSchema,
   faq: z.object({
     items: z.array(faqItemSchema).min(1),
@@ -706,6 +736,7 @@ export const parseFaqPageManagedContentForm = (input: unknown): FaqPageManagedCo
       title: parsed.seoTitle,
       description: parsed.seoDescription,
     },
+    hiddenBlocks: collectHiddenBlocksFromForm(values),
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -732,6 +763,7 @@ const socialLinkSchema = z.object({
 
 export const contactPageManagedContentSchema: z.ZodType<ContactPageManagedContent> = z.object({
   seo: seoSchema,
+  hiddenBlocks: hiddenBlocksSchema,
   banner: bannerSchema,
   introTitle: requiredText,
   introCopy: richTextRequired,
@@ -789,6 +821,7 @@ export const parseContactPageManagedContentForm = (input: unknown): ContactPageM
       title: parsed.seoTitle,
       description: parsed.seoDescription,
     },
+    hiddenBlocks: collectHiddenBlocksFromForm(values),
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -813,6 +846,7 @@ export const parseContactPageManagedContentForm = (input: unknown): ContactPageM
 
 export const blogIndexPageManagedContentSchema: z.ZodType<BlogIndexPageManagedContent> = z.object({
   seo: seoSchema,
+  hiddenBlocks: hiddenBlocksSchema,
   banner: bannerSchema,
   allPostsTitle: requiredText,
   postsLabel: requiredText,
@@ -849,12 +883,14 @@ export const parseBlogIndexPageManagedContentForm = (
   input: unknown,
 ): BlogIndexPageManagedContent => {
   const parsed = blogIndexPageFormSchema.parse(input);
+  const values = toInputRecord(input);
 
   return blogIndexPageManagedContentSchema.parse({
     seo: {
       title: parsed.seoTitle,
       description: parsed.seoDescription,
     },
+    hiddenBlocks: collectHiddenBlocksFromForm(values),
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,

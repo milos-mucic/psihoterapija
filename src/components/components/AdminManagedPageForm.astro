@@ -48,6 +48,27 @@ const editorConfig: ManagedPageEditorConfig = getManagedPageEditorConfig(
   page as SupportedManagedPage,
   content,
 );
+const hiddenBlocksList = content.hiddenBlocks ?? [];
+const isSeoSection = (section: ManagedPageEditorConfig["sections"][number]) =>
+  section.kind === "standard" && section.title === "SEO";
+const visibilityToggleByIndex = new Map<number, { fragment: string; hidden: boolean }>();
+const seenFragments = new Set<string>();
+
+editorConfig.sections.forEach((section, index) => {
+  if (isSeoSection(section)) {
+    return;
+  }
+
+  if (seenFragments.has(section.fragment)) {
+    return;
+  }
+
+  seenFragments.add(section.fragment);
+  visibilityToggleByIndex.set(index, {
+    fragment: section.fragment,
+    hidden: hiddenBlocksList.includes(section.fragment),
+  });
+});
 const richTextLabels = {
   bold: "Bold",
   italic: "Italic",
@@ -78,12 +99,15 @@ const richTextLabels = {
   <input type="hidden" name="previewToken" value="" data-admin-preview-token />
 
   {
-    editorConfig.sections.map((section) =>
-      section.kind === "standard" ? (
+    editorConfig.sections.map((section, index) => {
+      const visibilityToggle = visibilityToggleByIndex.get(index);
+
+      return section.kind === "standard" ? (
         <AdminManagedSection
           section={section}
           uploadFolder={editorConfig.uploadFolder}
           richTextLabels={richTextLabels}
+          visibilityToggle={visibilityToggle}
         />
       ) : section.kind === "biographyCards" ? (
         <AdminBiographyCardsEditor
@@ -95,6 +119,7 @@ const richTextLabels = {
           cards={section.cards}
           uploadFolder={editorConfig.uploadFolder}
           richTextLabels={richTextLabels}
+          visibilityToggle={visibilityToggle}
         />
       ) : section.kind === "scopeTabs" ? (
         <AdminScopeTabsEditor
@@ -103,17 +128,19 @@ const richTextLabels = {
           copy={section.copy}
           tabs={section.tabs}
           richTextLabels={richTextLabels}
+          visibilityToggle={visibilityToggle}
         />
       ) : section.kind === "repeatableText" ? (
-        <AdminRepeatableTextSection section={section} />
+        <AdminRepeatableTextSection section={section} visibilityToggle={visibilityToggle} />
       ) : (
         <AdminRepeatableGroupSection
           section={section}
           uploadFolder={editorConfig.uploadFolder}
           richTextLabels={richTextLabels}
+          visibilityToggle={visibilityToggle}
         />
-      ),
-    )
+      );
+    })
   }
 
   <div class="admin-form__actions admin-form__actions--floating">
