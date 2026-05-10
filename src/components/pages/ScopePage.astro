@@ -20,10 +20,13 @@ const scopeTabsPrevLabel = dictionary.common.scopeTabPrev;
 const scopeTabsNextLabel = dictionary.common.scopeTabNext;
 ---
 
+{!content.hiddenBlocks?.includes("scope-banner") && (
 <div id="scope-banner" class="scope-page__banner">
   <PageBanner {...content.banner} />
 </div>
+)}
 
+{!content.hiddenBlocks?.includes("scope-tabs") && (
 <section id="scope-tabs" class="page-section scope-page__tabs-section">
   <div class="container">
     <div class="scope-page__tabs" data-scope-tabs>
@@ -188,7 +191,9 @@ const scopeTabsNextLabel = dictionary.common.scopeTabNext;
     </div>
   </div>
 </section>
+)}
 
+{!content.hiddenBlocks?.includes("scope-focus") && (
 <section id="scope-focus" class="page-section scope-page__focus-section">
   <div class="container">
     <div class="scope-page__focus-grid">
@@ -213,7 +218,9 @@ const scopeTabsNextLabel = dictionary.common.scopeTabNext;
     </div>
   </div>
 </section>
+)}
 
+{!content.hiddenBlocks?.includes("scope-blog") && (
 <section id="scope-blog" class="home-section home-section--tight">
   <div class="container">
     <div class="home-heading-row home-heading-row--blog" data-reveal="up">
@@ -282,6 +289,7 @@ const scopeTabsNextLabel = dictionary.common.scopeTabNext;
     }
   </div>
 </section>
+)}
 
 <script>
   (() => {

@@ -1,4 +1,5 @@
 ---
+import AdminBlockVisibilityToggle from "@/components/components/AdminBlockVisibilityToggle.astro";
 import type { ScopePageManagedContent } from "@/features/page-content/types/page-content.types";
 
 type Props = {
@@ -7,9 +8,10 @@ type Props = {
   copy: string;
   tabs: ScopePageManagedContent["tabs"];
   richTextLabels: Record<string, string>;
+  visibilityToggle?: { fragment: string; hidden: boolean };
 };
 
-const { fragment, title, copy, tabs, richTextLabels } = Astro.props;
+const { fragment, title, copy, tabs, richTextLabels, visibilityToggle } = Astro.props;
 ---
 
 <div
@@ -18,6 +20,9 @@ const { fragment, title, copy, tabs, richTextLabels } = Astro.props;
   data-section-preview
   data-section-preview-fragment={fragment}
 >
+  {visibilityToggle ? (
+    <AdminBlockVisibilityToggle fragment={visibilityToggle.fragment} hidden={visibilityToggle.hidden} />
+  ) : null}
   <div class="page-grid">
     <div>
       <h2 style="margin: 0;">{title}</h2>

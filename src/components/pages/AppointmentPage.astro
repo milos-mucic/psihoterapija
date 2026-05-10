@@ -15,6 +15,7 @@ const content = previewContent ?? (await pageContentService.getAppointmentPageDa
 const dictionary = getDictionary(locale);
 ---
 
+{!content.hiddenBlocks?.includes("appointment-booking") && (
 <section
   id="appointment-booking"
   class="home-section home-section--tight appointment-page__booking"
@@ -40,7 +41,9 @@ const dictionary = getDictionary(locale);
     </div>
   </div>
 </section>
+)}
 
+{!content.hiddenBlocks?.includes("appointment-faq") && (
 <FaqAccordionSection
   items={content.faqs}
   image={content.faqImage}
@@ -48,6 +51,7 @@ const dictionary = getDictionary(locale);
   sectionClass="page-section--soft appointment-page__accordion-section"
   sectionId="appointment-faq"
 />
+)}
 
 <style>
   .appointment-page__booking {

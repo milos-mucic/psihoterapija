@@ -18,8 +18,11 @@ const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
 ---
 
 <div class="about-page">
-  <PageBanner {...content.banner} sectionId="about-banner" />
+  {!content.hiddenBlocks?.includes("about-banner") && (
+    <PageBanner {...content.banner} sectionId="about-banner" />
+  )}
 
+  {!content.hiddenBlocks?.includes("about-idea") && (
   <section id="about-idea" class="page-section about-page__idea">
     <div class="container">
       <div class="about-page__split">
@@ -39,7 +42,9 @@ const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
       </div>
     </div>
   </section>
+  )}
 
+  {!content.hiddenBlocks?.includes("about-blog") && (
   <section id="about-blog" class="home-section">
     <div class="container">
       <div class="home-heading-row home-heading-row--blog" data-reveal="up">
@@ -108,6 +113,7 @@ const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
       }
     </div>
   </section>
+  )}
 </div>
 
 <style>
