@@ -3,7 +3,17 @@
     "allow": [
       "Bash(ASTRO_DATABASE_FILE=file:./data/astro.db npx --no astro check)",
       "PowerShell($env:ASTRO_DATABASE_FILE='file:./data/astro.db'; npx --no astro check 2>&1 | Select-Object -Last 50)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(Get-ChildItem \"C:\\\\Projects\\\\psihoterapija\\\\src\\\\pages\\\\usluge\\\\\" -Recurse | Select-Object FullName)",
+      "Bash(rm \"/c/Projects/psihoterapija/src/pages/oblast-rada.astro\" \"/c/Projects/psihoterapija/src/pages/oblast-rada/[slug].astro\" \"/c/Projects/psihoterapija/src/pages/cir/oblast-rada.astro\" \"/c/Projects/psihoterapija/src/pages/cir/oblast-rada/[slug].astro\" && rmdir \"/c/Projects/psihoterapija/src/pages/oblast-rada\" \"/c/Projects/psihoterapija/src/pages/cir/oblast-rada\" 2>&1)",
+      "Bash(ASTRO_DATABASE_FILE=file:./data/astro.db npx astro check)",
+      "Bash(NODE_OPTIONS=\"--max-old-space-size=8192\" ASTRO_DATABASE_FILE=file:./data/astro.db npx astro check)",
+      "Bash(timeout 30 npx astro dev --port 4322)",
+      "Bash(grep -oE \"home-pill|psychotherapy-page__intro|home-section--tight|Naša ideja|Pristup i opseg\" /tmp/home.html /tmp/psih.html | head -20)",
+      "Read(//tmp/**)"
+    ],
+    "additionalDirectories": [
+      "C:\\Projects\\psihoterapija\\src\\pages\\oblast-rada"
     ]
   }
 }

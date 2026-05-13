@@ -214,28 +214,6 @@ const getScopeTabSeeds = (locale: SiteLocale): ScopeTabSeed[] => {
           ],
         },
         {
-          id: "poremecaji-licnosti",
-          label: "Поремећаји личности",
-          icon: mirroredImages.scopeIcon2,
-          detailImage: mirroredImages.scopeIcon2,
-          detailLead:
-            "Фокус рада је на обрасцима односа, доживљају себе и начинима емоционалне регулације који се дуготрајно понављају.",
-          items: [
-            {
-              title: "Поремећаји личности",
-              copy: "Понављајући обрасци односа и слике о себи који дуготрајно стварају тешкоће.",
-            },
-            {
-              title: "Хроничне потешкоће у односима",
-              copy: "Теме блискости, граница, одбацивања и конфликта у партнерским и породичним односима.",
-            },
-            {
-              title: "Емоционална нестабилност",
-              copy: "Рад на препознавању и регулацији интензивних емоција и импулсивних реакција.",
-            },
-          ],
-        },
-        {
           id: "depresivna-stanja",
           label: "Депресивна стања",
           icon: mirroredImages.scopeIcon3,
@@ -258,8 +236,30 @@ const getScopeTabSeeds = (locale: SiteLocale): ScopeTabSeed[] => {
           ],
         },
         {
-          id: "trauma",
-          label: "Траума",
+          id: "poremecaji-licnosti",
+          label: "Поремећаји личности",
+          icon: mirroredImages.scopeIcon2,
+          detailImage: mirroredImages.scopeIcon2,
+          detailLead:
+            "Фокус рада је на обрасцима односа, доживљају себе и начинима емоционалне регулације који се дуготрајно понављају.",
+          items: [
+            {
+              title: "Поремећаји личности",
+              copy: "Понављајући обрасци односа и слике о себи који дуготрајно стварају тешкоће.",
+            },
+            {
+              title: "Хроничне потешкоће у односима",
+              copy: "Теме блискости, граница, одбацивања и конфликта у партнерским и породичним односима.",
+            },
+            {
+              title: "Емоционална нестабилност",
+              copy: "Рад на препознавању и регулацији интензивних емоција и импулсивних реакција.",
+            },
+          ],
+        },
+        {
+          id: "traume",
+          label: "Трауме",
           icon: mirroredImages.scopeIcon4,
           detailImage: mirroredImages.scopeIcon4,
           detailLead:
@@ -304,28 +304,6 @@ const getScopeTabSeeds = (locale: SiteLocale): ScopeTabSeed[] => {
           ],
         },
         {
-          id: "poremecaji-licnosti",
-          label: "Poremećaji ličnosti",
-          icon: mirroredImages.scopeIcon2,
-          detailImage: mirroredImages.scopeIcon2,
-          detailLead:
-            "Fokus rada je na obrascima odnosa, doživljaju sebe i načinima emocionalne regulacije koji se dugotrajno ponavljaju.",
-          items: [
-            {
-              title: "Poremećaji ličnosti",
-              copy: "Ponavljajući obrasci odnosa i slike o sebi koji dugotrajno stvaraju teškoće.",
-            },
-            {
-              title: "Hronične poteškoće u odnosima",
-              copy: "Teme bliskosti, granica, odbacivanja i konflikta u partnerskim i porodičnim odnosima.",
-            },
-            {
-              title: "Emocionalna nestabilnost",
-              copy: "Rad na prepoznavanju i regulaciji intenzivnih emocija i impulsivnih reakcija.",
-            },
-          ],
-        },
-        {
           id: "depresivna-stanja",
           label: "Depresivna stanja",
           icon: mirroredImages.scopeIcon3,
@@ -348,8 +326,30 @@ const getScopeTabSeeds = (locale: SiteLocale): ScopeTabSeed[] => {
           ],
         },
         {
-          id: "trauma",
-          label: "Trauma",
+          id: "poremecaji-licnosti",
+          label: "Poremećaji ličnosti",
+          icon: mirroredImages.scopeIcon2,
+          detailImage: mirroredImages.scopeIcon2,
+          detailLead:
+            "Fokus rada je na obrascima odnosa, doživljaju sebe i načinima emocionalne regulacije koji se dugotrajno ponavljaju.",
+          items: [
+            {
+              title: "Poremećaji ličnosti",
+              copy: "Ponavljajući obrasci odnosa i slike o sebi koji dugotrajno stvaraju teškoće.",
+            },
+            {
+              title: "Hronične poteškoće u odnosima",
+              copy: "Teme bliskosti, granica, odbacivanja i konflikta u partnerskim i porodičnim odnosima.",
+            },
+            {
+              title: "Emocionalna nestabilnost",
+              copy: "Rad na prepoznavanju i regulaciji intenzivnih emocija i impulsivnih reakcija.",
+            },
+          ],
+        },
+        {
+          id: "traume",
+          label: "Traume",
           icon: mirroredImages.scopeIcon4,
           detailImage: mirroredImages.scopeIcon4,
           detailLead:
@@ -398,7 +398,7 @@ const getScopeTabs = (locale: SiteLocale): ScopeTab[] =>
       detailCtaLabel,
       cardTitle: summaryTitle,
       cardCopy: summaryCopy,
-      href: localizePath(locale, `/oblast-rada/${tab.id}/`),
+      href: localizePath(locale, `/psihoterapija/#psych-tab-${tab.id}`),
     };
   });
 
@@ -466,8 +466,8 @@ export const getScopeDetailPageData = (locale: SiteLocale, slug: string) => {
     lead: currentTab.detailLead,
     image: currentTab.detailImage,
     items: currentTab.items,
-    backHref: localizePath(locale, "/oblast-rada/"),
-    backLabel: isCyrillic ? "Назад на област рада" : "Nazad na oblast rada",
+    backHref: localizePath(locale, "/psihoterapija/"),
+    backLabel: isCyrillic ? "Назад на психотерапију" : "Nazad na psihoterapiju",
     ctaHref: localizePath(locale, "/zakazivanje/"),
     ctaLabel: dictionary.nav.appointment,
     relatedTitle: isCyrillic ? "Остале теме" : "Ostale teme",

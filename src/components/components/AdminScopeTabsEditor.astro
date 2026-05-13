@@ -258,32 +258,47 @@ const { fragment, title, copy, tabs, richTextLabels, blockMeta } = Astro.props;
                   />
                 </label>
 
-                {tab.items.map((item, itemIndex) => (
-                  <>
-                    <label class="admin-form__field">
-                      <span>Stavka {itemIndex + 1} naslov</span>
-                      <input
-                        class="input-control"
-                        data-scope-tab-item-title
-                        data-scope-tab-item-index={itemIndex}
-                        value={item.title}
-                      />
-                    </label>
-
-                    <div class="admin-form__field admin-form__field--full">
-                      <span>Stavka {itemIndex + 1} opis</span>
+                <div class="admin-form__field admin-form__field--full" data-scope-tab-item-list>
+                  {tab.items.map((item) => (
+                    <div
+                      class="admin-section-group admin-form__field--full"
+                      data-scope-tab-item-row
+                    >
                       <div
-                        class="admin-scope-tab-item-rich-text"
-                        data-scope-tab-item-copy
-                        data-scope-tab-item-index={itemIndex}
+                        style="display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; flex-wrap: wrap;"
                       >
-                        <textarea data-scope-tab-rtf-initial hidden>
-                          {item.copy}
-                        </textarea>
+                        <h4 style="margin: 0;" data-scope-tab-item-row-title>Stavka</h4>
+                        <button
+                          class="button-secondary"
+                          type="button"
+                          data-scope-tab-item-remove
+                        >
+                          Obriši stavku
+                        </button>
+                      </div>
+
+                      <label class="admin-form__field">
+                        <span>Naslov</span>
+                        <input class="input-control" data-scope-tab-item-title value={item.title} />
+                      </label>
+
+                      <div class="admin-form__field admin-form__field--full">
+                        <span>Opis</span>
+                        <div class="admin-scope-tab-item-rich-text" data-scope-tab-item-copy>
+                          <textarea data-scope-tab-rtf-initial hidden>
+                            {item.copy}
+                          </textarea>
+                        </div>
                       </div>
                     </div>
-                  </>
-                ))}
+                  ))}
+                </div>
+
+                <div class="admin-form__actions" style="justify-content: flex-start;">
+                  <button class="button-secondary" type="button" data-scope-tab-item-add>
+                    Dodaj stavku
+                  </button>
+                </div>
               </div>
             </div>
           ))
@@ -293,6 +308,31 @@ const { fragment, title, copy, tabs, richTextLabels, blockMeta } = Astro.props;
       <div class="admin-form__actions" style="justify-content: flex-start;">
         <button class="button-secondary" type="button" data-scope-tab-add> Dodaj temu </button>
       </div>
+
+      <template data-scope-tab-item-template>
+        <div class="admin-section-group admin-form__field--full" data-scope-tab-item-row>
+          <div
+            style="display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; flex-wrap: wrap;"
+          >
+            <h4 style="margin: 0;" data-scope-tab-item-row-title>Stavka</h4>
+            <button class="button-secondary" type="button" data-scope-tab-item-remove>
+              Obriši stavku
+            </button>
+          </div>
+
+          <label class="admin-form__field">
+            <span>Naslov</span>
+            <input class="input-control" data-scope-tab-item-title />
+          </label>
+
+          <div class="admin-form__field admin-form__field--full">
+            <span>Opis</span>
+            <div class="admin-scope-tab-item-rich-text" data-scope-tab-item-copy>
+              <textarea data-scope-tab-rtf-initial hidden></textarea>
+            </div>
+          </div>
+        </div>
+      </template>
 
       <template data-scope-tab-template>
         <div class="admin-section-group admin-form__field--full" data-scope-tab-item>
@@ -445,31 +485,45 @@ const { fragment, title, copy, tabs, richTextLabels, blockMeta } = Astro.props;
               <input class="input-control" data-scope-tab-field="detailCtaLabel" />
             </label>
 
-            {
-              [0, 1, 2].map((itemIndex) => (
-                <>
-                  <label class="admin-form__field">
-                    <span>Stavka {itemIndex + 1} naslov</span>
-                    <input
-                      class="input-control"
-                      data-scope-tab-item-title
-                      data-scope-tab-item-index={itemIndex}
-                    />
-                  </label>
-
-                  <div class="admin-form__field admin-form__field--full">
-                    <span>Stavka {itemIndex + 1} opis</span>
+            <div class="admin-form__field admin-form__field--full" data-scope-tab-item-list>
+              {
+                [0, 1, 2].map(() => (
+                  <div
+                    class="admin-section-group admin-form__field--full"
+                    data-scope-tab-item-row
+                  >
                     <div
-                      class="admin-scope-tab-item-rich-text"
-                      data-scope-tab-item-copy
-                      data-scope-tab-item-index={itemIndex}
+                      style="display: flex; justify-content: space-between; gap: 0.75rem; align-items: center; flex-wrap: wrap;"
                     >
-                      <textarea data-scope-tab-rtf-initial hidden />
+                      <h4 style="margin: 0;" data-scope-tab-item-row-title>
+                        Stavka
+                      </h4>
+                      <button class="button-secondary" type="button" data-scope-tab-item-remove>
+                        Obriši stavku
+                      </button>
+                    </div>
+
+                    <label class="admin-form__field">
+                      <span>Naslov</span>
+                      <input class="input-control" data-scope-tab-item-title />
+                    </label>
+
+                    <div class="admin-form__field admin-form__field--full">
+                      <span>Opis</span>
+                      <div class="admin-scope-tab-item-rich-text" data-scope-tab-item-copy>
+                        <textarea data-scope-tab-rtf-initial hidden />
+                      </div>
                     </div>
                   </div>
-                </>
-              ))
-            }
+                ))
+              }
+            </div>
+
+            <div class="admin-form__actions" style="justify-content: flex-start;">
+              <button class="button-secondary" type="button" data-scope-tab-item-add>
+                Dodaj stavku
+              </button>
+            </div>
           </div>
         </div>
       </template>

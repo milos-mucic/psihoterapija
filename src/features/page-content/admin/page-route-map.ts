@@ -13,7 +13,7 @@ export const getPublicPageHref = (pageKey: PageKey, locale: SiteLocale) => {
     case "psychotherapy":
       return localizePath(locale, "/psihoterapija/");
     case "scope":
-      return localizePath(locale, "/oblast-rada/");
+      return localizePath(locale, "/psihoterapija/");
     case "pricing":
       return localizePath(locale, "/cena/");
     case "appointment":

@@ -1063,12 +1063,14 @@ const richTextLabels = {
     const setupScopeTabs = () => {
       const list = document.querySelector("[data-scope-tab-list]");
       const template = document.querySelector("[data-scope-tab-template]");
+      const itemTemplate = document.querySelector("[data-scope-tab-item-template]");
       const addButton = document.querySelector("[data-scope-tab-add]");
       const form = list?.closest("form");
 
       if (
         !(list instanceof HTMLElement) ||
         !(template instanceof HTMLTemplateElement) ||
+        !(itemTemplate instanceof HTMLTemplateElement) ||
         !(addButton instanceof HTMLButtonElement) ||
         !(form instanceof HTMLFormElement) ||
         list.dataset.bound === "true"
@@ -1222,12 +1224,10 @@ const richTextLabels = {
         });
       };
 
-      const mountTabItemRichText = (field, tabIndex) => {
+      const mountTabItemRichText = (field, tabIndex, itemIndex) => {
         if (!(field instanceof HTMLElement)) {
           return;
         }
-
-        const itemIndex = Number(field.dataset.scopeTabItemIndex);
 
         if (Number.isNaN(itemIndex)) {
           return;
@@ -1333,22 +1333,32 @@ const richTextLabels = {
             field.name = `scopeTab_${index}_${fieldName}`;
           });
 
-          item.querySelectorAll("[data-scope-tab-item-title]").forEach((field) => {
-            if (!(field instanceof HTMLInputElement)) {
+          const itemRows = Array.from(item.querySelectorAll("[data-scope-tab-item-row]"));
+
+          itemRows.forEach((row, itemIndex) => {
+            if (!(row instanceof HTMLElement)) {
               return;
             }
 
-            const itemIndex = Number(field.dataset.scopeTabItemIndex);
-
-            if (Number.isNaN(itemIndex)) {
-              return;
+            const rowTitle = row.querySelector("[data-scope-tab-item-row-title]");
+            if (rowTitle instanceof HTMLElement) {
+              rowTitle.textContent = `Stavka ${itemIndex + 1}`;
             }
 
-            field.name = `scopeTab_${index}_item_${itemIndex}_title`;
-          });
+            const removeItemButton = row.querySelector("[data-scope-tab-item-remove]");
+            if (removeItemButton instanceof HTMLButtonElement) {
+              removeItemButton.disabled = itemRows.length <= 1;
+            }
 
-          item.querySelectorAll("[data-scope-tab-item-copy]").forEach((field) => {
-            mountTabItemRichText(field, index);
+            const titleField = row.querySelector("[data-scope-tab-item-title]");
+            if (titleField instanceof HTMLInputElement) {
+              titleField.name = `scopeTab_${index}_item_${itemIndex}_title`;
+            }
+
+            const copyField = row.querySelector("[data-scope-tab-item-copy]");
+            if (copyField instanceof HTMLElement) {
+              mountTabItemRichText(copyField, index, itemIndex);
+            }
           });
 
           updateTabImagePreview(item, "icon");
@@ -1357,6 +1367,8 @@ const richTextLabels = {
 
         notifyForm(form);
       };
+
+      const getItemTemplate = () => itemTemplate;
 
       addButton.addEventListener("click", () => {
         list.append(template.content.cloneNode(true));
@@ -1391,6 +1403,49 @@ const richTextLabels = {
           clearTabImageProgress(tab, fieldName);
           updateTabImagePreview(tab, fieldName);
           notifyForm(form);
+          return;
+        }
+
+        const itemAddButton = target.closest("[data-scope-tab-item-add]");
+
+        if (itemAddButton instanceof HTMLButtonElement) {
+          const tab = itemAddButton.closest("[data-scope-tab-item]");
+          const itemList = tab?.querySelector("[data-scope-tab-item-list]");
+
+          if (!(tab instanceof HTMLElement) || !(itemList instanceof HTMLElement)) {
+            return;
+          }
+
+          itemList.append(getItemTemplate().content.cloneNode(true));
+          syncTabs();
+          return;
+        }
+
+        const itemRemoveButton = target.closest("[data-scope-tab-item-remove]");
+
+        if (itemRemoveButton instanceof HTMLButtonElement) {
+          const tab = itemRemoveButton.closest("[data-scope-tab-item]");
+          const row = itemRemoveButton.closest("[data-scope-tab-item-row]");
+
+          if (!(tab instanceof HTMLElement) || !(row instanceof HTMLElement)) {
+            return;
+          }
+
+          const rows = tab.querySelectorAll("[data-scope-tab-item-row]");
+
+          if (rows.length <= 1) {
+            return;
+          }
+
+          row
+            .querySelectorAll(".admin-scope-tab-item-rich-text")
+            .forEach((field) => {
+              if (field instanceof HTMLElement) {
+                unmountAdminRichTextField(field);
+              }
+            });
+          row.remove();
+          syncTabs();
           return;
         }
 

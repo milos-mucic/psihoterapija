@@ -18,6 +18,12 @@ export default defineConfig({
   security: {
     checkOrigin: false,
   },
+  redirects: {
+    "/oblast-rada/": "/psihoterapija/",
+    "/oblast-rada/[slug]": "/psihoterapija/",
+    "/cir/oblast-rada/": "/cir/psihoterapija/",
+    "/cir/oblast-rada/[slug]": "/cir/psihoterapija/",
+  },
   integrations: [react(), mdx(), sitemap(), db()],
   vite: {
     plugins: [tailwindcss()],

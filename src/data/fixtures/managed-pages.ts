@@ -350,7 +350,7 @@ export const buildScopePageData = (locale: SiteLocale, content: ScopePageManaged
     ...tab,
     cardTitle: tab.summaryTitle,
     cardCopy: tab.summaryCopy,
-    href: localizePath(locale, `/oblast-rada/${tab.id}/`),
+    href: localizePath(locale, `/psihoterapija/#psych-tab-${tab.id}`),
   })),
   scopeTitle: content.intro.title,
   scopeItems: content.intro.items,
@@ -376,7 +376,7 @@ export const buildScopeDetailPageData = (
     ...tab,
     cardTitle: tab.summaryTitle,
     cardCopy: tab.summaryCopy,
-    href: localizePath(locale, `/oblast-rada/${tab.id}/`),
+    href: localizePath(locale, `/psihoterapija/#psych-tab-${tab.id}`),
   }));
   const currentTab = tabs.find((tab) => tab.id === slug);
 
@@ -396,7 +396,7 @@ export const buildScopeDetailPageData = (
     lead: currentTab.detailLead,
     image: currentTab.detailImage,
     items: currentTab.items,
-    backHref: localizePath(locale, "/oblast-rada/"),
+    backHref: localizePath(locale, "/psihoterapija/"),
     backLabel: currentTab.detailBackLabel,
     ctaHref: localizePath(locale, "/zakazivanje/"),
     ctaLabel: currentTab.detailCtaLabel,

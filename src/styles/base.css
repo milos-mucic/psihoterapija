@@ -1397,6 +1397,105 @@ body.appbar-drawer-open {
   background: var(--accent);
 }
 
+.site-nav__group {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.site-nav__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0;
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.96rem;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+}
+
+.site-nav__group.is-active .site-nav__toggle {
+  color: var(--foreground);
+}
+
+.site-nav__group.is-active .site-nav__toggle::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 1.2rem;
+  bottom: -0.2rem;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.site-nav__caret {
+  width: 0.9rem;
+  height: 0.9rem;
+  transition: transform 180ms ease;
+}
+
+.site-nav__group.is-open .site-nav__caret {
+  transform: rotate(180deg);
+}
+
+.site-nav__menu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, 0.4rem);
+  min-width: 12rem;
+  padding: 0.5rem;
+  background: var(--white, #ffffff);
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  box-shadow: 0 18px 44px rgba(16, 47, 48, 0.12);
+  display: grid;
+  gap: 0.15rem;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+  z-index: 30;
+}
+
+.site-nav__group.is-open .site-nav__menu {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 0.65rem);
+}
+
+.site-nav__menu a {
+  display: block;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  color: var(--foreground);
+  font-size: 0.94rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-nav__menu a:hover,
+.site-nav__menu a:focus-visible {
+  background: rgba(22, 60, 61, 0.06);
+  color: var(--primary);
+}
+
+.site-nav__menu a.is-active::after {
+  display: none;
+}
+
+.site-nav__menu a.is-active {
+  color: var(--primary);
+  background: rgba(22, 60, 61, 0.06);
+}
+
 .site-header__actions {
   display: flex;
   align-items: center;
@@ -1814,6 +1913,29 @@ body.appbar-drawer-open {
 
   .site-nav {
     justify-content: flex-start;
+  }
+
+  .site-nav__group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .site-nav__menu {
+    position: static;
+    transform: none;
+    box-shadow: none;
+    border: 0;
+    padding: 0.25rem 0 0.5rem 0.5rem;
+    background: transparent;
+    opacity: 1;
+    pointer-events: auto;
+    display: none;
+  }
+
+  .site-nav__group.is-open .site-nav__menu {
+    transform: none;
+    display: grid;
   }
 
   .site-header__actions {

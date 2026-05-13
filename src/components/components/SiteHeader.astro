@@ -1,5 +1,5 @@
 ---
-import { getNavigation } from "@/data/fixtures/navigation";
+import { getNavigation, isNavGroup } from "@/data/fixtures/navigation";
 import { getLocalePrefix, localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import { siteConfig, type SiteLocale } from "@/lib/config/site";
@@ -37,15 +37,58 @@ const siteMeta = siteConfig.name.replace(" Ikar", "");
 
       <nav class="site-nav" aria-label={dictionary.a11y.appbarPrimaryNav}>
         {
-          navigation.map((item) => (
-            <a
-              class:list={{ "is-active": isActivePath(item.href) }}
-              href={item.href}
-              aria-current={isActivePath(item.href) ? "page" : undefined}
-            >
-              {item.label}
-            </a>
-          ))
+          navigation.map((item) =>
+            isNavGroup(item) ? (
+              <div
+                class:list={["site-nav__group", { "is-active": isActivePath(item.href) }]}
+                data-nav-group
+              >
+                <button
+                  type="button"
+                  class="site-nav__toggle"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                  data-nav-toggle
+                >
+                  <span>{item.label}</span>
+                  <svg
+                    class="site-nav__caret"
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path
+                      d="M6 9l6 6 6-6"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                    />
+                  </svg>
+                </button>
+                <div class="site-nav__menu" role="menu">
+                  {item.children.map((child) => (
+                    <a
+                      class:list={{ "is-active": isActivePath(child.href) }}
+                      href={child.href}
+                      role="menuitem"
+                      aria-current={isActivePath(child.href) ? "page" : undefined}
+                    >
+                      {child.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <a
+                class:list={{ "is-active": isActivePath(item.href) }}
+                href={item.href}
+                aria-current={isActivePath(item.href) ? "page" : undefined}
+              >
+                {item.label}
+              </a>
+            ),
+          )
         }
       </nav>
 
@@ -60,3 +103,47 @@ const siteMeta = siteConfig.name.replace(" Ikar", "");
     </div>
   </div>
 </header>
+
+<script>
+  (() => {
+    const groups = document.querySelectorAll<HTMLElement>("[data-nav-group]");
+    if (groups.length === 0) return;
+
+    const closeAll = (except?: HTMLElement) => {
+      groups.forEach((group) => {
+        if (group === except) return;
+        group.classList.remove("is-open");
+        const toggle = group.querySelector<HTMLButtonElement>("[data-nav-toggle]");
+        toggle?.setAttribute("aria-expanded", "false");
+      });
+    };
+
+    groups.forEach((group) => {
+      const toggle = group.querySelector<HTMLButtonElement>("[data-nav-toggle]");
+      if (!toggle) return;
+
+      toggle.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const isOpen = group.classList.toggle("is-open");
+        toggle.setAttribute("aria-expanded", String(isOpen));
+        if (isOpen) closeAll(group);
+      });
+
+      group.addEventListener("mouseenter", () => {
+        group.classList.add("is-open");
+        toggle.setAttribute("aria-expanded", "true");
+        closeAll(group);
+      });
+
+      group.addEventListener("mouseleave", () => {
+        group.classList.remove("is-open");
+        toggle.setAttribute("aria-expanded", "false");
+      });
+    });
+
+    document.addEventListener("click", () => closeAll());
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeAll();
+    });
+  })();
+</script>

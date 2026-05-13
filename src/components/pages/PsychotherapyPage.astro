@@ -1,5 +1,4 @@
 ---
-import PageBanner from "@/components/sections/PageBanner.astro";
 import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import { blogService } from "@/features/blog/services/blog.service";
@@ -25,11 +24,7 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
 ---
 
 {!content.hiddenBlocks?.includes("psychotherapy-banner") && (
-<div id="psychotherapy-banner" class="psychotherapy-page__banner" style={blockBg("psychotherapy-banner")}>
-  <PageBanner {...content.banner} blockStyle={blockBg("psychotherapy-banner")} />
-</div>
-
-<section id="psychotherapy-intro" class="page-section psychotherapy-page__intro-section" style={blockBg("psychotherapy-banner")}>
+<section id="psychotherapy-banner" class="page-section psychotherapy-page__intro-section" style={blockBg("psychotherapy-banner")}>
   <div class="container">
     <article class="psychotherapy-page__intro-card" data-reveal="up">
       <div class="psychotherapy-page__intro-media">
@@ -37,7 +32,7 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
       </div>
       <div class="psychotherapy-page__intro-copy">
         <p class="psychotherapy-page__eyebrow">{dictionary.nav.psychotherapy}</p>
-        <h2>{content.banner.title}</h2>
+        <h1>{content.banner.title}</h1>
         <div class="psychotherapy-page__intro-text richtext-shell" set:html={content.banner.description} />
       </div>
     </article>
@@ -386,22 +381,15 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
 </script>
 
 <style>
-  .psychotherapy-page__banner :global(.page-banner) {
-    background: none;
-    padding: 10px 0 clamp(1.9rem, 4vw, 2.5rem);
-  }
-
-  .psychotherapy-page__banner :global(.page-banner__content) {
-    align-items: center;
-    gap: 0.85rem 1.7rem;
-  }
-
-  .psychotherapy-page__banner :global(.page-banner h1) {
-    font-size: clamp(2.15rem, 4vw, 3.35rem);
-  }
-
   .psychotherapy-page__intro-section {
-    padding-top: 0.5rem;
+    padding-top: clamp(1rem, 3vw, 2rem);
+  }
+
+  .psychotherapy-page__intro-copy h1 {
+    color: var(--white);
+    font-size: clamp(2.15rem, 4.5vw, 3.6rem);
+    line-height: 1.04;
+    margin: 0;
   }
 
   .psychotherapy-page__intro-card {
