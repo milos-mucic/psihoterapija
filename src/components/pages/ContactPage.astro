@@ -3,6 +3,7 @@ import ContactForm from "@/components/components/ContactForm.astro";
 import PageBanner from "@/components/sections/PageBanner.astro";
 import { getDictionary } from "@/features/i18n/translate";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
+import { getBlockBackgroundStyle } from "@/features/page-content/admin/block-backgrounds";
 import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
@@ -13,14 +14,15 @@ type Props = {
 const { locale, content: previewContent } = Astro.props;
 const content = previewContent ?? (await pageContentService.getContactPageData(locale));
 const dictionary = getDictionary(locale);
+const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackgrounds, fragment);
 ---
 
 {!content.hiddenBlocks?.includes("contact-banner") && (
-  <PageBanner {...content.banner} />
+  <PageBanner {...content.banner} blockStyle={blockBg("contact-banner")} />
 )}
 
 {!content.hiddenBlocks?.includes("contact-details") && (
-<section id="contact-details" class="page-section">
+<section id="contact-details" class="page-section" style={blockBg("contact-details")}>
   <div class="container">
     <div class="contact-layout">
       <div class="contact-details">
@@ -92,7 +94,7 @@ const dictionary = getDictionary(locale);
 )}
 
 {!content.hiddenBlocks?.includes("contact-offices") && (
-<section id="contact-offices" class="page-section page-section--soft">
+<section id="contact-offices" class="page-section page-section--soft" style={blockBg("contact-offices")}>
   <div class="container">
     <div class="page-section__header">
       <h2>{content.officesTitle}</h2>

@@ -3,6 +3,7 @@ import FaqAccordionSection from "@/components/sections/FaqAccordionSection.astro
 import AppointmentForm from "@/components/components/AppointmentForm.astro";
 import { getDictionary } from "@/features/i18n/translate";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
+import { getBlockBackgroundStyle } from "@/features/page-content/admin/block-backgrounds";
 import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
@@ -13,12 +14,14 @@ type Props = {
 const { locale, content: previewContent } = Astro.props;
 const content = previewContent ?? (await pageContentService.getAppointmentPageData(locale));
 const dictionary = getDictionary(locale);
+const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackgrounds, fragment);
 ---
 
 {!content.hiddenBlocks?.includes("appointment-booking") && (
 <section
   id="appointment-booking"
   class="home-section home-section--tight appointment-page__booking"
+  style={blockBg("appointment-booking")}
 >
   <div class="container">
     <div class="home-booking appointment-page__booking-grid">
@@ -50,6 +53,7 @@ const dictionary = getDictionary(locale);
   imageLoading="eager"
   sectionClass="page-section--soft appointment-page__accordion-section"
   sectionId="appointment-faq"
+  blockStyle={blockBg("appointment-faq")}
 />
 )}
 

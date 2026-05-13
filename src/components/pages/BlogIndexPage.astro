@@ -4,6 +4,7 @@ import { extractPlainTextFromHtml } from "@/features/blog/utils/rich-text";
 import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
+import { getBlockBackgroundStyle } from "@/features/page-content/admin/block-backgrounds";
 import type { BlogListItem } from "@/features/blog/types/blog.types";
 import type { SiteLocale } from "@/lib/config/site";
 
@@ -16,6 +17,7 @@ type Props = {
 const { locale, posts, content: previewContent } = Astro.props;
 const dictionary = getDictionary(locale);
 const content = previewContent ?? (await pageContentService.getBlogIndexPageData(locale));
+const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackgrounds, fragment);
 const recentPosts = posts.slice(0, 3);
 const keywordSet = new Set<string>();
 
@@ -35,11 +37,12 @@ const keywords = Array.from(keywordSet);
 <PageBanner
   {...content.banner}
   sectionId="blog-banner"
+  blockStyle={blockBg("blog-banner")}
 />
 )}
 
 {!content.hiddenBlocks?.includes("blog-index") && (
-<section id="blog-index" class="page-section blog-index" data-blog-index>
+<section id="blog-index" class="page-section blog-index" data-blog-index style={blockBg("blog-index")}>
   <div class="container">
     <div class="blog-index__layout">
       <div class="blog-index__main">

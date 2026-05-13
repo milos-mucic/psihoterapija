@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ASTRO_DATABASE_FILE=file:./data/astro.db npx --no astro check)",
+      "PowerShell($env:ASTRO_DATABASE_FILE='file:./data/astro.db'; npx --no astro check 2>&1 | Select-Object -Last 50)",
+      "Bash(npx tsc *)"
+    ]
+  }
+}

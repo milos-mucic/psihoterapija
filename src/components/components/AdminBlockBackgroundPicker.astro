@@ -1,0 +1,165 @@
+---
+import {
+  blockBackgroundPalette,
+  normalizeBlockBackgroundKey,
+  type BlockBackgroundKey,
+} from "@/features/page-content/admin/block-backgrounds";
+
+type Props = {
+  fragment: string;
+  value?: string;
+  label?: string;
+};
+
+const { fragment, value, label = "Pozadina sekcije" } = Astro.props;
+const selectedKey: BlockBackgroundKey = normalizeBlockBackgroundKey(value);
+const inputName = `blockBackground_${fragment}`;
+---
+
+<fieldset class="admin-block-bg" data-admin-block-bg>
+  <legend class="admin-block-bg__legend">{label}</legend>
+  <div class="admin-block-bg__swatches">
+    {
+      blockBackgroundPalette.map((option) => (
+        <label
+          class="admin-block-bg__swatch"
+          data-selected={option.key === selectedKey ? "true" : "false"}
+          title={option.label}
+        >
+          <input
+            type="radio"
+            name={inputName}
+            value={option.key}
+            checked={option.key === selectedKey}
+            class="admin-block-bg__radio"
+          />
+          <span
+            class="admin-block-bg__chip"
+            style={`background-color: ${option.swatch};`}
+            aria-hidden="true"
+          >
+            {option.key === "default" ? (
+              <span class="admin-block-bg__chip-x" aria-hidden="true">/</span>
+            ) : null}
+          </span>
+          <span class="admin-block-bg__name">{option.label}</span>
+        </label>
+      ))
+    }
+  </div>
+</fieldset>
+
+<style>
+  .admin-block-bg {
+    margin: 0 0 1rem 0;
+    padding: 0.7rem 0.9rem;
+    border-radius: 0.6rem;
+    background: rgba(22, 60, 61, 0.05);
+    border: 1px solid rgba(22, 60, 61, 0.1);
+  }
+
+  .admin-block-bg__legend {
+    padding: 0 0.25rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .admin-block-bg__swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .admin-block-bg__swatch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.6rem 0.35rem 0.35rem;
+    border-radius: 999px;
+    border: 1.5px solid rgba(22, 60, 61, 0.18);
+    background: var(--white);
+    cursor: pointer;
+    user-select: none;
+    font-size: 0.82rem;
+    transition: border-color 140ms ease, box-shadow 140ms ease;
+  }
+
+  .admin-block-bg__swatch[data-selected="true"] {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 1px var(--primary);
+  }
+
+  .admin-block-bg__radio {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+  }
+
+  .admin-block-bg__chip {
+    position: relative;
+    display: inline-block;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 999px;
+    border: 1px solid rgba(22, 60, 61, 0.18);
+    overflow: hidden;
+  }
+
+  .admin-block-bg__chip-x {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(180, 35, 24, 0.6);
+    font-weight: 700;
+    transform: rotate(45deg);
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  .admin-block-bg__name {
+    color: var(--foreground);
+    font-weight: 500;
+  }
+</style>
+
+<script>
+  (() => {
+    const init = () => {
+      document.querySelectorAll("[data-admin-block-bg]").forEach((wrapper) => {
+        if (!(wrapper instanceof HTMLElement) || wrapper.dataset.bound === "true") {
+          return;
+        }
+
+        const swatches = Array.from(
+          wrapper.querySelectorAll<HTMLElement>(".admin-block-bg__swatch"),
+        );
+
+        const sync = () => {
+          swatches.forEach((swatch) => {
+            const radio = swatch.querySelector<HTMLInputElement>(".admin-block-bg__radio");
+
+            if (!radio) {
+              return;
+            }
+
+            swatch.dataset.selected = radio.checked ? "true" : "false";
+          });
+        };
+
+        wrapper.addEventListener("change", sync);
+        wrapper.dataset.bound = "true";
+      });
+    };
+
+    init();
+    document.addEventListener("astro:page-load", init);
+  })();
+</script>

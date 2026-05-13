@@ -9,12 +9,13 @@ type Props = {
   description: string;
   primaryAction: Action;
   secondaryAction: Action;
+  blockStyle?: string;
 };
 
-const { titleHtml, description, primaryAction, secondaryAction } = Astro.props;
+const { titleHtml, description, primaryAction, secondaryAction, blockStyle } = Astro.props;
 ---
 
-<section id="home-hero" class="home-hero">
+<section id="home-hero" class="home-hero" style={blockStyle}>
   <div class="container home-hero__container">
     <div class="home-hero__content">
       <h1 class="home-hero__title" data-reveal="up" set:html={titleHtml} />

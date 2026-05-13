@@ -3,6 +3,7 @@ import AppointmentForm from "@/components/components/AppointmentForm.astro";
 import type { HomePageData } from "@/data/fixtures/home";
 import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
+import { getBlockBackgroundStyle } from "@/features/page-content/admin/block-backgrounds";
 import type { BlogListItem } from "@/features/blog/types/blog.types";
 import type { SiteLocale } from "@/lib/config/site";
 
@@ -14,6 +15,7 @@ type Props = {
 
 const { locale, content, posts } = Astro.props;
 const dictionary = getDictionary(locale);
+const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackgrounds, fragment);
 const youtubeShortCodeMatch = content.reasons.videoHref.match(/youtu\.be\/([^?&#]+)/);
 const youtubeWatchMatch = content.reasons.videoHref.match(/[?&]v=([^&]+)/);
 const youtubeVideoId = youtubeWatchMatch?.[1] ?? youtubeShortCodeMatch?.[1];
@@ -28,7 +30,7 @@ const homeVideoSrc = youtubeVideoId
 ---
 
 {!content.hiddenBlocks?.includes("home-prompt") && (
-<section id="home-prompt" class="home-section">
+<section id="home-prompt" class="home-section" style={blockBg("home-prompt")}>
   <div class="container">
     <div class="home-heading-row home-heading-row--prompt">
       <div class="home-heading-copy home-heading-copy--prompt" data-reveal="up">
@@ -49,7 +51,7 @@ const homeVideoSrc = youtubeVideoId
 )}
 
 {!content.hiddenBlocks?.includes("home-about") && (
-<section id="home-about" class="home-section home-section--tight">
+<section id="home-about" class="home-section home-section--tight" style={blockBg("home-about")}>
   <div class="container">
     <div class="home-about">
       <img
@@ -71,7 +73,7 @@ const homeVideoSrc = youtubeVideoId
 )}
 
 {!content.hiddenBlocks?.includes("home-services") && (
-<section id="home-services" class="home-section home-section--dark">
+<section id="home-services" class="home-section home-section--dark" style={blockBg("home-services")}>
   <div class="container">
     <div class="home-services">
       <div class="home-services__layout">
@@ -136,7 +138,7 @@ const homeVideoSrc = youtubeVideoId
 )}
 
 {!content.hiddenBlocks?.includes("home-themes") && (
-<section id="home-themes" class="home-section">
+<section id="home-themes" class="home-section" style={blockBg("home-themes")}>
   <div class="container">
     <div class="section-title-wrapper" data-reveal="up">
       <h2 class="heading-12">{content.themes.title}</h2>
@@ -196,7 +198,7 @@ const homeVideoSrc = youtubeVideoId
 )}
 
 {!content.hiddenBlocks?.includes("home-reasons") && (
-<section id="home-reasons" class="home-section home-section--dark">
+<section id="home-reasons" class="home-section home-section--dark" style={blockBg("home-reasons")}>
   <div class="container">
     <div class="home-reasons">
       <div class="home-reasons__intro" data-reveal="up">
@@ -357,7 +359,7 @@ const homeVideoSrc = youtubeVideoId
 </script>
 
 {!content.hiddenBlocks?.includes("home-booking") && (
-<section id="home-booking" class="home-section home-section--tight">
+<section id="home-booking" class="home-section home-section--tight" style={blockBg("home-booking")}>
   <div class="container">
     <div class="home-booking">
       <div class="home-booking__intro" data-reveal="up">
@@ -379,7 +381,7 @@ const homeVideoSrc = youtubeVideoId
 )}
 
 {!content.hiddenBlocks?.includes("home-blog") && (
-<section id="home-blog" class="home-section">
+<section id="home-blog" class="home-section" style={blockBg("home-blog")}>
   <div class="container">
     <div class="home-heading-row home-heading-row--blog">
       <div class="home-heading-copy" data-reveal="up">

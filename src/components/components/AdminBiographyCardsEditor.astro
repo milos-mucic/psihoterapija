@@ -1,4 +1,5 @@
 ---
+import AdminBlockBackgroundPicker from "@/components/components/AdminBlockBackgroundPicker.astro";
 import AdminBlockVisibilityToggle from "@/components/components/AdminBlockVisibilityToggle.astro";
 import { AdminRichTextField } from "@/components/components/AdminRichTextField";
 import type { AdminRichTextFieldProps } from "@/components/components/AdminRichTextField";
@@ -13,7 +14,7 @@ type Props = {
   cards: BiographyProfileManagedContent[];
   uploadFolder: string;
   richTextLabels: AdminRichTextFieldProps["labels"];
-  visibilityToggle?: { fragment: string; hidden: boolean };
+  blockMeta?: { fragment: string; hidden: boolean; backgroundKey: string };
 };
 
 const {
@@ -25,7 +26,7 @@ const {
   cards,
   uploadFolder,
   richTextLabels,
-  visibilityToggle,
+  blockMeta,
 } = Astro.props;
 ---
 
@@ -35,8 +36,11 @@ const {
   data-section-preview
   data-section-preview-fragment={fragment}
 >
-  {visibilityToggle ? (
-    <AdminBlockVisibilityToggle fragment={visibilityToggle.fragment} hidden={visibilityToggle.hidden} />
+  {blockMeta ? (
+    <>
+      <AdminBlockVisibilityToggle fragment={blockMeta.fragment} hidden={blockMeta.hidden} />
+      <AdminBlockBackgroundPicker fragment={blockMeta.fragment} value={blockMeta.backgroundKey} />
+    </>
   ) : null}
   <div class="page-grid">
     <div>

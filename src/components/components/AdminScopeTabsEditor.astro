@@ -1,4 +1,5 @@
 ---
+import AdminBlockBackgroundPicker from "@/components/components/AdminBlockBackgroundPicker.astro";
 import AdminBlockVisibilityToggle from "@/components/components/AdminBlockVisibilityToggle.astro";
 import type { ScopePageManagedContent } from "@/features/page-content/types/page-content.types";
 
@@ -8,10 +9,10 @@ type Props = {
   copy: string;
   tabs: ScopePageManagedContent["tabs"];
   richTextLabels: Record<string, string>;
-  visibilityToggle?: { fragment: string; hidden: boolean };
+  blockMeta?: { fragment: string; hidden: boolean; backgroundKey: string };
 };
 
-const { fragment, title, copy, tabs, richTextLabels, visibilityToggle } = Astro.props;
+const { fragment, title, copy, tabs, richTextLabels, blockMeta } = Astro.props;
 ---
 
 <div
@@ -20,8 +21,11 @@ const { fragment, title, copy, tabs, richTextLabels, visibilityToggle } = Astro.
   data-section-preview
   data-section-preview-fragment={fragment}
 >
-  {visibilityToggle ? (
-    <AdminBlockVisibilityToggle fragment={visibilityToggle.fragment} hidden={visibilityToggle.hidden} />
+  {blockMeta ? (
+    <>
+      <AdminBlockVisibilityToggle fragment={blockMeta.fragment} hidden={blockMeta.hidden} />
+      <AdminBlockBackgroundPicker fragment={blockMeta.fragment} value={blockMeta.backgroundKey} />
+    </>
   ) : null}
   <div class="page-grid">
     <div>

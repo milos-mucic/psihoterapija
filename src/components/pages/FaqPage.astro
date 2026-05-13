@@ -2,6 +2,7 @@
 import PageBanner from "@/components/sections/PageBanner.astro";
 import FaqAccordionSection from "@/components/sections/FaqAccordionSection.astro";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
+import { getBlockBackgroundStyle } from "@/features/page-content/admin/block-backgrounds";
 import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
@@ -11,10 +12,11 @@ type Props = {
 
 const { locale, content: previewContent } = Astro.props;
 const content = previewContent ?? (await pageContentService.getFaqPageData(locale));
+const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackgrounds, fragment);
 ---
 
 {!content.hiddenBlocks?.includes("faq-banner") && (
-  <PageBanner {...content.banner} sectionId="faq-banner" />
+  <PageBanner {...content.banner} sectionId="faq-banner" blockStyle={blockBg("faq-banner")} />
 )}
 
 {!content.hiddenBlocks?.includes("faq-items") && (
@@ -24,6 +26,7 @@ const content = previewContent ?? (await pageContentService.getFaqPageData(local
     imageLoading="eager"
     sectionClass="page-section--soft faq-page__accordion-section"
     sectionId="faq-items"
+    blockStyle={blockBg("faq-items")}
   />
 )}
 

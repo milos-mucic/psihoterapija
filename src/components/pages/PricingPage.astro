@@ -1,5 +1,6 @@
 ---
 import { pageContentService } from "@/features/page-content/services/page-content.service";
+import { getBlockBackgroundStyle } from "@/features/page-content/admin/block-backgrounds";
 import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
@@ -9,10 +10,11 @@ type Props = {
 
 const { locale, content: previewContent } = Astro.props;
 const content = previewContent ?? (await pageContentService.getPricingPageData(locale));
+const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackgrounds, fragment);
 ---
 
 {!content.hiddenBlocks?.includes("pricing-plans") && (
-<section id="pricing-plans" class="page-section pricing-page__plans-section">
+<section id="pricing-plans" class="page-section pricing-page__plans-section" style={blockBg("pricing-plans")}>
   <div class="container">
     <div class="pricing-page__grid">
       {
@@ -38,7 +40,7 @@ const content = previewContent ?? (await pageContentService.getPricingPageData(l
 )}
 
 {!content.hiddenBlocks?.includes("pricing-info") && (
-<section id="pricing-info" class="page-section pricing-page__info-section">
+<section id="pricing-info" class="page-section pricing-page__info-section" style={blockBg("pricing-info")}>
   <div class="container">
     <div class="pricing-page__info-grid">
       {

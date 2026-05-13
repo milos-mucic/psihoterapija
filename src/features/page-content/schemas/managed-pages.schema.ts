@@ -1,5 +1,9 @@
 import { z } from "zod";
 import { sanitizeRichTextHtml } from "@/features/blog/utils/rich-text";
+import {
+  isBlockBackgroundKey,
+  type BlockBackgroundKey,
+} from "@/features/page-content/admin/block-backgrounds";
 import type {
   AboutPageManagedContent,
   AppointmentPageManagedContent,
@@ -51,6 +55,21 @@ const textCardSchema = z.object({
 
 const hiddenBlocksSchema = z.array(z.string().trim().min(1)).default([]);
 
+export const blockBackgroundsSchema = z
+  .record(z.string().trim().min(1), z.string().trim().min(1))
+  .default({})
+  .transform((value) => {
+    const cleaned: Record<string, BlockBackgroundKey> = {};
+
+    for (const [fragment, key] of Object.entries(value)) {
+      if (isBlockBackgroundKey(key) && key !== "default") {
+        cleaned[fragment] = key;
+      }
+    }
+
+    return cleaned;
+  });
+
 const toInputRecord = (input: unknown) =>
   typeof input === "object" && input !== null ? (input as Record<string, unknown>) : {};
 
@@ -67,6 +86,29 @@ export const collectHiddenBlocksFromForm = (input: Record<string, unknown>): str
   }
 
   return Array.from(fragments);
+};
+
+export const collectBlockBackgroundsFromForm = (
+  input: Record<string, unknown>,
+): Record<string, BlockBackgroundKey> => {
+  const expression = /^blockBackground_(.+)$/;
+  const result: Record<string, BlockBackgroundKey> = {};
+
+  for (const key of Object.keys(input)) {
+    const match = expression.exec(key);
+
+    if (!match) {
+      continue;
+    }
+
+    const value = input[key];
+
+    if (isBlockBackgroundKey(value) && value !== "default") {
+      result[match[1]] = value;
+    }
+  }
+
+  return result;
 };
 
 const getIndexedFieldMatches = (input: Record<string, unknown>, expression: RegExp) => {
@@ -91,6 +133,7 @@ const getIndexedTextValues = (input: Record<string, unknown>, prefix: string) =>
 export const aboutPageManagedContentSchema: z.ZodType<AboutPageManagedContent> = z.object({
   seo: seoSchema,
   hiddenBlocks: hiddenBlocksSchema,
+  blockBackgrounds: blockBackgroundsSchema,
   banner: bannerSchema,
   showcase: z.object({
     title: requiredText,
@@ -153,6 +196,7 @@ export const parseAboutPageManagedContentForm = (input: unknown): AboutPageManag
       description: parsed.seoDescription,
     },
     hiddenBlocks: collectHiddenBlocksFromForm(values),
+    blockBackgrounds: collectBlockBackgroundsFromForm(values),
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -194,6 +238,7 @@ const biographyCardSchema = z.object({
 export const biographyPageManagedContentSchema: z.ZodType<BiographyPageManagedContent> = z.object({
   seo: seoSchema,
   hiddenBlocks: hiddenBlocksSchema,
+  blockBackgrounds: blockBackgroundsSchema,
   banner: bannerSchema,
   cardsSection: z.object({
     title: requiredText,
@@ -280,6 +325,7 @@ export const parseBiographyPageManagedContentForm = (
       description: parsed.seoDescription,
     },
     hiddenBlocks: collectHiddenBlocksFromForm(values),
+    blockBackgrounds: collectBlockBackgroundsFromForm(values),
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -304,6 +350,7 @@ export const psychotherapyPageManagedContentSchema: z.ZodType<PsychotherapyPageM
   z.object({
     seo: seoSchema,
     hiddenBlocks: hiddenBlocksSchema,
+    blockBackgrounds: blockBackgroundsSchema,
     banner: bannerSchema,
     scope: z.object({
       title: requiredText,
@@ -367,6 +414,7 @@ export const parsePsychotherapyPageManagedContentForm = (
       description: parsed.seoDescription,
     },
     hiddenBlocks: collectHiddenBlocksFromForm(values),
+    blockBackgrounds: collectBlockBackgroundsFromForm(values),
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -414,6 +462,7 @@ const scopeTabSchema = z.object({
 export const scopePageManagedContentSchema: z.ZodType<ScopePageManagedContent> = z.object({
   seo: seoSchema,
   hiddenBlocks: hiddenBlocksSchema,
+  blockBackgrounds: blockBackgroundsSchema,
   banner: bannerSchema,
   intro: z.object({
     title: requiredText,
@@ -531,6 +580,7 @@ export const parseScopePageManagedContentForm = (input: unknown): ScopePageManag
       description: parsed.seoDescription,
     },
     hiddenBlocks: collectHiddenBlocksFromForm(values),
+    blockBackgrounds: collectBlockBackgroundsFromForm(values),
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -570,6 +620,7 @@ const pricingPlanSchema = z.object({
 export const pricingPageManagedContentSchema: z.ZodType<PricingPageManagedContent> = z.object({
   seo: seoSchema,
   hiddenBlocks: hiddenBlocksSchema,
+  blockBackgrounds: blockBackgroundsSchema,
   banner: bannerSchema,
   plans: z.array(pricingPlanSchema).min(1),
   infoCards: z.array(textCardSchema).min(1),
@@ -610,6 +661,7 @@ export const parsePricingPageManagedContentForm = (input: unknown): PricingPageM
       description: parsed.seoDescription,
     },
     hiddenBlocks: collectHiddenBlocksFromForm(values),
+    blockBackgrounds: collectBlockBackgroundsFromForm(values),
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -624,6 +676,7 @@ export const appointmentPageManagedContentSchema: z.ZodType<AppointmentPageManag
   z.object({
     seo: seoSchema,
     hiddenBlocks: hiddenBlocksSchema,
+    blockBackgrounds: blockBackgroundsSchema,
     banner: bannerSchema,
     booking: z.object({
       title: requiredText,
@@ -671,6 +724,7 @@ export const parseAppointmentPageManagedContentForm = (
       description: parsed.seoDescription,
     },
     hiddenBlocks: collectHiddenBlocksFromForm(values),
+    blockBackgrounds: collectBlockBackgroundsFromForm(values),
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -692,6 +746,7 @@ export const parseAppointmentPageManagedContentForm = (
 export const faqPageManagedContentSchema: z.ZodType<FaqPageManagedContent> = z.object({
   seo: seoSchema,
   hiddenBlocks: hiddenBlocksSchema,
+  blockBackgrounds: blockBackgroundsSchema,
   banner: bannerSchema,
   faq: z.object({
     items: z.array(faqItemSchema).min(1),
@@ -737,6 +792,7 @@ export const parseFaqPageManagedContentForm = (input: unknown): FaqPageManagedCo
       description: parsed.seoDescription,
     },
     hiddenBlocks: collectHiddenBlocksFromForm(values),
+    blockBackgrounds: collectBlockBackgroundsFromForm(values),
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -764,6 +820,7 @@ const socialLinkSchema = z.object({
 export const contactPageManagedContentSchema: z.ZodType<ContactPageManagedContent> = z.object({
   seo: seoSchema,
   hiddenBlocks: hiddenBlocksSchema,
+  blockBackgrounds: blockBackgroundsSchema,
   banner: bannerSchema,
   introTitle: requiredText,
   introCopy: richTextRequired,
@@ -822,6 +879,7 @@ export const parseContactPageManagedContentForm = (input: unknown): ContactPageM
       description: parsed.seoDescription,
     },
     hiddenBlocks: collectHiddenBlocksFromForm(values),
+    blockBackgrounds: collectBlockBackgroundsFromForm(values),
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,
@@ -847,6 +905,7 @@ export const parseContactPageManagedContentForm = (input: unknown): ContactPageM
 export const blogIndexPageManagedContentSchema: z.ZodType<BlogIndexPageManagedContent> = z.object({
   seo: seoSchema,
   hiddenBlocks: hiddenBlocksSchema,
+  blockBackgrounds: blockBackgroundsSchema,
   banner: bannerSchema,
   allPostsTitle: requiredText,
   postsLabel: requiredText,
@@ -891,6 +950,7 @@ export const parseBlogIndexPageManagedContentForm = (
       description: parsed.seoDescription,
     },
     hiddenBlocks: collectHiddenBlocksFromForm(values),
+    blockBackgrounds: collectBlockBackgroundsFromForm(values),
     banner: {
       title: parsed.bannerTitle,
       description: parsed.bannerDescription,

@@ -3,6 +3,7 @@ import type { BannerData } from "@/data/fixtures/public-pages";
 
 type Props = BannerData & {
   sectionId?: string;
+  blockStyle?: string;
 };
 
 const {
@@ -12,10 +13,12 @@ const {
   backgroundImage,
   align = description ? "split" : "center",
   sectionId,
+  blockStyle,
 } = Astro.props;
-const backgroundStyle = backgroundImage
+const imageStyle = backgroundImage
   ? `--page-banner-image: linear-gradient(rgba(0, 0, 0, ${theme === "dark" ? 0.62 : 0.48}), rgba(0, 0, 0, ${theme === "dark" ? 0.46 : 0.34})), url("${backgroundImage}")`
-  : undefined;
+  : "";
+const mergedStyle = [imageStyle, blockStyle].filter(Boolean).join("; ") || undefined;
 ---
 
 <section
@@ -26,7 +29,7 @@ const backgroundStyle = backgroundImage
     backgroundImage && "page-banner--with-image",
     align === "split" ? "page-banner--split" : "page-banner--center",
   ]}
-  style={backgroundStyle}
+  style={mergedStyle}
 >
   <div class="container">
     <div class="page-banner__content">

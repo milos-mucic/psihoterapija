@@ -1,4 +1,5 @@
 ---
+import AdminBlockBackgroundPicker from "@/components/components/AdminBlockBackgroundPicker.astro";
 import AdminBlockVisibilityToggle from "@/components/components/AdminBlockVisibilityToggle.astro";
 import { AdminMediaField } from "@/components/components/AdminMediaField";
 import { AdminRichTextField } from "@/components/components/AdminRichTextField";
@@ -16,7 +17,9 @@ type Props = {
 
 const { action, content, locale, previewBaseHref, localeLabel } = Astro.props;
 const hiddenBlocksList = content.hiddenBlocks ?? [];
+const blockBackgrounds = content.blockBackgrounds ?? {};
 const isBlockHidden = (fragment: string) => hiddenBlocksList.includes(fragment);
+const getBlockBackgroundKey = (fragment: string) => blockBackgrounds[fragment] ?? "default";
 const localeOptions: Array<{ value: SiteLocale; label: string }> = [
   { value: "sr-latn", label: "Latinica" },
   { value: "sr-cyrl", label: "Ćirilica" },
@@ -130,6 +133,7 @@ const normalizedServiceItems = Array.from({ length: 3 }, (_, index) => ({
     data-section-preview-fragment="home-hero"
   >
     <AdminBlockVisibilityToggle fragment="home-hero" hidden={isBlockHidden("home-hero")} />
+    <AdminBlockBackgroundPicker fragment="home-hero" value={getBlockBackgroundKey("home-hero")} />
     <div class="page-grid">
       <div>
         <h2 style="margin: 0;">Hero sekcija</h2>
@@ -190,6 +194,7 @@ const normalizedServiceItems = Array.from({ length: 3 }, (_, index) => ({
     data-section-preview-fragment="home-prompt"
   >
     <AdminBlockVisibilityToggle fragment="home-prompt" hidden={isBlockHidden("home-prompt")} />
+    <AdminBlockBackgroundPicker fragment="home-prompt" value={getBlockBackgroundKey("home-prompt")} />
     <div class="page-grid">
       <div>
         <h2 style="margin: 0;">Kontakt prompt</h2>
@@ -229,6 +234,7 @@ const normalizedServiceItems = Array.from({ length: 3 }, (_, index) => ({
     data-section-preview-fragment="home-about"
   >
     <AdminBlockVisibilityToggle fragment="home-about" hidden={isBlockHidden("home-about")} />
+    <AdminBlockBackgroundPicker fragment="home-about" value={getBlockBackgroundKey("home-about")} />
     <div class="page-grid">
       <div>
         <h2 style="margin: 0;">O terapeutu</h2>
@@ -278,6 +284,7 @@ const normalizedServiceItems = Array.from({ length: 3 }, (_, index) => ({
     data-section-preview-fragment="home-services"
   >
     <AdminBlockVisibilityToggle fragment="home-services" hidden={isBlockHidden("home-services")} />
+    <AdminBlockBackgroundPicker fragment="home-services" value={getBlockBackgroundKey("home-services")} />
     <div class="page-grid">
       <div>
         <h2 style="margin: 0;">Usluge</h2>
@@ -352,6 +359,7 @@ const normalizedServiceItems = Array.from({ length: 3 }, (_, index) => ({
     data-section-preview-fragment="home-themes"
   >
     <AdminBlockVisibilityToggle fragment="home-themes" hidden={isBlockHidden("home-themes")} />
+    <AdminBlockBackgroundPicker fragment="home-themes" value={getBlockBackgroundKey("home-themes")} />
     <div class="page-grid">
       <div>
         <h2 style="margin: 0;">Teme rada</h2>
@@ -415,6 +423,7 @@ const normalizedServiceItems = Array.from({ length: 3 }, (_, index) => ({
     data-section-preview-fragment="home-reasons"
   >
     <AdminBlockVisibilityToggle fragment="home-reasons" hidden={isBlockHidden("home-reasons")} />
+    <AdminBlockBackgroundPicker fragment="home-reasons" value={getBlockBackgroundKey("home-reasons")} />
     <div class="page-grid">
       <div>
         <h2 style="margin: 0;">Zašto Ikar</h2>
@@ -521,6 +530,7 @@ const normalizedServiceItems = Array.from({ length: 3 }, (_, index) => ({
     data-section-preview-fragment="home-booking"
   >
     <AdminBlockVisibilityToggle fragment="home-booking" hidden={isBlockHidden("home-booking")} />
+    <AdminBlockBackgroundPicker fragment="home-booking" value={getBlockBackgroundKey("home-booking")} />
     <div class="page-grid">
       <div>
         <h2 style="margin: 0;">Zakazivanje</h2>
@@ -591,6 +601,7 @@ const normalizedServiceItems = Array.from({ length: 3 }, (_, index) => ({
     data-section-preview-fragment="home-blog"
   >
     <AdminBlockVisibilityToggle fragment="home-blog" hidden={isBlockHidden("home-blog")} />
+    <AdminBlockBackgroundPicker fragment="home-blog" value={getBlockBackgroundKey("home-blog")} />
     <div class="page-grid">
       <div>
         <h2 style="margin: 0;">Blog sekcija</h2>

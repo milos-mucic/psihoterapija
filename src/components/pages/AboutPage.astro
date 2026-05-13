@@ -4,6 +4,7 @@ import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import { blogService } from "@/features/blog/services/blog.service";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
+import { getBlockBackgroundStyle } from "@/features/page-content/admin/block-backgrounds";
 import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
@@ -15,15 +16,16 @@ const { locale, content: previewContent } = Astro.props;
 const dictionary = getDictionary(locale);
 const content = previewContent ?? (await pageContentService.getAboutPageData(locale));
 const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
+const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackgrounds, fragment);
 ---
 
 <div class="about-page">
   {!content.hiddenBlocks?.includes("about-banner") && (
-    <PageBanner {...content.banner} sectionId="about-banner" />
+    <PageBanner {...content.banner} sectionId="about-banner" blockStyle={blockBg("about-banner")} />
   )}
 
   {!content.hiddenBlocks?.includes("about-idea") && (
-  <section id="about-idea" class="page-section about-page__idea">
+  <section id="about-idea" class="page-section about-page__idea" style={blockBg("about-idea")}>
     <div class="container">
       <div class="about-page__split">
         <div class="about-page__copy" data-reveal="up">
@@ -45,7 +47,7 @@ const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
   )}
 
   {!content.hiddenBlocks?.includes("about-blog") && (
-  <section id="about-blog" class="home-section">
+  <section id="about-blog" class="home-section" style={blockBg("about-blog")}>
     <div class="container">
       <div class="home-heading-row home-heading-row--blog" data-reveal="up">
         <div class="home-heading-copy">

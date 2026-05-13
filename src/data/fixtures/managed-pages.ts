@@ -77,6 +77,7 @@ export const getDefaultAboutPageManagedContent = (locale: SiteLocale): AboutPage
 export const buildAboutPageData = (locale: SiteLocale, content: AboutPageManagedContent) => ({
   seo: content.seo,
   hiddenBlocks: content.hiddenBlocks ?? [],
+  blockBackgrounds: content.blockBackgrounds ?? {},
   banner: {
     title: content.banner.title,
     description: content.banner.description,
@@ -147,6 +148,7 @@ export const buildBiographyPageData = (
 ) => ({
   seo: content.seo,
   hiddenBlocks: content.hiddenBlocks ?? [],
+  blockBackgrounds: content.blockBackgrounds ?? {},
   banner: {
     title: content.banner.title,
     description: content.banner.description,
@@ -249,6 +251,7 @@ export const buildPsychotherapyPageData = (
 ) => ({
   seo: content.seo,
   hiddenBlocks: content.hiddenBlocks ?? [],
+  blockBackgrounds: content.blockBackgrounds ?? {},
   banner: {
     title: content.banner.title,
     description: content.banner.description,
@@ -335,6 +338,7 @@ export const getDefaultScopePageManagedContent = (locale: SiteLocale): ScopePage
 export const buildScopePageData = (locale: SiteLocale, content: ScopePageManagedContent) => ({
   seo: content.seo,
   hiddenBlocks: content.hiddenBlocks ?? [],
+  blockBackgrounds: content.blockBackgrounds ?? {},
   banner: {
     title: content.banner.title,
     description: content.banner.description,
@@ -430,6 +434,7 @@ export const getDefaultPricingPageManagedContent = (
 export const buildPricingPageData = (locale: SiteLocale, content: PricingPageManagedContent) => ({
   seo: content.seo,
   hiddenBlocks: content.hiddenBlocks ?? [],
+  blockBackgrounds: content.blockBackgrounds ?? {},
   banner: {
     title: content.banner.title,
     description: content.banner.description,
@@ -482,6 +487,7 @@ export const buildAppointmentPageData = (
 ) => ({
   seo: content.seo,
   hiddenBlocks: content.hiddenBlocks ?? [],
+  blockBackgrounds: content.blockBackgrounds ?? {},
   banner: {
     title: content.banner.title,
     description: content.banner.description,
@@ -533,6 +539,7 @@ export const getDefaultFaqPageManagedContent = (locale: SiteLocale): FaqPageMana
 export const buildFaqPageData = (_locale: SiteLocale, content: FaqPageManagedContent) => ({
   seo: content.seo,
   hiddenBlocks: content.hiddenBlocks ?? [],
+  blockBackgrounds: content.blockBackgrounds ?? {},
   banner: {
     title: content.banner.title,
     description: content.banner.description,
@@ -607,6 +614,7 @@ export const getDefaultContactPageManagedContent = (
 export const buildContactPageData = (_locale: SiteLocale, content: ContactPageManagedContent) => ({
   seo: content.seo,
   hiddenBlocks: content.hiddenBlocks ?? [],
+  blockBackgrounds: content.blockBackgrounds ?? {},
   banner: {
     title: content.banner.title,
     description: content.banner.description,
@@ -660,6 +668,7 @@ export const buildBlogIndexPageData = (
 ) => ({
   seo: content.seo,
   hiddenBlocks: content.hiddenBlocks ?? [],
+  blockBackgrounds: content.blockBackgrounds ?? {},
   banner: {
     title: content.banner.title,
     description: content.banner.description,

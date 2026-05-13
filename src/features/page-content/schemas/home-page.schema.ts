@@ -1,6 +1,10 @@
 import { z } from "zod";
 import { sanitizeInlineRichTextHtml, sanitizeRichTextHtml } from "@/features/blog/utils/rich-text";
-import { collectHiddenBlocksFromForm } from "@/features/page-content/schemas/managed-pages.schema";
+import {
+  blockBackgroundsSchema,
+  collectBlockBackgroundsFromForm,
+  collectHiddenBlocksFromForm,
+} from "@/features/page-content/schemas/managed-pages.schema";
 import type { HomePageManagedContent } from "@/features/page-content/types/page-content.types";
 
 const requiredText = z.string().trim().min(1);
@@ -32,6 +36,7 @@ export const homePageManagedContentSchema: z.ZodType<HomePageManagedContent> = z
     description: requiredText,
   }),
   hiddenBlocks: z.array(z.string().trim().min(1)).default([]),
+  blockBackgrounds: blockBackgroundsSchema,
   hero: z.object({
     titleHtml: inlineRichTextRequired,
     description: richTextRequired,
@@ -184,6 +189,7 @@ export const parseHomePageManagedContentForm = (input: unknown): HomePageManaged
       description: parsed.seoDescription,
     },
     hiddenBlocks: collectHiddenBlocksFromForm(values),
+    blockBackgrounds: collectBlockBackgroundsFromForm(values),
     hero: {
       titleHtml: parsed.heroTitleHtml,
       description: parsed.heroDescription,

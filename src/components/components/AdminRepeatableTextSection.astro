@@ -1,13 +1,14 @@
 ---
+import AdminBlockBackgroundPicker from "@/components/components/AdminBlockBackgroundPicker.astro";
 import AdminBlockVisibilityToggle from "@/components/components/AdminBlockVisibilityToggle.astro";
 import type { ManagedPageEditorRepeatableTextSection } from "@/features/page-content/admin/managed-page-editor.config";
 
 type Props = {
   section: ManagedPageEditorRepeatableTextSection;
-  visibilityToggle?: { fragment: string; hidden: boolean };
+  blockMeta?: { fragment: string; hidden: boolean; backgroundKey: string };
 };
 
-const { section, visibilityToggle } = Astro.props;
+const { section, blockMeta } = Astro.props;
 ---
 
 <div
@@ -16,8 +17,11 @@ const { section, visibilityToggle } = Astro.props;
   data-section-preview
   data-section-preview-fragment={section.fragment}
 >
-  {visibilityToggle ? (
-    <AdminBlockVisibilityToggle fragment={visibilityToggle.fragment} hidden={visibilityToggle.hidden} />
+  {blockMeta ? (
+    <>
+      <AdminBlockVisibilityToggle fragment={blockMeta.fragment} hidden={blockMeta.hidden} />
+      <AdminBlockBackgroundPicker fragment={blockMeta.fragment} value={blockMeta.backgroundKey} />
+    </>
   ) : null}
   <div class="page-grid">
     <div>

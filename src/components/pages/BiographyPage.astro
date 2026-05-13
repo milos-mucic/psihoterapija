@@ -4,6 +4,7 @@ import PageBanner from "@/components/sections/PageBanner.astro";
 import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
+import { getBlockBackgroundStyle } from "@/features/page-content/admin/block-backgrounds";
 import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
@@ -15,6 +16,7 @@ const { locale, content: previewContent } = Astro.props;
 const dictionary = getDictionary(locale);
 const canonicalPath = localizePath(locale, "/biografija/");
 const content = previewContent ?? (await pageContentService.getBiographyPageData(locale));
+const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackgrounds, fragment);
 ---
 
 <BaseLayout
@@ -26,11 +28,11 @@ const content = previewContent ?? (await pageContentService.getBiographyPageData
   appBarOverlay={true}
 >
   {!content.hiddenBlocks?.includes("biography-banner") && (
-    <PageBanner {...content.banner} sectionId="biography-banner" />
+    <PageBanner {...content.banner} sectionId="biography-banner" blockStyle={blockBg("biography-banner")} />
   )}
 
   {!content.hiddenBlocks?.includes("biography-cards") && (
-  <section id="biography-cards" class="page-section">
+  <section id="biography-cards" class="page-section" style={blockBg("biography-cards")}>
     <div class="container">
       <header class="page-section__header biography-page__header" data-reveal="up">
         <h2>{content.cardsTitle}</h2>
@@ -68,7 +70,7 @@ const content = previewContent ?? (await pageContentService.getBiographyPageData
   )}
 
   {!content.hiddenBlocks?.includes("biography-approach") && (
-  <section id="biography-approach" class="page-section page-section--soft">
+  <section id="biography-approach" class="page-section page-section--soft" style={blockBg("biography-approach")}>
     <div class="container">
       <div class="biography-page__approach">
         <img

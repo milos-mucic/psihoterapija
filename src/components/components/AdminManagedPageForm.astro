@@ -49,9 +49,17 @@ const editorConfig: ManagedPageEditorConfig = getManagedPageEditorConfig(
   content,
 );
 const hiddenBlocksList = content.hiddenBlocks ?? [];
+const blockBackgrounds = content.blockBackgrounds ?? {};
 const isSeoSection = (section: ManagedPageEditorConfig["sections"][number]) =>
   section.kind === "standard" && section.title === "SEO";
-const visibilityToggleByIndex = new Map<number, { fragment: string; hidden: boolean }>();
+
+type AdminBlockMeta = {
+  fragment: string;
+  hidden: boolean;
+  backgroundKey: string;
+};
+
+const blockMetaByIndex = new Map<number, AdminBlockMeta>();
 const seenFragments = new Set<string>();
 
 editorConfig.sections.forEach((section, index) => {
@@ -64,9 +72,10 @@ editorConfig.sections.forEach((section, index) => {
   }
 
   seenFragments.add(section.fragment);
-  visibilityToggleByIndex.set(index, {
+  blockMetaByIndex.set(index, {
     fragment: section.fragment,
     hidden: hiddenBlocksList.includes(section.fragment),
+    backgroundKey: blockBackgrounds[section.fragment] ?? "default",
   });
 });
 const richTextLabels = {
@@ -100,14 +109,14 @@ const richTextLabels = {
 
   {
     editorConfig.sections.map((section, index) => {
-      const visibilityToggle = visibilityToggleByIndex.get(index);
+      const blockMeta = blockMetaByIndex.get(index);
 
       return section.kind === "standard" ? (
         <AdminManagedSection
           section={section}
           uploadFolder={editorConfig.uploadFolder}
           richTextLabels={richTextLabels}
-          visibilityToggle={visibilityToggle}
+          blockMeta={blockMeta}
         />
       ) : section.kind === "biographyCards" ? (
         <AdminBiographyCardsEditor
@@ -119,7 +128,7 @@ const richTextLabels = {
           cards={section.cards}
           uploadFolder={editorConfig.uploadFolder}
           richTextLabels={richTextLabels}
-          visibilityToggle={visibilityToggle}
+          blockMeta={blockMeta}
         />
       ) : section.kind === "scopeTabs" ? (
         <AdminScopeTabsEditor
@@ -128,16 +137,16 @@ const richTextLabels = {
           copy={section.copy}
           tabs={section.tabs}
           richTextLabels={richTextLabels}
-          visibilityToggle={visibilityToggle}
+          blockMeta={blockMeta}
         />
       ) : section.kind === "repeatableText" ? (
-        <AdminRepeatableTextSection section={section} visibilityToggle={visibilityToggle} />
+        <AdminRepeatableTextSection section={section} blockMeta={blockMeta} />
       ) : (
         <AdminRepeatableGroupSection
           section={section}
           uploadFolder={editorConfig.uploadFolder}
           richTextLabels={richTextLabels}
-          visibilityToggle={visibilityToggle}
+          blockMeta={blockMeta}
         />
       );
     })

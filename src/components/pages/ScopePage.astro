@@ -4,6 +4,7 @@ import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import { blogService } from "@/features/blog/services/blog.service";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
+import { getBlockBackgroundStyle } from "@/features/page-content/admin/block-backgrounds";
 import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
@@ -13,6 +14,7 @@ type Props = {
 
 const { locale, content: previewContent } = Astro.props;
 const content = previewContent ?? (await pageContentService.getScopePageData(locale));
+const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackgrounds, fragment);
 const dictionary = getDictionary(locale);
 const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
 const scopeTabListLabel = dictionary.common.scopeTabList;
@@ -21,13 +23,13 @@ const scopeTabsNextLabel = dictionary.common.scopeTabNext;
 ---
 
 {!content.hiddenBlocks?.includes("scope-banner") && (
-<div id="scope-banner" class="scope-page__banner">
-  <PageBanner {...content.banner} />
+<div id="scope-banner" class="scope-page__banner" style={blockBg("scope-banner")}>
+  <PageBanner {...content.banner} blockStyle={blockBg("scope-banner")} />
 </div>
 )}
 
 {!content.hiddenBlocks?.includes("scope-tabs") && (
-<section id="scope-tabs" class="page-section scope-page__tabs-section">
+<section id="scope-tabs" class="page-section scope-page__tabs-section" style={blockBg("scope-tabs")}>
   <div class="container">
     <div class="scope-page__tabs" data-scope-tabs>
       <h2 class="scope-page__section-heading">{content.scopeTitle}</h2>
@@ -194,7 +196,7 @@ const scopeTabsNextLabel = dictionary.common.scopeTabNext;
 )}
 
 {!content.hiddenBlocks?.includes("scope-focus") && (
-<section id="scope-focus" class="page-section scope-page__focus-section">
+<section id="scope-focus" class="page-section scope-page__focus-section" style={blockBg("scope-focus")}>
   <div class="container">
     <div class="scope-page__focus-grid">
       <img
@@ -221,7 +223,7 @@ const scopeTabsNextLabel = dictionary.common.scopeTabNext;
 )}
 
 {!content.hiddenBlocks?.includes("scope-blog") && (
-<section id="scope-blog" class="home-section home-section--tight">
+<section id="scope-blog" class="home-section home-section--tight" style={blockBg("scope-blog")}>
   <div class="container">
     <div class="home-heading-row home-heading-row--blog" data-reveal="up">
       <div class="home-heading-copy">

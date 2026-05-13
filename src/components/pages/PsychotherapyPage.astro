@@ -4,6 +4,7 @@ import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import { blogService } from "@/features/blog/services/blog.service";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
+import { getBlockBackgroundStyle } from "@/features/page-content/admin/block-backgrounds";
 import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
@@ -13,6 +14,7 @@ type Props = {
 
 const { locale, content: previewContent } = Astro.props;
 const content = previewContent ?? (await pageContentService.getPsychotherapyPageData(locale));
+const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackgrounds, fragment);
 const scopeContent = await pageContentService.getScopePageData(locale);
 const dictionary = getDictionary(locale);
 const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
@@ -23,11 +25,11 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
 ---
 
 {!content.hiddenBlocks?.includes("psychotherapy-banner") && (
-<div id="psychotherapy-banner" class="psychotherapy-page__banner">
-  <PageBanner {...content.banner} />
+<div id="psychotherapy-banner" class="psychotherapy-page__banner" style={blockBg("psychotherapy-banner")}>
+  <PageBanner {...content.banner} blockStyle={blockBg("psychotherapy-banner")} />
 </div>
 
-<section id="psychotherapy-intro" class="page-section psychotherapy-page__intro-section">
+<section id="psychotherapy-intro" class="page-section psychotherapy-page__intro-section" style={blockBg("psychotherapy-banner")}>
   <div class="container">
     <article class="psychotherapy-page__intro-card" data-reveal="up">
       <div class="psychotherapy-page__intro-media">
@@ -44,7 +46,7 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
 )}
 
 {!content.hiddenBlocks?.includes("psychotherapy-scope") && (
-<section id="psychotherapy-tabs" class="page-section psychotherapy-page__tabs-section">
+<section id="psychotherapy-tabs" class="page-section psychotherapy-page__tabs-section" style={blockBg("psychotherapy-scope")}>
   <div class="container">
     <div class="psychotherapy-page__tabs" data-scope-tabs>
       <h2 class="psychotherapy-page__section-heading">{content.scopeTitle}</h2>

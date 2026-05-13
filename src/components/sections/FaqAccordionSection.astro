@@ -9,12 +9,26 @@ type Props = {
   imageLoading?: "eager" | "lazy";
   sectionClass?: string;
   sectionId?: string;
+  blockStyle?: string;
 };
 
-const { title, intro, items, image, imageLoading = "lazy", sectionClass, sectionId } = Astro.props;
+const {
+  title,
+  intro,
+  items,
+  image,
+  imageLoading = "lazy",
+  sectionClass,
+  sectionId,
+  blockStyle,
+} = Astro.props;
 ---
 
-<section id={sectionId} class:list={["page-section", "faq-accordion-section", sectionClass]}>
+<section
+  id={sectionId}
+  class:list={["page-section", "faq-accordion-section", sectionClass]}
+  style={blockStyle}
+>
   <div class="container">
     <div class:list={["faq-accordion", !image && "faq-accordion--single"]}>
       {

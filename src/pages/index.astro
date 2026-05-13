@@ -5,6 +5,7 @@ import HomeHeroSection from "@/components/sections/HomeHeroSection.astro";
 import HomePageContent from "@/components/sections/HomePageContent.astro";
 import { blogService } from "@/features/blog/services/blog.service";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
+import { getBlockBackgroundStyle } from "@/features/page-content/admin/block-backgrounds";
 import BaseLayout from "@/components/components/BaseLayout.astro";
 
 const locale = "sr-latn";
@@ -24,6 +25,7 @@ const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
       description={content.hero.description}
       primaryAction={content.hero.primaryAction}
       secondaryAction={content.hero.secondaryAction}
+      blockStyle={getBlockBackgroundStyle(content.blockBackgrounds, "home-hero")}
     />
   )}
 
