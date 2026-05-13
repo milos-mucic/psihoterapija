@@ -27,6 +27,7 @@ const homeVideoSrc = youtubeVideoId
     : content.reasons.videoHref;
 ---
 
+{!content.hiddenBlocks?.includes("home-prompt") && (
 <section id="home-prompt" class="home-section">
   <div class="container">
     <div class="home-heading-row home-heading-row--prompt">
@@ -45,7 +46,9 @@ const homeVideoSrc = youtubeVideoId
     </div>
   </div>
 </section>
+)}
 
+{!content.hiddenBlocks?.includes("home-about") && (
 <section id="home-about" class="home-section home-section--tight">
   <div class="container">
     <div class="home-about">
@@ -65,7 +68,9 @@ const homeVideoSrc = youtubeVideoId
     </div>
   </div>
 </section>
+)}
 
+{!content.hiddenBlocks?.includes("home-services") && (
 <section id="home-services" class="home-section home-section--dark">
   <div class="container">
     <div class="home-services">
@@ -128,7 +133,9 @@ const homeVideoSrc = youtubeVideoId
     </div>
   </div>
 </section>
+)}
 
+{!content.hiddenBlocks?.includes("home-themes") && (
 <section id="home-themes" class="home-section">
   <div class="container">
     <div class="section-title-wrapper" data-reveal="up">
@@ -186,7 +193,9 @@ const homeVideoSrc = youtubeVideoId
     </div>
   </div>
 </section>
+)}
 
+{!content.hiddenBlocks?.includes("home-reasons") && (
 <section id="home-reasons" class="home-section home-section--dark">
   <div class="container">
     <div class="home-reasons">
@@ -234,6 +243,7 @@ const homeVideoSrc = youtubeVideoId
     </div>
   </div>
 </section>
+)}
 
 <dialog class="home-video-dialog" data-home-video-dialog>
   <div class="home-video-dialog__surface">
@@ -346,6 +356,7 @@ const homeVideoSrc = youtubeVideoId
   })();
 </script>
 
+{!content.hiddenBlocks?.includes("home-booking") && (
 <section id="home-booking" class="home-section home-section--tight">
   <div class="container">
     <div class="home-booking">
@@ -365,7 +376,9 @@ const homeVideoSrc = youtubeVideoId
     </div>
   </div>
 </section>
+)}
 
+{!content.hiddenBlocks?.includes("home-blog") && (
 <section id="home-blog" class="home-section">
   <div class="container">
     <div class="home-heading-row home-heading-row--blog">
@@ -441,3 +454,4 @@ const homeVideoSrc = youtubeVideoId
     }
   </div>
 </section>
+)}

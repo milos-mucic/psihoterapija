@@ -25,8 +25,11 @@ const content = previewContent ?? (await pageContentService.getBiographyPageData
   appBarTone="dark"
   appBarOverlay={true}
 >
-  <PageBanner {...content.banner} sectionId="biography-banner" />
+  {!content.hiddenBlocks?.includes("biography-banner") && (
+    <PageBanner {...content.banner} sectionId="biography-banner" />
+  )}
 
+  {!content.hiddenBlocks?.includes("biography-cards") && (
   <section id="biography-cards" class="page-section">
     <div class="container">
       <header class="page-section__header biography-page__header" data-reveal="up">
@@ -62,7 +65,9 @@ const content = previewContent ?? (await pageContentService.getBiographyPageData
       </div>
     </div>
   </section>
+  )}
 
+  {!content.hiddenBlocks?.includes("biography-approach") && (
   <section id="biography-approach" class="page-section page-section--soft">
     <div class="container">
       <div class="biography-page__approach">
@@ -91,6 +96,7 @@ const content = previewContent ?? (await pageContentService.getBiographyPageData
       </div>
     </div>
   </section>
+  )}
 
   <style>
     .biography-page__header {

@@ -31,11 +31,14 @@ posts.forEach((post) => {
 const keywords = Array.from(keywordSet);
 ---
 
+{!content.hiddenBlocks?.includes("blog-banner") && (
 <PageBanner
   {...content.banner}
   sectionId="blog-banner"
 />
+)}
 
+{!content.hiddenBlocks?.includes("blog-index") && (
 <section id="blog-index" class="page-section blog-index" data-blog-index>
   <div class="container">
     <div class="blog-index__layout">
@@ -187,6 +190,7 @@ const keywords = Array.from(keywordSet);
     </div>
   </div>
 </section>
+)}
 
 <script>
   (() => {

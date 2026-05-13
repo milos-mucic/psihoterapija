@@ -13,15 +13,19 @@ const { locale, content: previewContent } = Astro.props;
 const content = previewContent ?? (await pageContentService.getFaqPageData(locale));
 ---
 
-<PageBanner {...content.banner} sectionId="faq-banner" />
+{!content.hiddenBlocks?.includes("faq-banner") && (
+  <PageBanner {...content.banner} sectionId="faq-banner" />
+)}
 
-<FaqAccordionSection
-  items={content.items}
-  image={content.faqImage}
-  imageLoading="eager"
-  sectionClass="page-section--soft faq-page__accordion-section"
-  sectionId="faq-items"
-/>
+{!content.hiddenBlocks?.includes("faq-items") && (
+  <FaqAccordionSection
+    items={content.items}
+    image={content.faqImage}
+    imageLoading="eager"
+    sectionClass="page-section--soft faq-page__accordion-section"
+    sectionId="faq-items"
+  />
+)}
 
 <style>
   :global(#faq-items) {

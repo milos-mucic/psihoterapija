@@ -1,4 +1,5 @@
 ---
+import AdminBlockVisibilityToggle from "@/components/components/AdminBlockVisibilityToggle.astro";
 import AdminManagedField from "@/components/components/AdminManagedField.astro";
 import type {
   ManagedPageEditorFieldGroup,
@@ -10,9 +11,10 @@ type Props = {
   section: ManagedPageEditorStandardSection;
   uploadFolder: string;
   richTextLabels: Record<string, string>;
+  visibilityToggle?: { fragment: string; hidden: boolean };
 };
 
-const { section, uploadFolder, richTextLabels } = Astro.props;
+const { section, uploadFolder, richTextLabels, visibilityToggle } = Astro.props;
 
 const isGroupEntry = (
   entry: ManagedPageEditorField | ManagedPageEditorFieldGroup,
@@ -26,6 +28,9 @@ const isGroupEntry = (
   data-section-preview-fragment={section.fragment}
   data-section-preview-copy={section.previewCopy}
 >
+  {visibilityToggle ? (
+    <AdminBlockVisibilityToggle fragment={visibilityToggle.fragment} hidden={visibilityToggle.hidden} />
+  ) : null}
   <div class="page-grid">
     <div>
       <h2 style="margin: 0;">{section.title}</h2>

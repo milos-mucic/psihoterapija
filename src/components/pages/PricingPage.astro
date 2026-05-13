@@ -11,6 +11,7 @@ const { locale, content: previewContent } = Astro.props;
 const content = previewContent ?? (await pageContentService.getPricingPageData(locale));
 ---
 
+{!content.hiddenBlocks?.includes("pricing-plans") && (
 <section id="pricing-plans" class="page-section pricing-page__plans-section">
   <div class="container">
     <div class="pricing-page__grid">
@@ -34,7 +35,9 @@ const content = previewContent ?? (await pageContentService.getPricingPageData(l
     </div>
   </div>
 </section>
+)}
 
+{!content.hiddenBlocks?.includes("pricing-info") && (
 <section id="pricing-info" class="page-section pricing-page__info-section">
   <div class="container">
     <div class="pricing-page__info-grid">
@@ -53,6 +56,7 @@ const content = previewContent ?? (await pageContentService.getPricingPageData(l
     </div>
   </div>
 </section>
+)}
 
 <style>
   .pricing-page__plans-section {

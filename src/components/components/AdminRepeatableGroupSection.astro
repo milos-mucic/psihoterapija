@@ -1,4 +1,5 @@
 ---
+import AdminBlockVisibilityToggle from "@/components/components/AdminBlockVisibilityToggle.astro";
 import AdminRepeatableGroupField from "@/components/components/AdminRepeatableGroupField.astro";
 import type { ManagedPageEditorRepeatableGroupSection } from "@/features/page-content/admin/managed-page-editor.config";
 
@@ -6,9 +7,10 @@ type Props = {
   section: ManagedPageEditorRepeatableGroupSection;
   uploadFolder: string;
   richTextLabels: Record<string, string>;
+  visibilityToggle?: { fragment: string; hidden: boolean };
 };
 
-const { section, uploadFolder, richTextLabels } = Astro.props;
+const { section, uploadFolder, richTextLabels, visibilityToggle } = Astro.props;
 ---
 
 <div
@@ -17,6 +19,9 @@ const { section, uploadFolder, richTextLabels } = Astro.props;
   data-section-preview
   data-section-preview-fragment={section.fragment}
 >
+  {visibilityToggle ? (
+    <AdminBlockVisibilityToggle fragment={visibilityToggle.fragment} hidden={visibilityToggle.hidden} />
+  ) : null}
   <div class="page-grid">
     <div>
       <h2 style="margin: 0;">{section.title}</h2>
