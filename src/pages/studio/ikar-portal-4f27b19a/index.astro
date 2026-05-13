@@ -45,6 +45,17 @@ const authenticated = adminAuthService.isAuthenticated(Astro.cookies);
               <span class="admin-tile__arrow">↗</span>
             </span>
           </a>
+          <a class="card admin-tile" href={`${adminConfig.basePath}/navigation/`}>
+            <p class="admin-tile__eyebrow">Site chrome</p>
+            <h3>Navigacija</h3>
+            <p class="admin-tile__copy">
+              Uredite labele, redoslede, URL-ove i dropdown decu glavnog menija.
+            </p>
+            <span class="admin-tile__footer">
+              Otvori sekciju
+              <span class="admin-tile__arrow">↗</span>
+            </span>
+          </a>
           <a class="card admin-tile" href={`${adminConfig.basePath}/blog/`}>
             <p class="admin-tile__eyebrow">Publishing</p>
             <h3>{dictionary.admin.dashboard.blogManagementTitle}</h3>

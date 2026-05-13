@@ -1,0 +1,480 @@
+---
+import type { ManagedNavigation } from "@/features/navigation/types";
+import type { SiteLocale } from "@/lib/config/site";
+
+type Props = {
+  action: string;
+  navigation: ManagedNavigation;
+  locale: SiteLocale;
+};
+
+const { action, navigation, locale } = Astro.props;
+const navigationJson = JSON.stringify(navigation);
+---
+
+<form class="admin-form" method="post" action={action} data-nav-form>
+  <input type="hidden" name="locale" value={locale} />
+  <input type="hidden" name="payload" data-nav-payload value={navigationJson} />
+
+  <div class="card" style="padding: 1.5rem;">
+    <div class="page-grid">
+      <div>
+        <h2 style="margin: 0;">Stavke navigacije</h2>
+        <p class="section-copy">
+          Prevucite ili koristite ↑ ↓ za izmenu redosleda. Otvorite stavku za detalje. Možete
+          dodati dropdown decu po stavci.
+        </p>
+      </div>
+
+      <div class="admin-nav-editor" data-nav-list></div>
+
+      <div class="admin-form__actions" style="justify-content: flex-start;">
+        <button class="button-secondary" type="button" data-nav-add-item>Dodaj stavku</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-form__actions admin-form__actions--floating">
+    <p class="admin-form__save-status" data-nav-form-status aria-live="polite"></p>
+    <button class="button-primary admin-form__fab" type="submit">Sačuvaj navigaciju</button>
+  </div>
+</form>
+
+<template data-nav-item-template>
+  <details class="admin-nav-item" data-nav-item>
+    <summary class="admin-nav-item__summary">
+      <span class="admin-nav-item__label" data-nav-item-label-display>Stavka</span>
+      <span class="admin-nav-item__badge" data-nav-item-system-badge hidden>sistem</span>
+      <div class="admin-nav-item__buttons">
+        <button
+          class="button-secondary admin-nav-item__icon-btn"
+          type="button"
+          data-nav-item-up
+          aria-label="Pomeri gore"
+        >
+          ↑
+        </button>
+        <button
+          class="button-secondary admin-nav-item__icon-btn"
+          type="button"
+          data-nav-item-down
+          aria-label="Pomeri dole"
+        >
+          ↓
+        </button>
+        <button
+          class="button-secondary admin-nav-item__icon-btn"
+          type="button"
+          data-nav-item-remove
+          aria-label="Obriši stavku"
+        >
+          ✕
+        </button>
+      </div>
+    </summary>
+
+    <div class="admin-nav-item__body">
+      <div class="admin-form__grid">
+        <label class="admin-form__field">
+          <span>Labela</span>
+          <input class="input-control" type="text" data-nav-item-label />
+        </label>
+        <label class="admin-form__field">
+          <span>URL</span>
+          <input class="input-control" type="text" data-nav-item-href />
+          <small class="admin-form__hint" data-nav-item-href-locked-hint hidden>
+            URL sistemske stavke je zaključan.
+          </small>
+        </label>
+      </div>
+
+      <div class="admin-nav-item__children-section">
+        <h4 style="margin: 0 0 0.5rem 0;">Dropdown deca</h4>
+        <p class="section-copy" style="margin: 0 0 0.75rem 0;">
+          Ako stavka ima decu prikazuje se kao dropdown u nav-u. Bez dece je običan link.
+        </p>
+        <div class="admin-nav-children-list" data-nav-children></div>
+        <div class="admin-form__actions" style="justify-content: flex-start;">
+          <button class="button-secondary" type="button" data-nav-add-child>Dodaj dete</button>
+        </div>
+      </div>
+    </div>
+  </details>
+</template>
+
+<template data-nav-child-template>
+  <div class="admin-nav-child" data-nav-child>
+    <div class="admin-form__grid">
+      <label class="admin-form__field">
+        <span>Labela</span>
+        <input class="input-control" type="text" data-nav-child-label />
+      </label>
+      <label class="admin-form__field">
+        <span>URL</span>
+        <input class="input-control" type="text" data-nav-child-href />
+        <small class="admin-form__hint" data-nav-child-href-locked-hint hidden>
+          URL sistemske stavke je zaključan.
+        </small>
+      </label>
+      <div class="admin-form__field admin-form__field--full admin-nav-child__actions">
+        <button class="button-secondary admin-nav-item__icon-btn" type="button" data-nav-child-up>
+          ↑
+        </button>
+        <button class="button-secondary admin-nav-item__icon-btn" type="button" data-nav-child-down>
+          ↓
+        </button>
+        <button
+          class="button-secondary admin-nav-item__icon-btn"
+          type="button"
+          data-nav-child-remove
+        >
+          ✕
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style is:global>
+  .admin-nav-editor {
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .admin-nav-item {
+    border: 1px solid var(--line);
+    border-radius: 0.85rem;
+    background: rgba(255, 255, 255, 0.95);
+    overflow: hidden;
+  }
+
+  .admin-nav-item__summary {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .admin-nav-item__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .admin-nav-item__summary::before {
+    content: "▸";
+    display: inline-block;
+    width: 1rem;
+    transition: transform 180ms ease;
+    color: var(--muted);
+  }
+
+  .admin-nav-item[open] > .admin-nav-item__summary::before {
+    transform: rotate(90deg);
+  }
+
+  .admin-nav-item__label {
+    font-weight: 600;
+    flex: 1;
+  }
+
+  .admin-nav-item__badge {
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    background: rgba(22, 60, 61, 0.08);
+    color: var(--primary);
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .admin-nav-item__buttons {
+    display: inline-flex;
+    gap: 0.35rem;
+  }
+
+  .admin-nav-item__icon-btn {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+  }
+
+  .admin-nav-item__icon-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .admin-nav-item__body {
+    padding: 1rem;
+    border-top: 1px solid var(--line);
+    display: grid;
+    gap: 1.1rem;
+  }
+
+  .admin-nav-children-list {
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .admin-nav-child {
+    padding: 0.85rem;
+    border: 1px solid var(--line);
+    border-radius: 0.65rem;
+    background: rgba(247, 244, 236, 0.5);
+  }
+
+  .admin-nav-child__actions {
+    display: inline-flex;
+    gap: 0.35rem;
+    justify-content: flex-end;
+  }
+
+  .admin-flash {
+    padding: 0.7rem 1rem;
+    border-radius: 0.65rem;
+    border: 1px solid transparent;
+    margin-bottom: 1rem;
+  }
+
+  .admin-flash--success {
+    background: rgba(72, 145, 78, 0.1);
+    border-color: rgba(72, 145, 78, 0.3);
+    color: #2e6a35;
+  }
+
+  .admin-flash--error {
+    background: rgba(193, 70, 70, 0.1);
+    border-color: rgba(193, 70, 70, 0.3);
+    color: #8a3434;
+  }
+</style>
+
+<script>
+  (() => {
+    type ManagedNavChild = {
+      id: string;
+      label: string;
+      href: string;
+      systemKey?: string;
+      lockDelete?: boolean;
+      lockHref?: boolean;
+    };
+
+    type ManagedNavItem = ManagedNavChild & {
+      children?: ManagedNavChild[];
+    };
+
+    type ManagedNavigation = { items: ManagedNavItem[] };
+
+    const form = document.querySelector<HTMLFormElement>("[data-nav-form]");
+    const list = document.querySelector<HTMLElement>("[data-nav-list]");
+    const payloadInput = document.querySelector<HTMLInputElement>("[data-nav-payload]");
+    const itemTemplate = document.querySelector<HTMLTemplateElement>(
+      "[data-nav-item-template]",
+    );
+    const childTemplate = document.querySelector<HTMLTemplateElement>(
+      "[data-nav-child-template]",
+    );
+    const statusEl = document.querySelector<HTMLElement>("[data-nav-form-status]");
+
+    if (!form || !list || !payloadInput || !itemTemplate || !childTemplate) {
+      return;
+    }
+
+    const initial: ManagedNavigation = (() => {
+      try {
+        const parsed = JSON.parse(payloadInput.value);
+        if (parsed && Array.isArray(parsed.items)) {
+          return parsed as ManagedNavigation;
+        }
+      } catch {
+        // ignore
+      }
+      return { items: [] };
+    })();
+
+    const data: ManagedNavigation = { items: initial.items };
+
+    const randomId = () =>
+      `nav-${Math.random().toString(36).slice(2, 8)}-${Date.now().toString(36)}`;
+
+    const renderChild = (
+      child: ManagedNavChild,
+      childIndex: number,
+      childList: ManagedNavChild[],
+      childrenContainer: HTMLElement,
+    ) => {
+      const fragment = childTemplate.content.cloneNode(true) as DocumentFragment;
+      const root = fragment.querySelector<HTMLElement>("[data-nav-child]");
+      if (!root) return;
+
+      const labelInput = root.querySelector<HTMLInputElement>("[data-nav-child-label]");
+      const hrefInput = root.querySelector<HTMLInputElement>("[data-nav-child-href]");
+      const lockedHint = root.querySelector<HTMLElement>(
+        "[data-nav-child-href-locked-hint]",
+      );
+      const upBtn = root.querySelector<HTMLButtonElement>("[data-nav-child-up]");
+      const downBtn = root.querySelector<HTMLButtonElement>("[data-nav-child-down]");
+      const removeBtn = root.querySelector<HTMLButtonElement>("[data-nav-child-remove]");
+
+      if (labelInput) labelInput.value = child.label;
+      if (hrefInput) {
+        hrefInput.value = child.href;
+        if (child.lockHref) {
+          hrefInput.readOnly = true;
+          hrefInput.style.opacity = "0.7";
+          if (lockedHint) lockedHint.hidden = false;
+        }
+      }
+
+      if (upBtn) upBtn.disabled = childIndex === 0;
+      if (downBtn) downBtn.disabled = childIndex === childList.length - 1;
+      if (removeBtn) removeBtn.disabled = !!child.lockDelete;
+
+      labelInput?.addEventListener("input", () => {
+        child.label = labelInput.value;
+      });
+      hrefInput?.addEventListener("input", () => {
+        if (!child.lockHref) child.href = hrefInput.value;
+      });
+
+      upBtn?.addEventListener("click", () => {
+        if (childIndex === 0) return;
+        const [moved] = childList.splice(childIndex, 1);
+        childList.splice(childIndex - 1, 0, moved);
+        renderChildren(childList, childrenContainer);
+      });
+
+      downBtn?.addEventListener("click", () => {
+        if (childIndex === childList.length - 1) return;
+        const [moved] = childList.splice(childIndex, 1);
+        childList.splice(childIndex + 1, 0, moved);
+        renderChildren(childList, childrenContainer);
+      });
+
+      removeBtn?.addEventListener("click", () => {
+        if (child.lockDelete) return;
+        childList.splice(childIndex, 1);
+        renderChildren(childList, childrenContainer);
+      });
+
+      childrenContainer.append(fragment);
+    };
+
+    const renderChildren = (childList: ManagedNavChild[], childrenContainer: HTMLElement) => {
+      childrenContainer.innerHTML = "";
+      childList.forEach((child, idx) => renderChild(child, idx, childList, childrenContainer));
+    };
+
+    const renderItem = (item: ManagedNavItem, itemIndex: number) => {
+      const fragment = itemTemplate.content.cloneNode(true) as DocumentFragment;
+      const root = fragment.querySelector<HTMLElement>("[data-nav-item]");
+      if (!root) return;
+
+      const labelDisplay = root.querySelector<HTMLElement>("[data-nav-item-label-display]");
+      const systemBadge = root.querySelector<HTMLElement>("[data-nav-item-system-badge]");
+      const labelInput = root.querySelector<HTMLInputElement>("[data-nav-item-label]");
+      const hrefInput = root.querySelector<HTMLInputElement>("[data-nav-item-href]");
+      const hrefLockedHint = root.querySelector<HTMLElement>(
+        "[data-nav-item-href-locked-hint]",
+      );
+      const upBtn = root.querySelector<HTMLButtonElement>("[data-nav-item-up]");
+      const downBtn = root.querySelector<HTMLButtonElement>("[data-nav-item-down]");
+      const removeBtn = root.querySelector<HTMLButtonElement>("[data-nav-item-remove]");
+      const childrenContainer = root.querySelector<HTMLElement>("[data-nav-children]");
+      const addChildBtn = root.querySelector<HTMLButtonElement>("[data-nav-add-child]");
+
+      if (labelDisplay) labelDisplay.textContent = item.label || "(bez naslova)";
+      if (systemBadge && item.systemKey) systemBadge.hidden = false;
+      if (labelInput) labelInput.value = item.label;
+      if (hrefInput) {
+        hrefInput.value = item.href;
+        if (item.lockHref) {
+          hrefInput.readOnly = true;
+          hrefInput.style.opacity = "0.7";
+          if (hrefLockedHint) hrefLockedHint.hidden = false;
+        }
+      }
+      if (upBtn) upBtn.disabled = itemIndex === 0;
+      if (downBtn) downBtn.disabled = itemIndex === data.items.length - 1;
+      if (removeBtn) removeBtn.disabled = !!item.lockDelete;
+
+      labelInput?.addEventListener("input", () => {
+        item.label = labelInput.value;
+        if (labelDisplay) labelDisplay.textContent = item.label || "(bez naslova)";
+      });
+      hrefInput?.addEventListener("input", () => {
+        if (!item.lockHref) item.href = hrefInput.value;
+      });
+
+      upBtn?.addEventListener("click", (event) => {
+        event.preventDefault();
+        if (itemIndex === 0) return;
+        const [moved] = data.items.splice(itemIndex, 1);
+        data.items.splice(itemIndex - 1, 0, moved);
+        renderAll();
+      });
+
+      downBtn?.addEventListener("click", (event) => {
+        event.preventDefault();
+        if (itemIndex === data.items.length - 1) return;
+        const [moved] = data.items.splice(itemIndex, 1);
+        data.items.splice(itemIndex + 1, 0, moved);
+        renderAll();
+      });
+
+      removeBtn?.addEventListener("click", (event) => {
+        event.preventDefault();
+        if (item.lockDelete) return;
+        data.items.splice(itemIndex, 1);
+        renderAll();
+      });
+
+      const children = item.children ?? [];
+
+      if (childrenContainer) {
+        renderChildren(children, childrenContainer);
+      }
+
+      addChildBtn?.addEventListener("click", () => {
+        if (!item.children) item.children = [];
+        item.children.push({
+          id: randomId(),
+          label: "Nova stavka",
+          href: "/",
+        });
+        if (childrenContainer) {
+          renderChildren(item.children, childrenContainer);
+        }
+      });
+
+      list.append(fragment);
+    };
+
+    const renderAll = () => {
+      list.innerHTML = "";
+      data.items.forEach((item, idx) => renderItem(item, idx));
+    };
+
+    const addItemBtn = document.querySelector<HTMLButtonElement>("[data-nav-add-item]");
+    addItemBtn?.addEventListener("click", () => {
+      data.items.push({
+        id: randomId(),
+        label: "Nova stavka",
+        href: "/",
+      });
+      renderAll();
+    });
+
+    form.addEventListener("submit", () => {
+      payloadInput.value = JSON.stringify(data);
+      if (statusEl) statusEl.textContent = "Šaljem...";
+    });
+
+    renderAll();
+  })();
+</script>
