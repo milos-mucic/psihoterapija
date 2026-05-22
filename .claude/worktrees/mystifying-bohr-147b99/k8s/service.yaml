@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: psihoterapija-ikar
+  namespace: prod
+  labels:
+    app: psihoterapija-ikar
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 3000
+      protocol: TCP
+      name: http
+  selector:
+    app: psihoterapija-ikar

@@ -1,57 +1,118 @@
 ---
+export const prerender = false;
+
+import AdminLayout from "@/components/components/AdminLayout.astro";
+import AdminIcon from "@/components/components/AdminIcon.astro";
+import { adminGuard } from "@/features/admin/auth/admin-guard";
 import { getDictionary } from "@/features/i18n/translate";
 import { submissionService } from "@/features/forms/services/submission.service";
 import { adminConfig } from "@/lib/config/admin";
-import AdminLayout from "@/components/components/AdminLayout.astro";
+import type { SubmissionStatus } from "@/features/forms/types/submission.types";
+
+const guard = adminGuard(Astro);
+if (guard) return guard;
 
 const dictionary = getDictionary("sr-latn");
 const submissions = await submissionService.listSubmissions();
+
+const filter = (Astro.url.searchParams.get("status") ?? "all") as "all" | SubmissionStatus;
+const counts = {
+  all:       submissions.length,
+  new:       submissions.filter((s) => s.status === "new").length,
+  reviewed:  submissions.filter((s) => s.status === "reviewed").length,
+  archived:  submissions.filter((s) => s.status === "archived").length,
+};
+const filtered = filter === "all" ? submissions : submissions.filter((s) => s.status === filter);
+const base = adminConfig.basePath;
+
+const tabs = [
+  { key: "all",       label: "Sve" },
+  { key: "new",       label: "Nove" },
+  { key: "reviewed",  label: "Pregledane" },
+  { key: "archived",  label: "Arhivirane" },
+] as const;
+
+const statusLabel = (s: SubmissionStatus) =>
+  s === "new" ? "Nova" : s === "reviewed" ? "Pregledana" : "Arhivirana";
 ---
-
-<AdminLayout title={dictionary.meta.admin.submissionsTitle}>
-  <div class="admin-grid">
-    <div class="card" style="padding: 1.5rem;">
-      <h2 style="margin: 0;">{dictionary.admin.submissions.title}</h2>
-      <p style="margin: 0.5rem 0 0; color: var(--muted);">{dictionary.admin.submissions.copy}</p>
+<AdminLayout
+  title={dictionary.meta.admin.submissionsTitle}
+  active="submissions"
+  breadcrumb={[{ label: "Prijave" }]}
+>
+  <div class="admin-page-head">
+    <div>
+      <h1>{dictionary.admin.submissions.title}</h1>
+      <p class="admin-page-head__copy">{counts.all} {counts.all === 1 ? "prijava" : "prijava"} ukupno</p>
     </div>
+  </div>
 
-    <div class="card" style="padding: 1.2rem;">
-      <table class="admin-table">
+  <div class="admin-tabs">
+    {tabs.map((t) => (
+      <a
+        href={t.key === "all" ? `${base}/submissions/` : `${base}/submissions/?status=${t.key}`}
+        class:list={["admin-tab", filter === t.key && "is-active"]}
+      >
+        {t.label}
+        <span class="admin-tab__count">{counts[t.key]}</span>
+      </a>
+    ))}
+  </div>
+
+  {filtered.length === 0 ? (
+    <div class="admin-empty">
+      <div class="admin-empty__icon"><AdminIcon name="inbox" /></div>
+      <div class="admin-empty__title">Nema prijava</div>
+      <p class="admin-empty__copy">
+        {filter === "all"
+          ? "Kada gosti popune kontakt ili formu za zakazivanje, pojaviće se ovde."
+          : "Nema prijava u izabranom statusu."}
+      </p>
+    </div>
+  ) : (
+    <div class="admin-card">
+      <table class="admin-tbl">
         <thead>
           <tr>
-            <th>{dictionary.admin.submissions.headers.type}</th>
             <th>{dictionary.admin.submissions.headers.name}</th>
+            <th>{dictionary.admin.submissions.headers.type}</th>
             <th>{dictionary.admin.submissions.headers.email}</th>
             <th>{dictionary.admin.submissions.headers.status}</th>
             <th>{dictionary.admin.submissions.headers.date}</th>
-            <th></th>
+            <th class="admin-tbl__actions"></th>
           </tr>
         </thead>
         <tbody>
-          {
-            submissions.length === 0 ? (
-              <tr>
-                <td colspan="6">{dictionary.admin.submissions.empty}</td>
-              </tr>
-            ) : (
-              submissions.map((submission) => (
-                <tr>
-                  <td>{submission.type}</td>
-                  <td>{submission.name}</td>
-                  <td>{submission.email}</td>
-                  <td>{submission.status}</td>
-                  <td>{new Date(submission.createdAt).toLocaleString("sr-RS")}</td>
-                  <td>
-                    <a href={`${adminConfig.basePath}/submissions/${submission.id}/`}>
-                      {dictionary.admin.submissions.headers.details}
-                    </a>
-                  </td>
-                </tr>
-              ))
-            )
-          }
+          {filtered.map((s) => (
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:0.65rem;">
+                  <span class="admin-avatar" style="width:2rem;height:2rem;font-size:0.75rem;">{s.name.charAt(0)}</span>
+                  <strong>{s.name}</strong>
+                </div>
+              </td>
+              <td style="color:var(--shell-text-soft);">
+                {s.type === "appointment" ? "Zakazivanje" : "Kontakt"}
+              </td>
+              <td>
+                <a href={`mailto:${s.email}`} style="color:var(--shell-text);text-decoration:none;">{s.email}</a>
+              </td>
+              <td>
+                <span class={`badge badge--${s.status}`}>{statusLabel(s.status)}</span>
+              </td>
+              <td style="color:var(--shell-text-soft);font-size:0.8rem;">
+                {new Date(s.createdAt).toLocaleString("sr-RS", { dateStyle: "short", timeStyle: "short" })}
+              </td>
+              <td class="admin-tbl__actions">
+                <a href={`${base}/submissions/${s.id}/`}>
+                  <AdminIcon name="arrowRight" />
+                  Detalji
+                </a>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
-  </div>
+  )}
 </AdminLayout>

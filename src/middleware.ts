@@ -6,15 +6,20 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const pathname = context.url.pathname.replace(/\/$/, "");
   const adminPath = adminConfig.basePath.replace(/\/$/, "");
 
+  // Only guard admin pages
   if (!pathname.startsWith(adminPath)) {
     return next();
   }
 
-  const isEntryPage = pathname === adminPath;
-
-  if (isEntryPage || adminAuthService.isAuthenticated(context.cookies)) {
+  // Always allow the login page itself
+  if (pathname === `${adminPath}/login`) {
     return next();
   }
 
-  return context.redirect(`${adminConfig.basePath}/?auth=required`);
+  if (adminAuthService.isAuthenticated(context.cookies)) {
+    return next();
+  }
+
+  const back = encodeURIComponent(context.url.pathname + context.url.search);
+  return context.redirect(`${adminConfig.basePath}/login/?return=${back}`);
 });

@@ -85,6 +85,7 @@ const navigationJson = JSON.stringify(navigation);
           <small class="admin-form__hint" data-nav-item-href-locked-hint hidden>
             URL sistemske stavke je zaključan.
           </small>
+          <div class="admin-nav-url-status" data-nav-item-url-status hidden></div>
         </label>
       </div>
 
@@ -112,6 +113,7 @@ const navigationJson = JSON.stringify(navigation);
       <label class="admin-form__field">
         <span>URL</span>
         <input class="input-control" type="text" data-nav-child-href />
+        <div class="admin-nav-url-status" data-nav-child-url-status hidden></div>
         <small class="admin-form__hint" data-nav-child-href-locked-hint hidden>
           URL sistemske stavke je zaključan.
         </small>
@@ -141,14 +143,16 @@ const navigationJson = JSON.stringify(navigation);
     gap: 0.65rem;
   }
 
-  .admin-nav-item {
+  /* Scope all .admin-nav-item rules to .admin-nav-editor so the sidebar's
+     .admin-nav-item links don't get clobbered with white pill backgrounds. */
+  .admin-nav-editor .admin-nav-item {
     border: 1px solid var(--line);
     border-radius: 0.85rem;
     background: rgba(255, 255, 255, 0.95);
     overflow: hidden;
   }
 
-  .admin-nav-item__summary {
+  .admin-nav-editor .admin-nav-item__summary {
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -157,11 +161,11 @@ const navigationJson = JSON.stringify(navigation);
     cursor: pointer;
   }
 
-  .admin-nav-item__summary::-webkit-details-marker {
+  .admin-nav-editor .admin-nav-item__summary::-webkit-details-marker {
     display: none;
   }
 
-  .admin-nav-item__summary::before {
+  .admin-nav-editor .admin-nav-item__summary::before {
     content: "▸";
     display: inline-block;
     width: 1rem;
@@ -169,16 +173,16 @@ const navigationJson = JSON.stringify(navigation);
     color: var(--muted);
   }
 
-  .admin-nav-item[open] > .admin-nav-item__summary::before {
+  .admin-nav-editor .admin-nav-item[open] > .admin-nav-item__summary::before {
     transform: rotate(90deg);
   }
 
-  .admin-nav-item__label {
+  .admin-nav-editor .admin-nav-item__label {
     font-weight: 600;
     flex: 1;
   }
 
-  .admin-nav-item__badge {
+  .admin-nav-editor .admin-nav-item__badge {
     padding: 0.15rem 0.5rem;
     border-radius: 999px;
     background: rgba(22, 60, 61, 0.08);
@@ -188,12 +192,12 @@ const navigationJson = JSON.stringify(navigation);
     text-transform: uppercase;
   }
 
-  .admin-nav-item__buttons {
+  .admin-nav-editor .admin-nav-item__buttons {
     display: inline-flex;
     gap: 0.35rem;
   }
 
-  .admin-nav-item__icon-btn {
+  .admin-nav-editor .admin-nav-item__icon-btn {
     width: 2rem;
     height: 2rem;
     padding: 0;
@@ -203,12 +207,12 @@ const navigationJson = JSON.stringify(navigation);
     font-size: 1rem;
   }
 
-  .admin-nav-item__icon-btn:disabled {
+  .admin-nav-editor .admin-nav-item__icon-btn:disabled {
     opacity: 0.45;
     cursor: not-allowed;
   }
 
-  .admin-nav-item__body {
+  .admin-nav-editor .admin-nav-item__body {
     padding: 1rem;
     border-top: 1px solid var(--line);
     display: grid;
@@ -251,6 +255,47 @@ const navigationJson = JSON.stringify(navigation);
     border-color: rgba(193, 70, 70, 0.3);
     color: #8a3434;
   }
+
+  /* URL lookup status under href field */
+  .admin-nav-url-status {
+    margin-top: 0.4rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.45rem;
+    font-size: 0.78rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border: 1px solid;
+    line-height: 1.35;
+  }
+  .admin-nav-url-status[data-tone="ok"] {
+    background: #e2f1e9;
+    border-color: rgba(46, 125, 107, 0.25);
+    color: #2e7d6b;
+  }
+  .admin-nav-url-status[data-tone="warn"] {
+    background: #fbf3df;
+    border-color: rgba(180, 131, 36, 0.3);
+    color: #8b6315;
+  }
+  .admin-nav-url-status[data-tone="external"] {
+    background: rgba(22, 60, 61, 0.06);
+    border-color: rgba(22, 60, 61, 0.16);
+    color: #44504e;
+  }
+  .admin-nav-url-status__dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+  .admin-nav-url-status a {
+    color: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    margin-left: 0.35rem;
+  }
 </style>
 
 <script>
@@ -283,6 +328,107 @@ const navigationJson = JSON.stringify(navigation);
 
     if (!form || !list || !payloadInput || !itemTemplate || !childTemplate) {
       return;
+    }
+
+    /* === URL lookup against /api/admin/custom-pages/lookup === */
+    type UrlLookup =
+      | { status: "external" }
+      | { status: "system" }
+      | { status: "custom"; id: string; title: string; slug: string; published: boolean }
+      | { status: "orphan"; slug: string };
+
+    const localeInput = form.querySelector<HTMLInputElement>('input[name="locale"]');
+    const currentLocale = (): "sr-latn" | "sr-cyrl" =>
+      (localeInput?.value === "sr-cyrl" ? "sr-cyrl" : "sr-latn");
+
+    const ADMIN_BASE = "/studio/ikar-portal-4f27b19a";
+
+    const lookupCache = new Map<string, UrlLookup>();
+    const inflight = new Map<string, Promise<UrlLookup>>();
+
+    async function lookupUrl(href: string): Promise<UrlLookup> {
+      const locale = currentLocale();
+      const key = `${locale}::${href}`;
+      const cached = lookupCache.get(key);
+      if (cached) return cached;
+      const existing = inflight.get(key);
+      if (existing) return existing;
+      const promise = fetch(
+        `/api/admin/custom-pages/lookup?href=${encodeURIComponent(href)}&locale=${locale}`,
+      )
+        .then((r) => r.json() as Promise<UrlLookup>)
+        .then((data) => {
+          lookupCache.set(key, data);
+          inflight.delete(key);
+          return data;
+        })
+        .catch(() => ({ status: "external" }) as UrlLookup);
+      inflight.set(key, promise);
+      return promise;
+    }
+
+    function renderUrlStatus(statusEl: HTMLElement | null, href: string, lockedExternal = false) {
+      if (!statusEl) return;
+      const trimmed = (href ?? "").trim();
+      if (!trimmed || lockedExternal) {
+        statusEl.hidden = true;
+        statusEl.innerHTML = "";
+        return;
+      }
+      if (!trimmed.startsWith("/")) {
+        statusEl.hidden = false;
+        statusEl.dataset.tone = "external";
+        statusEl.innerHTML =
+          '<span class="admin-nav-url-status__dot"></span>Eksterna URL — vodi van sajta.';
+        return;
+      }
+      // local URL: do async lookup
+      lookupUrl(trimmed).then((result) => {
+        statusEl.hidden = false;
+        if (result.status === "system") {
+          statusEl.dataset.tone = "ok";
+          statusEl.innerHTML =
+            '<span class="admin-nav-url-status__dot"></span>Sistemska stranica (postoji).';
+        } else if (result.status === "custom") {
+          const label = result.published
+            ? "Custom stranica (objavljena)"
+            : "Custom stranica (skica — nije vidljiva posetiocima)";
+          statusEl.dataset.tone = result.published ? "ok" : "warn";
+          statusEl.innerHTML =
+            `<span class="admin-nav-url-status__dot"></span>${label}` +
+            ` <a href="${ADMIN_BASE}/pages/custom/${result.id}/" target="_blank" rel="noreferrer">Uredi ↗</a>`;
+        } else if (result.status === "orphan") {
+          const locale = currentLocale();
+          const slug = result.slug;
+          const createHref = `${ADMIN_BASE}/pages/new/?slug=${encodeURIComponent(slug)}&locale=${locale}`;
+          statusEl.dataset.tone = "warn";
+          statusEl.innerHTML =
+            '<span class="admin-nav-url-status__dot"></span>' +
+            'Ova URL ne postoji još. ' +
+            `<a href="${createHref}" target="_blank" rel="noreferrer">Kreiraj stranicu za “/${slug}/” ↗</a>`;
+        } else {
+          statusEl.dataset.tone = "external";
+          statusEl.innerHTML =
+            '<span class="admin-nav-url-status__dot"></span>Eksterna URL.';
+        }
+      });
+    }
+
+    function bindUrlStatus(
+      input: HTMLInputElement | null,
+      statusEl: HTMLElement | null,
+      isLocked = false,
+    ) {
+      if (!input || !statusEl) return;
+      let timer: number | undefined;
+      const trigger = () => {
+        window.clearTimeout(timer);
+        timer = window.setTimeout(() => renderUrlStatus(statusEl, input.value, isLocked), 250);
+      };
+      input.addEventListener("input", trigger);
+      input.addEventListener("blur", trigger);
+      // initial
+      renderUrlStatus(statusEl, input.value, isLocked);
     }
 
     const initial: ManagedNavigation = (() => {
@@ -338,6 +484,9 @@ const navigationJson = JSON.stringify(navigation);
       labelInput?.addEventListener("input", () => {
         child.label = labelInput.value;
       });
+      const childUrlStatus = root.querySelector<HTMLElement>("[data-nav-child-url-status]");
+      bindUrlStatus(hrefInput, childUrlStatus, !!child.lockHref);
+
       hrefInput?.addEventListener("input", () => {
         if (!child.lockHref) child.href = hrefInput.value;
       });
@@ -410,6 +559,9 @@ const navigationJson = JSON.stringify(navigation);
       hrefInput?.addEventListener("input", () => {
         if (!item.lockHref) item.href = hrefInput.value;
       });
+
+      const urlStatus = root.querySelector<HTMLElement>("[data-nav-item-url-status]");
+      bindUrlStatus(hrefInput, urlStatus, !!item.lockHref);
 
       upBtn?.addEventListener("click", (event) => {
         event.preventDefault();

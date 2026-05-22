@@ -1,0 +1,7 @@
+node_modules
+dist
+.astro
+webflow-old
+package-lock.json
+public/legacy
+data/sqlite

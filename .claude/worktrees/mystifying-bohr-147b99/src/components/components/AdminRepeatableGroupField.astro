@@ -1,0 +1,77 @@
+---
+import type { ManagedPageEditorRepeatableGroupField } from "@/features/page-content/admin/managed-page-editor.config";
+
+type Props = {
+  field: ManagedPageEditorRepeatableGroupField;
+  value: string;
+};
+
+const { field, value } = Astro.props;
+const fieldClass = field.full ? "admin-form__field admin-form__field--full" : "admin-form__field";
+---
+
+{
+  field.kind === "text" ? (
+    <label class={fieldClass}>
+      <span>{field.label}</span>
+      <input class="input-control" data-repeatable-group-field={field.key} value={value} />
+    </label>
+  ) : field.kind === "richText" ? (
+    <div class={fieldClass}>
+      <span>{field.label}</span>
+      <div class="admin-repeatable-group-rich-text" data-repeatable-group-field={field.key}>
+        <textarea data-repeatable-group-rtf-initial hidden>
+          {value}
+        </textarea>
+      </div>
+    </div>
+  ) : (
+    <div class="admin-inline-media-field admin-form__field--full">
+      <span>{field.label}</span>
+      <input
+        data-repeatable-group-field={field.key}
+        data-repeatable-group-image-input={field.key}
+        type="hidden"
+        value={value}
+      />
+      <div
+        class="admin-inline-media-field__preview"
+        data-repeatable-group-image-preview={field.key}
+      >
+        {value ? (
+          <img src={value} alt="" loading="lazy" />
+        ) : (
+          <p class="admin-inline-media-field__empty">Slika nije dodata.</p>
+        )}
+      </div>
+      <div class="admin-inline-media-field__actions">
+        <label class="button-secondary admin-inline-media-field__upload">
+          <span>{field.uploadLabel ?? "Otpremi sliku"}</span>
+          <input
+            accept={field.accept ?? "image/*"}
+            data-repeatable-group-upload={field.key}
+            hidden
+            type="file"
+          />
+        </label>
+        <button
+          class="button-secondary"
+          data-repeatable-group-image-clear={field.key}
+          type="button"
+        >
+          Ukloni sliku
+        </button>
+      </div>
+      <div class="admin-upload-progress" data-repeatable-group-image-progress={field.key} hidden>
+        <div class="admin-upload-progress__track">
+          <div
+            class="admin-upload-progress__bar"
+            data-repeatable-group-image-progress-bar={field.key}
+            style="width: 0%;"
+          />
+        </div>
+      </div>
+      <p class="admin-inline-media-field__status" data-repeatable-group-image-status={field.key} />
+    </div>
+  )
+}

@@ -1,0 +1,219 @@
+---
+export const prerender = false;
+
+import AdminLayout from "@/components/components/AdminLayout.astro";
+import { AdminMediaField } from "@/components/components/AdminMediaField";
+import { adminGuard } from "@/features/admin/auth/admin-guard";
+import { siteSettingsService } from "@/features/site-settings/services/site-settings.service";
+
+const guard = adminGuard(Astro);
+if (guard) return guard;
+
+const settings = await siteSettingsService.get();
+const params = Astro.url.searchParams;
+const saved = params.get("saved") === "1";
+const errored = params.get("error") === "1";
+---
+
+<AdminLayout
+  title="Footer — sadržaj i mreže"
+  active="site-footer"
+  breadcrumb={[{ label: "Footer" }]}
+>
+  <div class="admin-page-head">
+    <div>
+      <h1>Footer</h1>
+      <p class="admin-page-head__copy">
+        Sadržaj donjeg dela sajta i društvene mreže koje se prikazuju u footeru.
+      </p>
+    </div>
+  </div>
+
+  {saved && <div class="admin-alert admin-alert--success" style="margin-bottom:0.6rem;">Footer je sačuvan.</div>}
+  {errored && <div class="admin-alert admin-alert--error" style="margin-bottom:0.6rem;">Greška pri snimanju.</div>}
+
+  <form method="POST" action="/api/admin/site-settings" class="cpb">
+    <input type="hidden" name="section" value="footer" />
+
+    <section class="admin-card">
+      <header class="admin-card__head">
+        <div>
+          <div class="admin-card__eyebrow">Logo</div>
+          <h2 class="admin-card__title">Logo u footer-u</h2>
+        </div>
+      </header>
+      <div class="admin-card__body cpb-grid">
+        <div class="cpb-grid__field cpb-grid__field--full">
+          <AdminMediaField
+            client:load
+            name="footer.logoLight"
+            label="Logo za tamnu pozadinu (trenutni footer)"
+            initialValue={settings.footer.logoLight}
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder="branding"
+            uploadLabel="Otpremi logo"
+            helpText="Trenutni footer ima tamnu pozadinu — preporučuje se beli/inverted logo. Ako je prazno, koristi se header logo za tamnu pozadinu."
+          />
+        </div>
+        <div class="cpb-grid__field cpb-grid__field--full">
+          <AdminMediaField
+            client:load
+            name="footer.logoDark"
+            label="Logo za svetlu pozadinu (rezerva)"
+            initialValue={settings.footer.logoDark}
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder="branding"
+            uploadLabel="Otpremi logo"
+            helpText="Verzija sa tamnim ispisom — koristi se ako u budućnosti footer dobije svetlu pozadinu."
+          />
+        </div>
+        <label class="site-checkbox cpb-grid__field--full">
+          <input class="site-checkbox__input" type="checkbox" name="footer.hideLogo" value="1" checked={settings.footer.hideLogo} />
+          <span class="site-checkbox__label">Sakri logo u footer-u</span>
+        </label>
+      </div>
+    </section>
+
+    <section class="admin-card">
+      <header class="admin-card__head">
+        <div>
+          <div class="admin-card__eyebrow">Tekst</div>
+          <h2 class="admin-card__title">Sadržaj footer-a</h2>
+        </div>
+      </header>
+      <div class="admin-card__body cpb-grid">
+        <label class="cpb-grid__field">
+          <span>Eyebrow iznad CTA</span>
+          <input type="text" name="footer.contactEyebrow" value={settings.footer.contactEyebrow} placeholder="npr. Pišite nam" />
+        </label>
+        <label class="cpb-grid__field">
+          <span>Glavni naslov u footer-u</span>
+          <input type="text" name="footer.brandHeading" value={settings.footer.brandHeading} placeholder="Ostavi prazno → koristi brand naziv" />
+        </label>
+        <label class="cpb-grid__field cpb-grid__field--full">
+          <span>Tekst u dnu (copyright)</span>
+          <input type="text" name="footer.copyright" value={settings.footer.copyright} placeholder="© 2026 Ikar Studio. Sva prava zadržana." />
+        </label>
+      </div>
+    </section>
+
+    <section class="admin-card">
+      <header class="admin-card__head">
+        <div>
+          <div class="admin-card__eyebrow">Društvene mreže</div>
+          <h2 class="admin-card__title">Linkovi u footer-u</h2>
+        </div>
+        <button type="button" class="btn-ghost" data-add-social>+ Dodaj mrežu</button>
+      </header>
+      <div class="admin-card__body">
+        <p style="font-size:0.8rem;color:var(--shell-text-soft);margin:0 0 0.65rem;">
+          Platforme: <code>instagram</code>, <code>facebook</code>, <code>linkedin</code>, <code>youtube</code>, <code>tiktok</code>, <code>twitter</code>, <code>x</code>, <code>email</code>, <code>website</code> — ili bilo koji custom string (prikazuje se generička ikona).
+        </p>
+        <div id="social-list" class="cpb__blocks">
+          {settings.footer.extraSocialLinks.length === 0 && (
+            <div class="cpb__empty" data-empty>
+              <div class="cpb__empty-title">Nema društvenih mreža</div>
+              <p>Klikni „+ Dodaj mrežu" da dodaš novu stavku.</p>
+            </div>
+          )}
+          {settings.footer.extraSocialLinks.map((link, i) => (
+            <div class="cpb-block" data-social-item>
+              <div class="cpb-block__head" style="cursor:default;">
+                <span class="cpb-block__type">{link.platform}</span>
+                <span class="cpb-block__preview">{link.label}</span>
+                <div class="cpb-block__actions">
+                  <button type="button" data-remove>✕</button>
+                </div>
+              </div>
+              <div class="cpb-block__body cpb-grid">
+                <label class="cpb-grid__field">
+                  <span>Platforma</span>
+                  <input type="text" name={`extraSocialLinks[${i}][platform]`} value={link.platform} required />
+                </label>
+                <label class="cpb-grid__field">
+                  <span>Labela</span>
+                  <input type="text" name={`extraSocialLinks[${i}][label]`} value={link.label} required />
+                </label>
+                <label class="cpb-grid__field cpb-grid__field--full">
+                  <span>URL</span>
+                  <input type="url" name={`extraSocialLinks[${i}][href]`} value={link.href} required placeholder="https://..." />
+                </label>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <div class="cpb__save-bar">
+      <button type="submit" class="cpb__save">Sačuvaj footer</button>
+    </div>
+  </form>
+
+  <template id="social-template">
+    <div class="cpb-block" data-social-item>
+      <div class="cpb-block__head" style="cursor:default;">
+        <span class="cpb-block__type">nova</span>
+        <span class="cpb-block__preview">Novi link</span>
+        <div class="cpb-block__actions">
+          <button type="button" data-remove>✕</button>
+        </div>
+      </div>
+      <div class="cpb-block__body cpb-grid">
+        <label class="cpb-grid__field">
+          <span>Platforma</span>
+          <input type="text" data-field="platform" required />
+        </label>
+        <label class="cpb-grid__field">
+          <span>Labela</span>
+          <input type="text" data-field="label" required />
+        </label>
+        <label class="cpb-grid__field cpb-grid__field--full">
+          <span>URL</span>
+          <input type="url" data-field="href" required placeholder="https://..." />
+        </label>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    (() => {
+      const addBtn = document.querySelector<HTMLButtonElement>("[data-add-social]");
+      const list = document.getElementById("social-list");
+      const tpl = document.getElementById("social-template") as HTMLTemplateElement | null;
+      if (!addBtn || !list || !tpl) return;
+
+      const reindex = () => {
+        const items = list.querySelectorAll<HTMLElement>("[data-social-item]");
+        items.forEach((item, idx) => {
+          const platform = item.querySelector<HTMLInputElement>('[data-field="platform"], input[name*="[platform]"]');
+          const label = item.querySelector<HTMLInputElement>('[data-field="label"], input[name*="[label]"]');
+          const href = item.querySelector<HTMLInputElement>('[data-field="href"], input[name*="[href]"]');
+          if (platform) platform.name = `extraSocialLinks[${idx}][platform]`;
+          if (label) label.name = `extraSocialLinks[${idx}][label]`;
+          if (href) href.name = `extraSocialLinks[${idx}][href]`;
+        });
+      };
+
+      const removeEmpty = () => {
+        list.querySelector("[data-empty]")?.remove();
+      };
+
+      addBtn.addEventListener("click", () => {
+        removeEmpty();
+        const node = tpl.content.cloneNode(true) as DocumentFragment;
+        list.appendChild(node);
+        reindex();
+      });
+
+      list.addEventListener("click", (event) => {
+        const target = event.target as HTMLElement;
+        const btn = target.closest("[data-remove]");
+        if (!btn) return;
+        const item = btn.closest("[data-social-item]");
+        item?.remove();
+        reindex();
+      });
+    })();
+  </script>
+</AdminLayout>

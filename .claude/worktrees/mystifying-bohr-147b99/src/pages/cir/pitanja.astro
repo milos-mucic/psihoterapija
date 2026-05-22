@@ -1,0 +1,21 @@
+---
+export const prerender = true;
+
+import FaqPage from "@/components/pages/FaqPage.astro";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
+import BaseLayout from "@/components/components/BaseLayout.astro";
+
+const locale = "sr-cyrl";
+const content = await pageContentService.getFaqPageData(locale);
+---
+
+<BaseLayout
+  title={content.seo.title}
+  description={content.seo.description}
+  locale={locale}
+  canonicalPath="/cir/pitanja/"
+  appBarTone="dark"
+  appBarOverlay={true}
+>
+  <FaqPage locale={locale} />
+</BaseLayout>

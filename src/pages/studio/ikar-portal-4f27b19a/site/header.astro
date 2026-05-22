@@ -1,0 +1,93 @@
+---
+export const prerender = false;
+
+import AdminLayout from "@/components/components/AdminLayout.astro";
+import { AdminMediaField } from "@/components/components/AdminMediaField";
+import { adminGuard } from "@/features/admin/auth/admin-guard";
+import { siteSettingsService } from "@/features/site-settings/services/site-settings.service";
+
+const guard = adminGuard(Astro);
+if (guard) return guard;
+
+const settings = await siteSettingsService.get();
+const params = Astro.url.searchParams;
+const saved = params.get("saved") === "1";
+const errored = params.get("error") === "1";
+---
+
+<AdminLayout
+  title="Header — brand"
+  active="site-header"
+  breadcrumb={[{ label: "Header" }]}
+>
+  <div class="admin-page-head">
+    <div>
+      <h1>Header — brand</h1>
+      <p class="admin-page-head__copy">
+        Logo, naziv i podtekst koji se prikazuju u headeru (gornjoj traci) sajta.
+      </p>
+    </div>
+  </div>
+
+  {saved && <div class="admin-alert admin-alert--success" style="margin-bottom:0.6rem;">Brand je sačuvan.</div>}
+  {errored && <div class="admin-alert admin-alert--error" style="margin-bottom:0.6rem;">Greška pri snimanju.</div>}
+
+  <form method="POST" action="/api/admin/site-settings" class="cpb">
+    <input type="hidden" name="section" value="header" />
+
+    <section class="admin-card">
+      <header class="admin-card__head">
+        <div>
+          <div class="admin-card__eyebrow">Brand</div>
+          <h2 class="admin-card__title">Tekst i logo</h2>
+        </div>
+      </header>
+      <div class="admin-card__body cpb-grid">
+        <label class="cpb-grid__field">
+          <span>Naziv brenda</span>
+          <input type="text" name="brand.name" value={settings.brand.name} placeholder="npr. Ikar" />
+          <small>Prikazuje se kraj logoa. Ostavi prazno ako koristiš samo logo sliku.</small>
+        </label>
+        <label class="cpb-grid__field">
+          <span>Podtekst / specijalnost</span>
+          <input type="text" name="brand.tagline" value={settings.brand.tagline} placeholder="npr. Psihoterapija" />
+          <small>Sitan tekst ispod naziva.</small>
+        </label>
+
+        <div class="cpb-grid__field cpb-grid__field--full">
+          <AdminMediaField
+            client:load
+            name="brand.logoLight"
+            label="Logo za svetlu pozadinu"
+            initialValue={settings.brand.logoLight}
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder="branding"
+            uploadLabel="Otpremi logo"
+            helpText="Preporučeno: PNG ili SVG sa transparentnom pozadinom."
+          />
+        </div>
+        <div class="cpb-grid__field cpb-grid__field--full">
+          <AdminMediaField
+            client:load
+            name="brand.logoDark"
+            label="Logo za tamnu pozadinu"
+            initialValue={settings.brand.logoDark}
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder="branding"
+            uploadLabel="Otpremi logo"
+            helpText="Verzija logoa za tamne sekcije (footer, hero overlay)."
+          />
+        </div>
+
+        <label class="site-checkbox cpb-grid__field--full">
+          <input class="site-checkbox__input" type="checkbox" name="brand.hideLogo" value="1" checked={settings.brand.hideLogo} />
+          <span class="site-checkbox__label">Sakri logo sliku (prikaži samo tekstualni brand)</span>
+        </label>
+      </div>
+    </section>
+
+    <div class="cpb__save-bar">
+      <button type="submit" class="cpb__save">Sačuvaj header</button>
+    </div>
+  </form>
+</AdminLayout>

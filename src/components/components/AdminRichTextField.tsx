@@ -93,6 +93,13 @@ export type AdminRichTextFieldProps = {
     removeLink?: string;
     placeholder?: string;
   };
+  /**
+   * Optional callback invoked whenever the editor's HTML value changes.
+   * Useful when the field is consumed by a parent React component that wants
+   * to react to changes instead of (or in addition to) relying on the hidden
+   * form input.
+   */
+  onValueChange?: (value: string) => void;
 };
 
 type Props = AdminRichTextFieldProps;
@@ -1319,8 +1326,13 @@ export function AdminRichTextField({
   uploadUrl,
   uploadFolder = "blog",
   labels,
+  onValueChange,
 }: Props) {
   const [value, setValue] = useState(initialValue);
+
+  useEffect(() => {
+    onValueChange?.(value);
+  }, [value, onValueChange]);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const initialConfig = useMemo(
     () => ({

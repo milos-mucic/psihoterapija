@@ -1,0 +1,19 @@
+---
+export const prerender = true;
+
+import BaseLayout from "@/components/components/BaseLayout.astro";
+import ScopePage from "@/components/pages/ScopePage.astro";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
+
+const locale = "sr-cyrl";
+const content = await pageContentService.getScopePageData(locale);
+---
+
+<BaseLayout
+  title={content.seo.title}
+  description={content.seo.description}
+  locale={locale}
+  canonicalPath="/cir/oblast-rada/"
+>
+  <ScopePage locale={locale} />
+</BaseLayout>

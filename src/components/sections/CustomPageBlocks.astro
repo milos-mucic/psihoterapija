@@ -1,0 +1,337 @@
+---
+import sanitizeHtml from "sanitize-html";
+import type {
+  CustomPageBlock,
+  HeroBlockData,
+  RichTextBlockData,
+  ImageBlockData,
+  CtaBlockData,
+} from "@/features/custom-pages/types/custom-page.types";
+
+interface Props {
+  blocks: CustomPageBlock[];
+}
+const { blocks } = Astro.props;
+
+const sanitizeBlockHtml = (html: string) =>
+  sanitizeHtml(html ?? "", {
+    allowedTags: ["p", "br", "strong", "b", "em", "i", "u", "ul", "ol", "li", "h2", "h3", "h4", "a", "blockquote"],
+    allowedAttributes: { a: ["href", "target", "rel"] },
+  });
+
+const sanitizeInlineHtml = (html: string) =>
+  sanitizeHtml(html ?? "", {
+    allowedTags: ["br", "strong", "b", "em", "i", "u", "a", "p"],
+    allowedAttributes: { a: ["href", "target", "rel"] },
+  });
+---
+
+{blocks.map((block) => (
+  <Fragment>
+    {block.type === "hero" && (
+      <section class:list={["cp-hero", `cp-hero--align-${(block.data as HeroBlockData).align ?? "left"}`]}>
+        {(block.data as HeroBlockData).image && (
+          <div class="cp-hero__bg">
+            <img src={(block.data as HeroBlockData).image} alt="" loading="eager" />
+          </div>
+        )}
+        <div class="cp-hero__inner container">
+          {(block.data as HeroBlockData).eyebrow && (
+            <p class="cp-hero__eyebrow">{(block.data as HeroBlockData).eyebrow}</p>
+          )}
+          <h1 class="cp-hero__title">{(block.data as HeroBlockData).title}</h1>
+          {(block.data as HeroBlockData).subtitle && (
+            <div class="cp-hero__subtitle" set:html={sanitizeInlineHtml((block.data as HeroBlockData).subtitle ?? "")}></div>
+          )}
+          {(block.data as HeroBlockData).ctaLabel && (block.data as HeroBlockData).ctaHref && (
+            <a class="cp-hero__cta" href={(block.data as HeroBlockData).ctaHref}>
+              {(block.data as HeroBlockData).ctaLabel}
+            </a>
+          )}
+        </div>
+      </section>
+    )}
+
+    {block.type === "richtext" && (
+      <section class="cp-richtext">
+        <div class="container">
+          <div class="cp-richtext__body prose" set:html={sanitizeBlockHtml((block.data as RichTextBlockData).html)}></div>
+        </div>
+      </section>
+    )}
+
+    {block.type === "image" && (
+      <section class:list={["cp-image", `cp-image--${(block.data as ImageBlockData).layout}`]}>
+        <div class="container">
+          <div class="cp-image__inner">
+            <figure class="cp-image__figure">
+              <img
+                src={(block.data as ImageBlockData).src}
+                alt={(block.data as ImageBlockData).alt ?? ""}
+                loading="lazy"
+              />
+              {(block.data as ImageBlockData).caption && (
+                <figcaption class="cp-image__caption">{(block.data as ImageBlockData).caption}</figcaption>
+              )}
+            </figure>
+            {((block.data as ImageBlockData).layout === "side-text-right" ||
+              (block.data as ImageBlockData).layout === "side-text-left") && (
+              <div class="cp-image__text">
+                {(block.data as ImageBlockData).title && (
+                  <h2 class="cp-image__title">{(block.data as ImageBlockData).title}</h2>
+                )}
+                {(block.data as ImageBlockData).text && (
+                  <div class="cp-image__copy" set:html={sanitizeInlineHtml((block.data as ImageBlockData).text ?? "")}></div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+    )}
+
+    {block.type === "cta" && (
+      <section class:list={["cp-cta", `cp-cta--${(block.data as CtaBlockData).variant}`]}>
+        <div class="container">
+          <div class="cp-cta__inner">
+            {(block.data as CtaBlockData).eyebrow && (
+              <p class="cp-cta__eyebrow">{(block.data as CtaBlockData).eyebrow}</p>
+            )}
+            <h2 class="cp-cta__title">{(block.data as CtaBlockData).title}</h2>
+            {(block.data as CtaBlockData).copy && (
+              <div class="cp-cta__copy" set:html={sanitizeInlineHtml((block.data as CtaBlockData).copy ?? "")}></div>
+            )}
+            <a class="cp-cta__button" href={(block.data as CtaBlockData).buttonHref}>
+              {(block.data as CtaBlockData).buttonLabel}
+            </a>
+          </div>
+        </div>
+      </section>
+    )}
+  </Fragment>
+))}
+
+<style is:global>
+  /* Hero */
+  .cp-hero {
+    position: relative;
+    padding: clamp(3rem, 6vw, 5rem) 0;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .cp-hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+  .cp-hero__bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .cp-hero__bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(15, 47, 48, 0.45), rgba(15, 47, 48, 0.65));
+  }
+  .cp-hero:has(.cp-hero__bg img[src]) .cp-hero__inner {
+    color: #f7f4ec;
+  }
+  .cp-hero__inner {
+    position: relative;
+    z-index: 1;
+  }
+  .cp-hero--align-center .cp-hero__inner {
+    text-align: center;
+  }
+  .cp-hero__eyebrow {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #c79e4f;
+    margin: 0 0 0.85rem;
+  }
+  .cp-hero__title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3.4rem);
+    line-height: 1.05;
+    margin: 0 0 0.75rem;
+  }
+  .cp-hero__subtitle {
+    font-size: 1.1rem;
+    line-height: 1.55;
+    max-width: 38rem;
+    margin: 0 0 1.5rem;
+  }
+  .cp-hero--align-center .cp-hero__subtitle {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .cp-hero__cta {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.85rem 1.6rem;
+    background: var(--accent, #2a5758);
+    color: #fff;
+    border-radius: 999px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.18s ease;
+  }
+  .cp-hero__cta:hover {
+    background: var(--accent-strong, #0f2f30);
+  }
+
+  /* Richtext */
+  .cp-richtext {
+    padding: clamp(2rem, 4vw, 3.5rem) 0;
+  }
+  .cp-richtext__body {
+    max-width: 48rem;
+    margin: 0 auto;
+  }
+  .cp-richtext__body h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+    line-height: 1.15;
+    margin: 1.75rem 0 0.85rem;
+  }
+  .cp-richtext__body h3 {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    margin: 1.4rem 0 0.65rem;
+  }
+  .cp-richtext__body p {
+    line-height: 1.7;
+    margin: 0 0 1rem;
+  }
+  .cp-richtext__body ul,
+  .cp-richtext__body ol {
+    padding-left: 1.4rem;
+    margin: 0 0 1rem;
+  }
+  .cp-richtext__body li {
+    line-height: 1.6;
+    margin: 0 0 0.35rem;
+  }
+  .cp-richtext__body a {
+    color: var(--accent-strong, #0f2f30);
+    text-decoration: underline;
+  }
+
+  /* Image */
+  .cp-image {
+    padding: clamp(2rem, 4vw, 3.5rem) 0;
+  }
+  .cp-image__inner {
+    display: grid;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  .cp-image--full .cp-image__inner {
+    grid-template-columns: 1fr;
+  }
+  .cp-image--side-text-right .cp-image__inner,
+  .cp-image--side-text-left .cp-image__inner {
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 50rem) {
+    .cp-image--side-text-right .cp-image__inner {
+      grid-template-columns: 1fr 1fr;
+    }
+    .cp-image--side-text-left .cp-image__inner {
+      grid-template-columns: 1fr 1fr;
+    }
+    .cp-image--side-text-left .cp-image__figure {
+      order: 2;
+    }
+  }
+  .cp-image__figure {
+    margin: 0;
+  }
+  .cp-image__figure img {
+    width: 100%;
+    height: auto;
+    border-radius: 0.85rem;
+    display: block;
+  }
+  .cp-image__caption {
+    font-size: 0.85rem;
+    color: var(--muted, #5c6561);
+    margin-top: 0.5rem;
+  }
+  .cp-image__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 2.2vw, 2rem);
+    line-height: 1.15;
+    margin: 0 0 0.65rem;
+  }
+  .cp-image__copy {
+    line-height: 1.65;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  /* CTA */
+  .cp-cta {
+    padding: clamp(2.5rem, 5vw, 4.5rem) 0;
+  }
+  .cp-cta__inner {
+    max-width: 38rem;
+    margin: 0 auto;
+    text-align: center;
+    padding: 2rem 1.5rem;
+    border-radius: 1.25rem;
+  }
+  .cp-cta--light .cp-cta__inner {
+    background: rgba(247, 244, 236, 0.7);
+    border: 1px solid var(--line);
+    color: var(--foreground);
+  }
+  .cp-cta--dark .cp-cta__inner {
+    background: linear-gradient(135deg, #163c3d, #0f2f30);
+    color: #f7f4ec;
+  }
+  .cp-cta__eyebrow {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #c79e4f;
+    margin: 0 0 0.85rem;
+  }
+  .cp-cta__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 2.6vw, 2.4rem);
+    line-height: 1.15;
+    margin: 0 0 0.85rem;
+  }
+  .cp-cta__copy {
+    margin: 0 0 1.5rem;
+    line-height: 1.6;
+  }
+  .cp-cta__button {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.85rem 1.6rem;
+    background: var(--accent, #2a5758);
+    color: #fff;
+    border-radius: 999px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.18s ease, transform 0.15s ease;
+  }
+  .cp-cta__button:hover {
+    background: var(--accent-strong, #0f2f30);
+    transform: translateY(-1px);
+  }
+  .cp-cta--dark .cp-cta__button {
+    background: #c79e4f;
+    color: #0f2f30;
+  }
+  .cp-cta--dark .cp-cta__button:hover {
+    background: #d7c5a2;
+  }
+</style>

@@ -1,0 +1,74 @@
+---
+export const prerender = false;
+
+import AdminLayout from "@/components/components/AdminLayout.astro";
+import { AdminCustomPageBuilder } from "@/components/components/AdminCustomPageBuilder";
+import { adminGuard } from "@/features/admin/auth/admin-guard";
+import { customPageService } from "@/features/custom-pages/services/custom-page.service";
+import { adminConfig } from "@/lib/config/admin";
+
+const guard = adminGuard(Astro);
+if (guard) return guard;
+
+const { id } = Astro.params;
+if (!id) return Astro.redirect(`${adminConfig.basePath}/pages/`);
+
+const page = await customPageService.getById(id);
+if (!page) return Astro.redirect(`${adminConfig.basePath}/pages/?missing=1`);
+
+const params = Astro.url.searchParams;
+const created = params.get("created") === "1";
+const saved = params.get("saved") === "1";
+
+const initial = {
+  slug: page.slug,
+  locale: page.locale,
+  title: page.title,
+  description: page.description ?? "",
+  blocks: page.blocks,
+  status: page.status,
+};
+---
+
+<AdminLayout
+  title={`Uredi: ${page.title}`}
+  active="pages"
+  breadcrumb={[
+    { label: "Stranice", href: `${adminConfig.basePath}/pages/` },
+    { label: page.title },
+  ]}
+>
+  <div class="admin-page-head">
+    <div>
+      <h1>{page.title}</h1>
+      <p class="admin-page-head__copy">
+        Uređuješ stranicu — promene se primenjuju nakon snimanja.
+      </p>
+    </div>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+      <a class="btn-ghost" href={`${page.locale === "sr-cyrl" ? "/cir/" : "/"}${page.slug}/`} target="_blank" rel="noreferrer">
+        Otvori javnu stranicu ↗
+      </a>
+      <form method="POST" action={`/api/admin/custom-pages/${page.id}/delete/`} onsubmit="return confirm('Obrisati ovu stranicu? Ova akcija je nepovratna.')" style="display:inline;">
+        <button class="btn-ghost" type="submit" style="color:var(--shell-danger);">
+          Obriši stranicu
+        </button>
+      </form>
+    </div>
+  </div>
+
+  {created && (
+    <div class="admin-alert admin-alert--success">Stranica je kreirana.</div>
+  )}
+  {saved && (
+    <div class="admin-alert admin-alert--success">Promene su sačuvane.</div>
+  )}
+
+  <AdminCustomPageBuilder
+    client:load
+    pageId={page.id}
+    initial={initial}
+    action={`/api/admin/custom-pages/${page.id}/`}
+    mode="edit"
+  />
+</AdminLayout>

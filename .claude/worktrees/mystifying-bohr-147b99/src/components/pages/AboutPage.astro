@@ -1,0 +1,186 @@
+---
+import PageBanner from "@/components/sections/PageBanner.astro";
+import { localizePath } from "@/features/i18n/locale";
+import { getDictionary } from "@/features/i18n/translate";
+import { blogService } from "@/features/blog/services/blog.service";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
+import type { SiteLocale } from "@/lib/config/site";
+
+type Props = {
+  locale: SiteLocale;
+  content?: Awaited<ReturnType<typeof pageContentService.getAboutPageData>>;
+};
+
+const { locale, content: previewContent } = Astro.props;
+const dictionary = getDictionary(locale);
+const content = previewContent ?? (await pageContentService.getAboutPageData(locale));
+const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
+---
+
+<div class="about-page">
+  {!content.hiddenBlocks?.includes("about-banner") && (
+    <PageBanner {...content.banner} sectionId="about-banner" />
+  )}
+
+  {!content.hiddenBlocks?.includes("about-idea") && (
+  <section id="about-idea" class="page-section about-page__idea">
+    <div class="container">
+      <div class="about-page__split">
+        <div class="about-page__copy" data-reveal="up">
+          <h2>{content.ideaTitle}</h2>
+          <div class="about-page__rich-text richtext-shell" set:html={content.ideaHtml} />
+        </div>
+
+        <aside class="about-page__focus-card" data-reveal="right" style="--reveal-delay: 90ms;">
+          <div class="about-page__focus-title">
+            <h3>{content.focusTitle}</h3>
+          </div>
+          <ul>
+            {content.focusItems.map((item) => <li>{item}</li>)}
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+  )}
+
+  {!content.hiddenBlocks?.includes("about-blog") && (
+  <section id="about-blog" class="home-section">
+    <div class="container">
+      <div class="home-heading-row home-heading-row--blog" data-reveal="up">
+        <div class="home-heading-copy">
+          <h2>{content.recentTitle}</h2>
+          <div class="home-richtext" set:html={content.recentCopy} />
+        </div>
+        <a class="home-button" href={content.recentHref}>{content.recentLabel}</a>
+      </div>
+
+      {
+        posts.length > 0 ? (
+          <div class="home-card-grid home-card-grid--blog">
+            {posts.map((post, index) => (
+              <article
+                class="home-blog-card"
+                data-reveal="up"
+                style={`--reveal-delay: ${index * 90}ms;`}
+              >
+                <a class="home-blog-card__media" href={localizePath(locale, `/blog/${post.slug}/`)}>
+                  <img
+                    src={post.coverImage ?? "/legacy/images/Blog-1_1Blog 1.webp"}
+                    alt={post.title}
+                    loading="lazy"
+                    data-image-component
+                  />
+                </a>
+                <div class="home-blog-card__body">
+                  <div class="home-post-meta">
+                    <span>
+                      {post.publishedAt.toLocaleDateString(
+                        locale === "sr-cyrl" ? "sr-Cyrl-RS" : "sr-RS",
+                      )}
+                    </span>
+                    <span>&bull;</span>
+                    <span>{post.tags.join(", ") || dictionary.blog.defaultTag}</span>
+                  </div>
+                  <div class="home-blog-card__copy">
+                    <h3>{post.title}</h3>
+                    <div class="home-blog-card__excerpt" set:html={post.excerpt} />
+                  </div>
+                  <a
+                    class="home-blog-card__action"
+                    href={localizePath(locale, `/blog/${post.slug}/`)}
+                  >
+                    <span>{dictionary.blog.readMoreLabel}</span>
+                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M7 17L17 7M9 7H17V15"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.9"
+                      />
+                    </svg>
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div class="home-card" data-reveal="up">
+            <p>{content.recentEmptyLabel}</p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+  )}
+</div>
+
+<style>
+  .about-page__idea {
+    padding-top: 0.5rem;
+  }
+
+  .about-page__split {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.9fr);
+    gap: clamp(1.5rem, 5vw, 3rem);
+    align-items: start;
+  }
+
+  .about-page__copy {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .about-page__copy h2 {
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    line-height: 1.05;
+  }
+
+  .about-page__rich-text,
+  .about-page__rich-text :global(p),
+  .about-page__rich-text :global(ul),
+  .about-page__rich-text :global(ol) {
+    margin: 0;
+    line-height: 1.8;
+  }
+
+  .about-page__focus-card {
+    display: grid;
+    gap: 1rem;
+    border-radius: 1rem;
+    background: var(--primary);
+    padding: 2rem;
+    box-shadow: 0 18px 44px rgba(16, 47, 48, 0.12);
+  }
+
+  .about-page__focus-title h3 {
+    color: var(--white);
+    font-size: 1.85rem;
+    line-height: 1.1;
+  }
+
+  .about-page__focus-card ul {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding-left: 1.25rem;
+    color: var(--primary-light);
+  }
+
+  .about-page__focus-card li {
+    display: list-item;
+    line-height: 1.6;
+  }
+
+  .about-page__focus-card li::marker {
+    color: var(--primary-light);
+  }
+
+  @media (max-width: 960px) {
+    .about-page__split {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

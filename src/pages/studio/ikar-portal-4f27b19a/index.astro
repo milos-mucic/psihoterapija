@@ -1,92 +1,307 @@
 ---
-import { AdminPasswordModal } from "@/components/components/AdminPasswordModal";
-import { getDictionary } from "@/features/i18n/translate";
-import { adminAuthService } from "@/features/admin/auth/admin-auth.service";
-import { adminConfig } from "@/lib/config/admin";
+export const prerender = false;
+
 import AdminLayout from "@/components/components/AdminLayout.astro";
+import AdminIcon from "@/components/components/AdminIcon.astro";
+import { adminGuard } from "@/features/admin/auth/admin-guard";
+import { adminConfig } from "@/lib/config/admin";
+import { blogService } from "@/features/blog/services/blog.service";
+import { submissionService } from "@/features/forms/services/submission.service";
+import { pageDashboardService } from "@/features/page-content/admin/page-dashboard.service";
+import { getDictionary } from "@/features/i18n/translate";
+
+const guard = adminGuard(Astro);
+if (guard) return guard;
 
 const dictionary = getDictionary("sr-latn");
-const authenticated = adminAuthService.isAuthenticated(Astro.cookies);
+
+const [posts, submissions, pages] = await Promise.all([
+  blogService.listAllPosts().catch(() => []),
+  submissionService.listSubmissions().catch(() => []),
+  pageDashboardService.listPages().catch(() => []),
+]);
+
+const pageStats = pageDashboardService.getStats(pages);
+
+const dayMs = 24 * 60 * 60 * 1000;
+const now = new Date();
+const todayStart = new Date(now);
+todayStart.setHours(0, 0, 0, 0);
+const sevenAgo = new Date(todayStart.getTime() - 7 * dayMs);
+
+const subsNew      = submissions.filter((s) => s.status === "new").length;
+const subsReviewed = submissions.filter((s) => s.status === "reviewed").length;
+const subsToday    = submissions.filter((s) => new Date(s.createdAt) >= todayStart).length;
+const subsLast7    = submissions.filter((s) => new Date(s.createdAt) >= sevenAgo).length;
+
+const postsPublished = posts.filter((p) => p.status === "published").length;
+const postsDraft     = posts.filter((p) => p.status === "draft").length;
+
+const recentSubs = [...submissions]
+  .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+  .slice(0, 5);
+
+const recentPosts = [...posts]
+  .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+  .slice(0, 5);
+
+const hour = now.getHours();
+const greeting = hour < 12 ? "Dobro jutro" : hour < 18 ? "Dobar dan" : "Dobro veče";
+
+const base = adminConfig.basePath;
 ---
+<AdminLayout title={dictionary.meta.admin.dashboardTitle} active="dashboard">
+  <!-- WELCOME -->
+  <div class="admin-page-head">
+    <div>
+      <h1>{greeting} 👋</h1>
+      <p class="admin-page-head__copy">Pregled aktivnosti u Ikar studiju.</p>
+    </div>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+      <a class="btn-ghost" href={`${base}/blog/new/`}>
+        <AdminIcon name="plus" /> Novi tekst
+      </a>
+      <a class="btn-dark" href={`${base}/submissions/`}>
+        <AdminIcon name="inbox" /> Prijave
+      </a>
+    </div>
+  </div>
 
-<AdminLayout title={dictionary.meta.admin.dashboardTitle}>
-  {
-    authenticated ? (
-      <div class="admin-grid">
-        <div class="card admin-intro-card">
-          <div class="admin-intro-card__content">
-            <p class="admin-kicker">Ikar Studio</p>
-            <h2>{dictionary.admin.dashboard.title}</h2>
-            <p class="section-copy">{dictionary.admin.dashboard.copy}</p>
-          </div>
+  <!-- LIVE STATS -->
+  <div class="admin-stats">
+    <a class="admin-stat admin-stat--link" href={`${base}/submissions/`}>
+      <span class="admin-stat__dot" style="background: #2e7d6b;"></span>
+      <div class="admin-stat__body">
+        <div class="admin-stat__label">Prijave danas</div>
+        <div class="admin-stat__value">{subsToday}</div>
+      </div>
+    </a>
 
-          <div class="admin-stat-strip">
-            <div class="admin-stat-pill">
-              <span class="admin-stat-pill__label">Sadržaj</span>
-              <strong>Stranice</strong>
-            </div>
-            <div class="admin-stat-pill">
-              <span class="admin-stat-pill__label">Tok rada</span>
-              <strong>Blog</strong>
-            </div>
-            <div class="admin-stat-pill">
-              <span class="admin-stat-pill__label">Upiti</span>
-              <strong>Prijave</strong>
-            </div>
-          </div>
+    <div class="admin-stat">
+      <span class="admin-stat__dot" style="background: #2a5758;"></span>
+      <div class="admin-stat__body">
+        <div class="admin-stat__label">Poslednjih 7 dana</div>
+        <div class="admin-stat__value">{subsLast7}</div>
+      </div>
+    </div>
+
+    <div class="admin-stat">
+      <span class="admin-stat__dot" style="background: #163c3d;"></span>
+      <div class="admin-stat__body">
+        <div class="admin-stat__label">Pregledane</div>
+        <div class="admin-stat__value">{subsReviewed}</div>
+      </div>
+    </div>
+
+    <a
+      class="admin-stat admin-stat--link"
+      href={`${base}/submissions/`}
+      class:list={["admin-stat", "admin-stat--link", subsNew > 0 && "is-warn"]}
+    >
+      <span class:list={["admin-stat__dot", subsNew > 0 && "is-pending"]} style={`background:${subsNew > 0 ? "#b48324" : "#828a85"};`}></span>
+      <div class="admin-stat__body">
+        <div class="admin-stat__label">Nove (nepregledane)</div>
+        <div class="admin-stat__value">{subsNew}</div>
+      </div>
+      {subsNew > 0 && <AdminIcon name="arrowRight" class="admin-stat__arrow" />}
+    </a>
+  </div>
+
+  <!-- CATALOG STATS -->
+  <div class="admin-stats" style="margin-bottom:0.6rem;">
+    <a class="admin-stat admin-stat--link" href={`${base}/pages/`}>
+      <span class="admin-stat__icon"><AdminIcon name="pages" /></span>
+      <div class="admin-stat__body">
+        <div class="admin-stat__label">Stranice</div>
+        <div class="admin-stat__value">{pageStats.totalPages}</div>
+      </div>
+      <AdminIcon name="arrowRight" class="admin-stat__arrow" />
+    </a>
+
+    <a class="admin-stat admin-stat--link" href={`${base}/blog/`}>
+      <span class="admin-stat__icon"><AdminIcon name="blog" /></span>
+      <div class="admin-stat__body">
+        <div class="admin-stat__label">Blog · objavljeno</div>
+        <div class="admin-stat__value">
+          {postsPublished}
+          <span style="font-size:0.75rem;color:var(--shell-text-mute);font-family:var(--font-body);"> / {posts.length}</span>
         </div>
-        <div class="admin-tile-grid">
-          <a class="card admin-tile" href={`${adminConfig.basePath}/pages/`}>
-            <p class="admin-tile__eyebrow">Content</p>
-            <h3>{dictionary.admin.pages.title}</h3>
-            <p class="admin-tile__copy">{dictionary.admin.pages.copy}</p>
-            <span class="admin-tile__footer">
-              Otvori sekciju
-              <span class="admin-tile__arrow">↗</span>
-            </span>
-          </a>
-          <a class="card admin-tile" href={`${adminConfig.basePath}/navigation/`}>
-            <p class="admin-tile__eyebrow">Site chrome</p>
-            <h3>Navigacija</h3>
-            <p class="admin-tile__copy">
-              Uredite labele, redoslede, URL-ove i dropdown decu glavnog menija.
-            </p>
-            <span class="admin-tile__footer">
-              Otvori sekciju
-              <span class="admin-tile__arrow">↗</span>
-            </span>
-          </a>
-          <a class="card admin-tile" href={`${adminConfig.basePath}/blog/`}>
-            <p class="admin-tile__eyebrow">Publishing</p>
-            <h3>{dictionary.admin.dashboard.blogManagementTitle}</h3>
-            <p class="admin-tile__copy">{dictionary.admin.dashboard.blogManagementCopy}</p>
-            <span class="admin-tile__footer">
-              Otvori sekciju
-              <span class="admin-tile__arrow">↗</span>
-            </span>
-          </a>
-          <a class="card admin-tile" href={`${adminConfig.basePath}/submissions/`}>
-            <p class="admin-tile__eyebrow">Inbox</p>
-            <h3>{dictionary.admin.dashboard.submissionsTitle}</h3>
-            <p class="admin-tile__copy">{dictionary.admin.dashboard.submissionsCopy}</p>
-            <span class="admin-tile__footer">
-              Otvori sekciju
-              <span class="admin-tile__arrow">↗</span>
-            </span>
+      </div>
+      <AdminIcon name="arrowRight" class="admin-stat__arrow" />
+    </a>
+
+    <a class="admin-stat admin-stat--link" href={`${base}/blog/?status=draft`}>
+      <span class="admin-stat__icon"><AdminIcon name="edit" /></span>
+      <div class="admin-stat__body">
+        <div class="admin-stat__label">Skice (draft)</div>
+        <div class="admin-stat__value">{postsDraft}</div>
+      </div>
+      <AdminIcon name="arrowRight" class="admin-stat__arrow" />
+    </a>
+
+    <a class="admin-stat admin-stat--link" href={`${base}/navigation/`}>
+      <span class="admin-stat__icon"><AdminIcon name="nav" /></span>
+      <div class="admin-stat__body">
+        <div class="admin-stat__label">Navigacija</div>
+        <div class="admin-stat__value" style="font-size:1.1rem;">Uredi</div>
+      </div>
+      <AdminIcon name="arrowRight" class="admin-stat__arrow" />
+    </a>
+  </div>
+
+  <!-- TWO-COLUMN -->
+  <div class="admin-row admin-row--2-3" style="margin-bottom:0.6rem;">
+    <!-- LEFT: PAGE QUALITY -->
+    <section class="admin-card">
+      <header class="admin-card__head">
+        <div>
+          <div class="admin-card__eyebrow">Pregled sadržaja</div>
+          <h2 class="admin-card__title">Stranice</h2>
+        </div>
+        <AdminIcon name="sparkles" class="admin-stat__arrow" />
+      </header>
+      <div class="admin-card__body">
+        <div style="display:grid;gap:0.6rem;">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.85rem;">
+            <span style="color:var(--shell-text-soft);">Potrebno prevesti</span>
+            <span style="font-family:var(--font-display);font-size:1.25rem;">{pageStats.pagesNeedingTranslation}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.85rem;">
+            <span style="color:var(--shell-text-soft);">Nedostaje slika</span>
+            <span style="font-family:var(--font-display);font-size:1.25rem;">{pageStats.pagesWithMissingImages}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.85rem;">
+            <span style="color:var(--shell-text-soft);">Neobjavljene promene</span>
+            <span style="font-family:var(--font-display);font-size:1.25rem;">{pageStats.pagesWithUnpublishedChanges}</span>
+          </div>
+          <a class="btn-ghost" href={`${base}/pages/`} style="margin-top:0.5rem;justify-content:center;">
+            Otvori page studio
+            <AdminIcon name="arrowRight" />
           </a>
         </div>
       </div>
-    ) : (
-      <div class="page-grid">
-        <div class="card admin-intro-card">
-          <div class="admin-intro-card__content">
-            <p class="admin-kicker">Private Access</p>
-            <h2>{dictionary.admin.entry.title}</h2>
-            <p class="section-copy">{dictionary.admin.entry.copy}</p>
-          </div>
+    </section>
+
+    <!-- RIGHT: RECENT SUBMISSIONS -->
+    <section class="admin-card">
+      <header class="admin-card__head">
+        <div>
+          <div class="admin-card__eyebrow">Inbox</div>
+          <h2 class="admin-card__title">Najnovije prijave</h2>
         </div>
-        <AdminPasswordModal client:load returnPath={adminConfig.basePath + "/"} />
+        <a class="btn-ghost" href={`${base}/submissions/`}>
+          Sve <AdminIcon name="arrowRight" />
+        </a>
+      </header>
+      <div class="admin-card__body">
+        {recentSubs.length === 0 ? (
+          <div style="text-align:center;color:var(--shell-text-soft);padding:1rem 0;">
+            <div style="width:2.5rem;height:2.5rem;margin:0 auto 0.5rem;border-radius:50%;background:var(--shell-gold-bg);color:var(--shell-gold);display:grid;place-items:center;">
+              <AdminIcon name="inbox" />
+            </div>
+            Nema prijava.
+          </div>
+        ) : (
+          <ul class="admin-list">
+            {recentSubs.map((s) => (
+              <li>
+                <span class="admin-avatar">
+                  {s.name.charAt(0)}
+                </span>
+                <div class="admin-list__main">
+                  <div class="admin-list__title">{s.name}</div>
+                  <div class="admin-list__meta">
+                    {s.type === "appointment" ? "Zakazivanje" : "Kontakt"} · {new Date(s.createdAt).toLocaleDateString("sr-RS", { day: "numeric", month: "short" })}
+                  </div>
+                </div>
+                <span class={`badge badge--${s.status}`}>{s.status === "new" ? "Nova" : s.status === "reviewed" ? "Pregledana" : "Arhivirana"}</span>
+                <a class="admin-list__action" href={`${base}/submissions/${s.id}/`} title="Detalji">
+                  <AdminIcon name="arrowRight" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
-    )
-  }
+    </section>
+  </div>
+
+  <!-- RECENT POSTS -->
+  <section class="admin-card" style="margin-bottom:0.6rem;">
+    <header class="admin-card__head">
+      <div>
+        <div class="admin-card__eyebrow">Publishing</div>
+        <h2 class="admin-card__title">Skoriji tekstovi</h2>
+      </div>
+      <a class="btn-ghost" href={`${base}/blog/`}>
+        Sve <AdminIcon name="arrowRight" />
+      </a>
+    </header>
+    <div class="admin-card__body">
+      {recentPosts.length === 0 ? (
+        <div style="text-align:center;color:var(--shell-text-soft);padding:1rem 0;">
+          <div style="width:2.5rem;height:2.5rem;margin:0 auto 0.5rem;border-radius:50%;background:var(--shell-gold-bg);color:var(--shell-gold);display:grid;place-items:center;">
+            <AdminIcon name="blog" />
+          </div>
+          Nema tekstova.
+        </div>
+      ) : (
+        <ul class="admin-list">
+          {recentPosts.map((p) => (
+            <li>
+              <span class="admin-avatar" style={`background:${p.status === "published" ? "#e2f1e9" : p.status === "draft" ? "#e7eef1" : "rgba(22, 60, 61, 0.06)"};color:${p.status === "published" ? "#2e7d6b" : "#2a5758"};`}>
+                {p.locale === "sr-cyrl" ? "ћ" : "L"}
+              </span>
+              <div class="admin-list__main">
+                <div class="admin-list__title">{p.title}</div>
+                <div class="admin-list__meta">
+                  {p.locale} · {new Date(p.publishedAt).toLocaleDateString("sr-RS", { day: "numeric", month: "short", year: "numeric" })}
+                </div>
+              </div>
+              <span class={`badge badge--${p.status}`}>{p.status === "published" ? "Objavljen" : p.status === "draft" ? "Skica" : "Arhiviran"}</span>
+              <a class="admin-list__action" href={`${base}/blog/${p.id}/edit/`} title="Uredi">
+                <AdminIcon name="edit" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
+
+  <!-- QUICK TILES -->
+  <div class="admin-tiles">
+    <a class="admin-tile admin-tile--dark" href={`${base}/blog/new/`}>
+      <div class="admin-tile__top">
+        <AdminIcon name="blog" class="admin-tile__icon" />
+        <AdminIcon name="plus" class="admin-tile__plus" />
+      </div>
+      <h3 class="admin-tile__title">Novi tekst</h3>
+      <p class="admin-tile__copy">Napiši novi blog post — Lexical editor.</p>
+    </a>
+    <a class="admin-tile" href={`${base}/pages/`}>
+      <div class="admin-tile__top">
+        <AdminIcon name="pages" class="admin-tile__icon" />
+        <AdminIcon name="arrowRight" class="admin-tile__plus" />
+      </div>
+      <h3 class="admin-tile__title">Uredi stranice</h3>
+      <p class="admin-tile__copy">Početna, biografija, usluge i ostali blokovi.</p>
+    </a>
+    <a class="admin-tile" href={`${base}/navigation/`}>
+      <div class="admin-tile__top">
+        <AdminIcon name="nav" class="admin-tile__icon" />
+        <AdminIcon name="arrowRight" class="admin-tile__plus" />
+      </div>
+      <h3 class="admin-tile__title">Navigacija</h3>
+      <p class="admin-tile__copy">Labele, redosled i meni za oba pisma.</p>
+    </a>
+    <a class="admin-tile" href={`${base}/submissions/`}>
+      <div class="admin-tile__top">
+        <AdminIcon name="inbox" class="admin-tile__icon" />
+        <AdminIcon name="arrowRight" class="admin-tile__plus" />
+      </div>
+      <h3 class="admin-tile__title">Pregled prijava</h3>
+      <p class="admin-tile__copy">Kontakti i zahtevi za zakazivanje.</p>
+    </a>
+  </div>
 </AdminLayout>

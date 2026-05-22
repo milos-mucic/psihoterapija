@@ -1,38 +1,135 @@
 ---
-import BaseLayout from "@/components/components/BaseLayout.astro";
+import AdminIcon from "@/components/components/AdminIcon.astro";
+import SeoHead from "@/components/components/SeoHead.astro";
 import { getDictionary } from "@/features/i18n/translate";
+import { submissionService } from "@/features/forms/services/submission.service";
+import { adminConfig } from "@/lib/config/admin";
+import "@/styles/global.css";
 import "@/styles/admin.css";
+import "@/styles/admin-shell.css";
+
+type Crumb = { label: string; href?: string };
 
 type Props = {
   title: string;
   description?: string;
+  active?:
+    | "dashboard"
+    | "pages"
+    | "blog"
+    | "submissions"
+    | "navigation"
+    | "site-header"
+    | "site-footer";
+  breadcrumb?: Crumb[];
 };
 
 const dictionary = getDictionary("sr-latn");
-const { title, description = dictionary.meta.admin.layoutDescription } = Astro.props;
+const {
+  title,
+  description = dictionary.meta.admin.layoutDescription,
+  active,
+  breadcrumb = [],
+} = Astro.props;
+
+const submissions = await submissionService.listSubmissions().catch(() => []);
+const newSubmissions = submissions.filter((s) => s.status === "new").length;
+
+const base = adminConfig.basePath;
+const nav: Array<{
+  key: NonNullable<Props["active"]>;
+  href: string;
+  label: string;
+  icon: string;
+  badge?: number;
+}> = [
+  { key: "dashboard",    href: `${base}/`,             label: "Pregled",    icon: "dashboard" },
+  { key: "pages",        href: `${base}/pages/`,       label: "Stranice",   icon: "pages" },
+  { key: "blog",         href: `${base}/blog/`,        label: "Blog",       icon: "blog" },
+  { key: "submissions",  href: `${base}/submissions/`, label: "Prijave",    icon: "inbox", badge: newSubmissions },
+  { key: "navigation",   href: `${base}/navigation/`,  label: "Navigacija", icon: "nav" },
+  { key: "site-header",  href: `${base}/site/header/`, label: "Header",     icon: "panelTop" },
+  { key: "site-footer",  href: `${base}/site/footer/`, label: "Footer",     icon: "panelBottom" },
+];
+
 ---
+<!doctype html>
+<html lang="sr-Latn-RS">
+  <head>
+    <SeoHead
+      title={title}
+      description={description}
+      canonicalPath={Astro.url.pathname}
+      locale="sr-latn"
+    />
+    <meta name="robots" content="noindex" />
+  </head>
+  <body class="admin-shell-v2">
+    <aside class="admin-sidebar">
+      <a class="admin-sidebar__brand" href={`${base}/`}>
+        <span class="admin-sidebar__mark">I</span>
+        <span>
+          <div class="admin-sidebar__brand-title">Ikar Studio</div>
+          <div class="admin-sidebar__brand-sub">Admin panel</div>
+        </span>
+      </a>
 
-<BaseLayout
-  title={title}
-  description={description}
-  locale="sr-latn"
-  canonicalPath={Astro.url.pathname}
-  appBarVariant="admin"
-  bodyClass="admin-shell"
->
-  <div class="admin-shell__backdrop" aria-hidden="true">
-    <div class="admin-shell__orb admin-shell__orb--one"></div>
-    <div class="admin-shell__orb admin-shell__orb--two"></div>
-    <div class="admin-shell__mesh"></div>
-  </div>
+      <nav class="admin-sidebar__nav" aria-label="Admin navigation">
+        {nav.map((item) => (
+          <a
+            href={item.href}
+            class:list={["admin-nav-item", active === item.key && "is-active"]}
+          >
+            <AdminIcon name={item.icon} />
+            <span>{item.label}</span>
+            {item.badge != null && item.badge > 0 ? (
+              <span class="admin-nav-item__badge">{item.badge}</span>
+            ) : null}
+          </a>
+        ))}
+      </nav>
 
-  <section class="section">
-    <div class="container">
-      <div class="admin-shell__frame">
-        <div class="admin-grid">
-          <slot />
+      <div class="admin-sidebar__foot">
+        <div class="admin-sidebar__user">
+          <div class="admin-sidebar__avatar">A</div>
+          <div>
+            <div class="admin-sidebar__user-name">Admin</div>
+            <div class="admin-sidebar__user-sub">Ikar Studio</div>
+          </div>
+        </div>
+        <div class="admin-sidebar__foot-actions">
+          <a class="admin-foot-btn" href="/" target="_blank" rel="noreferrer">
+            <AdminIcon name="external" /> Sajt
+          </a>
+          <form action="/api/admin/logout" method="post" style="flex:1;display:flex;">
+            <button class="admin-foot-btn" type="submit" style="flex:1;">
+              <AdminIcon name="logout" /> Odjava
+            </button>
+          </form>
         </div>
       </div>
+    </aside>
+
+    <div class="admin-main">
+      <header class="admin-topbar">
+        <nav class="admin-breadcrumb" aria-label="Breadcrumb">
+          <a href={`${base}/`}>Admin</a>
+          {breadcrumb.map((b) => (
+            <>
+              <span class="admin-breadcrumb__sep">/</span>
+              {b.href ? (
+                <a href={b.href}>{b.label}</a>
+              ) : (
+                <span class="admin-breadcrumb__active">{b.label}</span>
+              )}
+            </>
+          ))}
+        </nav>
+      </header>
+
+      <main class="admin-content">
+        <slot />
+      </main>
     </div>
-  </section>
-</BaseLayout>
+  </body>
+</html>

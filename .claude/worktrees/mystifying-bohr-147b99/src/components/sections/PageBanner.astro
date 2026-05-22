@@ -1,0 +1,46 @@
+---
+import type { BannerData } from "@/data/fixtures/public-pages";
+
+type Props = BannerData & {
+  sectionId?: string;
+};
+
+const {
+  title,
+  description,
+  theme = "light",
+  backgroundImage,
+  align = description ? "split" : "center",
+  sectionId,
+} = Astro.props;
+const backgroundStyle = backgroundImage
+  ? `--page-banner-image: linear-gradient(rgba(0, 0, 0, ${theme === "dark" ? 0.62 : 0.48}), rgba(0, 0, 0, ${theme === "dark" ? 0.46 : 0.34})), url("${backgroundImage}")`
+  : undefined;
+---
+
+<section
+  id={sectionId}
+  class:list={[
+    "page-banner",
+    theme === "dark" && "page-banner--dark",
+    backgroundImage && "page-banner--with-image",
+    align === "split" ? "page-banner--split" : "page-banner--center",
+  ]}
+  style={backgroundStyle}
+>
+  <div class="container">
+    <div class="page-banner__content">
+      <h1 data-reveal="up">{title}</h1>
+      {
+        description && (
+          <div
+            class="page-banner__description richtext-shell"
+            data-reveal="up"
+            style="--reveal-delay: 120ms;"
+            set:html={description}
+          />
+        )
+      }
+    </div>
+  </div>
+</section>

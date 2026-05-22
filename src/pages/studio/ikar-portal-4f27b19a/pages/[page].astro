@@ -1,14 +1,14 @@
 ---
-import { AdminPasswordModal } from "@/components/components/AdminPasswordModal";
+export const prerender = false;
+
 import AdminManagedPageForm from "@/components/components/AdminManagedPageForm.astro";
-import { getDictionary } from "@/features/i18n/translate";
-import { adminAuthService } from "@/features/admin/auth/admin-auth.service";
 import { getAdminPreviewHref } from "@/features/page-content/admin/page-route-map";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import type { PageKey } from "@/features/page-content/types/page-content.types";
 import { adminConfig } from "@/lib/config/admin";
 import type { SiteLocale } from "@/lib/config/site";
 import AdminLayout from "@/components/components/AdminLayout.astro";
+import { adminGuard } from "@/features/admin/auth/admin-guard";
 
 type SupportedPage = Exclude<PageKey, "home">;
 
@@ -57,9 +57,10 @@ if (!pageParam || !(pageParam in pageConfig)) {
   return Astro.redirect(`${adminConfig.basePath}/pages/`);
 }
 
+const guard = adminGuard(Astro);
+if (guard) return guard;
+
 const page = pageParam as SupportedPage;
-const dictionary = getDictionary("sr-latn");
-const authenticated = adminAuthService.isAuthenticated(Astro.cookies);
 const localeParam = Astro.url.searchParams.get("locale");
 const locale: SiteLocale = localeParam === "sr-cyrl" ? "sr-cyrl" : "sr-latn";
 const saved = Astro.url.searchParams.get("saved") === "1";
@@ -68,36 +69,30 @@ const localeLabel = locale === "sr-cyrl" ? "Ćirilica" : "Latinica";
 const config = pageConfig[page];
 const previewHref = getAdminPreviewHref(page, locale);
 
-const content = authenticated
-  ? await (async () => {
-      switch (page) {
-        case "about":
-          return pageContentService.getManagedAboutContent(locale);
-        case "biography":
-          return pageContentService.getManagedBiographyContent(locale);
-        case "psychotherapy":
-          return pageContentService.getManagedPsychotherapyContent(locale);
-        case "scope":
-          return pageContentService.getManagedScopeContent(locale);
-        case "pricing":
-          return pageContentService.getManagedPricingContent(locale);
-        case "appointment":
-          return pageContentService.getManagedAppointmentContent(locale);
-        case "faq":
-          return pageContentService.getManagedFaqContent(locale);
-        case "contact":
-          return pageContentService.getManagedContactContent(locale);
-        case "blog":
-          return pageContentService.getManagedBlogIndexContent(locale);
-      }
-    })()
-  : undefined;
+const content = await (async () => {
+  switch (page) {
+    case "about":         return pageContentService.getManagedAboutContent(locale);
+    case "biography":     return pageContentService.getManagedBiographyContent(locale);
+    case "psychotherapy": return pageContentService.getManagedPsychotherapyContent(locale);
+    case "scope":         return pageContentService.getManagedScopeContent(locale);
+    case "pricing":       return pageContentService.getManagedPricingContent(locale);
+    case "appointment":   return pageContentService.getManagedAppointmentContent(locale);
+    case "faq":           return pageContentService.getManagedFaqContent(locale);
+    case "contact":       return pageContentService.getManagedContactContent(locale);
+    case "blog":          return pageContentService.getManagedBlogIndexContent(locale);
+  }
+})();
 ---
 
-<AdminLayout title={config.title}>
-  {
-    authenticated ? (
-      <div class="admin-grid">
+<AdminLayout
+  title={config.title}
+  active="pages"
+  breadcrumb={[
+    { label: "Stranice", href: `${adminConfig.basePath}/pages/` },
+    { label: config.title },
+  ]}
+>
+  <div class="admin-grid">
         {saved ? (
           <p class="admin-status" data-tone="success">
             Izmene stranice su sačuvane.
@@ -154,20 +149,4 @@ const content = authenticated
           </div>
         ) : null}
       </div>
-    ) : (
-      <div class="page-grid">
-        <div class="card admin-intro-card">
-          <div class="admin-intro-card__content">
-            <p class="admin-kicker">Private Access</p>
-            <h2>{dictionary.admin.entry.title}</h2>
-            <p class="section-copy">{dictionary.admin.entry.copy}</p>
-          </div>
-        </div>
-        <AdminPasswordModal
-          client:load
-          returnPath={`${adminConfig.basePath}/pages/${page}/?locale=${locale}`}
-        />
-      </div>
-    )
-  }
 </AdminLayout>

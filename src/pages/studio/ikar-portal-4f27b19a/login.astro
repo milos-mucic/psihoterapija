@@ -1,0 +1,126 @@
+---
+export const prerender = false;
+
+import SeoHead from "@/components/components/SeoHead.astro";
+import { adminAuthService } from "@/features/admin/auth/admin-auth.service";
+import { adminConfig } from "@/lib/config/admin";
+import "@/styles/global.css";
+import "@/styles/admin-shell.css";
+
+const returnPath = Astro.url.searchParams.get("return") ?? `${adminConfig.basePath}/`;
+
+// If already logged in, send the user back where they were trying to go
+if (adminAuthService.isAuthenticated(Astro.cookies)) {
+  return Astro.redirect(returnPath);
+}
+---
+<!doctype html>
+<html lang="sr-Latn-RS">
+  <head>
+    <SeoHead
+      title="Prijava | Ikar Studio"
+      description="Privatan pristup admin panelu."
+      canonicalPath={Astro.url.pathname}
+      locale="sr-latn"
+    />
+    <meta name="robots" content="noindex" />
+  </head>
+  <body>
+    <div class="admin-login">
+      <aside class="admin-login__hero">
+        <div class="admin-login__hero-inner">
+          <div class="admin-login__hero-eyebrow">Private access</div>
+          <h1 class="admin-login__hero-title">Ikar Studio</h1>
+          <div class="admin-login__hero-sub">Psihoterapijski kabinet</div>
+          <p class="admin-login__hero-copy">
+            Centar za upravljanje sadržajem sajta — stranicama, blogom, prijavama
+            i navigacijom. Pristup je ograničen na ovlašćene saradnike.
+          </p>
+        </div>
+      </aside>
+
+      <section class="admin-login__form-wrap">
+        <a class="admin-login__exit" href="/">← Sajt</a>
+
+        <div class="admin-login__form">
+          <div class="admin-login__brand">
+            <span class="admin-login__brand-mark">I</span>
+            <div>
+              <div class="admin-login__brand-name">Ikar Studio</div>
+              <div class="admin-login__brand-sub">Admin panel</div>
+            </div>
+          </div>
+
+          <h2 class="admin-login__title">Prijava</h2>
+          <p class="admin-login__copy">Unesite lozinku da pristupite panelu.</p>
+
+          <div id="login-error" class="admin-alert admin-alert--error" hidden></div>
+
+          <form id="login-form" novalidate>
+            <input type="hidden" name="return" value={returnPath} />
+            <label class="admin-login__field">
+              <span class="admin-login__label">Lozinka</span>
+              <input
+                class="admin-login__input"
+                type="password"
+                name="password"
+                autocomplete="current-password"
+                required
+                autofocus
+              />
+            </label>
+            <button class="admin-login__submit" type="submit" data-default-text="Prijavi se">
+              Prijavi se
+            </button>
+          </form>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      const form = document.getElementById("login-form") as HTMLFormElement | null;
+      const errEl = document.getElementById("login-error") as HTMLElement | null;
+      const btn = form?.querySelector<HTMLButtonElement>('button[type="submit"]');
+
+      form?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (!form || !btn) return;
+        const fd = new FormData(form);
+        const password = String(fd.get("password") ?? "");
+        const back = String(fd.get("return") ?? "/");
+
+        btn.disabled = true;
+        btn.textContent = "...";
+        if (errEl) { errEl.hidden = true; errEl.textContent = ""; }
+
+        try {
+          const response = await fetch("/api/admin/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password }),
+          });
+
+          if (!response.ok) {
+            const data = await response.json().catch(() => null) as { message?: string } | null;
+            if (errEl) {
+              errEl.textContent = data?.message ?? "Pogrešna lozinka.";
+              errEl.hidden = false;
+            }
+            btn.disabled = false;
+            btn.textContent = btn.dataset.defaultText ?? "Prijavi se";
+            return;
+          }
+
+          window.location.href = back;
+        } catch {
+          if (errEl) {
+            errEl.textContent = "Greška u komunikaciji sa serverom.";
+            errEl.hidden = false;
+          }
+          btn.disabled = false;
+          btn.textContent = btn.dataset.defaultText ?? "Prijavi se";
+        }
+      });
+    </script>
+  </body>
+</html>

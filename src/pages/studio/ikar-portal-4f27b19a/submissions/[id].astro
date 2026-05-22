@@ -1,14 +1,28 @@
 ---
+export const prerender = false;
+
 import { getDictionary } from "@/features/i18n/translate";
 import { submissionService } from "@/features/forms/services/submission.service";
 import AdminLayout from "@/components/components/AdminLayout.astro";
+import { adminGuard } from "@/features/admin/auth/admin-guard";
+import { adminConfig } from "@/lib/config/admin";
+
+const guard = adminGuard(Astro);
+if (guard) return guard;
 
 const dictionary = getDictionary("sr-latn");
 const { id } = Astro.params;
 const submission = id ? await submissionService.getSubmission(id) : undefined;
 ---
 
-<AdminLayout title={dictionary.meta.admin.submissionDetailsTitle}>
+<AdminLayout
+  title={dictionary.meta.admin.submissionDetailsTitle}
+  active="submissions"
+  breadcrumb={[
+    { label: "Prijave", href: `${adminConfig.basePath}/submissions/` },
+    { label: submission?.name ?? "Detalji" },
+  ]}
+>
   <div class="card" style="padding: 1.5rem;">
     {
       submission ? (

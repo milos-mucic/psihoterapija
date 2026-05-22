@@ -1,0 +1,53 @@
+{
+  "name": "psihoterapija",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "ASTRO_DATABASE_FILE=file:./data/astro.db astro dev",
+    "start": "ASTRO_DATABASE_FILE=file:./data/astro.db astro dev",
+    "lint:i18n": "node scripts/lint-translatables.mjs",
+    "lint": "npm run lint:i18n",
+    "format": "prettier --write \"**/*.{astro,ts,tsx,js,jsx,mjs,json,md,mdx,css}\"",
+    "format:check": "prettier --check \"**/*.{astro,ts,tsx,js,jsx,mjs,json,md,mdx,css}\"",
+    "check": "sh -c 'ASTRO_DATABASE_FILE=file:./data/astro.db npm run lint && ASTRO_DATABASE_FILE=file:./data/astro.db astro check'",
+    "build": "ASTRO_DATABASE_FILE=file:./data/astro.db astro build",
+    "build:remote": "astro build --remote",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/db": "^0.20.1",
+    "@astrojs/mdx": "^4.3.0",
+    "@astrojs/node": "^9.4.0",
+    "@astrojs/react": "^4.4.0",
+    "@astrojs/sitemap": "^3.6.0",
+    "@lexical/html": "^0.42.0",
+    "@lexical/link": "^0.42.0",
+    "@lexical/list": "^0.42.0",
+    "@lexical/react": "^0.42.0",
+    "@lexical/rich-text": "^0.42.0",
+    "@lexical/selection": "^0.42.0",
+    "@lexical/utils": "^0.42.0",
+    "@tailwindcss/vite": "^4.1.0",
+    "@uppy/core": "^5.2.0",
+    "@uppy/dashboard": "^5.1.1",
+    "@uppy/image-editor": "^4.2.0",
+    "@uppy/react": "^5.2.0",
+    "astro": "^5.14.0",
+    "lexical": "^0.42.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "sanitize-html": "^2.17.2",
+    "tailwindcss": "^4.1.0",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.8",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "prettier": "^3.8.1",
+    "prettier-plugin-astro": "^0.14.1",
+    "typescript": "^5.9.0"
+  }
+}

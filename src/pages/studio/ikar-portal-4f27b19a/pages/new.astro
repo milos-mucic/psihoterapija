@@ -1,0 +1,51 @@
+---
+export const prerender = false;
+
+import AdminLayout from "@/components/components/AdminLayout.astro";
+import { AdminCustomPageBuilder } from "@/components/components/AdminCustomPageBuilder";
+import { adminGuard } from "@/features/admin/auth/admin-guard";
+import { adminConfig } from "@/lib/config/admin";
+import type { SiteLocale } from "@/lib/config/site";
+
+const guard = adminGuard(Astro);
+if (guard) return guard;
+
+const params = Astro.url.searchParams;
+const slugParam = params.get("slug") ?? "";
+const localeParam = (params.get("locale") as SiteLocale | null) ?? "sr-latn";
+const titleParam = params.get("title") ?? "";
+
+const initial = {
+  slug: slugParam,
+  locale: localeParam === "sr-cyrl" ? "sr-cyrl" : "sr-latn",
+  title: titleParam,
+  description: "",
+  blocks: [],
+  status: "draft" as const,
+};
+---
+
+<AdminLayout
+  title="Nova stranica"
+  active="pages"
+  breadcrumb={[
+    { label: "Stranice", href: `${adminConfig.basePath}/pages/` },
+    { label: "Nova stranica" },
+  ]}
+>
+  <div class="admin-page-head">
+    <div>
+      <h1>Nova stranica</h1>
+      <p class="admin-page-head__copy">
+        Postavi naslov i URL, pa dodaj blokove (hero, tekst, slika, CTA). Možeš sačuvati kao skicu pa kasnije objaviti.
+      </p>
+    </div>
+  </div>
+
+  <AdminCustomPageBuilder
+    client:load
+    initial={initial}
+    action="/api/admin/custom-pages/"
+    mode="create"
+  />
+</AdminLayout>

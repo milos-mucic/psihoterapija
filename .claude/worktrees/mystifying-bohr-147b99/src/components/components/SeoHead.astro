@@ -1,0 +1,61 @@
+---
+import type { SiteLocale } from "@/lib/config/site";
+
+type Props = {
+  title: string;
+  description: string;
+  canonicalPath: string;
+  locale: SiteLocale;
+};
+
+const { title, description, canonicalPath, locale } = Astro.props;
+const siteUrl = new URL(canonicalPath, Astro.site);
+const isPublicPage = canonicalPath.startsWith("/") && !canonicalPath.startsWith("/studio/");
+const latnPath = canonicalPath.startsWith("/cir/")
+  ? canonicalPath.replace(/^\/cir/, "") || "/"
+  : canonicalPath === "/cir/"
+    ? "/"
+    : canonicalPath;
+const cyrlPath = canonicalPath.startsWith("/cir/")
+  ? canonicalPath
+  : canonicalPath === "/"
+    ? "/cir/"
+    : `/cir${canonicalPath}`;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="generator" content={Astro.generator} />
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:type" content="website" />
+<meta property="og:url" content={siteUrl.toString()} />
+<meta property="og:locale" content={locale === "sr-cyrl" ? "sr_Cyrl_RS" : "sr_RS"} />
+<link rel="canonical" href={siteUrl.toString()} />
+{
+  isPublicPage ? (
+    <link rel="alternate" hreflang="sr-Latn-RS" href={new URL(latnPath, Astro.site).toString()} />
+  ) : null
+}
+{
+  isPublicPage ? (
+    <link rel="alternate" hreflang="sr-Cyrl-RS" href={new URL(cyrlPath, Astro.site).toString()} />
+  ) : null
+}
+{
+  isPublicPage ? (
+    <link rel="alternate" hreflang="x-default" href={new URL(latnPath, Astro.site).toString()} />
+  ) : null
+}
+<link rel="sitemap" type="application/xml" href={new URL("/sitemap-index.xml", Astro.site).toString()} />
+<meta name="theme-color" content="#163c3d" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Castoro:ital@0;1&family=Lexend:wght@300;400;500;600;700&display=swap"
+/>
+<link rel="icon" href="/legacy/images/favicon.png" type="image/png" />
+<link rel="apple-touch-icon" href="/legacy/images/webclip.png" />

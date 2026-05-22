@@ -1,16 +1,19 @@
 ---
-import { AdminPasswordModal } from "@/components/components/AdminPasswordModal";
+export const prerender = false;
+
 import AdminHomePageForm from "@/components/components/AdminHomePageForm.astro";
 import { getDictionary } from "@/features/i18n/translate";
-import { adminAuthService } from "@/features/admin/auth/admin-auth.service";
 import { getAdminPreviewHref } from "@/features/page-content/admin/page-route-map";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import type { SiteLocale } from "@/lib/config/site";
 import { adminConfig } from "@/lib/config/admin";
 import AdminLayout from "@/components/components/AdminLayout.astro";
+import { adminGuard } from "@/features/admin/auth/admin-guard";
+
+const guard = adminGuard(Astro);
+if (guard) return guard;
 
 const dictionary = getDictionary("sr-latn");
-const authenticated = adminAuthService.isAuthenticated(Astro.cookies);
 const localeParam = Astro.url.searchParams.get("locale");
 const locale: SiteLocale = localeParam === "sr-cyrl" ? "sr-cyrl" : "sr-latn";
 const content = await pageContentService.getManagedHomeContent(locale);
@@ -20,77 +23,66 @@ const localeLabel = locale === "sr-cyrl" ? "Ćirilica" : "Latinica";
 const previewHref = getAdminPreviewHref("home", locale);
 ---
 
-<AdminLayout title={dictionary.admin.pages.homeTitle}>
-  {
-    authenticated ? (
-      <div class="admin-grid">
-        {saved ? (
-          <p class="admin-status" data-tone="success">
-            {dictionary.admin.pages.messages.saved}
-          </p>
-        ) : error === "validation" ? (
-          <p class="admin-status" data-tone="error">
-            {dictionary.admin.pages.messages.validationError}
-          </p>
-        ) : null}
+<AdminLayout
+  title={dictionary.admin.pages.homeTitle}
+  active="pages"
+  breadcrumb={[
+    { label: "Stranice", href: `${adminConfig.basePath}/pages/` },
+    { label: dictionary.admin.pages.homeTitle },
+  ]}
+>
+  <div class="admin-grid">
+    {saved ? (
+      <p class="admin-status" data-tone="success">
+        {dictionary.admin.pages.messages.saved}
+      </p>
+    ) : error === "validation" ? (
+      <p class="admin-status" data-tone="error">
+        {dictionary.admin.pages.messages.validationError}
+      </p>
+    ) : null}
 
-        <div class="card admin-page-header">
-          <div class="admin-page-header__content">
-            <div>
-              <p class="admin-kicker">Homepage Editing</p>
-              <h2>{dictionary.admin.pages.homeTitle}</h2>
-              <p class="admin-page-header__copy">{dictionary.admin.pages.homeCopy}</p>
-            </div>
-
-            <div class="admin-page-header__actions">
-              <a
-                class:list={["button-secondary", locale === "sr-latn" && "is-active"]}
-                href={`${adminConfig.basePath}/pages/home/?locale=sr-latn`}
-              >
-                Latinica
-              </a>
-              <a
-                class:list={["button-secondary", locale === "sr-cyrl" && "is-active"]}
-                href={`${adminConfig.basePath}/pages/home/?locale=sr-cyrl`}
-              >
-                Ćirilica
-              </a>
-            </div>
-          </div>
+    <div class="card admin-page-header">
+      <div class="admin-page-header__content">
+        <div>
+          <p class="admin-kicker">Homepage Editing</p>
+          <h2>{dictionary.admin.pages.homeTitle}</h2>
+          <p class="admin-page-header__copy">{dictionary.admin.pages.homeCopy}</p>
         </div>
 
-        <div class="card admin-meta-card">
-          <p>
-            Uređujete sadržaj za: <strong style="color: var(--foreground);">{localeLabel}</strong>
-          </p>
-        </div>
-
-        <div class="admin-editor-layout" data-admin-page-editor>
-          <div class="admin-editor-layout__form">
-            <AdminHomePageForm
-              action="/api/admin/pages/home"
-              content={content}
-              locale={locale}
-              previewBaseHref={previewHref}
-              localeLabel={localeLabel}
-            />
-          </div>
+        <div class="admin-page-header__actions">
+          <a
+            class:list={["button-secondary", locale === "sr-latn" && "is-active"]}
+            href={`${adminConfig.basePath}/pages/home/?locale=sr-latn`}
+          >
+            Latinica
+          </a>
+          <a
+            class:list={["button-secondary", locale === "sr-cyrl" && "is-active"]}
+            href={`${adminConfig.basePath}/pages/home/?locale=sr-cyrl`}
+          >
+            Ćirilica
+          </a>
         </div>
       </div>
-    ) : (
-      <div class="page-grid">
-        <div class="card admin-intro-card">
-          <div class="admin-intro-card__content">
-            <p class="admin-kicker">Private Access</p>
-            <h2>{dictionary.admin.entry.title}</h2>
-            <p class="section-copy">{dictionary.admin.entry.copy}</p>
-          </div>
-        </div>
-        <AdminPasswordModal
-          client:load
-          returnPath={`${adminConfig.basePath}/pages/home/?locale=${locale}`}
+    </div>
+
+    <div class="card admin-meta-card">
+      <p>
+        Uređujete sadržaj za: <strong style="color: var(--foreground);">{localeLabel}</strong>
+      </p>
+    </div>
+
+    <div class="admin-editor-layout" data-admin-page-editor>
+      <div class="admin-editor-layout__form">
+        <AdminHomePageForm
+          action="/api/admin/pages/home"
+          content={content}
+          locale={locale}
+          previewBaseHref={previewHref}
+          localeLabel={localeLabel}
         />
       </div>
-    )
-  }
+    </div>
+  </div>
 </AdminLayout>

@@ -66,11 +66,47 @@ export const PageContent = defineTable({
   indexes: [{ on: ["pageKey", "locale"], unique: true }],
 });
 
+/**
+ * User-created pages with block-based layout.
+ * blocks = JSON array: [{ id, type: 'hero'|'richtext'|'image'|'cta', data: {...} }]
+ */
+export const CustomPages = defineTable({
+  columns: {
+    id: column.text({ primaryKey: true }),
+    slug: column.text(),
+    locale: column.text({ enum: ["sr-latn", "sr-cyrl"] }),
+    title: column.text(),
+    description: column.text({ optional: true }),
+    blocks: column.json(),
+    status: column.text({ enum: ["draft", "published"] }),
+    createdAt: column.date(),
+    updatedAt: column.date(),
+  },
+  indexes: [
+    { on: ["locale", "slug"], unique: true },
+    { on: ["status"] },
+  ],
+});
+
+/**
+ * Site-wide settings (one row per key). Holds brand, footer, social link
+ * overrides — anything that lives outside per-page content.
+ */
+export const SiteSettings = defineTable({
+  columns: {
+    key: column.text({ primaryKey: true }),
+    value: column.json(),
+    updatedAt: column.date(),
+  },
+});
+
 export default defineDb({
   tables: {
     Submissions,
     MediaAssets,
     BlogPosts,
     PageContent,
+    CustomPages,
+    SiteSettings,
   },
 });

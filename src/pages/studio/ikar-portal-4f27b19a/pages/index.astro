@@ -1,102 +1,188 @@
 ---
-import { AdminPasswordModal } from "@/components/components/AdminPasswordModal";
+export const prerender = false;
+
 import { getDictionary } from "@/features/i18n/translate";
-import { adminAuthService } from "@/features/admin/auth/admin-auth.service";
 import { pageDashboardService } from "@/features/page-content/admin/page-dashboard.service";
-import { adminConfig } from "@/lib/config/admin";
+import { customPageService } from "@/features/custom-pages/services/custom-page.service";
 import AdminLayout from "@/components/components/AdminLayout.astro";
+import AdminIcon from "@/components/components/AdminIcon.astro";
+import { adminGuard } from "@/features/admin/auth/admin-guard";
+import { adminConfig } from "@/lib/config/admin";
+
+const guard = adminGuard(Astro);
+if (guard) return guard;
 
 const dictionary = getDictionary("sr-latn");
-const authenticated = adminAuthService.isAuthenticated(Astro.cookies);
-const pageOverview = authenticated ? await pageDashboardService.listPages() : [];
-const pageStats = authenticated ? pageDashboardService.getStats(pageOverview) : undefined;
+const [pageOverview, customPages] = await Promise.all([
+  pageDashboardService.listPages(),
+  customPageService.listAll(),
+]);
+const pageStats = pageDashboardService.getStats(pageOverview);
+
+const params = Astro.url.searchParams;
+const deleted = params.get("deleted") === "1";
+
+const base = adminConfig.basePath;
 ---
 
-<AdminLayout title={dictionary.admin.pages.title}>
-  {
-    authenticated ? (
-      <div class="admin-grid">
-        <div class="card admin-intro-card">
-          <div class="admin-intro-card__content">
-            <p class="admin-kicker">Page Studio</p>
-            <h2>{dictionary.admin.pages.title}</h2>
-            <p class="section-copy">{dictionary.admin.pages.copy}</p>
-          </div>
+<AdminLayout
+  title={dictionary.admin.pages.title}
+  active="pages"
+  breadcrumb={[{ label: "Stranice" }]}
+>
+  {deleted && (
+    <div class="admin-alert admin-alert--success" style="margin-bottom:0.6rem;">
+      Stranica je obrisana.
+    </div>
+  )}
 
-          {pageStats ? (
-            <div class="admin-stat-strip">
-              <div class="admin-stat-pill">
-                <span class="admin-stat-pill__label">Stranice</span>
-                <strong>{pageStats.totalPages}</strong>
-              </div>
-              <div class="admin-stat-pill">
-                <span class="admin-stat-pill__label">Needs Translation</span>
-                <strong>{pageStats.pagesNeedingTranslation}</strong>
-              </div>
-              <div class="admin-stat-pill">
-                <span class="admin-stat-pill__label">Missing Image</span>
-                <strong>{pageStats.pagesWithMissingImages}</strong>
-              </div>
-              <div class="admin-stat-pill">
-                <span class="admin-stat-pill__label">Unpublished</span>
-                <strong>{pageStats.pagesWithUnpublishedChanges}</strong>
+  <div class="admin-page-head">
+    <div>
+      <h1>{dictionary.admin.pages.title}</h1>
+      <p class="admin-page-head__copy">{dictionary.admin.pages.copy}</p>
+    </div>
+    <a class="btn-gold" href={`${base}/pages/new/`}>
+      <AdminIcon name="plus" /> Nova stranica
+    </a>
+  </div>
+
+  {pageStats && (
+    <div class="admin-stats" style="margin-bottom:0.85rem;">
+      <div class="admin-stat">
+        <span class="admin-stat__dot" style="background:#163c3d;"></span>
+        <div class="admin-stat__body">
+          <div class="admin-stat__label">Ukupno predefinisanih</div>
+          <div class="admin-stat__value">{pageStats.totalPages}</div>
+        </div>
+      </div>
+      <div class="admin-stat">
+        <span class="admin-stat__dot" style="background:#b48324;"></span>
+        <div class="admin-stat__body">
+          <div class="admin-stat__label">Potrebno prevesti</div>
+          <div class="admin-stat__value">{pageStats.pagesNeedingTranslation}</div>
+        </div>
+      </div>
+      <div class="admin-stat">
+        <span class="admin-stat__dot" style="background:#b42318;"></span>
+        <div class="admin-stat__body">
+          <div class="admin-stat__label">Nedostaje slika</div>
+          <div class="admin-stat__value">{pageStats.pagesWithMissingImages}</div>
+        </div>
+      </div>
+      <div class="admin-stat">
+        <span class="admin-stat__dot" style="background:#2a5758;"></span>
+        <div class="admin-stat__body">
+          <div class="admin-stat__label">Custom stranice</div>
+          <div class="admin-stat__value">{customPages.length}</div>
+        </div>
+      </div>
+    </div>
+  )}
+
+  {customPages.length > 0 && (
+    <section class="admin-card" style="margin-bottom:0.85rem;">
+      <header class="admin-card__head">
+        <div>
+          <div class="admin-card__eyebrow">Custom stranice</div>
+          <h2 class="admin-card__title">Tvoje stranice</h2>
+        </div>
+        <a class="btn-ghost" href={`${base}/pages/new/`}>+ Nova</a>
+      </header>
+      <div class="admin-card__body" style="padding:0;">
+        <table class="admin-tbl">
+          <thead>
+            <tr>
+              <th>Naslov</th>
+              <th>URL</th>
+              <th>Pismo</th>
+              <th>Status</th>
+              <th>Izmena</th>
+              <th class="admin-tbl__actions"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {customPages.map((p) => (
+              <tr>
+                <td><strong>{p.title}</strong></td>
+                <td>
+                  <code style="font-family:ui-monospace,Menlo,monospace;font-size:0.78rem;color:var(--shell-gold-strong);">
+                    {p.locale === "sr-cyrl" ? "/cir/" : "/"}{p.slug}/
+                  </code>
+                </td>
+                <td>{p.locale === "sr-cyrl" ? "Ћирилица" : "Latinica"}</td>
+                <td>
+                  <span class={`badge badge--${p.status === "published" ? "published" : "draft"}`}>
+                    {p.status === "published" ? "Objavljeno" : "Skica"}
+                  </span>
+                </td>
+                <td style="color:var(--shell-text-soft);font-size:0.8rem;">
+                  {p.updatedAt.toLocaleDateString("sr-RS", { day: "numeric", month: "short", year: "numeric" })}
+                </td>
+                <td class="admin-tbl__actions">
+                  <a href={`${base}/pages/custom/${p.id}/`} title="Uredi">
+                    <AdminIcon name="edit" /> Uredi
+                  </a>
+                  {p.status === "published" && (
+                    <a
+                      href={`${p.locale === "sr-cyrl" ? "/cir/" : "/"}${p.slug}/`}
+                      target="_blank"
+                      rel="noreferrer"
+                      title="Otvori javnu stranicu"
+                      style="margin-left:0.4rem;"
+                    >
+                      <AdminIcon name="preview" />
+                    </a>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  )}
+
+  <section class="admin-card">
+    <header class="admin-card__head">
+      <div>
+        <div class="admin-card__eyebrow">Predefinisane</div>
+        <h2 class="admin-card__title">Sistemske stranice</h2>
+      </div>
+    </header>
+    <div class="admin-card__body" style="padding:0.6rem;">
+      <div class="admin-page-dashboard">
+        {pageOverview.map((page) => (
+          <article class="card admin-page-card">
+            <div class="admin-page-card__head">
+              <div>
+                <p class="admin-tile__eyebrow">Page</p>
+                <h3>{page.title}</h3>
+                <p class="admin-tile__copy">{page.copy}</p>
               </div>
             </div>
-          ) : null}
-        </div>
 
-        <div class="admin-page-dashboard">
-          {pageOverview.map((page) => (
-            <article class="card admin-page-card">
-              <div class="admin-page-card__head">
-                <div>
-                  <p class="admin-tile__eyebrow">Page</p>
-                  <h3>{page.title}</h3>
-                  <p class="admin-tile__copy">{page.copy}</p>
-                </div>
-              </div>
-
-              <div class="admin-page-card__locale-list">
-                {page.locales.map((locale) => (
-                  <section class="admin-page-locale">
-                    <div class="admin-page-locale__head">
-                      <div>
-                        <h4>{locale.label}</h4>
-                        <p>{locale.updatedAtLabel}</p>
-                      </div>
+            <div class="admin-page-card__locale-list">
+              {page.locales.map((locale) => (
+                <section class="admin-page-locale">
+                  <div class="admin-page-locale__head">
+                    <div>
+                      <h4>{locale.label}</h4>
+                      <p>{locale.updatedAtLabel}</p>
                     </div>
+                  </div>
 
-                    <div class="admin-page-locale__actions">
-                      <a class="button-secondary" href={locale.editorHref}>
-                        Uredi
-                      </a>
-                      <a
-                        class="button-secondary"
-                        href={locale.publicHref}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Javna strana
-                      </a>
-                    </div>
-                  </section>
-                ))}
-              </div>
-            </article>
-          ))}
-        </div>
+                  <div class="admin-page-locale__actions">
+                    <a class="button-secondary" href={locale.editorHref}>Uredi</a>
+                    <a class="button-secondary" href={locale.publicHref} target="_blank" rel="noreferrer">
+                      Javna strana
+                    </a>
+                  </div>
+                </section>
+              ))}
+            </div>
+          </article>
+        ))}
       </div>
-    ) : (
-      <div class="page-grid">
-        <div class="card admin-intro-card">
-          <div class="admin-intro-card__content">
-            <p class="admin-kicker">Private Access</p>
-            <h2>{dictionary.admin.entry.title}</h2>
-            <p class="section-copy">{dictionary.admin.entry.copy}</p>
-          </div>
-        </div>
-        <AdminPasswordModal client:load returnPath={adminConfig.basePath + "/pages/"} />
-      </div>
-    )
-  }
+    </div>
+  </section>
 </AdminLayout>

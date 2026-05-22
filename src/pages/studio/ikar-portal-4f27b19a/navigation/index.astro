@@ -1,82 +1,69 @@
 ---
 export const prerender = false;
 
-import { AdminPasswordModal } from "@/components/components/AdminPasswordModal";
 import AdminLayout from "@/components/components/AdminLayout.astro";
 import AdminNavigationForm from "@/components/components/AdminNavigationForm.astro";
-import { adminAuthService } from "@/features/admin/auth/admin-auth.service";
 import { navigationService } from "@/features/navigation/service";
 import { adminConfig } from "@/lib/config/admin";
-import { getDictionary } from "@/features/i18n/translate";
 import type { SiteLocale } from "@/lib/config/site";
+import { adminGuard } from "@/features/admin/auth/admin-guard";
 
-const dictionary = getDictionary("sr-latn");
-const authenticated = adminAuthService.isAuthenticated(Astro.cookies);
+const guard = adminGuard(Astro);
+if (guard) return guard;
 
 const localeParam = Astro.url.searchParams.get("locale");
 const locale: SiteLocale = localeParam === "sr-cyrl" ? "sr-cyrl" : "sr-latn";
 const saved = Astro.url.searchParams.get("saved") === "1";
 const errorParam = Astro.url.searchParams.get("error");
 
-const navigation = authenticated ? await navigationService.getNavigation(locale) : undefined;
+const navigation = await navigationService.getNavigation(locale);
 const action = `/api/admin/navigation`;
 ---
 
-<AdminLayout title="Navigacija | Admin">
-  {
-    authenticated && navigation ? (
-      <div class="admin-grid">
-        <div class="card admin-intro-card">
-          <div class="admin-intro-card__content">
-            <p class="admin-kicker">Navigacija</p>
-            <h2>Glavni meni</h2>
-            <p class="section-copy">
-              Uredite labele, redoslede, URL-ove i dropdown decu stavki glavne navigacije. Sistemske
-              stavke ne mogu biti obrisane niti mogu da menjaju URL, ali im se labela i deca mogu
-              uređivati.
-            </p>
-          </div>
-
-          <div class="admin-stat-strip">
-            <a
-              class="admin-stat-pill"
-              href={`${adminConfig.basePath}/navigation/?locale=sr-latn`}
-              style={locale === "sr-latn" ? "outline: 2px solid var(--primary);" : ""}
-            >
-              <span class="admin-stat-pill__label">Pismo</span>
-              <strong>Latinica</strong>
-            </a>
-            <a
-              class="admin-stat-pill"
-              href={`${adminConfig.basePath}/navigation/?locale=sr-cyrl`}
-              style={locale === "sr-cyrl" ? "outline: 2px solid var(--primary);" : ""}
-            >
-              <span class="admin-stat-pill__label">Pismo</span>
-              <strong>Ћирилица</strong>
-            </a>
-          </div>
-        </div>
-
-        {saved ? <p class="admin-flash admin-flash--success">Navigacija je sačuvana.</p> : null}
-        {errorParam ? (
-          <p class="admin-flash admin-flash--error">
-            Neuspešno čuvanje. Proverite da labele i URL-ovi nisu prazni.
-          </p>
-        ) : null}
-
-        <AdminNavigationForm action={action} navigation={navigation} locale={locale} />
+<AdminLayout
+  title="Navigacija | Admin"
+  active="navigation"
+  breadcrumb={[{ label: "Navigacija" }]}
+>
+  <div class="admin-grid">
+    <div class="card admin-intro-card">
+      <div class="admin-intro-card__content">
+        <p class="admin-kicker">Navigacija</p>
+        <h2>Glavni meni</h2>
+        <p class="section-copy">
+          Uredite labele, redoslede, URL-ove i dropdown decu stavki glavne navigacije. Sistemske
+          stavke ne mogu biti obrisane niti mogu da menjaju URL, ali im se labela i deca mogu
+          uređivati.
+        </p>
       </div>
-    ) : (
-      <div class="page-grid">
-        <div class="card admin-intro-card">
-          <div class="admin-intro-card__content">
-            <p class="admin-kicker">Private Access</p>
-            <h2>{dictionary.admin.entry.title}</h2>
-            <p class="section-copy">{dictionary.admin.entry.copy}</p>
-          </div>
-        </div>
-        <AdminPasswordModal client:load returnPath={adminConfig.basePath + "/navigation/"} />
+
+      <div class="admin-stat-strip">
+        <a
+          class="admin-stat-pill"
+          href={`${adminConfig.basePath}/navigation/?locale=sr-latn`}
+          style={locale === "sr-latn" ? "outline: 2px solid var(--primary);" : ""}
+        >
+          <span class="admin-stat-pill__label">Pismo</span>
+          <strong>Latinica</strong>
+        </a>
+        <a
+          class="admin-stat-pill"
+          href={`${adminConfig.basePath}/navigation/?locale=sr-cyrl`}
+          style={locale === "sr-cyrl" ? "outline: 2px solid var(--primary);" : ""}
+        >
+          <span class="admin-stat-pill__label">Pismo</span>
+          <strong>Ћирилица</strong>
+        </a>
       </div>
-    )
-  }
+    </div>
+
+    {saved ? <p class="admin-alert admin-alert--success">Navigacija je sačuvana.</p> : null}
+    {errorParam ? (
+      <p class="admin-alert admin-alert--error">
+        Neuspešno čuvanje. Proverite da labele i URL-ovi nisu prazni.
+      </p>
+    ) : null}
+
+    <AdminNavigationForm action={action} navigation={navigation} locale={locale} />
+  </div>
 </AdminLayout>

@@ -1,0 +1,331 @@
+---
+import { localizePath } from "@/features/i18n/locale";
+import { getDictionary } from "@/features/i18n/translate";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
+import { siteConfig, type SiteLocale } from "@/lib/config/site";
+
+type Props = {
+  locale: SiteLocale;
+};
+
+const { locale } = Astro.props;
+const dictionary = getDictionary(locale);
+const contactContent = await pageContentService.getContactPageData(locale);
+const primarySocial =
+  contactContent.socialLinks.find((link) => link.platform === "instagram") ??
+  contactContent.socialLinks[0];
+const galleryImages = contactContent.officeGallery.slice(0, 3);
+const footerPrimaryLinks = [
+  { label: dictionary.nav.home, href: localizePath(locale, "/") },
+  { label: dictionary.nav.about, href: localizePath(locale, "/o-nama/") },
+  { label: dictionary.nav.psychotherapy, href: localizePath(locale, "/psihoterapija/") },
+  { label: dictionary.nav.blog, href: localizePath(locale, "/blog/") },
+];
+const footerSupportLinks = [
+  { label: dictionary.nav.faq, href: localizePath(locale, "/pitanja/") },
+  { label: dictionary.nav.contact, href: localizePath(locale, "/kontakt/") },
+  { label: dictionary.nav.appointment, href: localizePath(locale, "/zakazivanje/") },
+];
+---
+
+<footer class="section site-footer">
+  <div class="footer-shell">
+    <div class="container">
+      <div class="footer-cta">
+        <div class="footer-brand">
+          <p class="eyebrow footer-eyebrow">{dictionary.footer.contactEyebrow}</p>
+          <h2>{siteConfig.name}</h2>
+        </div>
+        <a class="appbar__cta" href={localizePath(locale, "/kontakt/")}>
+          {dictionary.nav.contact}
+        </a>
+      </div>
+
+      <div class="footer-main">
+        <div class="footer-brand">
+          <img
+            class="footer-brand__logo"
+            src="/legacy/images/Logo-White.svg"
+            alt={siteConfig.name}
+            loading="lazy"
+            data-image-component
+          />
+          <div class="footer-contact-list">
+            <a href={`mailto:${contactContent.email}`}>{contactContent.email}</a>
+            <a href={`tel:${contactContent.phone.replace(/\s+/g, "")}`}
+              >{contactContent.phone}</a
+            >
+          </div>
+        </div>
+
+        <div class="footer-sitemap">
+          <p class="footer-section-title">{dictionary.footer.sitemapTitle}</p>
+          <nav class="footer-sitemap__grid" aria-label={dictionary.a11y.footerNav}>
+            <div class="footer-link-group">
+              <p class="footer-link-group__title">{dictionary.footer.navigationTitle}</p>
+              <div class="footer-nav">
+                {footerPrimaryLinks.map((item) => <a href={item.href}>{item.label}</a>)}
+              </div>
+            </div>
+
+            <div class="footer-link-group">
+              <p class="footer-link-group__title">{dictionary.footer.supportTitle}</p>
+              <div class="footer-nav">
+                {footerSupportLinks.map((item) => <a href={item.href}>{item.label}</a>)}
+              </div>
+            </div>
+          </nav>
+        </div>
+
+        <div class="footer-aside">
+          <div class="footer-social">
+            <p class="footer-section-title">{dictionary.footer.socialTitle}</p>
+            <a
+              class="footer-social-link"
+              href={primarySocial?.href ?? "#"}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={primarySocial?.label ?? dictionary.footer.instagramLabel}
+            >
+              <span class="footer-social-link__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <rect x="3.5" y="3.5" width="17" height="17" rx="5"></rect>
+                  <circle cx="12" cy="12" r="3.75"></circle>
+                  <circle cx="17.2" cy="6.8" r="1"></circle>
+                </svg>
+              </span>
+              <span class="footer-social-link__copy">
+                <strong>{primarySocial?.label ?? dictionary.footer.instagramLabel}</strong>
+                <span>{primarySocial?.href ?? dictionary.footer.instagramPlaceholder}</span>
+              </span>
+            </a>
+          </div>
+
+          <div class="footer-gallery" aria-hidden="true">
+            {
+              galleryImages.map((image) => (
+                <img src={image} alt="" loading="lazy" data-image-component />
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    display: block;
+    padding: 0;
+    margin-top: 0;
+  }
+
+  .container {
+    width: min(calc(100% - 1.875rem), var(--container, 90rem));
+    margin: 0 auto;
+  }
+
+  .footer-shell {
+    width: 100%;
+    padding: clamp(2rem, 4vw, 2.5rem) 0 0;
+    color: rgba(255, 255, 255, 0.86);
+    background:
+      linear-gradient(145deg, rgba(9, 31, 32, 0.98), rgba(22, 60, 61, 0.92)),
+      url("/legacy/images/6_1-p-800.jpeg") center / cover no-repeat;
+    border: none;
+    border-radius: 0;
+  }
+
+  .footer-shell :is(h2, p, strong, span) {
+    color: inherit;
+  }
+
+  .footer-shell img {
+    display: block;
+    max-width: 100%;
+  }
+
+  .footer-brand h2 {
+    margin: 0;
+    color: #fff;
+    font-family: "Castoro", Georgia, serif;
+    font-size: clamp(2.2rem, 4vw, 3.35rem);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+  }
+
+  .footer-brand p,
+  .footer-nav a,
+  .footer-contact-list a,
+  .footer-social-link__copy span {
+    margin: 0;
+    font-family: "Lexend", "Segoe UI", sans-serif;
+    line-height: 1.6;
+  }
+
+  .footer-shell a:not(.appbar__cta) {
+    text-decoration: none;
+    transition:
+      color 180ms ease,
+      opacity 180ms ease,
+      transform 180ms ease,
+      box-shadow 200ms ease-in-out,
+      filter 200ms ease-in-out;
+  }
+
+  .eyebrow {
+    margin: 0 0 0.85rem;
+    font-family: "Lexend", "Segoe UI", sans-serif;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 0.74rem;
+  }
+
+  .footer-cta,
+  .footer-main {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .footer-cta {
+    align-items: center;
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .footer-cta .appbar__cta {
+    align-self: center;
+    text-decoration: none;
+  }
+
+  .footer-eyebrow {
+    color: rgba(255, 255, 255, 0.62);
+  }
+
+  .footer-main {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) minmax(17rem, 0.95fr);
+    padding-top: 1.5rem;
+    padding-bottom: 10px;
+    align-items: start;
+  }
+
+  .footer-brand {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .footer-brand__logo {
+    height: 2.1rem;
+    width: auto;
+  }
+
+  .footer-contact-list,
+  .footer-nav {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .footer-sitemap,
+  .footer-aside,
+  .footer-social,
+  .footer-link-group,
+  .footer-social-link__copy {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .footer-sitemap__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.1rem;
+  }
+
+  .footer-section-title,
+  .footer-link-group__title {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: "Lexend", "Segoe UI", sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .footer-link-group__title {
+    font-size: 0.74rem;
+  }
+
+  .footer-nav a,
+  .footer-contact-list a {
+    color: rgba(255, 255, 255, 0.72);
+  }
+
+  .footer-nav a:hover,
+  .footer-contact-list a:hover {
+    color: #fff;
+  }
+
+  .footer-gallery {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .footer-social-link {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.9rem;
+    align-items: center;
+    padding: 1rem 1.05rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .footer-social-link__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.9rem;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+  }
+
+  .footer-social-link__icon svg {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+
+  .footer-social-link__copy {
+    gap: 0.2rem;
+  }
+
+  .footer-social-link__copy strong {
+    font-family: "Lexend", "Segoe UI", sans-serif;
+    font-weight: 600;
+  }
+
+  .footer-gallery img {
+    aspect-ratio: 1;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  @media (max-width: 720px) {
+    .site-footer {
+      margin-top: 0;
+    }
+
+    .footer-main,
+    .footer-cta {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

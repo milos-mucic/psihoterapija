@@ -1,0 +1,19 @@
+---
+export const prerender = true;
+
+import BaseLayout from "@/components/components/BaseLayout.astro";
+import PricingPage from "@/components/pages/PricingPage.astro";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
+
+const locale = "sr-latn";
+const content = await pageContentService.getPricingPageData(locale);
+---
+
+<BaseLayout
+  title={content.seo.title}
+  description={content.seo.description}
+  locale={locale}
+  canonicalPath="/cena/"
+>
+  <PricingPage locale={locale} />
+</BaseLayout>

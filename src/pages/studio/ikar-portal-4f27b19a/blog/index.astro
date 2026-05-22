@@ -1,8 +1,14 @@
 ---
+export const prerender = false;
+
 import { getDictionary } from "@/features/i18n/translate";
 import { blogService } from "@/features/blog/services/blog.service";
 import { adminConfig } from "@/lib/config/admin";
 import AdminLayout from "@/components/components/AdminLayout.astro";
+import { adminGuard } from "@/features/admin/auth/admin-guard";
+
+const guard = adminGuard(Astro);
+if (guard) return guard;
 
 const dictionary = getDictionary("sr-latn");
 const posts = await blogService.listAllPosts();
@@ -12,7 +18,11 @@ const deleted = params.get("deleted") === "1";
 const error = params.get("error");
 ---
 
-<AdminLayout title={dictionary.admin.dashboard.blogManagementTitle}>
+<AdminLayout
+  title={dictionary.admin.dashboard.blogManagementTitle}
+  active="blog"
+  breadcrumb={[{ label: "Blog" }]}
+>
   <div class="admin-grid">
     {
       archived ? (

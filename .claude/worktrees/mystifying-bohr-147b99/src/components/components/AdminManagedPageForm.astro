@@ -1,0 +1,1452 @@
+---
+import AdminBiographyCardsEditor from "@/components/components/AdminBiographyCardsEditor.astro";
+import AdminManagedSection from "@/components/components/AdminManagedSection.astro";
+import AdminRepeatableGroupSection from "@/components/components/AdminRepeatableGroupSection.astro";
+import AdminRepeatableTextSection from "@/components/components/AdminRepeatableTextSection.astro";
+import AdminScopeTabsEditor from "@/components/components/AdminScopeTabsEditor.astro";
+import {
+  getManagedPageEditorConfig,
+  type ManagedPageEditorConfig,
+  type SupportedManagedPage,
+} from "@/features/page-content/admin/managed-page-editor.config";
+import type {
+  AboutPageManagedContent,
+  AppointmentPageManagedContent,
+  BlogIndexPageManagedContent,
+  BiographyPageManagedContent,
+  ContactPageManagedContent,
+  FaqPageManagedContent,
+  PageKey,
+  PricingPageManagedContent,
+  PsychotherapyPageManagedContent,
+  ScopePageManagedContent,
+} from "@/features/page-content/types/page-content.types";
+import type { SiteLocale } from "@/lib/config/site";
+
+type SupportedPage = Exclude<PageKey, "home">;
+
+type Props = {
+  action: string;
+  page: SupportedPage;
+  content:
+    | AboutPageManagedContent
+    | BiographyPageManagedContent
+    | PsychotherapyPageManagedContent
+    | ScopePageManagedContent
+    | PricingPageManagedContent
+    | AppointmentPageManagedContent
+    | FaqPageManagedContent
+    | ContactPageManagedContent
+    | BlogIndexPageManagedContent;
+  locale: SiteLocale;
+  previewBaseHref: string;
+  localeLabel: string;
+};
+
+const { action, content, locale, page, previewBaseHref, localeLabel } = Astro.props;
+const editorConfig: ManagedPageEditorConfig = getManagedPageEditorConfig(
+  page as SupportedManagedPage,
+  content,
+);
+const hiddenBlocksList = content.hiddenBlocks ?? [];
+const isSeoSection = (section: ManagedPageEditorConfig["sections"][number]) =>
+  section.kind === "standard" && section.title === "SEO";
+const visibilityToggleByIndex = new Map<number, { fragment: string; hidden: boolean }>();
+const seenFragments = new Set<string>();
+
+editorConfig.sections.forEach((section, index) => {
+  if (isSeoSection(section)) {
+    return;
+  }
+
+  if (seenFragments.has(section.fragment)) {
+    return;
+  }
+
+  seenFragments.add(section.fragment);
+  visibilityToggleByIndex.set(index, {
+    fragment: section.fragment,
+    hidden: hiddenBlocksList.includes(section.fragment),
+  });
+});
+const richTextLabels = {
+  bold: "Bold",
+  italic: "Italic",
+  underline: "Underline",
+  heading2: "Heading 2",
+  heading3: "Heading 3",
+  bulletList: "Lista",
+  orderedList: "Numerisana lista",
+  quote: "Citat",
+  link: "Link",
+  image: "Slika",
+  clear: "Ukloni format",
+  uploadFailed: "Upload slike nije uspeo.",
+};
+---
+
+<form
+  class="admin-form"
+  method="post"
+  action={action}
+  data-admin-section-preview-root
+  data-admin-preview-endpoint="/api/admin/pages/preview"
+  data-preview-base-href={previewBaseHref}
+  data-preview-locale-label={localeLabel}
+>
+  <input type="hidden" name="locale" value={locale} />
+  <input type="hidden" name="pageKey" value={page} />
+  <input type="hidden" name="previewToken" value="" data-admin-preview-token />
+
+  {
+    editorConfig.sections.map((section, index) => {
+      const visibilityToggle = visibilityToggleByIndex.get(index);
+
+      return section.kind === "standard" ? (
+        <AdminManagedSection
+          section={section}
+          uploadFolder={editorConfig.uploadFolder}
+          richTextLabels={richTextLabels}
+          visibilityToggle={visibilityToggle}
+        />
+      ) : section.kind === "biographyCards" ? (
+        <AdminBiographyCardsEditor
+          fragment={section.fragment}
+          title={section.title}
+          copy={section.copy}
+          sectionTitleValue={section.sectionTitleValue}
+          sectionCopyValue={section.sectionCopyValue}
+          cards={section.cards}
+          uploadFolder={editorConfig.uploadFolder}
+          richTextLabels={richTextLabels}
+          visibilityToggle={visibilityToggle}
+        />
+      ) : section.kind === "scopeTabs" ? (
+        <AdminScopeTabsEditor
+          fragment={section.fragment}
+          title={section.title}
+          copy={section.copy}
+          tabs={section.tabs}
+          richTextLabels={richTextLabels}
+          visibilityToggle={visibilityToggle}
+        />
+      ) : section.kind === "repeatableText" ? (
+        <AdminRepeatableTextSection section={section} visibilityToggle={visibilityToggle} />
+      ) : (
+        <AdminRepeatableGroupSection
+          section={section}
+          uploadFolder={editorConfig.uploadFolder}
+          richTextLabels={richTextLabels}
+          visibilityToggle={visibilityToggle}
+        />
+      );
+    })
+  }
+
+  <div class="admin-form__actions admin-form__actions--floating">
+    <p class="admin-form__save-status" data-admin-form-submit-status aria-live="polite"></p>
+    <button class="button-primary admin-form__fab" type="submit" data-admin-form-submit>
+      Sačuvaj stranicu
+    </button>
+  </div>
+</form>
+
+<script>
+  // @ts-nocheck
+  import {
+    setupAdminFormExperience,
+    notifyAdminFormValueChange,
+  } from "@/features/admin/editor/admin-form.client";
+  import { mountAdminRichTextField, unmountAdminRichTextField } from "./AdminRichTextMount";
+  import { uploadWithProgress } from "@/lib/http/upload-with-progress";
+
+  (() => {
+    const notifyForm = (form) => {
+      if (form instanceof HTMLFormElement) {
+        notifyAdminFormValueChange(form);
+      }
+    };
+
+    const setupRepeatableTextSections = () => {
+      document.querySelectorAll("[data-repeatable-text-list]").forEach((list) => {
+        if (!(list instanceof HTMLElement) || list.dataset.bound === "true") {
+          return;
+        }
+
+        const container = list.parentElement;
+        const template = container?.querySelector("[data-repeatable-text-template]");
+        const addButton = container?.querySelector("[data-repeatable-text-add]");
+        const form = list.closest("form");
+        const itemLabel = list.dataset.repeatableItemLabel ?? "Stavka";
+        const prefix = list.dataset.repeatableNamePrefix ?? "item";
+        const minItems = Math.max(1, Number(list.dataset.repeatableMinItems ?? "1"));
+
+        if (
+          !(template instanceof HTMLTemplateElement) ||
+          !(addButton instanceof HTMLButtonElement) ||
+          !(form instanceof HTMLFormElement)
+        ) {
+          return;
+        }
+
+        const syncItems = () => {
+          const items = Array.from(list.querySelectorAll("[data-repeatable-text-item]"));
+
+          items.forEach((item, index) => {
+            if (!(item instanceof HTMLElement)) {
+              return;
+            }
+
+            const title = item.querySelector("[data-repeatable-text-title]");
+            const input = item.querySelector("[data-repeatable-text-value]");
+            const removeButton = item.querySelector("[data-repeatable-text-remove]");
+
+            if (title instanceof HTMLElement) {
+              title.textContent = `${itemLabel} ${index + 1}`;
+            }
+
+            if (input instanceof HTMLInputElement) {
+              input.name = `${prefix}_${index}`;
+            }
+
+            if (removeButton instanceof HTMLButtonElement) {
+              removeButton.disabled = items.length <= minItems;
+            }
+          });
+
+          notifyForm(form);
+        };
+
+        addButton.addEventListener("click", () => {
+          list.append(template.content.cloneNode(true));
+          syncItems();
+        });
+
+        list.addEventListener("click", (event) => {
+          const target = event.target;
+
+          if (!(target instanceof HTMLElement)) {
+            return;
+          }
+
+          const removeButton = target.closest("[data-repeatable-text-remove]");
+
+          if (!(removeButton instanceof HTMLButtonElement)) {
+            return;
+          }
+
+          const items = list.querySelectorAll("[data-repeatable-text-item]");
+
+          if (items.length <= minItems) {
+            return;
+          }
+
+          removeButton.closest("[data-repeatable-text-item]")?.remove();
+          syncItems();
+        });
+
+        syncItems();
+        list.dataset.bound = "true";
+      });
+    };
+
+    const setupRepeatableGroupSections = () => {
+      document.querySelectorAll("[data-repeatable-group-list]").forEach((list) => {
+        if (!(list instanceof HTMLElement) || list.dataset.bound === "true") {
+          return;
+        }
+
+        const container = list.parentElement;
+        const template = container?.querySelector("[data-repeatable-group-template]");
+        const addButton = container?.querySelector("[data-repeatable-group-add]");
+        const form = list.closest("form");
+        const itemLabel = list.dataset.repeatableItemLabel ?? "Stavka";
+        const prefix = list.dataset.repeatableNamePrefix ?? "item";
+        const uploadFolder = list.dataset.repeatableUploadFolder ?? "pages";
+        const minItems = Math.max(1, Number(list.dataset.repeatableMinItems ?? "1"));
+
+        if (
+          !(template instanceof HTMLTemplateElement) ||
+          !(addButton instanceof HTMLButtonElement) ||
+          !(form instanceof HTMLFormElement)
+        ) {
+          return;
+        }
+
+        let fieldTemplates = [];
+        let richTextLabels = {};
+
+        try {
+          fieldTemplates = JSON.parse(list.dataset.repeatableGroupFields ?? "[]");
+          richTextLabels = JSON.parse(list.dataset.repeatableRichTextLabels ?? "{}");
+        } catch {
+          fieldTemplates = [];
+          richTextLabels = {};
+        }
+
+        const getPendingSourceId = (item, fieldKey) => {
+          if (!(item instanceof HTMLElement) || !fieldKey) {
+            return "";
+          }
+
+          const datasetKey = `pendingSource${fieldKey[0].toUpperCase()}${fieldKey.slice(1)}`;
+
+          if (!item.dataset[datasetKey]) {
+            item.dataset[datasetKey] =
+              globalThis.crypto?.randomUUID?.() ??
+              `repeatable-group-${Date.now()}-${Math.random()}`;
+          }
+
+          return item.dataset[datasetKey] ?? "";
+        };
+
+        const setPendingUpload = (item, fieldKey, active) => {
+          const sourceId = getPendingSourceId(item, fieldKey);
+
+          if (!sourceId) {
+            return;
+          }
+
+          form.dispatchEvent(
+            new CustomEvent("admin:pending-media", {
+              detail: { active, sourceId },
+            }),
+          );
+        };
+
+        const createEmptyImageState = () => {
+          const empty = document.createElement("p");
+          empty.className = "admin-inline-media-field__empty";
+          empty.textContent = "Slika nije dodata.";
+          return empty;
+        };
+
+        const getImageField = (item, fieldKey) => {
+          const field = item.querySelector(`[data-repeatable-group-image-input="${fieldKey}"]`);
+          return field instanceof HTMLInputElement ? field : null;
+        };
+
+        const getImagePreview = (item, fieldKey) => {
+          const preview = item.querySelector(`[data-repeatable-group-image-preview="${fieldKey}"]`);
+          return preview instanceof HTMLElement ? preview : null;
+        };
+
+        const getImageStatus = (item, fieldKey) => {
+          const status = item.querySelector(`[data-repeatable-group-image-status="${fieldKey}"]`);
+          return status instanceof HTMLElement ? status : null;
+        };
+
+        const setImageStatus = (item, fieldKey, message = "") => {
+          const status = getImageStatus(item, fieldKey);
+
+          if (status) {
+            status.textContent = message;
+          }
+        };
+
+        const setImageProgress = (item, fieldKey, percent = 0) => {
+          const progress = item.querySelector(
+            `[data-repeatable-group-image-progress="${fieldKey}"]`,
+          );
+          const bar = item.querySelector(
+            `[data-repeatable-group-image-progress-bar="${fieldKey}"]`,
+          );
+
+          if (progress instanceof HTMLElement) {
+            progress.hidden = false;
+          }
+
+          if (bar instanceof HTMLElement) {
+            bar.style.width = `${percent}%`;
+          }
+        };
+
+        const clearImageProgress = (item, fieldKey) => {
+          const progress = item.querySelector(
+            `[data-repeatable-group-image-progress="${fieldKey}"]`,
+          );
+          const bar = item.querySelector(
+            `[data-repeatable-group-image-progress-bar="${fieldKey}"]`,
+          );
+
+          if (progress instanceof HTMLElement) {
+            progress.hidden = true;
+          }
+
+          if (bar instanceof HTMLElement) {
+            bar.style.width = "0%";
+          }
+        };
+
+        const updateImagePreview = (item, fieldKey) => {
+          const field = getImageField(item, fieldKey);
+          const preview = getImagePreview(item, fieldKey);
+
+          if (!field || !preview) {
+            return;
+          }
+
+          preview.replaceChildren();
+
+          if (field.value.trim()) {
+            const image = document.createElement("img");
+            image.src = field.value.trim();
+            image.alt = "";
+            image.loading = "lazy";
+            preview.append(image);
+          } else {
+            preview.append(createEmptyImageState());
+          }
+
+          const clearButton = item.querySelector(
+            `[data-repeatable-group-image-clear="${fieldKey}"]`,
+          );
+
+          if (clearButton instanceof HTMLButtonElement) {
+            clearButton.disabled = field.value.trim().length === 0;
+          }
+        };
+
+        const mountRichTextField = (field, index) => {
+          if (!(field instanceof HTMLElement)) {
+            return;
+          }
+
+          const fieldKey = field.dataset.repeatableGroupField;
+
+          if (!fieldKey) {
+            return;
+          }
+
+          const initialField = field.querySelector("[data-repeatable-group-rtf-initial]");
+          const initialValue =
+            initialField instanceof HTMLTextAreaElement ? initialField.value : "";
+
+          mountAdminRichTextField(field, {
+            initialValue,
+            labels: richTextLabels,
+            name: `${prefix}_${index}_${fieldKey}`,
+            uploadFolder,
+            uploadUrl: "/api/admin/media/upload",
+          });
+        };
+
+        const uploadImage = async (item, fieldKey, file) => {
+          const field = getImageField(item, fieldKey);
+
+          if (!field) {
+            return;
+          }
+
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("folder", uploadFolder);
+
+          setImageStatus(item, fieldKey, "Otpremanje...");
+          setImageProgress(item, fieldKey, 0);
+          setPendingUpload(item, fieldKey, true);
+
+          try {
+            const data = await uploadWithProgress({
+              formData,
+              url: "/api/admin/media/upload",
+              onProgress: (percent) => {
+                setImageProgress(item, fieldKey, percent);
+                setImageStatus(item, fieldKey, `Otpremanje... ${percent}%`);
+              },
+            });
+
+            if (!data?.url || typeof data.url !== "string") {
+              setImageStatus(item, fieldKey, "Upload nije uspeo.");
+              clearImageProgress(item, fieldKey);
+              return;
+            }
+
+            field.value = data.url;
+            updateImagePreview(item, fieldKey);
+            setImageStatus(item, fieldKey, "Slika je otpremljena.");
+            setImageProgress(item, fieldKey, 100);
+            notifyForm(form);
+            form.dispatchEvent(
+              new CustomEvent("admin:auto-save-media", {
+                detail: { sourceId: getPendingSourceId(item, fieldKey) },
+              }),
+            );
+          } catch {
+            setImageStatus(item, fieldKey, "Upload nije uspeo.");
+            clearImageProgress(item, fieldKey);
+          } finally {
+            setPendingUpload(item, fieldKey, false);
+          }
+        };
+
+        const syncItems = () => {
+          const items = Array.from(list.querySelectorAll("[data-repeatable-group-item]"));
+
+          items.forEach((item, index) => {
+            if (!(item instanceof HTMLElement)) {
+              return;
+            }
+
+            const title = item.querySelector("[data-repeatable-group-title]");
+            const removeButton = item.querySelector("[data-repeatable-group-remove]");
+
+            if (title instanceof HTMLElement) {
+              title.textContent = `${itemLabel} ${index + 1}`;
+            }
+
+            if (removeButton instanceof HTMLButtonElement) {
+              removeButton.disabled = items.length <= minItems;
+            }
+
+            fieldTemplates.forEach((fieldTemplate) => {
+              const field = item.querySelector(
+                `[data-repeatable-group-field="${fieldTemplate.key}"]`,
+              );
+
+              if (!(field instanceof HTMLElement)) {
+                return;
+              }
+
+              if (field.classList.contains("admin-repeatable-group-rich-text")) {
+                mountRichTextField(field, index);
+                return;
+              }
+
+              if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
+                field.name = `${prefix}_${index}_${fieldTemplate.key}`;
+              }
+
+              if (fieldTemplate.kind === "media") {
+                updateImagePreview(item, fieldTemplate.key);
+              }
+            });
+          });
+
+          notifyForm(form);
+        };
+
+        addButton.addEventListener("click", () => {
+          list.append(template.content.cloneNode(true));
+          syncItems();
+        });
+
+        list.addEventListener("click", (event) => {
+          const target = event.target;
+
+          if (!(target instanceof HTMLElement)) {
+            return;
+          }
+
+          const clearButton = target.closest("[data-repeatable-group-image-clear]");
+
+          if (clearButton instanceof HTMLButtonElement) {
+            const item = clearButton.closest("[data-repeatable-group-item]");
+            const fieldKey = clearButton.dataset.repeatableGroupImageClear;
+
+            if (!(item instanceof HTMLElement) || !fieldKey) {
+              return;
+            }
+
+            const field = getImageField(item, fieldKey);
+
+            if (!field) {
+              return;
+            }
+
+            field.value = "";
+            setImageStatus(item, fieldKey, "");
+            clearImageProgress(item, fieldKey);
+            updateImagePreview(item, fieldKey);
+            notifyForm(form);
+            return;
+          }
+
+          const removeButton = target.closest("[data-repeatable-group-remove]");
+
+          if (!(removeButton instanceof HTMLButtonElement)) {
+            return;
+          }
+
+          const items = list.querySelectorAll("[data-repeatable-group-item]");
+
+          if (items.length <= minItems) {
+            return;
+          }
+
+          const item = removeButton.closest("[data-repeatable-group-item]");
+
+          if (item instanceof HTMLElement) {
+            item.querySelectorAll(".admin-repeatable-group-rich-text").forEach((field) => {
+              if (field instanceof HTMLElement) {
+                unmountAdminRichTextField(field);
+              }
+            });
+
+            fieldTemplates
+              .filter((fieldTemplate) => fieldTemplate.kind === "media")
+              .forEach((fieldTemplate) => {
+                setPendingUpload(item, fieldTemplate.key, false);
+              });
+
+            item.remove();
+            syncItems();
+          }
+        });
+
+        list.addEventListener("change", (event) => {
+          const target = event.target;
+
+          if (
+            !(target instanceof HTMLInputElement) ||
+            !target.matches("[data-repeatable-group-upload]")
+          ) {
+            return;
+          }
+
+          const item = target.closest("[data-repeatable-group-item]");
+          const fieldKey = target.dataset.repeatableGroupUpload;
+          const file = target.files?.[0];
+
+          target.value = "";
+
+          if (!file || !(item instanceof HTMLElement) || !fieldKey) {
+            return;
+          }
+
+          void uploadImage(item, fieldKey, file);
+        });
+
+        syncItems();
+        list.dataset.bound = "true";
+      });
+    };
+
+    const setupBiographyCards = () => {
+      const list = document.querySelector("[data-biography-card-list]");
+      const template = document.querySelector("[data-biography-card-template]");
+      const addButton = document.querySelector("[data-biography-card-add]");
+      const form = list?.closest("form");
+
+      if (
+        !(list instanceof HTMLElement) ||
+        !(template instanceof HTMLTemplateElement) ||
+        !(addButton instanceof HTMLButtonElement) ||
+        !(form instanceof HTMLFormElement) ||
+        list.dataset.bound === "true"
+      ) {
+        return;
+      }
+
+      let richTextLabels = {};
+
+      try {
+        richTextLabels = JSON.parse(list.dataset.biographyCardRichTextLabels ?? "{}");
+      } catch {
+        richTextLabels = {};
+      }
+
+      const getPendingSourceId = (card) => {
+        if (!(card instanceof HTMLElement)) {
+          return "";
+        }
+
+        if (!card.dataset.pendingSourceId) {
+          card.dataset.pendingSourceId =
+            globalThis.crypto?.randomUUID?.() ?? `bio-card-${Date.now()}-${Math.random()}`;
+        }
+
+        return card.dataset.pendingSourceId;
+      };
+
+      const setPendingUpload = (card, active) => {
+        const sourceId = getPendingSourceId(card);
+
+        if (!sourceId) {
+          return;
+        }
+
+        form.dispatchEvent(
+          new CustomEvent("admin:pending-media", {
+            detail: { active, sourceId },
+          }),
+        );
+      };
+
+      const createEmptyImageState = () => {
+        const empty = document.createElement("p");
+        empty.className = "admin-inline-media-field__empty";
+        empty.textContent = "Slika nije dodata.";
+        return empty;
+      };
+
+      const getCardImageField = (card) => {
+        const field = card.querySelector("[data-biography-card-image-input]");
+        return field instanceof HTMLInputElement ? field : null;
+      };
+
+      const getCardImagePreview = (card) => {
+        const preview = card.querySelector("[data-biography-card-image-preview]");
+        return preview instanceof HTMLElement ? preview : null;
+      };
+
+      const getCardImageStatus = (card) => {
+        const status = card.querySelector("[data-biography-card-image-status]");
+        return status instanceof HTMLElement ? status : null;
+      };
+
+      const updateCardImagePreview = (card) => {
+        const field = getCardImageField(card);
+        const preview = getCardImagePreview(card);
+
+        if (!field || !preview) {
+          return;
+        }
+
+        preview.replaceChildren();
+
+        if (field.value.trim()) {
+          const image = document.createElement("img");
+          image.src = field.value.trim();
+          image.alt = "";
+          image.loading = "lazy";
+          preview.append(image);
+        } else {
+          preview.append(createEmptyImageState());
+        }
+
+        const clearButton = card.querySelector("[data-biography-card-image-clear]");
+
+        if (clearButton instanceof HTMLButtonElement) {
+          clearButton.disabled = field.value.trim().length === 0;
+        }
+      };
+
+      const setCardImageStatus = (card, message = "") => {
+        const status = getCardImageStatus(card);
+
+        if (status) {
+          status.textContent = message;
+        }
+      };
+
+      const setCardImageProgress = (card, percent = 0) => {
+        const progress = card.querySelector("[data-biography-card-image-progress]");
+        const bar = card.querySelector("[data-biography-card-image-progress-bar]");
+
+        if (progress instanceof HTMLElement) {
+          progress.hidden = false;
+        }
+
+        if (bar instanceof HTMLElement) {
+          bar.style.width = `${percent}%`;
+        }
+      };
+
+      const clearCardImageProgress = (card) => {
+        const progress = card.querySelector("[data-biography-card-image-progress]");
+        const bar = card.querySelector("[data-biography-card-image-progress-bar]");
+
+        if (progress instanceof HTMLElement) {
+          progress.hidden = true;
+        }
+
+        if (bar instanceof HTMLElement) {
+          bar.style.width = "0%";
+        }
+      };
+
+      const mountCardRichText = (field, index) => {
+        if (!(field instanceof HTMLElement)) {
+          return;
+        }
+
+        const fieldName = field.dataset.biographyCardField;
+
+        if (!fieldName) {
+          return;
+        }
+
+        const initialField = field.querySelector("[data-biography-card-rtf-initial]");
+        const initialValue = initialField instanceof HTMLTextAreaElement ? initialField.value : "";
+
+        mountAdminRichTextField(field, {
+          initialValue,
+          labels: richTextLabels,
+          name: `biographyCard_${index}_${fieldName}`,
+          uploadFolder: "pages/biography",
+          uploadUrl: "/api/admin/media/upload",
+        });
+      };
+
+      const uploadCardImage = async (card, file) => {
+        const field = getCardImageField(card);
+
+        if (!field) {
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("folder", "pages/biography");
+
+        setCardImageStatus(card, "Otpremanje...");
+        setCardImageProgress(card, 0);
+        setPendingUpload(card, true);
+
+        try {
+          const data = await uploadWithProgress({
+            formData,
+            url: "/api/admin/media/upload",
+            onProgress: (percent) => {
+              setCardImageProgress(card, percent);
+              setCardImageStatus(card, `Otpremanje... ${percent}%`);
+            },
+          });
+
+          if (!data?.url || typeof data.url !== "string") {
+            setCardImageStatus(card, "Upload nije uspeo.");
+            clearCardImageProgress(card);
+            return;
+          }
+
+          field.value = data.url;
+          updateCardImagePreview(card);
+          setCardImageStatus(card, "Slika je otpremljena.");
+          setCardImageProgress(card, 100);
+          notifyForm(form);
+          form.dispatchEvent(
+            new CustomEvent("admin:auto-save-media", {
+              detail: { sourceId: getPendingSourceId(card) },
+            }),
+          );
+        } catch {
+          setCardImageStatus(card, "Upload nije uspeo.");
+          clearCardImageProgress(card);
+        } finally {
+          setPendingUpload(card, false);
+        }
+      };
+
+      const syncCardHighlights = (card, cardIndex) => {
+        if (!(card instanceof HTMLElement)) {
+          return;
+        }
+
+        const highlightList = card.querySelector("[data-biography-highlight-list]");
+
+        if (!(highlightList instanceof HTMLElement)) {
+          return;
+        }
+
+        const minItems = Math.max(
+          1,
+          Number(highlightList.dataset.biographyHighlightMinItems ?? "1"),
+        );
+        const items = Array.from(highlightList.querySelectorAll("[data-biography-highlight-item]"));
+
+        items.forEach((item, highlightIndex) => {
+          if (!(item instanceof HTMLElement)) {
+            return;
+          }
+
+          const title = item.querySelector("[data-biography-highlight-title]");
+          const input = item.querySelector("[data-biography-highlight-value]");
+          const removeButton = item.querySelector("[data-biography-highlight-remove]");
+
+          if (title instanceof HTMLElement) {
+            title.textContent = `Tag ${highlightIndex + 1}`;
+          }
+
+          if (input instanceof HTMLInputElement) {
+            input.name = `biographyCard_${cardIndex}_highlight_${highlightIndex}`;
+          }
+
+          if (removeButton instanceof HTMLButtonElement) {
+            removeButton.disabled = items.length <= minItems;
+          }
+        });
+      };
+
+      const syncCards = () => {
+        const items = Array.from(list.querySelectorAll("[data-biography-card-item]"));
+
+        items.forEach((item, index) => {
+          if (!(item instanceof HTMLElement)) {
+            return;
+          }
+
+          const title = item.querySelector("[data-biography-card-title]");
+
+          if (title instanceof HTMLElement) {
+            title.textContent = `Profil ${index + 1}`;
+          }
+
+          const removeButton = item.querySelector("[data-biography-card-remove]");
+
+          if (removeButton instanceof HTMLButtonElement) {
+            removeButton.disabled = items.length === 1;
+          }
+
+          item.querySelectorAll("[data-biography-card-field]").forEach((field) => {
+            const fieldName = field.dataset.biographyCardField;
+
+            if (!fieldName) {
+              return;
+            }
+
+            if (field.classList.contains("admin-biography-card-rich-text")) {
+              mountCardRichText(field, index);
+              return;
+            }
+
+            if (!(field instanceof HTMLInputElement) && !(field instanceof HTMLTextAreaElement)) {
+              return;
+            }
+
+            field.name = `biographyCard_${index}_${fieldName}`;
+          });
+
+          updateCardImagePreview(item);
+          syncCardHighlights(item, index);
+        });
+
+        notifyForm(form);
+      };
+
+      addButton.addEventListener("click", () => {
+        list.append(template.content.cloneNode(true));
+        syncCards();
+      });
+
+      list.addEventListener("click", (event) => {
+        const target = event.target;
+
+        if (!(target instanceof HTMLElement)) {
+          return;
+        }
+
+        const clearButton = target.closest("[data-biography-card-image-clear]");
+
+        if (clearButton instanceof HTMLButtonElement) {
+          const card = clearButton.closest("[data-biography-card-item]");
+
+          if (!(card instanceof HTMLElement)) {
+            return;
+          }
+
+          const field = getCardImageField(card);
+
+          if (!field) {
+            return;
+          }
+
+          field.value = "";
+          setCardImageStatus(card, "");
+          clearCardImageProgress(card);
+          updateCardImagePreview(card);
+          notifyForm(form);
+          return;
+        }
+
+        const addHighlightButton = target.closest("[data-biography-highlight-add]");
+
+        if (addHighlightButton instanceof HTMLButtonElement) {
+          const card = addHighlightButton.closest("[data-biography-card-item]");
+          const highlightList = card?.querySelector("[data-biography-highlight-list]");
+          const highlightTemplate = card?.querySelector("[data-biography-highlight-template]");
+
+          if (
+            !(card instanceof HTMLElement) ||
+            !(highlightList instanceof HTMLElement) ||
+            !(highlightTemplate instanceof HTMLTemplateElement)
+          ) {
+            return;
+          }
+
+          highlightList.append(highlightTemplate.content.cloneNode(true));
+          syncCards();
+          return;
+        }
+
+        const removeHighlightButton = target.closest("[data-biography-highlight-remove]");
+
+        if (removeHighlightButton instanceof HTMLButtonElement) {
+          const card = removeHighlightButton.closest("[data-biography-card-item]");
+          const highlightList = card?.querySelector("[data-biography-highlight-list]");
+          const highlightItem = removeHighlightButton.closest("[data-biography-highlight-item]");
+
+          if (
+            !(card instanceof HTMLElement) ||
+            !(highlightList instanceof HTMLElement) ||
+            !(highlightItem instanceof HTMLElement)
+          ) {
+            return;
+          }
+
+          const items = highlightList.querySelectorAll("[data-biography-highlight-item]");
+          const minItems = Math.max(
+            1,
+            Number(highlightList.dataset.biographyHighlightMinItems ?? "1"),
+          );
+
+          if (items.length <= minItems) {
+            return;
+          }
+
+          highlightItem.remove();
+          syncCards();
+          return;
+        }
+
+        const removeButton = target.closest("[data-biography-card-remove]");
+
+        if (!(removeButton instanceof HTMLButtonElement)) {
+          return;
+        }
+
+        const items = list.querySelectorAll("[data-biography-card-item]");
+
+        if (items.length <= 1) {
+          return;
+        }
+
+        const card = removeButton.closest("[data-biography-card-item]");
+
+        if (card instanceof HTMLElement) {
+          card.querySelectorAll(".admin-biography-card-rich-text").forEach((field) => {
+            if (field instanceof HTMLElement) {
+              unmountAdminRichTextField(field);
+            }
+          });
+          setPendingUpload(card, false);
+          card.remove();
+          syncCards();
+        }
+      });
+
+      list.addEventListener("change", (event) => {
+        const target = event.target;
+
+        if (
+          !(target instanceof HTMLInputElement) ||
+          !target.matches("[data-biography-card-upload]")
+        ) {
+          return;
+        }
+
+        const file = target.files?.[0];
+        const card = target.closest("[data-biography-card-item]");
+
+        target.value = "";
+
+        if (!file || !(card instanceof HTMLElement)) {
+          return;
+        }
+
+        void uploadCardImage(card, file);
+      });
+
+      syncCards();
+      list.dataset.bound = "true";
+    };
+
+    const setupScopeTabs = () => {
+      const list = document.querySelector("[data-scope-tab-list]");
+      const template = document.querySelector("[data-scope-tab-template]");
+      const addButton = document.querySelector("[data-scope-tab-add]");
+      const form = list?.closest("form");
+
+      if (
+        !(list instanceof HTMLElement) ||
+        !(template instanceof HTMLTemplateElement) ||
+        !(addButton instanceof HTMLButtonElement) ||
+        !(form instanceof HTMLFormElement) ||
+        list.dataset.bound === "true"
+      ) {
+        return;
+      }
+
+      let richTextLabels = {};
+
+      try {
+        richTextLabels = JSON.parse(list.dataset.scopeTabRichTextLabels ?? "{}");
+      } catch {
+        richTextLabels = {};
+      }
+
+      const getPendingSourceKey = (fieldName) =>
+        fieldName === "detailImage" ? "pendingSourceDetailImage" : "pendingSourceIcon";
+
+      const getPendingSourceId = (tab, fieldName) => {
+        if (!(tab instanceof HTMLElement)) {
+          return "";
+        }
+
+        const key = getPendingSourceKey(fieldName);
+
+        if (!tab.dataset[key]) {
+          tab.dataset[key] =
+            globalThis.crypto?.randomUUID?.() ?? `scope-tab-${Date.now()}-${Math.random()}`;
+        }
+
+        return tab.dataset[key] ?? "";
+      };
+
+      const setPendingUpload = (tab, fieldName, active) => {
+        const sourceId = getPendingSourceId(tab, fieldName);
+
+        if (!sourceId) {
+          return;
+        }
+
+        form.dispatchEvent(
+          new CustomEvent("admin:pending-media", {
+            detail: { active, sourceId },
+          }),
+        );
+      };
+
+      const createEmptyImageState = () => {
+        const empty = document.createElement("p");
+        empty.className = "admin-inline-media-field__empty";
+        empty.textContent = "Slika nije dodata.";
+        return empty;
+      };
+
+      const getTabImageField = (tab, fieldName) => {
+        const field = tab.querySelector(`[data-scope-tab-image-input="${fieldName}"]`);
+        return field instanceof HTMLInputElement ? field : null;
+      };
+
+      const getTabImagePreview = (tab, fieldName) => {
+        const preview = tab.querySelector(`[data-scope-tab-image-preview="${fieldName}"]`);
+        return preview instanceof HTMLElement ? preview : null;
+      };
+
+      const getTabImageStatus = (tab, fieldName) => {
+        const status = tab.querySelector(`[data-scope-tab-image-status="${fieldName}"]`);
+        return status instanceof HTMLElement ? status : null;
+      };
+
+      const updateTabImagePreview = (tab, fieldName) => {
+        const field = getTabImageField(tab, fieldName);
+        const preview = getTabImagePreview(tab, fieldName);
+
+        if (!field || !preview) {
+          return;
+        }
+
+        preview.replaceChildren();
+
+        if (field.value.trim()) {
+          const image = document.createElement("img");
+          image.src = field.value.trim();
+          image.alt = "";
+          image.loading = "lazy";
+          preview.append(image);
+        } else {
+          preview.append(createEmptyImageState());
+        }
+
+        const clearButton = tab.querySelector(`[data-scope-tab-image-clear="${fieldName}"]`);
+
+        if (clearButton instanceof HTMLButtonElement) {
+          clearButton.disabled = field.value.trim().length === 0;
+        }
+      };
+
+      const setTabImageStatus = (tab, fieldName, message = "") => {
+        const status = getTabImageStatus(tab, fieldName);
+
+        if (status) {
+          status.textContent = message;
+        }
+      };
+
+      const setTabImageProgress = (tab, fieldName, percent = 0) => {
+        const progress = tab.querySelector(`[data-scope-tab-image-progress="${fieldName}"]`);
+        const bar = tab.querySelector(`[data-scope-tab-image-progress-bar="${fieldName}"]`);
+
+        if (progress instanceof HTMLElement) {
+          progress.hidden = false;
+        }
+
+        if (bar instanceof HTMLElement) {
+          bar.style.width = `${percent}%`;
+        }
+      };
+
+      const clearTabImageProgress = (tab, fieldName) => {
+        const progress = tab.querySelector(`[data-scope-tab-image-progress="${fieldName}"]`);
+        const bar = tab.querySelector(`[data-scope-tab-image-progress-bar="${fieldName}"]`);
+
+        if (progress instanceof HTMLElement) {
+          progress.hidden = true;
+        }
+
+        if (bar instanceof HTMLElement) {
+          bar.style.width = "0%";
+        }
+      };
+
+      const mountTabRichText = (field, tabIndex) => {
+        if (!(field instanceof HTMLElement)) {
+          return;
+        }
+
+        const fieldName = field.dataset.scopeTabField;
+
+        if (!fieldName) {
+          return;
+        }
+
+        const initialField = field.querySelector("[data-scope-tab-rtf-initial]");
+        const initialValue = initialField instanceof HTMLTextAreaElement ? initialField.value : "";
+
+        mountAdminRichTextField(field, {
+          initialValue,
+          labels: richTextLabels,
+          name: `scopeTab_${tabIndex}_${fieldName}`,
+          uploadFolder: "pages/scope",
+          uploadUrl: "/api/admin/media/upload",
+        });
+      };
+
+      const mountTabItemRichText = (field, tabIndex) => {
+        if (!(field instanceof HTMLElement)) {
+          return;
+        }
+
+        const itemIndex = Number(field.dataset.scopeTabItemIndex);
+
+        if (Number.isNaN(itemIndex)) {
+          return;
+        }
+
+        const initialField = field.querySelector("[data-scope-tab-rtf-initial]");
+        const initialValue = initialField instanceof HTMLTextAreaElement ? initialField.value : "";
+
+        mountAdminRichTextField(field, {
+          initialValue,
+          labels: richTextLabels,
+          name: `scopeTab_${tabIndex}_item_${itemIndex}_copy`,
+          uploadFolder: "pages/scope",
+          uploadUrl: "/api/admin/media/upload",
+        });
+      };
+
+      const uploadTabImage = async (tab, fieldName, file) => {
+        const field = getTabImageField(tab, fieldName);
+
+        if (!field) {
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("folder", "pages/scope");
+
+        setTabImageStatus(tab, fieldName, "Otpremanje...");
+        setTabImageProgress(tab, fieldName, 0);
+        setPendingUpload(tab, fieldName, true);
+
+        try {
+          const data = await uploadWithProgress({
+            formData,
+            url: "/api/admin/media/upload",
+            onProgress: (percent) => {
+              setTabImageProgress(tab, fieldName, percent);
+              setTabImageStatus(tab, fieldName, `Otpremanje... ${percent}%`);
+            },
+          });
+
+          if (!data?.url || typeof data.url !== "string") {
+            setTabImageStatus(tab, fieldName, "Upload nije uspeo.");
+            clearTabImageProgress(tab, fieldName);
+            return;
+          }
+
+          field.value = data.url;
+          updateTabImagePreview(tab, fieldName);
+          setTabImageStatus(tab, fieldName, "Slika je otpremljena.");
+          setTabImageProgress(tab, fieldName, 100);
+          notifyForm(form);
+          form.dispatchEvent(
+            new CustomEvent("admin:auto-save-media", {
+              detail: { sourceId: getPendingSourceId(tab, fieldName) },
+            }),
+          );
+        } catch {
+          setTabImageStatus(tab, fieldName, "Upload nije uspeo.");
+          clearTabImageProgress(tab, fieldName);
+        } finally {
+          setPendingUpload(tab, fieldName, false);
+        }
+      };
+
+      const syncTabs = () => {
+        const items = Array.from(list.querySelectorAll("[data-scope-tab-item]"));
+
+        items.forEach((item, index) => {
+          if (!(item instanceof HTMLElement)) {
+            return;
+          }
+
+          const title = item.querySelector("[data-scope-tab-title]");
+
+          if (title instanceof HTMLElement) {
+            title.textContent = `Tema ${index + 1}`;
+          }
+
+          const removeButton = item.querySelector("[data-scope-tab-remove]");
+
+          if (removeButton instanceof HTMLButtonElement) {
+            removeButton.disabled = items.length === 1;
+          }
+
+          item.querySelectorAll("[data-scope-tab-field]").forEach((field) => {
+            const fieldName = field.dataset.scopeTabField;
+
+            if (!fieldName) {
+              return;
+            }
+
+            if (field.classList.contains("admin-scope-tab-rich-text")) {
+              mountTabRichText(field, index);
+              return;
+            }
+
+            if (!(field instanceof HTMLInputElement) && !(field instanceof HTMLTextAreaElement)) {
+              return;
+            }
+
+            field.name = `scopeTab_${index}_${fieldName}`;
+          });
+
+          item.querySelectorAll("[data-scope-tab-item-title]").forEach((field) => {
+            if (!(field instanceof HTMLInputElement)) {
+              return;
+            }
+
+            const itemIndex = Number(field.dataset.scopeTabItemIndex);
+
+            if (Number.isNaN(itemIndex)) {
+              return;
+            }
+
+            field.name = `scopeTab_${index}_item_${itemIndex}_title`;
+          });
+
+          item.querySelectorAll("[data-scope-tab-item-copy]").forEach((field) => {
+            mountTabItemRichText(field, index);
+          });
+
+          updateTabImagePreview(item, "icon");
+          updateTabImagePreview(item, "detailImage");
+        });
+
+        notifyForm(form);
+      };
+
+      addButton.addEventListener("click", () => {
+        list.append(template.content.cloneNode(true));
+        syncTabs();
+      });
+
+      list.addEventListener("click", (event) => {
+        const target = event.target;
+
+        if (!(target instanceof HTMLElement)) {
+          return;
+        }
+
+        const clearButton = target.closest("[data-scope-tab-image-clear]");
+
+        if (clearButton instanceof HTMLButtonElement) {
+          const tab = clearButton.closest("[data-scope-tab-item]");
+          const fieldName = clearButton.dataset.scopeTabImageClear;
+
+          if (!(tab instanceof HTMLElement) || !fieldName) {
+            return;
+          }
+
+          const field = getTabImageField(tab, fieldName);
+
+          if (!field) {
+            return;
+          }
+
+          field.value = "";
+          setTabImageStatus(tab, fieldName, "");
+          clearTabImageProgress(tab, fieldName);
+          updateTabImagePreview(tab, fieldName);
+          notifyForm(form);
+          return;
+        }
+
+        const removeButton = target.closest("[data-scope-tab-remove]");
+
+        if (!(removeButton instanceof HTMLButtonElement)) {
+          return;
+        }
+
+        const items = list.querySelectorAll("[data-scope-tab-item]");
+
+        if (items.length <= 1) {
+          return;
+        }
+
+        const tab = removeButton.closest("[data-scope-tab-item]");
+
+        if (tab instanceof HTMLElement) {
+          tab
+            .querySelectorAll(".admin-scope-tab-rich-text, .admin-scope-tab-item-rich-text")
+            .forEach((field) => {
+              if (field instanceof HTMLElement) {
+                unmountAdminRichTextField(field);
+              }
+            });
+          setPendingUpload(tab, "icon", false);
+          setPendingUpload(tab, "detailImage", false);
+          tab.remove();
+          syncTabs();
+        }
+      });
+
+      list.addEventListener("change", (event) => {
+        const target = event.target;
+
+        if (!(target instanceof HTMLInputElement) || !target.matches("[data-scope-tab-upload]")) {
+          return;
+        }
+
+        const file = target.files?.[0];
+        const tab = target.closest("[data-scope-tab-item]");
+        const fieldName = target.dataset.scopeTabUpload;
+
+        target.value = "";
+
+        if (!file || !(tab instanceof HTMLElement) || !fieldName) {
+          return;
+        }
+
+        void uploadTabImage(tab, fieldName, file);
+      });
+
+      syncTabs();
+      list.dataset.bound = "true";
+    };
+
+    const init = () => {
+      setupAdminFormExperience();
+      setupRepeatableTextSections();
+      setupRepeatableGroupSections();
+      setupBiographyCards();
+      setupScopeTabs();
+    };
+
+    init();
+    document.addEventListener("astro:page-load", init);
+  })();
+</script>

@@ -1,0 +1,77 @@
+---
+import AppBar from "@/components/components/AppBar.astro";
+import AdminAppBar from "@/components/components/AdminAppBar.astro";
+import PageMotion from "@/components/components/PageMotion.astro";
+import SiteFooter from "@/components/components/SiteFooter.astro";
+import SeoHead from "@/components/components/SeoHead.astro";
+import type { SiteLocale } from "@/lib/config/site";
+import "@/styles/global.css";
+
+type Props = {
+  title: string;
+  description: string;
+  locale: SiteLocale;
+  canonicalPath: string;
+  appBarTone?: "light" | "dark";
+  appBarOverlay?: boolean;
+  appBarVariant?: "site" | "admin";
+  bodyClass?: string;
+};
+
+const {
+  title,
+  description,
+  locale,
+  canonicalPath,
+  appBarTone,
+  appBarOverlay,
+  appBarVariant = "site",
+  bodyClass,
+} = Astro.props;
+const isHome = Astro.url.pathname === "/" || Astro.url.pathname === "/cir/";
+const isAppBarOverlayRoute =
+  appBarOverlay ?? (canonicalPath === "/o-nama/" || canonicalPath === "/cir/o-nama/");
+const derivedAppBarTone =
+  canonicalPath === "/" ||
+  canonicalPath === "/cir/" ||
+  canonicalPath === "/o-nama/" ||
+  canonicalPath === "/cir/o-nama/" ||
+  canonicalPath === "/kontakt/" ||
+  canonicalPath === "/cir/kontakt/" ||
+  canonicalPath === "/zakazivanje/" ||
+  canonicalPath === "/cir/zakazivanje/"
+    ? "dark"
+    : "light";
+const initialAppBarTone = appBarTone ?? derivedAppBarTone;
+---
+
+<!doctype html>
+<html lang={locale === "sr-cyrl" ? "sr-Cyrl-RS" : "sr-Latn-RS"}>
+  <head>
+    <SeoHead
+      title={title}
+      description={description}
+      canonicalPath={canonicalPath}
+      locale={locale}
+    />
+    <slot name="head" />
+  </head>
+  <body
+    class:list={[bodyClass, { "home-route": isHome, "appbar-overlay-route": isAppBarOverlayRoute }]}
+  >
+    <div class="site-shell">
+      {
+        appBarVariant === "admin" ? (
+          <AdminAppBar pathname={Astro.url.pathname} />
+        ) : (
+          <AppBar locale={locale} pathname={Astro.url.pathname} initialTone={initialAppBarTone} />
+        )
+      }
+      <main>
+        <slot />
+      </main>
+      <SiteFooter locale={locale} />
+    </div>
+    <PageMotion />
+  </body>
+</html>

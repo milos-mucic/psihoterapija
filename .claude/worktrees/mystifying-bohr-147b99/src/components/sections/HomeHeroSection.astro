@@ -1,0 +1,43 @@
+---
+type Action = {
+  href: string;
+  label: string;
+};
+
+type Props = {
+  titleHtml: string;
+  description: string;
+  primaryAction: Action;
+  secondaryAction: Action;
+};
+
+const { titleHtml, description, primaryAction, secondaryAction } = Astro.props;
+---
+
+<section id="home-hero" class="home-hero">
+  <div class="container home-hero__container">
+    <div class="home-hero__content">
+      <h1 class="home-hero__title" data-reveal="up" set:html={titleHtml} />
+      <div
+        class="home-hero__description home-richtext home-richtext--hero"
+        data-reveal="up"
+        style="--reveal-delay: 90ms;"
+        set:html={description}
+      />
+      <div class="home-hero__actions" data-reveal="up" style="--reveal-delay: 180ms;">
+        <a class="home-hero__button" href={primaryAction.href}>{primaryAction.label}</a>
+        <a class="home-hero__text-link" href={secondaryAction.href}>
+          <span>{secondaryAction.label}</span>
+          <svg class="home-hero__text-link-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M7 17L17 7M9 7H17V15"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.9"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

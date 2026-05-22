@@ -2,6 +2,7 @@
 import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
+import { siteSettingsService } from "@/features/site-settings/services/site-settings.service";
 import { siteConfig, type SiteLocale } from "@/lib/config/site";
 
 type Props = {
@@ -11,10 +12,52 @@ type Props = {
 const { locale } = Astro.props;
 const dictionary = getDictionary(locale);
 const contactContent = await pageContentService.getContactPageData(locale);
-const primarySocial =
-  contactContent.socialLinks.find((link) => link.platform === "instagram") ??
-  contactContent.socialLinks[0];
+const settings = await siteSettingsService.get();
+
+// Social links: managed centrally from Site settings (Kontakt stranica više ne doprinosi footer-u)
+type SocialLink = { platform: string; label: string; href: string };
+const allSocialLinks: SocialLink[] = (settings.footer.extraSocialLinks ?? []).filter(
+  (link): link is SocialLink => Boolean(link.href && link.platform && link.label),
+);
+
 const galleryImages = contactContent.officeGallery.slice(0, 3);
+const brandHeading = settings.footer.brandHeading || settings.brand.name || siteConfig.name;
+const contactEyebrow = settings.footer.contactEyebrow || dictionary.footer.contactEyebrow;
+// Footer currently has a dark background → pick the variant designed for dark
+// surfaces (logoLight). Falls back to the header's light-variant logo, then to
+// the legacy asset.
+const footerLogo =
+  settings.footer.logoLight ||
+  settings.brand.logoLight ||
+  "/legacy/images/Logo-White.svg";
+const showFooterLogo = !settings.footer.hideLogo && Boolean(footerLogo);
+const copyrightText =
+  settings.footer.copyright || `© ${new Date().getFullYear()} ${brandHeading}. Sva prava zadržana.`;
+
+// Render per-platform inline SVG icons
+const PLATFORM_ICONS: Record<string, string> = {
+  instagram:
+    '<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="3.75"/><circle cx="17.2" cy="6.8" r="1"/>',
+  facebook:
+    '<path d="M15 8h-2a1 1 0 0 0-1 1v2h3l-.5 3H12v6h-3v-6H7v-3h2V8.5A3.5 3.5 0 0 1 12.5 5H15v3z"/>',
+  linkedin:
+    '<rect x="3.5" y="3.5" width="17" height="17" rx="2"/><line x1="8" y1="10" x2="8" y2="17"/><circle cx="8" cy="7" r="0.6"/><path d="M12 17v-4.5a2 2 0 1 1 4 0V17"/><line x1="12" y1="10" x2="12" y2="17"/>',
+  youtube:
+    '<rect x="2.5" y="6" width="19" height="12" rx="3"/><polygon points="10,9 16,12 10,15" fill="currentColor" stroke="none"/>',
+  tiktok:
+    '<path d="M14 4v9a3 3 0 1 1-3-3"/><path d="M14 4c0 2 1.5 4 4 4"/>',
+  twitter:
+    '<path d="M22 5.8a8 8 0 0 1-2.4.7 4.2 4.2 0 0 0 1.8-2.3 8 8 0 0 1-2.6 1 4.2 4.2 0 0 0-7.1 3.8A11.9 11.9 0 0 1 3 4.8a4.2 4.2 0 0 0 1.3 5.6 4.2 4.2 0 0 1-1.9-.5v.1A4.2 4.2 0 0 0 5.8 14a4.2 4.2 0 0 1-1.9.1 4.2 4.2 0 0 0 3.9 2.9A8.4 8.4 0 0 1 2 18.7a11.9 11.9 0 0 0 6.4 1.9c7.7 0 12-6.4 12-11.9v-.5A8.5 8.5 0 0 0 22 5.8z"/>',
+  x:
+    '<path d="M4 4l16 16M20 4L4 20"/>',
+  email:
+    '<rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3,7 12,13 21,7"/>',
+  website:
+    '<circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+};
+const iconFor = (platform: string) =>
+  PLATFORM_ICONS[platform.toLowerCase().trim()] ??
+  '<circle cx="12" cy="12" r="9"/><line x1="8" y1="12" x2="16" y2="12"/>';
 const footerPrimaryLinks = [
   { label: dictionary.nav.home, href: localizePath(locale, "/") },
   { label: dictionary.nav.about, href: localizePath(locale, "/o-nama/") },
@@ -33,8 +76,8 @@ const footerSupportLinks = [
     <div class="container">
       <div class="footer-cta">
         <div class="footer-brand">
-          <p class="eyebrow footer-eyebrow">{dictionary.footer.contactEyebrow}</p>
-          <h2>{siteConfig.name}</h2>
+          <p class="eyebrow footer-eyebrow">{contactEyebrow}</p>
+          <h2>{brandHeading}</h2>
         </div>
         <a class="appbar__cta" href={localizePath(locale, "/kontakt/")}>
           {dictionary.nav.contact}
@@ -43,13 +86,15 @@ const footerSupportLinks = [
 
       <div class="footer-main">
         <div class="footer-brand">
-          <img
-            class="footer-brand__logo"
-            src="/legacy/images/Logo-White.svg"
-            alt={siteConfig.name}
-            loading="lazy"
-            data-image-component
-          />
+          {showFooterLogo && (
+            <img
+              class="footer-brand__logo"
+              src={footerLogo}
+              alt={brandHeading}
+              loading="lazy"
+              data-image-component
+            />
+          )}
           <div class="footer-contact-list">
             <a href={`mailto:${contactContent.email}`}>{contactContent.email}</a>
             <a href={`tel:${contactContent.phone.replace(/\s+/g, "")}`}
@@ -80,25 +125,29 @@ const footerSupportLinks = [
         <div class="footer-aside">
           <div class="footer-social">
             <p class="footer-section-title">{dictionary.footer.socialTitle}</p>
-            <a
-              class="footer-social-link"
-              href={primarySocial?.href ?? "#"}
-              target="_blank"
-              rel="noreferrer"
-              aria-label={primarySocial?.label ?? dictionary.footer.instagramLabel}
-            >
-              <span class="footer-social-link__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <rect x="3.5" y="3.5" width="17" height="17" rx="5"></rect>
-                  <circle cx="12" cy="12" r="3.75"></circle>
-                  <circle cx="17.2" cy="6.8" r="1"></circle>
-                </svg>
-              </span>
-              <span class="footer-social-link__copy">
-                <strong>{primarySocial?.label ?? dictionary.footer.instagramLabel}</strong>
-                <span>{primarySocial?.href ?? dictionary.footer.instagramPlaceholder}</span>
-              </span>
-            </a>
+            {allSocialLinks.length === 0 ? (
+              <p class="footer-social-empty">{dictionary.footer.instagramPlaceholder}</p>
+            ) : (
+              <div class="footer-social-list">
+                {allSocialLinks.map((link) => (
+                  <a
+                    class="footer-social-link"
+                    href={link.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={link.label}
+                  >
+                    <span class="footer-social-link__icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" set:html={iconFor(link.platform)}></svg>
+                    </span>
+                    <span class="footer-social-link__copy">
+                      <strong>{link.label}</strong>
+                      <span>{link.href}</span>
+                    </span>
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
 
           <div class="footer-gallery" aria-hidden="true">
@@ -109,6 +158,10 @@ const footerSupportLinks = [
             }
           </div>
         </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>{copyrightText}</span>
       </div>
     </div>
   </div>
@@ -327,5 +380,27 @@ const footerSupportLinks = [
     .footer-cta {
       grid-template-columns: 1fr;
     }
+  }
+
+  /* Multiple social links list */
+  .footer-social-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .footer-social-empty {
+    margin: 0;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  /* Bottom copyright */
+  .footer-bottom {
+    margin-top: 2rem;
+    padding: 1rem 0 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.55);
+    text-align: center;
   }
 </style>

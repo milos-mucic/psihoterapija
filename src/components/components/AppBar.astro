@@ -2,6 +2,7 @@
 import { getLocalePrefix, localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import { navigationService } from "@/features/navigation/service";
+import { siteSettingsService } from "@/features/site-settings/services/site-settings.service";
 import { siteConfig, type SiteLocale } from "@/lib/config/site";
 
 type Props = {
@@ -23,22 +24,41 @@ const isActivePath = (href: string) =>
 
 const navigation = await navigationService.getNavigation(locale);
 const navItems = navigation.items;
+
+const brand = (await siteSettingsService.get()).brand;
+const brandAriaLabel = brand.name || siteConfig.name;
+const showLogo = !brand.hideLogo && (brand.logoLight || brand.logoDark);
+const showText = Boolean(brand.name || brand.tagline);
 ---
 
 <header class="appbar appbar--solid" data-appbar-root data-initial-tone={initialTone}>
   <div class="container">
     <div class="appbar__panel">
-      <a class="appbar__brand" href={localizePath(locale, "/")} aria-label={siteConfig.name}>
-        <img
-          class="appbar__brand-logo appbar__brand-logo--light"
-          src="/legacy/images/Logo-White.svg"
-          alt={siteConfig.name}
-        />
-        <img
-          class="appbar__brand-logo appbar__brand-logo--dark"
-          src="/legacy/images/Logo-Dark.svg"
-          alt={siteConfig.name}
-        />
+      <a class="appbar__brand" href={localizePath(locale, "/")} aria-label={brandAriaLabel}>
+        {showLogo && (
+          <>
+            {brand.logoLight && (
+              <img
+                class="appbar__brand-logo appbar__brand-logo--light"
+                src={brand.logoLight}
+                alt={brandAriaLabel}
+              />
+            )}
+            {brand.logoDark && (
+              <img
+                class="appbar__brand-logo appbar__brand-logo--dark"
+                src={brand.logoDark}
+                alt={brandAriaLabel}
+              />
+            )}
+          </>
+        )}
+        {showText && (
+          <span class="appbar__brand-text">
+            {brand.name && <span class="appbar__brand-name">{brand.name}</span>}
+            {brand.tagline && <span class="appbar__brand-tagline">{brand.tagline}</span>}
+          </span>
+        )}
       </a>
 
       <div class="appbar__desktop">
@@ -254,3 +274,32 @@ const navItems = navigation.items;
 </header>
 
 <script type="module" src="/scripts/appbar.js"></script>
+
+<style is:global>
+  .appbar__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    text-decoration: none;
+    color: inherit;
+  }
+  .appbar__brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.05;
+  }
+  .appbar__brand-name {
+    font-family: "Castoro", Georgia, serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: inherit;
+  }
+  .appbar__brand-tagline {
+    font-size: 0.65rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-top: 0.2rem;
+  }
+</style>

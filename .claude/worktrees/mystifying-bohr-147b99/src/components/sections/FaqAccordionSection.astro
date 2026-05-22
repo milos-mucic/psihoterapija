@@ -1,0 +1,211 @@
+---
+import type { FaqAccordionItem } from "@/data/fixtures/public-pages";
+
+type Props = {
+  title?: string;
+  intro?: string;
+  items: FaqAccordionItem[];
+  image?: string;
+  imageLoading?: "eager" | "lazy";
+  sectionClass?: string;
+  sectionId?: string;
+};
+
+const { title, intro, items, image, imageLoading = "lazy", sectionClass, sectionId } = Astro.props;
+---
+
+<section id={sectionId} class:list={["page-section", "faq-accordion-section", sectionClass]}>
+  <div class="container">
+    <div class:list={["faq-accordion", !image && "faq-accordion--single"]}>
+      {
+        image && (
+          <div class="faq-accordion__media" data-reveal="left">
+            <img
+              class="faq-accordion__image"
+              src={image}
+              alt=""
+              loading={imageLoading}
+              data-image-component
+            />
+          </div>
+        )
+      }
+
+      <div class="faq-accordion__content">
+        {title && <h2 data-reveal="up">{title}</h2>}
+        {
+          intro && (
+            <p data-reveal="up" style="--reveal-delay: 120ms;">
+              {intro}
+            </p>
+          )
+        }
+
+        <div class="faq-accordion__items">
+          {
+            items.map((item, index) => (
+              <article
+                class="faq-item"
+                data-accordion-item
+                data-open={index === 0 ? "true" : "false"}
+                data-reveal="up"
+                style={`--reveal-delay: ${index * 80}ms;`}
+              >
+                <button
+                  class="faq-item__trigger"
+                  type="button"
+                  data-accordion-trigger
+                  aria-expanded={index === 0 ? "true" : "false"}
+                >
+                  <span class="faq-item__title">{item.question}</span>
+                  <span class="faq-item__icon" aria-hidden="true">
+                    <svg viewBox="0 0 20 20" fill="none">
+                      <path
+                        d="M5 7.5 10 12.5 15 7.5"
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.8"
+                      />
+                    </svg>
+                  </span>
+                </button>
+                <div class="faq-item__body" data-accordion-body hidden={index !== 0}>
+                  <div class="faq-item__body-inner">
+                    {item.answerHtml ? (
+                      <div class="richtext-shell" set:html={item.answerHtml} />
+                    ) : (
+                      <p>{item.answer}</p>
+                    )}
+                  </div>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq-accordion-section {
+    padding: 0 0 1.4rem;
+  }
+
+  .faq-accordion {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 6vw, 3.75rem);
+    align-items: start;
+  }
+
+  .faq-accordion--single {
+    grid-template-columns: 1fr;
+  }
+
+  .faq-accordion__media {
+    min-height: clamp(18rem, 34vw, 24rem);
+  }
+
+  .faq-accordion__image {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+  }
+
+  .faq-accordion__content {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .faq-accordion__items {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .faq-item {
+    margin: 0;
+    padding: 14px 18px;
+    border: none;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .faq-item:first-child {
+    padding-top: 14px;
+  }
+
+  .faq-item__trigger {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    padding: 0.15rem 0;
+    border: 0;
+    background: none;
+    color: var(--primary);
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .faq-item__title {
+    color: var(--primary);
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 2vw, 1.35rem);
+    line-height: 1.35;
+  }
+
+  .faq-item__icon {
+    flex: 0 0 auto;
+    margin-top: 0.15rem;
+    margin-left: 0.9rem;
+    color: var(--primary);
+    width: 1rem;
+    height: 1rem;
+    transition:
+      transform 300ms ease,
+      color 300ms ease;
+  }
+
+  .faq-item__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .faq-item__body {
+    overflow: hidden;
+    height: 0;
+    transition: height 400ms ease;
+  }
+
+  .faq-item__body-inner {
+    padding-top: 0.3rem;
+    padding-bottom: 0.35rem;
+  }
+
+  .faq-item__body-inner p {
+    max-width: none;
+    line-height: 1.62;
+  }
+
+  .faq-item.is-open .faq-item__icon {
+    transform: rotate(180deg);
+    color: var(--muted);
+  }
+
+  @media (max-width: 960px) {
+    .faq-accordion {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .faq-item {
+      padding: 12px 14px;
+    }
+  }
+</style>

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: psihoterapija-ikar-config
+  namespace: prod
+  labels:
+    app: psihoterapija-ikar
+data:
+  NODE_ENV: "production"
+  HOST: "0.0.0.0"
+  PORT: "3000"
+  ASTRO_DATABASE_FILE: "file:./data/astro.db"
+  PUBLIC_SITE_URL: "https://dev.psihoterapija-ikar.rs"
+  UPLOADS_DIR: "/app/data/uploads"

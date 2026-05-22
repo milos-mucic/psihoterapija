@@ -1,0 +1,9 @@
+---
+export const prerender = false;
+
+import { adminConfig } from "@/lib/config/admin";
+
+// "Sajt" is split into Header and Footer admin sections.
+// Send any traffic on /site/ to /site/header/ by default.
+return Astro.redirect(`${adminConfig.basePath}/site/header/`);
+---
