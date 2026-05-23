@@ -225,6 +225,260 @@
   }
 }
 
+/* ============================================================
+ *  MOBILE OVERRIDES for legacy admin content (<=48rem)
+ *  All scoped under .admin-shell-v2 so desktop stays untouched.
+ *  ============================================================ */
+@media (max-width: 48rem) {
+  /* Generic form grids — collapse to 1 column */
+  .admin-shell-v2 .admin-form__grid,
+  .admin-shell-v2 .admin-form,
+  .admin-shell-v2 .admin-managed-section__grid,
+  .admin-shell-v2 .admin-managed-field__grid,
+  .admin-shell-v2 .admin-repeatable-group-field__grid,
+  .admin-shell-v2 .admin-repeatable-group-section__grid,
+  .admin-shell-v2 .admin-section-editor,
+  .admin-shell-v2 .admin-section-editor__header,
+  .admin-shell-v2 .admin-tile-grid,
+  .admin-shell-v2 .footer-cta,
+  .admin-shell-v2 .footer-main,
+  .admin-shell-v2 .admin-page-card__head,
+  .admin-shell-v2 .admin-page-locale__head {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Card paddings — tighter on phone */
+  .admin-shell-v2 .card {
+    padding: 1rem !important;
+  }
+  .admin-shell-v2 .admin-page-header,
+  .admin-shell-v2 .admin-intro-card {
+    padding: 1rem !important;
+  }
+
+  /* Stat strip wraps */
+  .admin-shell-v2 .admin-stat-strip {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .admin-shell-v2 .admin-stat-pill {
+    min-width: 0;
+  }
+
+  /* Headings smaller */
+  .admin-shell-v2 .admin-intro-card h2,
+  .admin-shell-v2 .admin-page-header h2 {
+    font-size: clamp(1.1rem, 4.5vw, 1.45rem) !important;
+  }
+  .admin-shell-v2 .admin-page-head h1 {
+    font-size: clamp(1.25rem, 5vw, 1.65rem) !important;
+  }
+
+  /* Page header action row stacks */
+  .admin-shell-v2 .admin-page-header__content {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .admin-shell-v2 .admin-page-header__actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .admin-shell-v2 .admin-page-header__actions > * {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  /* Locale toggles full-width pills */
+  .admin-shell-v2 .admin-page-locale__actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .admin-shell-v2 .admin-page-locale__actions .button-secondary {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  /* Buttons — generous tap targets */
+  .admin-shell-v2 .button-primary,
+  .admin-shell-v2 .button-secondary,
+  .admin-shell-v2 .btn-gold,
+  .admin-shell-v2 .btn-ghost,
+  .admin-shell-v2 .btn-dark {
+    padding: 0.7rem 1.1rem;
+    min-height: 42px;
+    font-size: 0.82rem;
+  }
+  .admin-shell-v2 .admin-page-head .btn-gold,
+  .admin-shell-v2 .admin-page-head .btn-ghost,
+  .admin-shell-v2 .admin-page-head .btn-dark {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Floating save bar — sit inside bottom safe area */
+  .admin-shell-v2 .admin-form__actions--floating {
+    position: fixed !important;
+    left: 10px;
+    right: 10px;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    flex-wrap: wrap;
+    justify-content: space-between;
+    border-radius: 1rem;
+    padding: 0.6rem;
+    z-index: 30;
+  }
+  .admin-shell-v2 .admin-form__fab {
+    flex: 1;
+    text-align: center;
+  }
+  .admin-shell-v2 .admin-form {
+    padding-bottom: 6rem !important;
+  }
+
+  /* Rich text editor toolbar — let it wrap, scroll horizontally if needed */
+  .admin-shell-v2 .admin-rtf__toolbar {
+    flex-wrap: wrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .admin-shell-v2 .admin-rtf {
+    font-size: 0.95rem;
+  }
+
+  /* Media field uploader */
+  .admin-shell-v2 .uppy-Dashboard {
+    max-width: 100% !important;
+  }
+
+  /* Filter tabs wrap */
+  .admin-shell-v2 .admin-tabs {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  .admin-shell-v2 .admin-tab {
+    flex-shrink: 0;
+  }
+
+  /* Reservation/submission cards (if any) collapse columns */
+  .admin-shell-v2 .admin-reservation {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Stat dashboard — 1-col on very small */
+  .admin-shell-v2 .admin-stat__value {
+    font-size: 1.05rem;
+  }
+  .admin-shell-v2 .admin-stat__label {
+    font-size: 0.58rem;
+  }
+
+  /* Nav editor item buttons wrap */
+  .admin-shell-v2 .admin-nav-editor .admin-nav-item__summary {
+    flex-wrap: wrap;
+    row-gap: 0.5rem;
+  }
+  .admin-shell-v2 .admin-nav-editor .admin-nav-item__label {
+    flex: 1 1 60%;
+    min-width: 0;
+  }
+  .admin-shell-v2 .admin-nav-editor .admin-nav-item__buttons {
+    margin-left: auto;
+  }
+
+  /* Block builder save bar */
+  .admin-shell-v2 .cpb__save-bar {
+    justify-content: stretch;
+    bottom: max(10px, env(safe-area-inset-bottom));
+  }
+  .admin-shell-v2 .cpb__save {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Form sticky bar inside Sajt pages */
+  .admin-shell-v2 .cpb__head-fields {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Block editor add-options grid */
+  .admin-shell-v2 .cpb__add-options {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Avatar / dashboard list lines wrap */
+  .admin-shell-v2 .admin-list > li {
+    flex-wrap: wrap;
+    row-gap: 0.35rem;
+  }
+  .admin-shell-v2 .admin-list__meta {
+    width: 100%;
+  }
+
+  /* SeoHead / Settings dl pairs */
+  .admin-shell-v2 dl {
+    display: block !important;
+  }
+
+  /* Inputs, textareas, selects — bigger tap targets, prevent iOS zoom */
+  .admin-shell-v2 input[type="text"],
+  .admin-shell-v2 input[type="email"],
+  .admin-shell-v2 input[type="url"],
+  .admin-shell-v2 input[type="number"],
+  .admin-shell-v2 input[type="search"],
+  .admin-shell-v2 input[type="password"],
+  .admin-shell-v2 input[type="date"],
+  .admin-shell-v2 input[type="tel"],
+  .admin-shell-v2 textarea,
+  .admin-shell-v2 select,
+  .admin-shell-v2 .input-control,
+  .admin-shell-v2 .select-control,
+  .admin-shell-v2 .textarea-control {
+    font-size: 16px;  /* 16px prevents iOS Safari auto-zoom on focus */
+    min-height: 42px;
+  }
+  .admin-shell-v2 textarea,
+  .admin-shell-v2 .textarea-control {
+    min-height: 90px;
+  }
+
+  /* Section meta card */
+  .admin-shell-v2 .admin-meta-card {
+    padding: 0.75rem 1rem !important;
+    font-size: 0.85rem;
+  }
+
+  /* Form actions row — stack */
+  .admin-shell-v2 .admin-form__actions {
+    flex-wrap: wrap;
+  }
+  .admin-shell-v2 .admin-form__actions > * {
+    flex: 1 1 auto;
+  }
+
+  /* Lists of two-column dl/dd (submission detail page etc.) */
+  .admin-shell-v2 dl[style*="grid"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Very small phones (<= 24rem ~ 384px) — extra-compact */
+@media (max-width: 24rem) {
+  .admin-shell-v2 .admin-content {
+    padding: 8px !important;
+  }
+  .admin-shell-v2 .card,
+  .admin-shell-v2 .admin-card,
+  .admin-shell-v2 .admin-page-header,
+  .admin-shell-v2 .admin-intro-card {
+    padding: 0.75rem !important;
+  }
+  .admin-shell-v2 .admin-stat {
+    padding: 0.5rem 0.6rem;
+  }
+}
+
 /* ============ SIDEBAR ============ */
 .admin-sidebar {
   position: sticky;
