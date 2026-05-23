@@ -17,5 +17,6 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/data/astro.db ./bootstrap/astro.db
+COPY --from=build /app/scripts ./scripts
 EXPOSE 3000
 CMD ["node", "dist/server/entry.mjs"]

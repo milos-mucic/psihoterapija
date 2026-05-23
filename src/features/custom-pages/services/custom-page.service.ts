@@ -34,21 +34,63 @@ const parseInput = (input: unknown): CustomPageInput => {
   return result.data;
 };
 
+/**
+ * Read methods fall back to empty results when the underlying table doesn't
+ * exist yet — this happens on production deployments where the persisted
+ * SQLite file was created before the CustomPages table was introduced. The
+ * fallback keeps the admin and public catch-all routes from crashing; the
+ * operator can fix the schema separately (see scripts/migrate-db.mjs).
+ */
+const isMissingTableError = (error: unknown) =>
+  error instanceof Error && /no such table|does not exist/i.test(error.message);
+
+const logMissingTable = (op: string, error: unknown) => {
+  if (isMissingTableError(error)) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `[custom-page.service] ${op}: CustomPages table not present — falling back. ` +
+        `Run the DB migration to enable custom pages.`,
+    );
+    return true;
+  }
+  return false;
+};
+
 export const customPageService = {
-  listAll(): Promise<CustomPageListItem[]> {
-    return customPageRepository.listAll();
+  async listAll(): Promise<CustomPageListItem[]> {
+    try {
+      return await customPageRepository.listAll();
+    } catch (error) {
+      if (logMissingTable("listAll", error)) return [];
+      throw error;
+    }
   },
 
-  listPublished(locale: SiteLocale): Promise<CustomPageListItem[]> {
-    return customPageRepository.listPublished(locale);
+  async listPublished(locale: SiteLocale): Promise<CustomPageListItem[]> {
+    try {
+      return await customPageRepository.listPublished(locale);
+    } catch (error) {
+      if (logMissingTable("listPublished", error)) return [];
+      throw error;
+    }
   },
 
-  getById(id: string): Promise<CustomPageRecord | undefined> {
-    return customPageRepository.getById(id);
+  async getById(id: string): Promise<CustomPageRecord | undefined> {
+    try {
+      return await customPageRepository.getById(id);
+    } catch (error) {
+      if (logMissingTable("getById", error)) return undefined;
+      throw error;
+    }
   },
 
-  getBySlug(locale: SiteLocale, slug: string): Promise<CustomPageRecord | undefined> {
-    return customPageRepository.getBySlug(locale, slug);
+  async getBySlug(locale: SiteLocale, slug: string): Promise<CustomPageRecord | undefined> {
+    try {
+      return await customPageRepository.getBySlug(locale, slug);
+    } catch (error) {
+      if (logMissingTable("getBySlug", error)) return undefined;
+      throw error;
+    }
   },
 
   async create(input: unknown): Promise<CustomPageRecord> {

@@ -41,6 +41,12 @@ spec:
               if [ ! -f /data/astro.db ]; then
                 cp /app/bootstrap/astro.db /data/astro.db
               fi
+              # Idempotently add any tables introduced by newer code that are
+              # missing from the persisted DB (e.g. CustomPages, SiteSettings).
+              if [ -f /app/scripts/migrate-db.mjs ]; then
+                ASTRO_DATABASE_FILE="file:/data/astro.db" \
+                  node /app/scripts/migrate-db.mjs
+              fi
               chown -R 1000:1000 /data
           volumeMounts:
             - name: app-data
