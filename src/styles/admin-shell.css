@@ -40,6 +40,191 @@
   font-family: var(--font-body, "Lexend", system-ui, sans-serif);
 }
 
+/* ============ MOBILE TOP BAR (hidden on desktop) ============ */
+.admin-mobile-bar {
+  display: none;
+}
+.admin-backdrop {
+  display: none;
+}
+
+@media (max-width: 64rem) {
+  .admin-shell-v2 {
+    grid-template-columns: 1fr;
+  }
+  .admin-mobile-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    height: 52px;
+    padding: 0 10px;
+    background: var(--shell-sidebar-bg);
+    color: var(--shell-sidebar-fg-strong);
+    position: sticky;
+    top: 0;
+    z-index: 25;
+    grid-column: 1 / -1;
+  }
+  .admin-mobile-bar__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(255, 252, 245, 0.15);
+    border-radius: var(--shell-radius-sm);
+    background: rgba(255, 252, 245, 0.08);
+    color: inherit;
+    cursor: pointer;
+    padding: 0;
+  }
+  .admin-mobile-bar__toggle:active {
+    transform: scale(0.95);
+  }
+  .admin-mobile-bar__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    color: inherit;
+  }
+  .admin-mobile-bar__mark {
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    border: 1.5px solid rgba(215, 197, 162, 0.55);
+    background: rgba(215, 197, 162, 0.08);
+    color: #e8d6ad;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-display, "Castoro", serif);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  .admin-mobile-bar__title {
+    font-family: var(--font-display, "Castoro", serif);
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+
+  /* Sidebar becomes an off-canvas drawer */
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 17rem;
+    max-width: 85vw;
+    height: 100dvh;
+    z-index: 40;
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(.2,.7,.2,1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    align-self: initial;
+  }
+  .admin-sidebar-open .admin-sidebar {
+    transform: translateX(0);
+  }
+
+  /* Backdrop overlay */
+  .admin-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 35;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  .admin-sidebar-open .admin-backdrop {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Lock body scroll when drawer open */
+  body.admin-sidebar-open {
+    overflow: hidden;
+  }
+
+  /* Horizontal scroll for any wide table that would otherwise overflow */
+  .admin-shell-v2 .admin-tbl,
+  .admin-shell-v2 .admin-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  .admin-shell-v2 .admin-tbl thead,
+  .admin-shell-v2 .admin-tbl tbody,
+  .admin-shell-v2 .admin-table thead,
+  .admin-shell-v2 .admin-table tbody {
+    display: table;
+    width: 100%;
+  }
+
+  /* Page head: stack title + actions vertically, action buttons go full row */
+  .admin-shell-v2 .admin-page-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .admin-shell-v2 .admin-page-head > div:nth-child(2) {
+    width: 100%;
+  }
+
+  /* Card head with action button: allow wrap */
+  .admin-shell-v2 .admin-card__head {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  /* Sticky save bar: pad bottom so it stays inside viewport */
+  .admin-shell-v2 .cpb__save-bar {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
+  }
+
+  /* Stats: smaller on tight screens */
+  .admin-shell-v2 .admin-stat__value {
+    font-size: 1.1rem;
+  }
+
+  /* Tiles: single column on small phones */
+  @media (max-width: 30rem) {
+    .admin-shell-v2 .admin-tiles {
+      grid-template-columns: 1fr;
+    }
+    .admin-shell-v2 .admin-stats {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Forms: media field rows */
+  .admin-shell-v2 .cpb-grid__upload {
+    flex-wrap: wrap;
+  }
+  .admin-shell-v2 .cpb-grid__upload input {
+    flex: 1 1 100%;
+    min-width: 0;
+    order: 3;
+  }
+  .admin-shell-v2 .cpb-grid__upload button {
+    order: 2;
+  }
+  .admin-shell-v2 .cpb-grid__upload img {
+    order: 1;
+  }
+
+  /* Floating save bars used by navigation/page builders */
+  .admin-shell-v2 .admin-form__actions--floating {
+    position: fixed;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+  }
+}
+
 /* ============ SIDEBAR ============ */
 .admin-sidebar {
   position: sticky;

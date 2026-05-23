@@ -65,7 +65,21 @@ const nav: Array<{
     <meta name="robots" content="noindex" />
   </head>
   <body class="admin-shell-v2">
-    <aside class="admin-sidebar">
+    <header class="admin-mobile-bar" data-admin-mobile-bar>
+      <button class="admin-mobile-bar__toggle" type="button" aria-label="Menu" data-admin-menu-toggle>
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="4" y1="7" x2="20" y2="7"/>
+          <line x1="4" y1="12" x2="20" y2="12"/>
+          <line x1="4" y1="17" x2="20" y2="17"/>
+        </svg>
+      </button>
+      <a class="admin-mobile-bar__brand" href={`${base}/`}>
+        <span class="admin-mobile-bar__mark">I</span>
+        <span class="admin-mobile-bar__title">Ikar Studio</span>
+      </a>
+    </header>
+    <div class="admin-backdrop" data-admin-backdrop aria-hidden="true"></div>
+    <aside class="admin-sidebar" data-admin-sidebar>
       <a class="admin-sidebar__brand" href={`${base}/`}>
         <span class="admin-sidebar__mark">I</span>
         <span>
@@ -131,5 +145,37 @@ const nav: Array<{
         <slot />
       </main>
     </div>
+
+    <script>
+      (() => {
+        const body = document.body;
+        const sidebar = document.querySelector<HTMLElement>("[data-admin-sidebar]");
+        const backdrop = document.querySelector<HTMLElement>("[data-admin-backdrop]");
+        const toggle = document.querySelector<HTMLButtonElement>("[data-admin-menu-toggle]");
+        if (!sidebar || !backdrop || !toggle) return;
+
+        const open = () => {
+          body.classList.add("admin-sidebar-open");
+        };
+        const close = () => {
+          body.classList.remove("admin-sidebar-open");
+        };
+
+        toggle.addEventListener("click", () => {
+          body.classList.contains("admin-sidebar-open") ? close() : open();
+        });
+        backdrop.addEventListener("click", close);
+        // Close after tapping any nav link on mobile
+        sidebar.querySelectorAll<HTMLAnchorElement>("a").forEach((link) => {
+          link.addEventListener("click", () => {
+            if (window.matchMedia("(max-width: 64rem)").matches) close();
+          });
+        });
+        // Close on Escape
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") close();
+        });
+      })();
+    </script>
   </body>
 </html>
