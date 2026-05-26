@@ -1,0 +1,22 @@
+---
+// Renders a string as rich text. Accepts both plain text and HTML (output of AdminRichTextField).
+// Use this wherever a previously plain-text field has been promoted to a rich-text editor in admin.
+//
+// `as` lets the caller pick the wrapping element (default span, since inline-mode RTF output is
+// inline-only). Use "h1".."h6", "p", "div", "span" as needed.
+import { stripHtmlTags } from "@/features/page-content/admin/technical-fields";
+
+type Props = {
+  content: string | null | undefined;
+  as?: keyof HTMLElementTagNameMap;
+  class?: string;
+  /** When true, strips tags and renders as text only (for places where HTML markup is unwanted). */
+  plain?: boolean;
+};
+
+const { content, as: Tag = "span", class: className, plain = false } = Astro.props;
+const value = content ?? "";
+const safeText = plain ? stripHtmlTags(value) : null;
+---
+
+{plain ? <Tag class={className}>{safeText}</Tag> : <Tag class={className} set:html={value} />}

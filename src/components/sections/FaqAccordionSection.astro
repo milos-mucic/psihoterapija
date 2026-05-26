@@ -46,12 +46,10 @@ const {
       }
 
       <div class="faq-accordion__content">
-        {title && <h2 data-reveal="up">{title}</h2>}
+        {title && <h2 data-reveal="up" set:html={title} />}
         {
           intro && (
-            <p data-reveal="up" style="--reveal-delay: 120ms;">
-              {intro}
-            </p>
+            <p data-reveal="up" style="--reveal-delay: 120ms;" set:html={intro} />
           )
         }
 
@@ -71,7 +69,7 @@ const {
                   data-accordion-trigger
                   aria-expanded={index === 0 ? "true" : "false"}
                 >
-                  <span class="faq-item__title">{item.question}</span>
+                  <span class="faq-item__title" set:html={item.question} />
                   <span class="faq-item__icon" aria-hidden="true">
                     <svg viewBox="0 0 20 20" fill="none">
                       <path
@@ -89,7 +87,7 @@ const {
                     {item.answerHtml ? (
                       <div class="richtext-shell" set:html={item.answerHtml} />
                     ) : (
-                      <p>{item.answer}</p>
+                      <p set:html={item.answer} />
                     )}
                   </div>
                 </div>

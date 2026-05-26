@@ -38,6 +38,14 @@ const richTextLabels = {
   image: "Slika",
   clear: "Ukloni format",
   uploadFailed: "Upload slike nije uspeo.",
+  fontSize: "Veličina fonta",
+  fontFamily: "Font",
+  textColor: "Boja teksta",
+  highlightColor: "Marker (pozadina)",
+  alignLeft: "Poravnaj levo",
+  alignCenter: "Centriraj",
+  alignRight: "Poravnaj desno",
+  alignJustify: "Obostrano poravnanje",
 };
 
 const heroTitleRichTextLabels = {
@@ -202,10 +210,18 @@ const normalizedServiceItems = Array.from({ length: 3 }, (_, index) => ({
       </div>
 
       <div class="admin-form__grid">
-        <label class="admin-form__field">
+        <div class="admin-form__field">
           <span>Naslov</span>
-          <input class="input-control" name="promptTitle" value={content.prompt.title} />
-        </label>
+          <AdminRichTextField
+            client:load
+            name="promptTitle"
+            initialValue={content.prompt.title}
+            mode="inline"
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder="pages/home"
+            labels={richTextLabels}
+          />
+        </div>
 
         <label class="admin-form__field">
           <span>Labela dugmeta</span>
@@ -242,10 +258,18 @@ const normalizedServiceItems = Array.from({ length: 3 }, (_, index) => ({
       </div>
 
       <div class="admin-form__grid">
-        <label class="admin-form__field admin-form__field--full">
+        <div class="admin-form__field admin-form__field--full">
           <span>Naslov</span>
-          <input class="input-control" name="aboutTitle" value={content.about.title} />
-        </label>
+          <AdminRichTextField
+            client:load
+            name="aboutTitle"
+            initialValue={content.about.title}
+            mode="inline"
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder="pages/home"
+            labels={richTextLabels}
+          />
+        </div>
 
         <AdminMediaField
           client:load
@@ -292,10 +316,18 @@ const normalizedServiceItems = Array.from({ length: 3 }, (_, index) => ({
       </div>
 
       <div class="admin-form__grid">
-        <label class="admin-form__field">
+        <div class="admin-form__field">
           <span>Naslov sekcije</span>
-          <input class="input-control" name="servicesTitle" value={content.services.title} />
-        </label>
+          <AdminRichTextField
+            client:load
+            name="servicesTitle"
+            initialValue={content.services.title}
+            mode="inline"
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder="pages/home"
+            labels={richTextLabels}
+          />
+        </div>
 
         <div class="admin-form__field admin-form__field--full">
           <span>Opis sekcije</span>
@@ -367,10 +399,18 @@ const normalizedServiceItems = Array.from({ length: 3 }, (_, index) => ({
       </div>
 
       <div class="admin-form__grid">
-        <label class="admin-form__field">
+        <div class="admin-form__field">
           <span>Naslov sekcije</span>
-          <input class="input-control" name="themesTitle" value={content.themes.title} />
-        </label>
+          <AdminRichTextField
+            client:load
+            name="themesTitle"
+            initialValue={content.themes.title}
+            mode="inline"
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder="pages/home"
+            labels={richTextLabels}
+          />
+        </div>
 
         {
           content.themes.items.map((item, index) => (
@@ -433,10 +473,18 @@ const normalizedServiceItems = Array.from({ length: 3 }, (_, index) => ({
       </div>
 
       <div class="admin-form__grid">
-        <label class="admin-form__field">
+        <div class="admin-form__field">
           <span>Naslov sekcije</span>
-          <input class="input-control" name="reasonsTitle" value={content.reasons.title} />
-        </label>
+          <AdminRichTextField
+            client:load
+            name="reasonsTitle"
+            initialValue={content.reasons.title}
+            mode="inline"
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder="pages/home"
+            labels={richTextLabels}
+          />
+        </div>
 
         <div class="admin-form__field admin-form__field--full">
           <span>Opis sekcije</span>
@@ -538,10 +586,18 @@ const normalizedServiceItems = Array.from({ length: 3 }, (_, index) => ({
       </div>
 
       <div class="admin-form__grid">
-        <label class="admin-form__field">
+        <div class="admin-form__field">
           <span>Naslov sekcije</span>
-          <input class="input-control" name="bookingTitle" value={content.booking.title} />
-        </label>
+          <AdminRichTextField
+            client:load
+            name="bookingTitle"
+            initialValue={content.booking.title}
+            mode="inline"
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder="pages/home"
+            labels={richTextLabels}
+          />
+        </div>
 
         <div class="admin-form__field admin-form__field--full">
           <span>Opis sekcije</span>
@@ -564,32 +620,44 @@ const normalizedServiceItems = Array.from({ length: 3 }, (_, index) => ({
           />
         </label>
 
-        <label class="admin-form__field">
+        <div class="admin-form__field">
           <span>Format 1</span>
-          <input
-            class="input-control"
+          <AdminRichTextField
+            client:load
             name="bookingFormat1"
-            value={content.booking.formats[0] ?? ""}
+            initialValue={content.booking.formats[0] ?? ""}
+            mode="inline"
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder="pages/home"
+            labels={richTextLabels}
           />
-        </label>
+        </div>
 
-        <label class="admin-form__field">
+        <div class="admin-form__field">
           <span>Format 2</span>
-          <input
-            class="input-control"
+          <AdminRichTextField
+            client:load
             name="bookingFormat2"
-            value={content.booking.formats[1] ?? ""}
+            initialValue={content.booking.formats[1] ?? ""}
+            mode="inline"
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder="pages/home"
+            labels={richTextLabels}
           />
-        </label>
+        </div>
 
-        <label class="admin-form__field">
+        <div class="admin-form__field">
           <span>Format 3</span>
-          <input
-            class="input-control"
+          <AdminRichTextField
+            client:load
             name="bookingFormat3"
-            value={content.booking.formats[2] ?? ""}
+            initialValue={content.booking.formats[2] ?? ""}
+            mode="inline"
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder="pages/home"
+            labels={richTextLabels}
           />
-        </label>
+        </div>
       </div>
     </div>
   </div>
@@ -611,10 +679,18 @@ const normalizedServiceItems = Array.from({ length: 3 }, (_, index) => ({
       </div>
 
       <div class="admin-form__grid">
-        <label class="admin-form__field">
+        <div class="admin-form__field">
           <span>Naslov sekcije</span>
-          <input class="input-control" name="recentTitle" value={content.recent.title} />
-        </label>
+          <AdminRichTextField
+            client:load
+            name="recentTitle"
+            initialValue={content.recent.title}
+            mode="inline"
+            uploadUrl="/api/admin/media/upload"
+            uploadFolder="pages/home"
+            labels={richTextLabels}
+          />
+        </div>
 
         <label class="admin-form__field">
           <span>Labela dugmeta</span>

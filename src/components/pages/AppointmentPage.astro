@@ -26,7 +26,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
   <div class="container">
     <div class="home-booking appointment-page__booking-grid">
       <div class="home-booking__intro" data-reveal="up">
-        <h2>{content.formTitle}</h2>
+        <h2 set:html={content.formTitle} />
         <div class="appointment-page__intro-copy richtext-shell" set:html={content.introCopy} />
       </div>
 

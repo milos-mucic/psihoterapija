@@ -24,8 +24,8 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
             data-reveal="up"
             style={`--reveal-delay: ${index * 90}ms;`}
           >
-            <h3>{plan.title}</h3>
-            <p class="pricing-page__price">{plan.price}</p>
+            <h3 set:html={plan.title} />
+            <p class="pricing-page__price" set:html={plan.price} />
             <div class="pricing-page__outside richtext-shell" set:html={plan.outsideSerbiaPrice} />
             <a class="pricing-page__cta" href={plan.ctaHref}>
               <span>{plan.ctaLabel}</span>
@@ -50,7 +50,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
             data-reveal="up"
             style={`--reveal-delay: ${index * 85}ms;`}
           >
-            <h4>{card.title}</h4>
+            <h4 set:html={card.title} />
             <div class="richtext-shell" set:html={card.copy} />
           </article>
         ))

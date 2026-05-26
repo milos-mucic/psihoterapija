@@ -21,8 +21,8 @@ const { title, description, locale, canonicalPath, publishedAt } = Astro.props;
           <p class="eyebrow">
             {publishedAt.toLocaleDateString(locale === "sr-cyrl" ? "sr-Cyrl-RS" : "sr-RS")}
           </p>
-          <h1 class="section-title">{title}</h1>
-          <p class="section-copy">{description}</p>
+          <h1 class="section-title" set:html={title} />
+          <p class="section-copy" set:html={description} />
           <div class="prose-shell">
             <slot />
           </div>

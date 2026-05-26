@@ -1,4 +1,5 @@
 ---
+import { stripHtmlTags } from "@/features/page-content/admin/technical-fields";
 import { getNavigation, isNavGroup } from "@/data/fixtures/navigation";
 import { getLocalePrefix, localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
@@ -27,11 +28,11 @@ const siteMeta = siteConfig.name.replace(" Ikar", "");
 <header class="section site-header">
   <div class="container">
     <div class="card site-header__inner">
-      <a class="site-brand" href={localizePath(locale, "/")} aria-label={siteConfig.name}>
-        <img class="site-brand__logo" src="/legacy/images/Logo-Dark.svg" alt={siteConfig.name} />
+      <a class="site-brand" href={localizePath(locale, "/")} aria-label={stripHtmlTags(siteConfig.name)}>
+        <img class="site-brand__logo" src="/legacy/images/Logo-Dark.svg" alt={stripHtmlTags(siteConfig.name)} />
         <span>
           <span class="site-brand__title">Ikar</span>
-          <span class="site-brand__meta">{siteMeta}</span>
+          <span class="site-brand__meta" set:html={siteMeta} />
         </span>
       </a>
 

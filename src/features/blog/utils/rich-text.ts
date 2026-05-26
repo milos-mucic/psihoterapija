@@ -8,6 +8,10 @@ const richTextAllowedTags = [
   "em",
   "i",
   "u",
+  "s",
+  "strike",
+  "del",
+  "span",
   "ul",
   "ol",
   "li",
@@ -15,15 +19,68 @@ const richTextAllowedTags = [
   "h2",
   "h3",
   "h4",
+  "h5",
+  "h6",
   "a",
   "img",
 ];
 
-const inlineRichTextAllowedTags = ["br", "strong", "b", "em", "i", "u", "a"];
+const inlineRichTextAllowedTags = ["br", "strong", "b", "em", "i", "u", "s", "strike", "del", "span", "a"];
+
+// Allow the `style` attribute on text/block elements so editor-applied inline styles
+// (font-size, color, font-family, text-align…) survive sanitization. The style values
+// themselves are still constrained via `allowedStyles` below.
+const styledTags = [
+  "span",
+  "p",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "blockquote",
+  "li",
+  "ul",
+  "ol",
+  "strong",
+  "b",
+  "em",
+  "i",
+  "u",
+  "s",
+  "strike",
+  "del",
+];
+const styleAttrFor = (tags: string[]): sanitizeHtml.IOptions["allowedAttributes"] =>
+  Object.fromEntries(tags.map((tag) => [tag, ["style"]]));
 
 const allowedAttributes: sanitizeHtml.IOptions["allowedAttributes"] = {
-  a: ["href", "target", "rel"],
+  ...styleAttrFor(styledTags),
+  a: ["href", "target", "rel", "style"],
   img: ["src", "alt", "title", "width", "height", "loading", "class", "style", "data-layout", "data-width-pct"],
+};
+
+// CSS values that survive sanitization. Each property maps to a list of regex patterns;
+// if any matches, the value is kept. Conservative allowlist prevents XSS via CSS.
+const richTextAllowedStyles: sanitizeHtml.IOptions["allowedStyles"] = {
+  "*": {
+    "font-size": [
+      /^\d+(\.\d+)?(px|em|rem|%|pt)$/,
+      /^(xx-small|x-small|small|medium|large|x-large|xx-large)$/,
+    ],
+    "font-family": [/^[\w\s,'"\-]+$/],
+    "font-weight": [/^(\d{3}|normal|bold|bolder|lighter)$/],
+    "font-style": [/^(normal|italic|oblique)$/],
+    color: [/^#[0-9a-fA-F]{3,8}$/, /^rgba?\([\d\s,.%]+\)$/, /^hsla?\([\d\s,.%]+\)$/, /^[a-z]+$/],
+    "background-color": [/^#[0-9a-fA-F]{3,8}$/, /^rgba?\([\d\s,.%]+\)$/, /^hsla?\([\d\s,.%]+\)$/, /^[a-z]+$/, /^transparent$/],
+    "text-align": [/^(left|right|center|justify|start|end)$/],
+    "text-decoration": [/^(none|underline|line-through|overline)(\s+(solid|dashed|wavy))?$/],
+    "line-height": [/^\d+(\.\d+)?(px|em|rem|%)?$/, /^normal$/],
+    "letter-spacing": [/^-?\d+(\.\d+)?(px|em|rem)$/, /^normal$/],
+  },
+  img: {
+    width: [/^\d+(\.\d+)?%$/],
+  },
 };
 
 const escapeHtml = (value: string) =>
@@ -130,11 +187,7 @@ export const sanitizeRichTextHtml = (input: string) => {
   return sanitizeHtml(prepared, {
     allowedTags: richTextAllowedTags,
     allowedAttributes,
-    allowedStyles: {
-      img: {
-        width: [/^\d+(\.\d+)?%$/],
-      },
-    },
+    allowedStyles: richTextAllowedStyles,
     allowedSchemes: ["http", "https", "data"],
     allowedSchemesByTag: {
       img: ["http", "https", "data"],
@@ -170,6 +223,7 @@ export const sanitizeInlineRichTextHtml = (input: string) => {
   return sanitizeHtml(normalized, {
     allowedTags: inlineRichTextAllowedTags,
     allowedAttributes,
+    allowedStyles: richTextAllowedStyles,
     allowedSchemes: ["http", "https"],
     allowedSchemesByTag: {
       a: ["http", "https", "mailto", "tel"],

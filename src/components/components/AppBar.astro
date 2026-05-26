@@ -1,4 +1,5 @@
 ---
+import { stripHtmlTags } from "@/features/page-content/admin/technical-fields";
 import { getLocalePrefix, localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import { navigationService } from "@/features/navigation/service";
@@ -56,7 +57,7 @@ const showText = Boolean(brand.name || brand.tagline);
         {showText && (
           <span class="appbar__brand-text">
             {brand.name && <span class="appbar__brand-name">{brand.name}</span>}
-            {brand.tagline && <span class="appbar__brand-tagline">{brand.tagline}</span>}
+            {brand.tagline && <span class="appbar__brand-tagline" set:html={brand.tagline} />}
           </span>
         )}
       </a>
@@ -161,7 +162,7 @@ const showText = Boolean(brand.name || brand.tagline);
             <img
               class="appbar__drawer-logo"
               src="/legacy/images/Logo-Dark.svg"
-              alt={siteConfig.name}
+              alt={stripHtmlTags(siteConfig.name)}
             />
             <button
               class="appbar__drawer-close"

@@ -33,7 +33,7 @@ const mergedStyle = [imageStyle, blockStyle].filter(Boolean).join("; ") || undef
 >
   <div class="container">
     <div class="page-banner__content">
-      <h1 data-reveal="up">{title}</h1>
+      <h1 data-reveal="up" set:html={title} />
       {
         description && (
           <div

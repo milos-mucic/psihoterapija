@@ -76,8 +76,8 @@ const footerSupportLinks = [
     <div class="container">
       <div class="footer-cta">
         <div class="footer-brand">
-          <p class="eyebrow footer-eyebrow">{contactEyebrow}</p>
-          <h2>{brandHeading}</h2>
+          <p class="eyebrow footer-eyebrow" set:html={contactEyebrow} />
+          <h2 set:html={brandHeading} />
         </div>
         <a class="appbar__cta" href={localizePath(locale, "/kontakt/")}>
           {dictionary.nav.contact}
@@ -104,17 +104,17 @@ const footerSupportLinks = [
         </div>
 
         <div class="footer-sitemap">
-          <p class="footer-section-title">{dictionary.footer.sitemapTitle}</p>
+          <p class="footer-section-title" set:html={dictionary.footer.sitemapTitle} />
           <nav class="footer-sitemap__grid" aria-label={dictionary.a11y.footerNav}>
             <div class="footer-link-group">
-              <p class="footer-link-group__title">{dictionary.footer.navigationTitle}</p>
+              <p class="footer-link-group__title" set:html={dictionary.footer.navigationTitle} />
               <div class="footer-nav">
                 {footerPrimaryLinks.map((item) => <a href={item.href}>{item.label}</a>)}
               </div>
             </div>
 
             <div class="footer-link-group">
-              <p class="footer-link-group__title">{dictionary.footer.supportTitle}</p>
+              <p class="footer-link-group__title" set:html={dictionary.footer.supportTitle} />
               <div class="footer-nav">
                 {footerSupportLinks.map((item) => <a href={item.href}>{item.label}</a>)}
               </div>
@@ -124,7 +124,7 @@ const footerSupportLinks = [
 
         <div class="footer-aside">
           <div class="footer-social">
-            <p class="footer-section-title">{dictionary.footer.socialTitle}</p>
+            <p class="footer-section-title" set:html={dictionary.footer.socialTitle} />
             {allSocialLinks.length === 0 ? (
               <p class="footer-social-empty">{dictionary.footer.instagramPlaceholder}</p>
             ) : (
@@ -161,7 +161,7 @@ const footerSupportLinks = [
       </div>
 
       <div class="footer-bottom">
-        <span>{copyrightText}</span>
+        <span set:html={copyrightText} />
       </div>
     </div>
   </div>

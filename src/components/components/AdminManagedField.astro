@@ -2,6 +2,7 @@
 import { AdminMediaField } from "@/components/components/AdminMediaField";
 import { AdminRichTextField } from "@/components/components/AdminRichTextField";
 import type { ManagedPageEditorField } from "@/features/page-content/admin/managed-page-editor.config";
+import { isTechnicalFieldName } from "@/features/page-content/admin/technical-fields";
 
 type Props = {
   field: ManagedPageEditorField;
@@ -16,10 +17,33 @@ const fieldClass =
     : field.full
       ? "admin-form__field admin-form__field--full"
       : "admin-form__field";
+
+// Promote text/textarea fields to RTF unless they look "technical" (SEO, URL, email, alt, label, slug, placeholder).
+// Technical fields go into HTML attributes or constrained UI elements where HTML markup would break things.
+const promoteText =
+  field.kind === "text" && !isTechnicalFieldName(field.name);
+const promoteTextarea =
+  field.kind === "textarea" && !isTechnicalFieldName(field.name);
+const renderAsRichText =
+  field.kind === "richText" || promoteText || promoteTextarea;
+const richTextMode: "full" | "inline" = promoteText ? "inline" : "full";
 ---
 
 {
-  field.kind === "text" ? (
+  renderAsRichText && field.kind !== "media" ? (
+    <div class={fieldClass}>
+      <span>{field.label}</span>
+      <AdminRichTextField
+        client:load
+        name={field.name}
+        initialValue={field.value}
+        uploadUrl="/api/admin/media/upload"
+        uploadFolder={uploadFolder}
+        labels={richTextLabels}
+        mode={richTextMode}
+      />
+    </div>
+  ) : field.kind === "text" ? (
     <label class={fieldClass}>
       <span>{field.label}</span>
       <input class="input-control" name={field.name} value={field.value} />
@@ -35,18 +59,6 @@ const fieldClass =
         {field.value}
       </textarea>
     </label>
-  ) : field.kind === "richText" ? (
-    <div class={fieldClass}>
-      <span>{field.label}</span>
-      <AdminRichTextField
-        client:load
-        name={field.name}
-        initialValue={field.value}
-        uploadUrl="/api/admin/media/upload"
-        uploadFolder={uploadFolder}
-        labels={richTextLabels}
-      />
-    </div>
   ) : (
     <AdminMediaField
       client:load

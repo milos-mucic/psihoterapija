@@ -1,4 +1,5 @@
 ---
+import { stripHtmlTags } from "@/features/page-content/admin/technical-fields";
 import BaseLayout from "@/components/components/BaseLayout.astro";
 import PageBanner from "@/components/sections/PageBanner.astro";
 import { localizePath } from "@/features/i18n/locale";
@@ -20,7 +21,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
 ---
 
 <BaseLayout
-  title={content.seo.title}
+  title={stripHtmlTags(content.seo.title)}
   description={content.seo.description}
   locale={locale}
   canonicalPath={canonicalPath}
@@ -35,7 +36,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
   <section id="biography-cards" class="page-section" style={blockBg("biography-cards")}>
     <div class="container">
       <header class="page-section__header biography-page__header" data-reveal="up">
-        <h2>{content.cardsTitle}</h2>
+        <h2 set:html={content.cardsTitle} />
         <div class="biography-page__richtext richtext-shell" set:html={content.cardsCopy} />
       </header>
 
@@ -49,11 +50,11 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
               style={`--reveal-delay: ${index * 90}ms;`}
             >
               <div class="biography-page__card-media">
-                <img src={card.image} alt={card.title} loading="lazy" data-image-component />
+                <img src={card.image} alt={stripHtmlTags(card.title)} loading="lazy" data-image-component />
               </div>
               <div class="biography-page__card-body">
-                <p class="biography-page__role">{card.role}</p>
-                <h3>{card.title}</h3>
+                <p class="biography-page__role" set:html={card.role} />
+                <h3 set:html={card.title} />
                 <div class="biography-page__richtext richtext-shell" set:html={card.summary} />
                 <ul class="biography-page__tags">
                   {card.highlights.map((tag) => (
@@ -76,7 +77,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
         <img
           class="biography-page__approach-image"
           src={content.approachImage}
-          alt={content.approachTitle}
+          alt={stripHtmlTags(content.approachTitle)}
           loading="lazy"
           data-image-component
           data-reveal="left"
@@ -86,10 +87,10 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
           data-reveal="right"
           style="--reveal-delay: 90ms;"
         >
-          <h2>{content.approachTitle}</h2>
+          <h2 set:html={content.approachTitle} />
           <div class="biography-page__richtext richtext-shell" set:html={content.approachCopy} />
           <ul class="home-list biography-page__list">
-            {content.approachPoints.map((point) => <li>{point}</li>)}
+            {content.approachPoints.map((point) => <li set:html={point} />)}
           </ul>
           <a class="home-button" href={content.ctaHref}>
             {content.ctaLabel}

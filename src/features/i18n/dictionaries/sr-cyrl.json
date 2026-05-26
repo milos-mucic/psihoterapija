@@ -501,7 +501,15 @@
         "link": "Линк",
         "image": "Слика",
         "clear": "Уклони формат",
-        "uploadFailed": "Upload слике није успео."
+        "uploadFailed": "Upload слике није успео.",
+        "fontSize": "Величина фонта",
+        "fontFamily": "Фонт",
+        "textColor": "Боја текста",
+        "highlightColor": "Маркер (позадина)",
+        "alignLeft": "Поравнај лево",
+        "alignCenter": "Центрирај",
+        "alignRight": "Поравнај десно",
+        "alignJustify": "Обострано поравнање"
       }
     },
     "blogMessages": {

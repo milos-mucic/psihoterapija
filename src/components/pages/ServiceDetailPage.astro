@@ -29,15 +29,15 @@ const bookingCopy = dictionary.common.serviceBookingCopy;
   <div class="container">
     <div class="service-detail-page__grid">
       <div class="service-detail-page__copy" data-reveal="up">
-        <p class="service-detail-page__eyebrow">{content.banner.title}</p>
-        <h2>{content.intro.title}</h2>
+        <p class="service-detail-page__eyebrow" set:html={content.banner.title} />
+        <h2 set:html={content.intro.title} />
         <div class="service-detail-page__body richtext-shell" set:html={content.intro.body} />
       </div>
 
       <aside class="service-detail-page__aside" data-reveal="up" style="--reveal-delay: 90ms;">
         <img src={content.intro.image} alt="" loading="lazy" data-image-component />
         <div class="service-detail-page__aside-card">
-          <h3>{summaryTitle}</h3>
+          <h3 set:html={summaryTitle} />
           <ul>
             {content.intro.highlights.map((item) => <li>{item}</li>)}
           </ul>
@@ -51,8 +51,8 @@ const bookingCopy = dictionary.common.serviceBookingCopy;
   <div class="container">
     <div class="home-booking service-detail-page__booking-grid">
       <div class="home-booking__intro" data-reveal="up">
-        <h2>{bookingTitle}</h2>
-        <p>{bookingCopy}</p>
+        <h2 set:html={bookingTitle} />
+        <p set:html={bookingCopy} />
       </div>
 
       <div data-reveal="up" style="--reveal-delay: 90ms;">

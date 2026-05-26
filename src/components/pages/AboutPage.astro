@@ -1,4 +1,5 @@
 ---
+import { stripHtmlTags } from "@/features/page-content/admin/technical-fields";
 import PageBanner from "@/components/sections/PageBanner.astro";
 import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
@@ -29,13 +30,13 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
     <div class="container">
       <div class="about-page__split">
         <div class="about-page__copy" data-reveal="up">
-          <h2>{content.ideaTitle}</h2>
+          <h2 set:html={content.ideaTitle} />
           <div class="about-page__rich-text richtext-shell" set:html={content.ideaHtml} />
         </div>
 
         <aside class="about-page__focus-card" data-reveal="right" style="--reveal-delay: 90ms;">
           <div class="about-page__focus-title">
-            <h3>{content.focusTitle}</h3>
+            <h3 set:html={content.focusTitle} />
           </div>
           <ul>
             {content.focusItems.map((item) => <li>{item}</li>)}
@@ -51,7 +52,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
     <div class="container">
       <div class="home-heading-row home-heading-row--blog" data-reveal="up">
         <div class="home-heading-copy">
-          <h2>{content.recentTitle}</h2>
+          <h2 set:html={content.recentTitle} />
           <div class="home-richtext" set:html={content.recentCopy} />
         </div>
         <a class="home-button" href={content.recentHref}>{content.recentLabel}</a>
@@ -69,7 +70,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
                 <a class="home-blog-card__media" href={localizePath(locale, `/blog/${post.slug}/`)}>
                   <img
                     src={post.coverImage ?? "/legacy/images/Blog-1_1Blog 1.webp"}
-                    alt={post.title}
+                    alt={stripHtmlTags(post.title)}
                     loading="lazy"
                     data-image-component
                   />
@@ -85,7 +86,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
                     <span>{post.tags.join(", ") || dictionary.blog.defaultTag}</span>
                   </div>
                   <div class="home-blog-card__copy">
-                    <h3>{post.title}</h3>
+                    <h3 set:html={post.title} />
                     <div class="home-blog-card__excerpt" set:html={post.excerpt} />
                   </div>
                   <a

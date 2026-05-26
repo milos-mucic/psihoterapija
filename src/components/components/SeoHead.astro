@@ -1,5 +1,6 @@
 ---
 import type { SiteLocale } from "@/lib/config/site";
+import { stripHtmlTags } from "@/features/page-content/admin/technical-fields";
 
 type Props = {
   title: string;
@@ -8,7 +9,10 @@ type Props = {
   locale: SiteLocale;
 };
 
-const { title, description, canonicalPath, locale } = Astro.props;
+const rawProps = Astro.props;
+const title = stripHtmlTags(rawProps.title);
+const description = stripHtmlTags(rawProps.description);
+const { canonicalPath, locale } = rawProps;
 const siteUrl = new URL(canonicalPath, Astro.site);
 const isPublicPage = canonicalPath.startsWith("/") && !canonicalPath.startsWith("/studio/");
 const latnPath = canonicalPath.startsWith("/cir/")

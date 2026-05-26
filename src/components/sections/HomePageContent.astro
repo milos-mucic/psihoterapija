@@ -1,4 +1,5 @@
 ---
+import { stripHtmlTags } from "@/features/page-content/admin/technical-fields";
 import AppointmentForm from "@/components/components/AppointmentForm.astro";
 import type { HomePageData } from "@/data/fixtures/home";
 import { localizePath } from "@/features/i18n/locale";
@@ -34,7 +35,7 @@ const homeVideoSrc = youtubeVideoId
   <div class="container">
     <div class="home-heading-row home-heading-row--prompt">
       <div class="home-heading-copy home-heading-copy--prompt" data-reveal="up">
-        <h2>{content.prompt.title}</h2>
+        <h2 set:html={content.prompt.title} />
         <div class="home-richtext" set:html={content.prompt.copy} />
       </div>
       <a
@@ -57,13 +58,13 @@ const homeVideoSrc = youtubeVideoId
       <img
         class="home-about__image"
         src={content.about.image}
-        alt={content.about.title}
+        alt={stripHtmlTags(content.about.title)}
         loading="lazy"
         data-image-component
         data-reveal="left"
       />
       <div class="home-about__content" data-reveal="right" style="--reveal-delay: 90ms;">
-        <h2>{content.about.title}</h2>
+        <h2 set:html={content.about.title} />
         <div class="home-richtext" set:html={content.about.body} />
         <a class="home-button" href={content.about.href}>{content.about.label}</a>
       </div>
@@ -78,7 +79,7 @@ const homeVideoSrc = youtubeVideoId
     <div class="home-services">
       <div class="home-services__layout">
         <div class="home-services__intro" data-reveal="up">
-          <h2 class="home-visually-hidden">{content.services.title}</h2>
+          <h2 class="home-visually-hidden" set:html={content.services.title} />
           <div class="home-richtext home-richtext--light" set:html={content.services.copy} />
         </div>
 
@@ -100,7 +101,7 @@ const homeVideoSrc = youtubeVideoId
                   aria-hidden="true"
                 />
                 <div class="home-service-card__body">
-                  <h3 class="home-service-title">{item.title}</h3>
+                  <h3 class="home-service-title" set:html={item.title} />
                   <div
                     class="home-service-copy home-richtext home-richtext--light"
                     set:html={item.copy}
@@ -141,7 +142,7 @@ const homeVideoSrc = youtubeVideoId
 <section id="home-themes" class="home-section" style={blockBg("home-themes")}>
   <div class="container">
     <div class="section-title-wrapper" data-reveal="up">
-      <h2 class="heading-12">{content.themes.title}</h2>
+      <h2 class="heading-12" set:html={content.themes.title} />
     </div>
 
     <div class="collection-list-wrapper-w-100">
@@ -158,14 +159,14 @@ const homeVideoSrc = youtubeVideoId
                 <img
                   class="service-img"
                   src={item.image}
-                  alt={item.title}
+                  alt={stripHtmlTags(item.title)}
                   loading="lazy"
                   data-image-component
                 />
               </a>
               <div class="info-collection-wrapper">
                 <a href={item.href}>
-                  <h3 class="service-name">{item.title}</h3>
+                  <h3 class="service-name" set:html={item.title} />
                 </a>
                 <div class="mt-0 home-richtext" set:html={item.copy} />
                 <div class="collection-link-wrapper">
@@ -202,7 +203,7 @@ const homeVideoSrc = youtubeVideoId
   <div class="container">
     <div class="home-reasons">
       <div class="home-reasons__intro" data-reveal="up">
-        <h2>{content.reasons.title}</h2>
+        <h2 set:html={content.reasons.title} />
         <div class="home-richtext home-richtext--light" set:html={content.reasons.copy} />
       </div>
 
@@ -218,7 +219,7 @@ const homeVideoSrc = youtubeVideoId
                 <span class="home-reason-panel__index">{String(index + 1).padStart(2, "0")}</span>
                 <div class="home-reason-panel__content">
                   <div class="home-reason-panel__top">
-                    <h3>{item.title}</h3>
+                    <h3 set:html={item.title} />
                   </div>
                   <div class="home-richtext home-richtext--light" set:html={item.copy} />
                 </div>
@@ -233,12 +234,12 @@ const homeVideoSrc = youtubeVideoId
           data-home-video-open
           data-video-kind={homeVideoKind}
           data-video-src={homeVideoSrc}
-          aria-label={content.reasons.videoLabel}
+          aria-label={stripHtmlTags(content.reasons.videoLabel)}
           data-reveal="grow"
           style="--reveal-delay: 180ms;"
         >
           <img src={content.reasons.videoImage} alt="" loading="lazy" data-image-component />
-          <span class="home-video-card__badge">{dictionary.common.play}</span>
+          <span class="home-video-card__badge" set:html={dictionary.common.play} />
           <span class="home-video-card__label">{content.reasons.videoLabel}</span>
         </button>
       </div>
@@ -267,7 +268,7 @@ const homeVideoSrc = youtubeVideoId
     <div class="home-video-dialog__frame">
       <iframe
         data-home-video-iframe
-        title={content.reasons.videoLabel}
+        title={stripHtmlTags(content.reasons.videoLabel)}
         allow="autoplay; fullscreen; picture-in-picture"></iframe>
       <video data-home-video-player controls playsinline hidden>
         <track kind="captions" />
@@ -363,7 +364,7 @@ const homeVideoSrc = youtubeVideoId
   <div class="container">
     <div class="home-booking">
       <div class="home-booking__intro" data-reveal="up">
-        <h2>{content.booking.title}</h2>
+        <h2 set:html={content.booking.title} />
         <div class="home-richtext" set:html={content.booking.copy} />
       </div>
 
@@ -385,7 +386,7 @@ const homeVideoSrc = youtubeVideoId
   <div class="container">
     <div class="home-heading-row home-heading-row--blog">
       <div class="home-heading-copy" data-reveal="up">
-        <h2>{content.recent.title}</h2>
+        <h2 set:html={content.recent.title} />
         <div class="home-richtext" set:html={content.recent.copy} />
       </div>
       <a
@@ -410,7 +411,7 @@ const homeVideoSrc = youtubeVideoId
               <a class="home-blog-card__media" href={localizePath(locale, `/blog/${post.slug}/`)}>
                 <img
                   src={post.coverImage ?? "/legacy/images/Blog-1_1Blog 1.webp"}
-                  alt={post.title}
+                  alt={stripHtmlTags(post.title)}
                   loading="lazy"
                   data-image-component
                 />
@@ -426,7 +427,7 @@ const homeVideoSrc = youtubeVideoId
                   <span>{post.tags.join(", ") || dictionary.blog.defaultTag}</span>
                 </div>
                 <div class="home-blog-card__copy">
-                  <h3>{post.title}</h3>
+                  <h3 set:html={post.title} />
                   <div class="home-blog-card__excerpt" set:html={post.excerpt} />
                 </div>
                 <a
@@ -450,7 +451,7 @@ const homeVideoSrc = youtubeVideoId
         </div>
       ) : (
         <div class="home-card" data-reveal="up">
-          <p>{content.recent.empty}</p>
+          <p set:html={content.recent.empty} />
         </div>
       )
     }

@@ -29,7 +29,12 @@ import {
   HeadingNode,
   QuoteNode,
 } from "@lexical/rich-text";
-import { $setBlocksType } from "@lexical/selection";
+import {
+  $getSelectionStyleValueForProperty,
+  $patchStyleText,
+  $setBlocksType,
+} from "@lexical/selection";
+import type { RangeSelection } from "lexical";
 import { $getNearestBlockElementAncestorOrThrow, mergeRegister } from "@lexical/utils";
 import {
   $createParagraphNode,
@@ -43,6 +48,8 @@ import {
   $isParagraphNode,
   $isRangeSelection,
   $isTextNode,
+  $setSelection,
+  TextNode,
   CLICK_COMMAND,
   CAN_REDO_COMMAND,
   CAN_UNDO_COMMAND,
@@ -50,6 +57,8 @@ import {
   COMMAND_PRIORITY_LOW,
   createCommand,
   DecoratorNode,
+  type ElementFormatType,
+  FORMAT_ELEMENT_COMMAND,
   FORMAT_TEXT_COMMAND,
   KEY_BACKSPACE_COMMAND,
   KEY_DELETE_COMMAND,
@@ -92,6 +101,14 @@ export type AdminRichTextFieldProps = {
     strikethrough?: string;
     removeLink?: string;
     placeholder?: string;
+    fontSize?: string;
+    fontFamily?: string;
+    textColor?: string;
+    highlightColor?: string;
+    alignLeft?: string;
+    alignCenter?: string;
+    alignRight?: string;
+    alignJustify?: string;
   };
   /**
    * Optional callback invoked whenever the editor's HTML value changes.
@@ -124,6 +141,42 @@ type SerializedImageNode = Spread<
   },
   SerializedLexicalNode
 >;
+
+// Lexical's default TextNode importer does NOT propagate inline `style` from a wrapping
+// `<span style="…">…</span>` onto the TextNode itself. That means saved HTML like
+// `<p>Hello <span style="color: red">world</span></p>` round-trips through
+// $generateNodesFromDOM as plain "Hello world" (style erased), and reopening the editor
+// shows no formatting. We register a custom node whose only purpose is to add a `<span>`
+// importer that copies the inline style onto every TextNode child via `forChild`.
+class SpanStyleImporterNode extends TextNode {
+  static getType(): string {
+    return "span-style-importer";
+  }
+  static clone(node: SpanStyleImporterNode): SpanStyleImporterNode {
+    return new SpanStyleImporterNode(node.__text, node.__key);
+  }
+  static importDOM(): DOMConversionMap | null {
+    return {
+      span: () => ({
+        conversion: (element: HTMLElement): DOMConversionOutput => ({
+          node: null,
+          forChild: (child) => {
+            if ($isTextNode(child)) {
+              const style = element.getAttribute("style");
+              if (style) {
+                const existing = child.getStyle();
+                const combined = [existing, style].filter(Boolean).join("; ");
+                child.setStyle(combined);
+              }
+            }
+            return child;
+          },
+        }),
+        priority: 1,
+      }),
+    };
+  }
+}
 
 const editorTheme: EditorThemeClasses = {
   heading: {
@@ -166,7 +219,59 @@ const buttonSymbols = {
   image: "Img",
   undo: "<",
   redo: ">",
+  alignLeft: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <line x1="3" y1="12" x2="15" y2="12" />
+      <line x1="3" y1="18" x2="18" y2="18" />
+    </svg>
+  ),
+  alignCenter: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <line x1="6" y1="12" x2="18" y2="12" />
+      <line x1="4" y1="18" x2="20" y2="18" />
+    </svg>
+  ),
+  alignRight: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <line x1="9" y1="12" x2="21" y2="12" />
+      <line x1="6" y1="18" x2="21" y2="18" />
+    </svg>
+  ),
+  alignJustify: (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <line x1="3" y1="12" x2="21" y2="12" />
+      <line x1="3" y1="18" x2="21" y2="18" />
+    </svg>
+  ),
 } as const;
+
+const fontSizeOptions = [
+  "12px",
+  "14px",
+  "16px",
+  "18px",
+  "20px",
+  "24px",
+  "28px",
+  "32px",
+  "40px",
+  "48px",
+  "56px",
+  "72px",
+] as const;
+
+const fontFamilyOptions = [
+  { label: "Sistemski", value: "" },
+  { label: "Lexend (telo)", value: "Lexend, system-ui, sans-serif" },
+  { label: "Castoro (naslovi)", value: "Castoro, Georgia, serif" },
+  { label: "Sans-serif", value: "system-ui, -apple-system, Arial, sans-serif" },
+  { label: "Serif", value: "Georgia, 'Times New Roman', serif" },
+  { label: "Monospace", value: "ui-monospace, 'SF Mono', Menlo, monospace" },
+] as const;
 const imageMimeAccept = "image/*";
 const imageMaxBytes = 1_000_000;
 const imageScales = [1, 0.92, 0.84, 0.76, 0.68];
@@ -185,8 +290,69 @@ const normalizeLinkUrl = (value: string) => {
   return `https://${value.replace(/^\/+/, "")}`;
 };
 
+// Strip Lexical-internal junk from exported HTML so what's saved is clean, portable HTML.
+// - Drops editor-only theme classes (`admin-rtf__text--bold`, etc.)
+// - Drops the `white-space: pre-wrap;` style Lexical sprinkles on every TextNode export
+// - Collapses redundant `<b><strong>...</strong></b>` (and `<i><em>`) double-wrappers
+// - Unwraps `<span>`s that have no remaining attributes
+const sanitizeExportedHtml = (html: string) => {
+  if (!html) return html;
+  if (!canUseDomParser()) return html;
+
+  const doc = new DOMParser().parseFromString(html, "text/html");
+
+  // 1) Strip editor theme classes
+  doc.querySelectorAll("[class]").forEach((el) => {
+    const filtered = (el.getAttribute("class") || "")
+      .split(/\s+/)
+      .filter((c) => c && !c.startsWith("admin-rtf__"))
+      .join(" ");
+    if (filtered) el.setAttribute("class", filtered);
+    else el.removeAttribute("class");
+  });
+
+  // 2) Strip white-space: pre-wrap from inline styles (Lexical default), keep user styles
+  doc.querySelectorAll("[style]").forEach((el) => {
+    const style = el.getAttribute("style") || "";
+    const filtered = style
+      .split(";")
+      .map((s) => s.trim())
+      .filter((s) => s && !/^white-space\s*:\s*pre-wrap\s*$/i.test(s))
+      .join("; ");
+    if (filtered) el.setAttribute("style", filtered + (filtered.endsWith(";") ? "" : ";"));
+    else el.removeAttribute("style");
+  });
+
+  // 3) Collapse <b><strong>…</strong></b> and <i><em>…</em></i> double-wrappers.
+  const collapse = (outerTag: string, innerTag: string) => {
+    doc.querySelectorAll(outerTag).forEach((outer) => {
+      if (outer.children.length === 1 && outer.firstElementChild?.tagName === innerTag.toUpperCase()) {
+        const inner = outer.firstElementChild as HTMLElement;
+        outer.replaceWith(inner);
+      }
+    });
+  };
+  collapse("b", "strong");
+  collapse("strong", "b");
+  collapse("i", "em");
+  collapse("em", "i");
+
+  // 4) Unwrap spans that have no remaining attributes (purely structural)
+  doc.querySelectorAll("span").forEach((span) => {
+    if (span.attributes.length === 0) {
+      const parent = span.parentNode;
+      if (parent) {
+        while (span.firstChild) parent.insertBefore(span.firstChild, span);
+        parent.removeChild(span);
+      }
+    }
+  });
+
+  return doc.body.innerHTML;
+};
+
 const normalizeFullEditorHtml = (value: string) => {
-  const html = value.trim();
+  const html = sanitizeExportedHtml(value.trim());
 
   if (html === "<p><br></p>" || html === "<p><br /></p>") {
     return "";
@@ -789,6 +955,11 @@ function ToolbarPlugin({
   const [isLink, setIsLink] = useState(false);
   const [isStrikethrough, setIsStrikethrough] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
+  const [fontSize, setFontSize] = useState<string>("");
+  const [fontFamily, setFontFamily] = useState<string>("");
+  const [textColor, setTextColor] = useState<string>("#163c3d");
+  const [highlightColor, setHighlightColor] = useState<string>("#faf3e1");
+  const [elementAlignment, setElementAlignment] = useState<ElementFormatType>("left");
 
   const refreshToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -800,6 +971,9 @@ function ToolbarPlugin({
       setIsStrikethrough(false);
       setIsLink(false);
       setBlockType("paragraph");
+      setFontSize("");
+      setFontFamily("");
+      setElementAlignment("left");
       return;
     }
 
@@ -822,6 +996,14 @@ function ToolbarPlugin({
     setIsUnderline(selection.hasFormat("underline"));
     setIsStrikethrough(selection.hasFormat("strikethrough"));
     setIsLink(Boolean(linkNode));
+    setFontSize($getSelectionStyleValueForProperty(selection, "font-size", ""));
+    setFontFamily($getSelectionStyleValueForProperty(selection, "font-family", ""));
+    const currentColor = $getSelectionStyleValueForProperty(selection, "color", "");
+    if (currentColor) setTextColor(currentColor);
+    const currentBg = $getSelectionStyleValueForProperty(selection, "background-color", "");
+    if (currentBg) setHighlightColor(currentBg);
+    const blockAlign = $isElementNode(nearestBlock) ? nearestBlock.getFormatType() : "";
+    setElementAlignment((blockAlign || "left") as ElementFormatType);
 
     if ($isListNode(nearestBlock)) {
       setBlockType(nearestBlock.getTag() === "ol" ? "ol" : "ul");
@@ -904,18 +1086,66 @@ function ToolbarPlugin({
     editor.dispatchCommand(TOGGLE_LINK_COMMAND, normalizeLinkUrl(trimmedUrl));
   };
 
+  // Selection is lost when toolbar controls (select, color picker) take DOM focus.
+  // We keep a live snapshot of the editor's range selection so that applyStyle can
+  // restore it inside editor.update() before applying inline CSS.
+  const savedSelectionRef = useRef<RangeSelection | null>(null);
+
+  const captureSelection = useCallback(() => {
+    editor.getEditorState().read(() => {
+      const selection = $getSelection();
+      if ($isRangeSelection(selection)) {
+        savedSelectionRef.current = selection.clone();
+      }
+    });
+  }, [editor]);
+
+  const applyStyle = useCallback(
+    (styles: Record<string, string | null>) => {
+      editor.update(() => {
+        const saved = savedSelectionRef.current;
+        if (saved) {
+          // Restore saved selection so the style applies to the user's range,
+          // not to the empty selection caused by toolbar focus.
+          $setSelection(saved.clone());
+        }
+        const selection = $getSelection();
+        if (!$isRangeSelection(selection)) return;
+        $patchStyleText(selection, styles);
+      });
+    },
+    [editor],
+  );
+
+  const setAlignment = useCallback(
+    (alignment: ElementFormatType) => {
+      editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, alignment);
+    },
+    [editor],
+  );
+
   useEffect(
     () =>
       mergeRegister(
         editor.registerUpdateListener(({ editorState }) => {
           editorState.read(() => {
             refreshToolbar();
+            // Keep a live snapshot of any range selection inside the editor,
+            // so toolbar controls that steal DOM focus can still restore it.
+            const selection = $getSelection();
+            if ($isRangeSelection(selection)) {
+              savedSelectionRef.current = selection.clone();
+            }
           });
         }),
         editor.registerCommand(
           SELECTION_CHANGE_COMMAND,
           () => {
             refreshToolbar();
+            const selection = $getSelection();
+            if ($isRangeSelection(selection)) {
+              savedSelectionRef.current = selection.clone();
+            }
             return false;
           },
           COMMAND_PRIORITY_EDITOR,
@@ -1049,6 +1279,134 @@ function ToolbarPlugin({
       >
         {buttonSymbols.strikethrough}
       </button>
+
+      <span className="admin-rtf__divider" aria-hidden="true" />
+
+      <select
+        className="admin-rtf__select"
+        aria-label={labels.fontSize ?? "Veličina fonta"}
+        title={labels.fontSize ?? "Veličina fonta"}
+        value={fontSize}
+        onMouseDown={captureSelection}
+        onFocus={captureSelection}
+        onChange={(event) => {
+          const next = event.target.value;
+          applyStyle({ "font-size": next || null });
+        }}
+      >
+        <option value="">{labels.fontSize ?? "Veličina"}</option>
+        {fontSizeOptions.map((size) => (
+          <option key={size} value={size}>
+            {size}
+          </option>
+        ))}
+      </select>
+
+      <select
+        className="admin-rtf__select"
+        aria-label={labels.fontFamily ?? "Font"}
+        title={labels.fontFamily ?? "Font"}
+        value={fontFamily}
+        onMouseDown={captureSelection}
+        onFocus={captureSelection}
+        onChange={(event) => {
+          const next = event.target.value;
+          applyStyle({ "font-family": next || null });
+        }}
+      >
+        {fontFamilyOptions.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+
+      <label
+        className="admin-rtf__color"
+        aria-label={labels.textColor ?? "Boja teksta"}
+        title={labels.textColor ?? "Boja teksta"}
+        onMouseDown={captureSelection}
+      >
+        <span className="admin-rtf__color-icon" style={{ color: textColor }}>
+          A
+        </span>
+        <input
+          type="color"
+          value={textColor}
+          onChange={(event) => {
+            const next = event.target.value;
+            setTextColor(next);
+            applyStyle({ color: next });
+          }}
+        />
+      </label>
+
+      <label
+        className="admin-rtf__color admin-rtf__color--highlight"
+        aria-label={labels.highlightColor ?? "Marker"}
+        title={labels.highlightColor ?? "Marker"}
+        onMouseDown={captureSelection}
+      >
+        <span
+          className="admin-rtf__color-icon"
+          style={{ backgroundColor: highlightColor, color: "#000" }}
+        >
+          ab
+        </span>
+        <input
+          type="color"
+          value={highlightColor}
+          onChange={(event) => {
+            const next = event.target.value;
+            setHighlightColor(next);
+            applyStyle({ "background-color": next });
+          }}
+        />
+      </label>
+
+      <span className="admin-rtf__divider" aria-hidden="true" />
+
+      <button
+        className={`admin-rtf__button${elementAlignment === "left" ? " is-active" : ""}`}
+        type="button"
+        aria-label={labels.alignLeft ?? "Levo"}
+        title={labels.alignLeft ?? "Poravnaj levo"}
+        onClick={() => setAlignment("left")}
+      >
+        {buttonSymbols.alignLeft}
+      </button>
+
+      <button
+        className={`admin-rtf__button${elementAlignment === "center" ? " is-active" : ""}`}
+        type="button"
+        aria-label={labels.alignCenter ?? "Centar"}
+        title={labels.alignCenter ?? "Centriraj"}
+        onClick={() => setAlignment("center")}
+      >
+        {buttonSymbols.alignCenter}
+      </button>
+
+      <button
+        className={`admin-rtf__button${elementAlignment === "right" ? " is-active" : ""}`}
+        type="button"
+        aria-label={labels.alignRight ?? "Desno"}
+        title={labels.alignRight ?? "Poravnaj desno"}
+        onClick={() => setAlignment("right")}
+      >
+        {buttonSymbols.alignRight}
+      </button>
+
+      <button
+        className={`admin-rtf__button${elementAlignment === "justify" ? " is-active" : ""}`}
+        type="button"
+        aria-label={labels.alignJustify ?? "Justify"}
+        title={labels.alignJustify ?? "Obostrano"}
+        onClick={() => setAlignment("justify")}
+      >
+        {buttonSymbols.alignJustify}
+      </button>
+
+      <span className="admin-rtf__divider" aria-hidden="true" />
 
       {mode === "full" ? (
         <>
@@ -1337,7 +1695,15 @@ export function AdminRichTextField({
   const initialConfig = useMemo(
     () => ({
       namespace: `admin-rich-text-${name}`,
-      nodes: [HeadingNode, QuoteNode, ListNode, ListItemNode, LinkNode, ImageNode],
+      nodes: [
+        HeadingNode,
+        QuoteNode,
+        ListNode,
+        ListItemNode,
+        LinkNode,
+        ImageNode,
+        SpanStyleImporterNode,
+      ],
       onError: (editorError: Error) => {
         throw editorError;
       },

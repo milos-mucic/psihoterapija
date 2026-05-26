@@ -1,4 +1,5 @@
 ---
+import { stripHtmlTags } from "@/features/page-content/admin/technical-fields";
 import AppointmentForm from "@/components/components/AppointmentForm.astro";
 import PageBanner from "@/components/sections/PageBanner.astro";
 import { getDictionary } from "@/features/i18n/translate";
@@ -30,15 +31,15 @@ if (!content) {
       <div class="biography-profile-page__media" data-reveal="left">
         <img
           src={content.profile.image}
-          alt={content.profile.title}
+          alt={stripHtmlTags(content.profile.title)}
           loading="eager"
           data-image-component
         />
       </div>
 
       <div class="biography-profile-page__copy" data-reveal="right" style="--reveal-delay: 90ms;">
-        <p class="biography-profile-page__role">{content.profile.role}</p>
-        <h1>{content.profile.title}</h1>
+        <p class="biography-profile-page__role" set:html={content.profile.role} />
+        <h1 set:html={content.profile.title} />
         <div
           class="biography-profile-page__summary richtext-shell"
           set:html={content.profile.summary}
@@ -68,7 +69,7 @@ if (!content) {
   <div class="container">
     <div class="home-booking biography-profile-page__booking-grid">
       <div class="home-booking__intro" data-reveal="up">
-        <h2>{dictionary.common.biographyBookingTitle}</h2>
+        <h2 set:html={dictionary.common.biographyBookingTitle} />
         <div class="richtext-shell" set:html={appointmentContent.introCopy} />
       </div>
 
@@ -90,7 +91,7 @@ if (!content) {
       <div class="container">
         <div class="home-heading-row" data-reveal="up">
           <div class="home-heading-copy">
-            <h2>{content.relatedTitle}</h2>
+            <h2 set:html={content.relatedTitle} />
           </div>
           <a class="home-button" href={content.backHref}>
             {content.backLabel}
@@ -105,9 +106,9 @@ if (!content) {
               data-reveal="up"
               style={`--reveal-delay: ${index * 70}ms;`}
             >
-              <img src={profile.image} alt={profile.title} loading="lazy" data-image-component />
-              <p class="biography-profile-page__related-role">{profile.role}</p>
-              <h3>{profile.title}</h3>
+              <img src={profile.image} alt={stripHtmlTags(profile.title)} loading="lazy" data-image-component />
+              <p class="biography-profile-page__related-role" set:html={profile.role} />
+              <h3 set:html={profile.title} />
               <div class="richtext-shell" set:html={profile.summary} />
             </a>
           ))}

@@ -22,9 +22,9 @@ const portraitImage = "/legacy/images/Doctor--1_1-p-500.jpg";
     <div class="card hero-panel" style={`--hero-image: url('${heroImage}')`}>
       <div class="hero-grid">
         <div class="hero-copy">
-          {eyebrow && <p class="eyebrow hero-eyebrow">{eyebrow}</p>}
-          <h1 class="section-title hero-title">{title}</h1>
-          <p class="section-copy hero-description">{description}</p>
+          {eyebrow && <p class="eyebrow hero-eyebrow" set:html={eyebrow} />}
+          <h1 class="section-title hero-title" set:html={title} />
+          <p class="section-copy hero-description" set:html={description} />
           {
             actions.length > 0 && (
               <div class="hero-actions">

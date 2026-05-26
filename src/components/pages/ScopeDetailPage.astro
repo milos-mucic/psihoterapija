@@ -24,7 +24,7 @@ if (!content) {
   <div class="container">
     <div class="scope-detail-page__intro-grid">
       <div class="scope-detail-page__intro-copy" data-reveal="left">
-        <p class="scope-detail-page__eyebrow">{content.eyebrow}</p>
+        <p class="scope-detail-page__eyebrow" set:html={content.eyebrow} />
         <div class="scope-detail-page__lead richtext-shell" set:html={content.lead} />
         <div class="scope-detail-page__actions">
           <a class="button-ghost" href={content.backHref}>{content.backLabel}</a>
@@ -55,7 +55,7 @@ if (!content) {
             data-reveal="up"
             style={`--reveal-delay: ${index * 80}ms;`}
           >
-            <h2>{item.title}</h2>
+            <h2 set:html={item.title} />
             <div class="richtext-shell" set:html={item.copy} />
           </article>
         ))
@@ -68,7 +68,7 @@ if (!content) {
   <div class="container">
     <div class="home-heading-row" data-reveal="up">
       <div class="home-heading-copy">
-        <h2>{content.relatedTitle}</h2>
+        <h2 set:html={content.relatedTitle} />
       </div>
       <a class="home-button" href={content.backHref}>{content.backLabel}</a>
     </div>

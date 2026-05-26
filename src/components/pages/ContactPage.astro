@@ -26,7 +26,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
   <div class="container">
     <div class="contact-layout">
       <div class="contact-details">
-        <h2>{content.introTitle}</h2>
+        <h2 set:html={content.introTitle} />
         <div class="richtext-shell" set:html={content.introCopy} />
 
         <div class="contact-details__grid">
@@ -49,7 +49,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
         </div>
 
         <div class="contact-socials" data-reveal="up" style="--reveal-delay: 140ms;">
-          <h3>{content.contactLabels.socials}</h3>
+          <h3 set:html={content.contactLabels.socials} />
           <div class="contact-socials__icons">
             {
               content.socialLinks.map((link) => (
@@ -85,7 +85,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
       </div>
 
       <div class="page-form-shell page-form-shell--contact" data-reveal="right">
-        <h2>{content.formTitle}</h2>
+        <h2 set:html={content.formTitle} />
         <ContactForm locale={locale} labels={dictionary.forms} />
       </div>
     </div>
@@ -97,7 +97,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
 <section id="contact-offices" class="page-section page-section--soft" style={blockBg("contact-offices")}>
   <div class="container">
     <div class="page-section__header">
-      <h2>{content.officesTitle}</h2>
+      <h2 set:html={content.officesTitle} />
       <div class="richtext-shell" set:html={content.officesCopy} />
     </div>
 

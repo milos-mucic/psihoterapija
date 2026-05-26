@@ -25,6 +25,14 @@ const RTF_LABELS: AdminRichTextFieldProps["labels"] = {
   image: "Slika",
   clear: "Ukloni format",
   uploadFailed: "Upload slike nije uspeo.",
+  fontSize: "Veličina fonta",
+  fontFamily: "Font",
+  textColor: "Boja teksta",
+  highlightColor: "Marker (pozadina)",
+  alignLeft: "Poravnaj levo",
+  alignCenter: "Centriraj",
+  alignRight: "Poravnaj desno",
+  alignJustify: "Obostrano poravnanje",
 };
 
 type RichTextProps = {

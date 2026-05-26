@@ -51,15 +51,18 @@ const {
     <div class="admin-form__grid">
       <div class="admin-form__field admin-form__field--full">
         <div class="admin-form__grid">
-          <label class="admin-form__field admin-form__field--full">
+          <div class="admin-form__field admin-form__field--full" data-biography-section-title-wrap>
             <span>Naslov sekcije</span>
-            <input
-              class="input-control"
+            <AdminRichTextField
+              client:load
               name="cardsTitle"
-              value={sectionTitleValue}
-              data-biography-section-title
+              initialValue={sectionTitleValue}
+              mode="inline"
+              uploadUrl="/api/admin/media/upload"
+              uploadFolder={uploadFolder}
+              labels={richTextLabels}
             />
-          </label>
+          </div>
         </div>
       </div>
 

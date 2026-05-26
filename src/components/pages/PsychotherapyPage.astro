@@ -1,4 +1,5 @@
 ---
+import { stripHtmlTags } from "@/features/page-content/admin/technical-fields";
 import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import { blogService } from "@/features/blog/services/blog.service";
@@ -31,8 +32,8 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
         <img src={introImage} alt="" loading="lazy" data-image-component />
       </div>
       <div class="psychotherapy-page__intro-copy">
-        <p class="psychotherapy-page__eyebrow">{dictionary.nav.psychotherapy}</p>
-        <h1>{content.banner.title}</h1>
+        <p class="psychotherapy-page__eyebrow" set:html={dictionary.nav.psychotherapy} />
+        <h1 set:html={content.banner.title} />
         <div class="psychotherapy-page__intro-text richtext-shell" set:html={content.banner.description} />
       </div>
     </article>
@@ -44,7 +45,7 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
 <section id="psychotherapy-tabs" class="page-section psychotherapy-page__tabs-section" style={blockBg("psychotherapy-scope")}>
   <div class="container">
     <div class="psychotherapy-page__tabs" data-scope-tabs>
-      <h2 class="psychotherapy-page__section-heading">{content.scopeTitle}</h2>
+      <h2 class="psychotherapy-page__section-heading" set:html={content.scopeTitle} />
       <div class="psychotherapy-page__tabs-carousel" data-reveal="up">
         <button
           type="button"
@@ -65,7 +66,7 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
         <div
           class="psychotherapy-page__tabs-menu"
           role="tablist"
-          aria-label={content.scopeTitle}
+          aria-label={stripHtmlTags(content.scopeTitle)}
           data-scope-tabs-track
         >
           {
@@ -93,7 +94,7 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
                 </span>
                 <span class="psychotherapy-page__tab-copy">
                   <span class="psychotherapy-page__tab-label">{tab.label}</span>
-                  <span class="psychotherapy-page__tab-meta">{tab.tabMeta}</span>
+                  <span class="psychotherapy-page__tab-meta" set:html={tab.tabMeta} />
                 </span>
               </button>
             ))
@@ -133,7 +134,7 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
                 <div class="psychotherapy-page__tab-summary">
                   <div class="psychotherapy-page__tab-summary-card">
                     <div class="psychotherapy-page__tab-summary-top">
-                      <span class="psychotherapy-page__tab-summary-eyebrow">{tab.panelEyebrow}</span>
+                      <span class="psychotherapy-page__tab-summary-eyebrow" set:html={tab.panelEyebrow} />
                       <div class="psychotherapy-page__tab-summary-head">
                         <span class="psychotherapy-page__tab-summary-icon-shell" aria-hidden="true">
                           <img
@@ -146,7 +147,7 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
                         </span>
                         <div class="psychotherapy-page__tab-summary-title-wrap">
                           <p class="psychotherapy-page__tab-summary-kicker">{tab.label}</p>
-                          <h3 class="psychotherapy-page__tab-item-title">{tab.cardTitle}</h3>
+                          <h3 class="psychotherapy-page__tab-item-title" set:html={tab.cardTitle} />
                         </div>
                       </div>
                     </div>
@@ -154,7 +155,7 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
                     <div class="psychotherapy-page__tab-summary-art">
                       <img
                         src={tab.detailImage}
-                        alt={tab.cardTitle}
+                        alt={stripHtmlTags(tab.cardTitle)}
                         loading="lazy"
                         data-image-component
                       />
@@ -181,7 +182,7 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
                           <span class="psychotherapy-page__tab-point-index">
                             {String(itemIndex + 1).padStart(2, "0")}
                           </span>
-                          <h4>{item.title}</h4>
+                          <h4 set:html={item.title} />
                           <div
                             class="psychotherapy-page__tab-point-copy richtext-shell"
                             set:html={item.copy}
@@ -205,7 +206,7 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
   <div class="container">
     <div class="home-heading-row home-heading-row--blog" data-reveal="up">
       <div class="home-heading-copy">
-        <h2>{scopeContent.recentTitle}</h2>
+        <h2 set:html={scopeContent.recentTitle} />
         <div class="psychotherapy-page__recent-copy richtext-shell" set:html={scopeContent.recentCopy} />
       </div>
       <a class="home-button" href={scopeContent.recentHref}>{scopeContent.recentLabel}</a>
@@ -223,7 +224,7 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
               <a class="home-blog-card__media" href={localizePath(locale, `/blog/${post.slug}/`)}>
                 <img
                   src={post.coverImage ?? "/legacy/images/Blog-1_1Blog 1.webp"}
-                  alt={post.title}
+                  alt={stripHtmlTags(post.title)}
                   loading="lazy"
                   data-image-component
                 />
@@ -239,7 +240,7 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
                   <span>{post.tags.join(", ") || dictionary.blog.defaultTag}</span>
                 </div>
                 <div class="home-blog-card__copy">
-                  <h3>{post.title}</h3>
+                  <h3 set:html={post.title} />
                   <div class="home-blog-card__excerpt" set:html={post.excerpt} />
                 </div>
                 <a class="home-blog-card__action" href={localizePath(locale, `/blog/${post.slug}/`)}>
@@ -260,7 +261,7 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
         </div>
       ) : (
         <div class="home-card" data-reveal="up">
-          <p>{scopeContent.recentEmpty}</p>
+          <p set:html={scopeContent.recentEmpty} />
         </div>
       )
     }

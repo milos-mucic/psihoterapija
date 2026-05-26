@@ -45,6 +45,14 @@ type Props = {
     image: string;
     clear: string;
     uploadFailed: string;
+    fontSize?: string;
+    fontFamily?: string;
+    textColor?: string;
+    highlightColor?: string;
+    alignLeft?: string;
+    alignCenter?: string;
+    alignRight?: string;
+    alignJustify?: string;
   };
 };
 
@@ -62,10 +70,18 @@ const tagsValue = post?.tags.join(", ") ?? "";
 
 <form class="admin-form" method="post" action={action}>
   <div class="admin-form__grid">
-    <label class="admin-form__field admin-form__field--full">
+    <div class="admin-form__field admin-form__field--full">
       <span>{labels.title}</span>
-      <input class="input-control" name="title" required value={post?.title ?? ""} />
-    </label>
+      <AdminRichTextField
+        client:load
+        name="title"
+        initialValue={post?.title ?? ""}
+        uploadUrl="/api/admin/media/upload"
+        uploadFolder="blog"
+        mode="inline"
+        labels={richText}
+      />
+    </div>
 
     <label class="admin-form__field">
       <span>{labels.slug}</span>

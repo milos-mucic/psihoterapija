@@ -959,6 +959,90 @@
   cursor: not-allowed;
 }
 
+.admin-rtf__divider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--line);
+  margin: 0.15rem 0.15rem;
+}
+
+.admin-rtf__select {
+  border: 1px solid var(--line);
+  background: #fff;
+  color: #111827;
+  border-radius: 0.45rem;
+  height: 2.25rem;
+  padding: 0 0.45rem;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  max-width: 9.5rem;
+}
+
+.admin-rtf__select:hover {
+  border-color: rgb(var(--primary-rgb) / 0.25);
+  background: #f9fafb;
+}
+
+.admin-rtf__select:focus {
+  outline: none;
+  border-color: rgb(var(--primary-rgb) / 0.35);
+  box-shadow: 0 0 0 3px rgb(var(--primary-rgb) / 0.12);
+}
+
+.admin-rtf__color {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid var(--line);
+  border-radius: 0.45rem;
+  background: #fff;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.admin-rtf__color:hover {
+  border-color: rgb(var(--primary-rgb) / 0.25);
+}
+
+.admin-rtf__color input[type="color"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.admin-rtf__color-icon {
+  pointer-events: none;
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.1rem 0.25rem;
+  border-radius: 0.25rem;
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+.admin-rtf__color--highlight .admin-rtf__color-icon {
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: -0.04em;
+  text-shadow: none;
+}
+
+/* Render inline styles inside the editor content (font, color, alignment) */
+.admin-rtf__editor [style*="text-align"] {
+  display: block;
+}
+
 .admin-rtf__editor-shell {
   position: relative;
   border: 1px solid var(--line);
