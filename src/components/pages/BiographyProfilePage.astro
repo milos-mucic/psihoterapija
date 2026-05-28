@@ -50,7 +50,7 @@ if (!content) {
         </ul>
 
         <div class="biography-profile-page__actions">
-          <a class="button-ghost" href={content.backHref}>{content.backLabel}</a>
+          <a class="home-button" href={content.backHref}>{content.backLabel}</a>
         </div>
       </div>
     </div>
@@ -106,7 +106,9 @@ if (!content) {
               data-reveal="up"
               style={`--reveal-delay: ${index * 70}ms;`}
             >
-              <img src={profile.image} alt={stripHtmlTags(profile.title)} loading="lazy" data-image-component />
+              <span class="biography-profile-page__related-media">
+                <img src={profile.image} alt={stripHtmlTags(profile.title)} loading="lazy" data-image-component />
+              </span>
               <p class="biography-profile-page__related-role" set:html={profile.role} />
               <h3 set:html={profile.title} />
               <div class="richtext-shell" set:html={profile.summary} />
@@ -119,59 +121,87 @@ if (!content) {
 }
 
 <style>
+  .biography-profile-page__intro {
+    padding-top: clamp(2.5rem, 5vw, 4rem);
+    padding-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
   .biography-profile-page__grid {
     display: grid;
-    grid-template-columns: minmax(18rem, 28rem) minmax(0, 1fr);
-    gap: clamp(1.5rem, 5vw, 3rem);
-    align-items: center;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(2rem, 6vw, 4.5rem);
+    align-items: stretch;
   }
 
   .biography-profile-page__media {
+    position: relative;
     overflow: hidden;
-    border-radius: 1rem;
-    border: 1px solid var(--line);
-    box-shadow: 0 22px 52px rgba(16, 47, 48, 0.12);
+    border-radius: 1.5rem;
+    background: rgba(22, 60, 61, 0.04);
+    min-height: 22rem;
+  }
+
+  .biography-profile-page__media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 1.5rem;
+    box-shadow: inset 0 0 0 1px rgba(22, 60, 61, 0.06);
+    pointer-events: none;
   }
 
   .biography-profile-page__media img {
     width: 100%;
     height: 100%;
-    min-height: 22rem;
     object-fit: cover;
     display: block;
   }
 
   .biography-profile-page__copy {
     display: grid;
-    gap: 1rem;
+    gap: 1.15rem;
+    align-content: start;
   }
 
   .biography-profile-page__role,
   .biography-profile-page__related-role {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
     margin: 0;
     color: var(--primary);
-    font-size: 0.86rem;
-    letter-spacing: 0.08em;
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .biography-profile-page__role::before,
+  .biography-profile-page__related-role::before {
+    content: "";
+    width: 1.8rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.5;
   }
 
   .biography-profile-page__copy h1 {
-    font-size: clamp(2.3rem, 5vw, 4rem);
-    line-height: 1.04;
+    font-size: clamp(2.4rem, 5.2vw, 4.25rem);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
   }
 
   .biography-profile-page__summary {
-    color: var(--foreground);
-    font-size: 1.04rem;
+    margin-top: 1rem;
+    color: var(--muted);
+    font-size: 1.08rem;
     line-height: 1.75;
+    max-width: 36rem;
   }
 
   .biography-profile-page__summary :global(p),
   .biography-profile-page__summary :global(ul),
-  .biography-profile-page__summary :global(ol),
-  .biography-profile-page__body-card :global(p),
-  .biography-profile-page__body-card :global(ul),
-  .biography-profile-page__body-card :global(ol) {
+  .biography-profile-page__summary :global(ol) {
     margin: 0;
     line-height: 1.75;
   }
@@ -179,41 +209,111 @@ if (!content) {
   .biography-profile-page__tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.55rem;
-    margin: 0;
+    gap: 0.4rem 0.8rem;
+    margin: 0.2rem 0 0;
     padding: 0;
     list-style: none;
   }
 
   .biography-profile-page__tags li {
-    padding: 0.4rem 0.65rem;
-    border-radius: 999px;
-    border: 1px solid rgba(22, 60, 61, 0.12);
-    background: rgba(22, 60, 61, 0.04);
-    color: var(--foreground);
-    font-size: 0.84rem;
-    line-height: 1.3;
+    color: var(--muted);
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+  }
+
+  .biography-profile-page__tags li:not(:last-child)::after {
+    content: "·";
+    margin-left: 0.8rem;
+    opacity: 0.5;
   }
 
   .biography-profile-page__actions {
     display: flex;
     flex-wrap: wrap;
+    align-items: flex-start;
     gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+
+  .biography-profile-page__actions .home-button {
+    align-self: flex-start;
+    padding: 0.6rem 1.15rem;
+    font-size: 0.92rem;
+    line-height: 1.2;
+    height: auto;
+  }
+
+  .biography-profile-page__body {
+    padding-top: clamp(1.5rem, 3.5vw, 2.5rem);
+    padding-bottom: clamp(3rem, 6vw, 5rem);
+    background: transparent;
+  }
+
+  .biography-profile-page__body .container--narrow {
+    max-width: 46rem;
   }
 
   .biography-profile-page__body-card {
+    position: relative;
     display: grid;
-    gap: 1rem;
-    padding: clamp(1.35rem, 3vw, 2rem);
-    border: 1px solid var(--line);
-    border-radius: 1rem;
-    background: rgba(255, 255, 255, 0.92);
-    box-shadow: 0 18px 44px rgba(16, 47, 48, 0.08);
+    gap: 1.2rem;
+    padding: clamp(2.5rem, 5vw, 4rem) clamp(2rem, 4.5vw, 3.5rem);
+    border: none;
+    border-radius: 1.5rem;
+    background: #ffffff;
+    box-shadow: 0 30px 80px -24px rgba(16, 47, 48, 0.18);
+    font-size: 1.05rem;
+    color: var(--foreground);
   }
 
-  .biography-profile-page__body-card p {
+  .biography-profile-page__body-card::before {
+    content: "";
+    position: absolute;
+    top: 2.25rem;
+    left: clamp(2rem, 4.5vw, 3.5rem);
+    width: 2.25rem;
+    height: 2px;
+    background: var(--primary);
+    border-radius: 999px;
+  }
+
+  .biography-profile-page__body-card > :global(*:first-child) {
+    padding-top: 0.6rem;
+  }
+
+  .biography-profile-page__body-card :global(p:first-of-type) {
+    font-size: 1.18rem;
+    line-height: 1.7;
     color: var(--foreground);
-    line-height: 1.75;
+  }
+
+  .biography-profile-page__body-card :global(p),
+  .biography-profile-page__body-card :global(ul),
+  .biography-profile-page__body-card :global(ol) {
+    margin: 0;
+    line-height: 1.85;
+  }
+
+  .biography-profile-page__body-card :global(h2) {
+    margin-top: 1.5rem;
+    font-size: clamp(1.5rem, 2.6vw, 1.9rem);
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+  }
+
+  .biography-profile-page__body-card :global(h3) {
+    margin-top: 1.25rem;
+    font-size: 1.25rem;
+    line-height: 1.25;
+  }
+
+  .biography-profile-page__body-card :global(blockquote) {
+    margin: 1.5rem 0;
+    padding: 0.25rem 0 0.25rem 1.5rem;
+    border-left: 2px solid var(--primary);
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.7;
   }
 
   .biography-profile-page__booking {
@@ -226,59 +326,72 @@ if (!content) {
 
   .biography-profile-page__related-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+    gap: 2rem 1.75rem;
+    margin-top: 3rem;
   }
 
   .biography-profile-page__related-card {
-    display: grid;
-    gap: 0.7rem;
-    border-radius: 1rem;
-    border: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.92);
-    box-shadow: 0 18px 44px rgba(16, 47, 48, 0.08);
-    overflow: hidden;
-    transition:
-      transform 220ms ease,
-      box-shadow 220ms ease,
-      border-color 220ms ease;
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+    transition: transform 280ms cubic-bezier(0.2, 0.7, 0.2, 1);
   }
 
   .biography-profile-page__related-card:hover {
     color: inherit;
-    transform: translateY(-3px);
-    border-color: rgb(var(--primary-rgb) / 0.18);
-    box-shadow: 0 22px 52px rgba(16, 47, 48, 0.12);
+    transform: translateY(-4px);
+  }
+
+  .biography-profile-page__related-media {
+    display: block;
+    overflow: hidden;
+    border-radius: 1rem;
+    background: rgba(22, 60, 61, 0.04);
+    aspect-ratio: 1 / 1;
   }
 
   .biography-profile-page__related-card img {
     width: 100%;
-    aspect-ratio: 16 / 11;
+    height: 100%;
     object-fit: cover;
+    transition: transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
   }
 
-  .biography-profile-page__related-card > :global(*) {
-    margin-inline: 1rem;
+  .biography-profile-page__related-card:hover img {
+    transform: scale(1.04);
   }
 
-  .biography-profile-page__related-card img:first-child {
-    margin: 0;
+  .biography-profile-page__related-card > :global(.biography-profile-page__related-role) {
+    margin-top: 1.35rem;
   }
 
   .biography-profile-page__related-card h3 {
-    font-size: 1.3rem;
-    line-height: 1.15;
+    margin-top: 0.5rem;
+    font-size: 1.35rem;
+    line-height: 1.18;
+    letter-spacing: -0.01em;
   }
 
-  .biography-profile-page__related-card p:last-child {
-    margin-bottom: 1rem;
-    color: var(--foreground);
-    line-height: 1.6;
+  .biography-profile-page__related-card .richtext-shell {
+    margin-top: 1rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+
+  .biography-profile-page__related-card .richtext-shell :global(p) {
+    margin: 0;
   }
 
   @media (max-width: 960px) {
     .biography-profile-page__grid {
       grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .biography-profile-page__media img {
+      aspect-ratio: 4 / 5;
     }
   }
 </style>

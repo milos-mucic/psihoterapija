@@ -1,4 +1,5 @@
 ---
+import PageBanner from "@/components/sections/PageBanner.astro";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import { getBlockBackgroundStyle } from "@/features/page-content/admin/block-backgrounds";
 import type { SiteLocale } from "@/lib/config/site";
@@ -12,6 +13,10 @@ const { locale, content: previewContent } = Astro.props;
 const content = previewContent ?? (await pageContentService.getPricingPageData(locale));
 const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackgrounds, fragment);
 ---
+
+{!content.hiddenBlocks?.includes("pricing-banner") && (
+  <PageBanner {...content.banner} sectionId="pricing-banner" blockStyle={blockBg("pricing-banner")} />
+)}
 
 {!content.hiddenBlocks?.includes("pricing-plans") && (
 <section id="pricing-plans" class="page-section pricing-page__plans-section" style={blockBg("pricing-plans")}>
@@ -28,8 +33,8 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
             <p class="pricing-page__price" set:html={plan.price} />
             <div class="pricing-page__outside richtext-shell" set:html={plan.outsideSerbiaPrice} />
             <a class="pricing-page__cta" href={plan.ctaHref}>
-              <span>{plan.ctaLabel}</span>
-              <span aria-hidden="true">→</span>
+              <span class="pricing-page__cta-label">{plan.ctaLabel}</span>
+              <span class="pricing-page__cta-arrow" aria-hidden="true">→</span>
             </a>
           </article>
         ))
@@ -62,7 +67,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
 
 <style>
   .pricing-page__plans-section {
-    padding-top: 0.6rem;
+    padding-top: clamp(2.5rem, 5vw, 4rem);
     padding-bottom: 1rem;
   }
 
@@ -74,6 +79,8 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
 
   .pricing-page__card {
     display: grid;
+    justify-items: center;
+    text-align: center;
     gap: 0.95rem;
     padding: 1.55rem 1.4rem;
     border-radius: 12px;
@@ -101,6 +108,10 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
     line-height: 1.6;
   }
 
+  .pricing-page__outside :global(p) {
+    text-align: center;
+  }
+
   .pricing-page__outside :global(p),
   .pricing-page__outside :global(ul),
   .pricing-page__outside :global(ol),
@@ -118,10 +129,53 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
     margin-top: 0.15rem;
     font-weight: 600;
     color: var(--primary);
+    position: relative;
+    transition: color 220ms ease, transform 220ms ease;
+  }
+
+  .pricing-page__cta-label {
+    position: relative;
+  }
+
+  .pricing-page__cta-label::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform 280ms ease;
+  }
+
+  .pricing-page__cta-arrow {
+    display: inline-block;
+    transition: transform 260ms ease;
   }
 
   .pricing-page__cta:hover {
     color: var(--accent-strong);
+  }
+
+  .pricing-page__cta:hover .pricing-page__cta-label::after,
+  .pricing-page__cta:focus-visible .pricing-page__cta-label::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+
+  .pricing-page__cta:hover .pricing-page__cta-arrow,
+  .pricing-page__cta:focus-visible .pricing-page__cta-arrow {
+    transform: translateX(4px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pricing-page__cta,
+    .pricing-page__cta-label::after,
+    .pricing-page__cta-arrow {
+      transition: none;
+    }
   }
 
   .pricing-page__info-section {
@@ -163,7 +217,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
 
   @media (max-width: 760px) {
     .pricing-page__plans-section {
-      padding-top: 0;
+      padding-top: 2rem;
     }
 
     .pricing-page__grid,

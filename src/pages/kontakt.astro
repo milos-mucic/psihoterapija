@@ -14,6 +14,8 @@ const content = await pageContentService.getContactPageData(locale);
   description={content.seo.description}
   locale={locale}
   canonicalPath="/kontakt/"
+  appBarTone="dark"
+  appBarOverlay={true}
 >
   <ContactPage locale={locale} content={content} />
 </BaseLayout>

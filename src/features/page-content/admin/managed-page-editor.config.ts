@@ -539,14 +539,14 @@ const buildScopeEditor = (content: ScopePageManagedContent): ManagedPageEditorCo
 const buildPricingEditor = (content: PricingPageManagedContent): ManagedPageEditorConfig => ({
   uploadFolder: "pages/pricing",
   sections: [
-    seoSection(content.seo, { fragment: "pricing-plans" }),
+    seoSection(content.seo, { fragment: "pricing-banner" }),
     {
       kind: "standard",
-      fragment: "pricing-plans",
-      title: "Banner i SEO tekst",
-      copy: "Ovo se koristi za naslovni opis stranice i meta opis.",
+      fragment: "pricing-banner",
+      title: "Banner",
+      copy: "Naslov, opis i pozadinska slika cenovne stranice.",
       previewCopy:
-        "Ovaj blok najviše utiče na SEO i uvodni sloj stranice, pa preview otvara vrh javne strane.",
+        "Banner se prikazuje na vrhu cenovne stranice i postavlja kontekst za planove ispod.",
       entries: [
         text("bannerTitle", "Naslov", content.banner.title),
         richText("bannerDescription", "Opis", content.banner.description),

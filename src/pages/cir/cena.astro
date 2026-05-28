@@ -14,6 +14,8 @@ const content = await pageContentService.getPricingPageData(locale);
   description={content.seo.description}
   locale={locale}
   canonicalPath="/cir/cena/"
+  appBarTone="dark"
+  appBarOverlay={true}
 >
   <PricingPage locale={locale} />
 </BaseLayout>
