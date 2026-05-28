@@ -17,17 +17,18 @@ type Props = {
 const { locale, content, posts } = Astro.props;
 const dictionary = getDictionary(locale);
 const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackgrounds, fragment);
-const youtubeShortCodeMatch = content.reasons.videoHref.match(/youtu\.be\/([^?&#]+)/);
-const youtubeWatchMatch = content.reasons.videoHref.match(/[?&]v=([^&]+)/);
-const youtubeVideoId = youtubeWatchMatch?.[1] ?? youtubeShortCodeMatch?.[1];
-const vimeoMatch = content.reasons.videoHref.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-const isDirectVideo = /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(content.reasons.videoHref);
-const homeVideoKind = isDirectVideo ? "direct" : "embed";
-const homeVideoSrc = youtubeVideoId
-  ? `https://www.youtube.com/embed/${youtubeVideoId}?autoplay=1&rel=0`
-  : vimeoMatch?.[1]
-    ? `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`
-    : content.reasons.videoHref;
+// Video plejer privremeno onemogucen — ostaje samo poster slika.
+// const youtubeShortCodeMatch = content.reasons.videoHref.match(/youtu\.be\/([^?&#]+)/);
+// const youtubeWatchMatch = content.reasons.videoHref.match(/[?&]v=([^&]+)/);
+// const youtubeVideoId = youtubeWatchMatch?.[1] ?? youtubeShortCodeMatch?.[1];
+// const vimeoMatch = content.reasons.videoHref.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+// const isDirectVideo = /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(content.reasons.videoHref);
+// const homeVideoKind = isDirectVideo ? "direct" : "embed";
+// const homeVideoSrc = youtubeVideoId
+//   ? `https://www.youtube.com/embed/${youtubeVideoId}?autoplay=1&rel=0`
+//   : vimeoMatch?.[1]
+//     ? `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`
+//     : content.reasons.videoHref;
 ---
 
 {!content.hiddenBlocks?.includes("home-prompt") && (
@@ -77,13 +78,12 @@ const homeVideoSrc = youtubeVideoId
 <section id="home-services" class="home-section home-section--dark" style={blockBg("home-services")}>
   <div class="container">
     <div class="home-services">
-      <div class="home-services__layout">
-        <div class="home-services__intro" data-reveal="up">
-          <h2 class="home-visually-hidden" set:html={content.services.title} />
-          <div class="home-richtext home-richtext--light" set:html={content.services.copy} />
-        </div>
+      <div class="home-services__header" data-reveal="up">
+        <h2 set:html={content.services.title} />
+        <div class="home-richtext home-richtext--light" set:html={content.services.copy} />
+      </div>
 
-        <div class="home-services__cards">
+      <div class="home-services__cards">
           {
             content.services.items.map((item, index) => (
               <a
@@ -92,16 +92,18 @@ const homeVideoSrc = youtubeVideoId
                 data-reveal="up"
                 style={`--reveal-delay: ${90 + index * 90}ms;`}
               >
-                <img
-                  class="home-service-card__icon"
-                  src={item.image}
-                  alt=""
-                  loading="lazy"
-                  data-image-component
-                  aria-hidden="true"
-                />
-                <div class="home-service-card__body">
+                <div class="home-service-card__header">
+                  <img
+                    class="home-service-card__icon"
+                    src={item.image}
+                    alt=""
+                    loading="lazy"
+                    data-image-component
+                    aria-hidden="true"
+                  />
                   <h3 class="home-service-title" set:html={item.title} />
+                </div>
+                <div class="home-service-card__body">
                   <div
                     class="home-service-copy home-richtext home-richtext--light"
                     set:html={item.copy}
@@ -132,7 +134,6 @@ const homeVideoSrc = youtubeVideoId
             ))
           }
         </div>
-      </div>
     </div>
   </div>
 </section>
@@ -228,6 +229,15 @@ const homeVideoSrc = youtubeVideoId
           }
         </div>
 
+        {/* Video plejer privremeno onemogucen — ostaje samo poster slika. */}
+        <div
+          class="home-video-card home-video-card--static"
+          data-reveal="grow"
+          style="--reveal-delay: 180ms;"
+        >
+          <img src={content.reasons.videoImage} alt="" loading="lazy" data-image-component />
+        </div>
+        {/*
         <button
           type="button"
           class="home-video-card"
@@ -242,12 +252,14 @@ const homeVideoSrc = youtubeVideoId
           <span class="home-video-card__badge" set:html={dictionary.common.play} />
           <span class="home-video-card__label">{content.reasons.videoLabel}</span>
         </button>
+        */}
       </div>
     </div>
   </div>
 </section>
 )}
 
+{/* Video dijalog + skripta privremeno onemoguceni. Otkomentarisati zajedno sa video dugmetom u home-reasons sekciji.
 <dialog class="home-video-dialog" data-home-video-dialog>
   <div class="home-video-dialog__surface">
     <button
@@ -358,6 +370,7 @@ const homeVideoSrc = youtubeVideoId
     setupHomeVideo();
   })();
 </script>
+*/}
 
 {!content.hiddenBlocks?.includes("home-booking") && (
 <section id="home-booking" class="home-section home-section--tight" style={blockBg("home-booking")}>

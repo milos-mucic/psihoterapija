@@ -25,6 +25,10 @@ const richTextRequired = z
   .min(1)
   .transform((value) => sanitizeRichTextHtml(value))
   .refine((value) => value.length > 0);
+const richTextOptional = z
+  .string()
+  .trim()
+  .transform((value) => (value ? sanitizeRichTextHtml(value) : ""));
 
 const bannerSchema = z.object({
   title: requiredText,
@@ -229,6 +233,8 @@ const biographyCardSchema = z.object({
   slug: requiredText,
   title: requiredText,
   role: requiredText,
+  bannerTitle: optionalText.optional(),
+  bannerDescription: richTextOptional.optional(),
   summary: richTextRequired,
   body: richTextRequired,
   image: requiredText,
@@ -304,6 +310,8 @@ const toBiographyCard = (
     slug: input[`${prefix}slug`],
     title: input[`${prefix}title`],
     role: input[`${prefix}role`],
+    bannerTitle: input[`${prefix}bannerTitle`],
+    bannerDescription: input[`${prefix}bannerDescription`],
     summary: input[`${prefix}summary`],
     body: input[`${prefix}body`],
     image: input[`${prefix}image`],

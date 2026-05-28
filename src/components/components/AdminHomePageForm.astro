@@ -537,6 +537,10 @@ const normalizedServiceItems = Array.from({ length: 3 }, (_, index) => ({
           ))
         }
 
+        {/* Video plejer privremeno onemogucen — URL i labela su sakriveni, postojece vrednosti se cuvaju kroz hidden input. */}
+        <input type="hidden" name="reasonsVideoUrl" value={content.reasons.videoUrl} />
+        <input type="hidden" name="reasonsVideoLabel" value={content.reasons.videoLabel} />
+        {/*
         <AdminMediaField
           client:load
           name="reasonsVideoUrl"
@@ -548,17 +552,19 @@ const normalizedServiceItems = Array.from({ length: 3 }, (_, index) => ({
           uploadLabel="Otpremi video"
           helpText="Možete ostaviti YouTube/Vimeo URL ili otpremiti direktan video fajl."
         />
+        */}
 
         <AdminMediaField
           client:load
           name="reasonsVideoImage"
-          label="Poster / preview slika videa"
+          label="Slika"
           initialValue={content.reasons.videoImage}
           uploadUrl="/api/admin/media/upload"
           uploadFolder="pages/home"
           uploadLabel="Dodaj sliku"
         />
 
+        {/*
         <label class="admin-form__field">
           <span>Labela videa</span>
           <input
@@ -567,6 +573,7 @@ const normalizedServiceItems = Array.from({ length: 3 }, (_, index) => ({
             value={content.reasons.videoLabel}
           />
         </label>
+        */}
       </div>
     </div>
   </div>

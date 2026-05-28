@@ -41,6 +41,8 @@ export type BiographyProfileManagedContent = {
   slug: string;
   title: string;
   role: string;
+  bannerTitle?: string;
+  bannerDescription?: string;
   summary: string;
   body: string;
   image: string;

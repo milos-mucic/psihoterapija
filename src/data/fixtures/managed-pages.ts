@@ -187,8 +187,8 @@ export const buildBiographyDetailPageData = (
 
   return {
     banner: {
-      title: profile.title,
-      description: profile.role,
+      title: profile.bannerTitle?.trim() ? profile.bannerTitle : profile.title,
+      description: profile.bannerDescription?.trim() ? profile.bannerDescription : profile.role,
       backgroundImage: content.banner.backgroundImage,
       theme: "dark" as const,
       align: "split" as const,

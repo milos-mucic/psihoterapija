@@ -128,6 +128,30 @@ const {
                   />
                 </label>
 
+                <label class="admin-form__field admin-form__field--full">
+                  <span>Naslov banera (opciono)</span>
+                  <input
+                    class="input-control"
+                    data-biography-card-field="bannerTitle"
+                    name={`biographyCard_${index}_bannerTitle`}
+                    value={card.bannerTitle ?? ""}
+                    placeholder={card.title}
+                  />
+                  <small class="admin-form__hint">Ako ostavite prazno, koristi se 'Naslov' iznad.</small>
+                </label>
+
+                <label class="admin-form__field admin-form__field--full">
+                  <span>Opis banera (opciono)</span>
+                  <textarea
+                    class="input-control"
+                    data-biography-card-field="bannerDescription"
+                    name={`biographyCard_${index}_bannerDescription`}
+                    rows="2"
+                    placeholder={card.role}
+                  >{card.bannerDescription ?? ""}</textarea>
+                  <small class="admin-form__hint">Ako ostavite prazno, koristi se 'Rola' iznad.</small>
+                </label>
+
                 <div class="admin-form__field admin-form__field--full">
                   <span>Sažetak na kartici</span>
                   <div class="admin-biography-card-rich-text" data-biography-card-field="summary">
@@ -286,6 +310,18 @@ const {
             <label class="admin-form__field">
               <span>Rola</span>
               <input class="input-control" data-biography-card-field="role" />
+            </label>
+
+            <label class="admin-form__field admin-form__field--full">
+              <span>Naslov banera (opciono)</span>
+              <input class="input-control" data-biography-card-field="bannerTitle" />
+              <small class="admin-form__hint">Ako ostavite prazno, koristi se 'Naslov' iznad.</small>
+            </label>
+
+            <label class="admin-form__field admin-form__field--full">
+              <span>Opis banera (opciono)</span>
+              <textarea class="input-control" data-biography-card-field="bannerDescription" rows="2"></textarea>
+              <small class="admin-form__hint">Ako ostavite prazno, koristi se 'Rola' iznad.</small>
             </label>
 
             <div class="admin-form__field admin-form__field--full">
