@@ -1,7 +1,7 @@
 # Psychotherapy Website Implementation Blueprint
 
 ## 1. Recommended Architecture
-
+  
 ### Recommended baseline
 
 - Use **Astro as the application shell** with **TypeScript** and **Tailwind**.
