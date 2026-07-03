@@ -4,6 +4,7 @@ export type PageKey =
   | "biography"
   | "psychotherapy"
   | "scope"
+  | "services"
   | "pricing"
   | "appointment"
   | "faq"
@@ -305,6 +306,26 @@ export type ContactPageManagedContent = {
   officeGallery: string[];
 };
 
+export type ServiceItemManagedContent = {
+  slug: string;
+  seo: PageSeoManagedContent;
+  banner: PageBannerManagedContent;
+  intro: {
+    title: string;
+    body: string;
+    image: string;
+    highlights: string[];
+  };
+  faqs: ManagedFaqItem[];
+};
+
+export type ServicesPageManagedContent = {
+  seo: PageSeoManagedContent;
+  hiddenBlocks?: string[];
+  blockBackgrounds?: BlockBackgroundsManagedContent;
+  services: ServiceItemManagedContent[];
+};
+
 export type BlogIndexPageManagedContent = {
   seo: PageSeoManagedContent;
   hiddenBlocks?: string[];
@@ -335,6 +356,7 @@ export type ManagedPageContentMap = {
   biography: BiographyPageManagedContent;
   psychotherapy: PsychotherapyPageManagedContent;
   scope: ScopePageManagedContent;
+  services: ServicesPageManagedContent;
   pricing: PricingPageManagedContent;
   appointment: AppointmentPageManagedContent;
   faq: FaqPageManagedContent;

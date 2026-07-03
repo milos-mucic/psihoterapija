@@ -10,6 +10,7 @@ import type {
   PricingPageManagedContent,
   PsychotherapyPageManagedContent,
   ScopePageManagedContent,
+  ServicesPageManagedContent,
 } from "@/features/page-content/types/page-content.types";
 
 export type SupportedManagedPage = Exclude<PageKey, "home">;
@@ -132,6 +133,7 @@ type ManagedPageEditorContent =
   | BiographyPageManagedContent
   | PsychotherapyPageManagedContent
   | ScopePageManagedContent
+  | ServicesPageManagedContent
   | PricingPageManagedContent
   | AppointmentPageManagedContent
   | FaqPageManagedContent
@@ -536,6 +538,72 @@ const buildScopeEditor = (content: ScopePageManagedContent): ManagedPageEditorCo
   ],
 });
 
+const buildServicesEditor = (content: ServicesPageManagedContent): ManagedPageEditorConfig => ({
+  uploadFolder: "pages/services",
+  sections: content.services.flatMap((service, index): ManagedPageEditorSection[] => {
+    const prefix = `svc${index}`;
+
+    return [
+      {
+        kind: "standard",
+        fragment: `services-${index}-banner`,
+        title: `${service.banner.title} — SEO i baner`,
+        copy: "SEO, naslov, opis i pozadinska slika banera ove usluge.",
+        entries: [
+          text(`${prefix}_seoTitle`, "SEO naslov", service.seo.title, { full: true }),
+          textarea(`${prefix}_seoDescription`, "Meta opis", service.seo.description, {
+            full: true,
+            rows: 3,
+          }),
+          text(`${prefix}_bannerTitle`, "Naslov usluge", service.banner.title),
+          richText(`${prefix}_bannerDescription`, "Opis u baneru", service.banner.description),
+          media(`${prefix}_bannerImage`, "Pozadinska slika banera", service.banner.backgroundImage),
+        ],
+      },
+      {
+        kind: "standard",
+        fragment: `services-${index}-intro`,
+        title: `${service.banner.title} — Uvodni tekst`,
+        copy: "Naslov, glavni tekst i slika uvodne sekcije.",
+        entries: [
+          text(`${prefix}_introTitle`, "Naslov", service.intro.title, { full: true }),
+          richText(`${prefix}_introBody`, "Tekst", service.intro.body),
+          media(`${prefix}_introImage`, "Slika uz tekst", service.intro.image),
+        ],
+      },
+      {
+        kind: "repeatableText",
+        fragment: `services-${index}-intro`,
+        title: `${service.banner.title} — Ključne stavke`,
+        copy: 'Lista "Ukratko" pored slike.',
+        itemLabel: "Stavka",
+        itemNamePrefix: `${prefix}_highlight`,
+        values: service.intro.highlights,
+        addButtonLabel: "Dodaj stavku",
+        minItems: 1,
+      },
+      {
+        kind: "repeatableGroup",
+        fragment: `services-${index}-faq`,
+        title: `${service.banner.title} — FAQ`,
+        copy: "Pitanja i odgovori za ovu uslugu.",
+        itemLabel: "Pitanje",
+        itemNamePrefix: `${prefix}_faq`,
+        addButtonLabel: "Dodaj pitanje",
+        minItems: 1,
+        fields: [
+          { key: "question", kind: "text", label: "Pitanje", full: true },
+          { key: "answer", kind: "richText", label: "Odgovor", full: true },
+        ],
+        items: service.faqs.map((faq) => ({
+          question: faq.question,
+          answer: faq.answer,
+        })),
+      },
+    ];
+  }),
+});
+
 const buildPricingEditor = (content: PricingPageManagedContent): ManagedPageEditorConfig => ({
   uploadFolder: "pages/pricing",
   sections: [
@@ -852,6 +920,8 @@ export const getManagedPageEditorConfig = (
       return buildPsychotherapyEditor(content as PsychotherapyPageManagedContent);
     case "scope":
       return buildScopeEditor(content as ScopePageManagedContent);
+    case "services":
+      return buildServicesEditor(content as ServicesPageManagedContent);
     case "pricing":
       return buildPricingEditor(content as PricingPageManagedContent);
     case "appointment":

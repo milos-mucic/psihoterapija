@@ -20,6 +20,7 @@ import type {
   PricingPageManagedContent,
   PsychotherapyPageManagedContent,
   ScopePageManagedContent,
+  ServicesPageManagedContent,
 } from "@/features/page-content/types/page-content.types";
 
 type SupportedPage = Exclude<PageKey, "home">;
@@ -32,6 +33,7 @@ type Props = {
     | BiographyPageManagedContent
     | PsychotherapyPageManagedContent
     | ScopePageManagedContent
+    | ServicesPageManagedContent
     | PricingPageManagedContent
     | AppointmentPageManagedContent
     | FaqPageManagedContent

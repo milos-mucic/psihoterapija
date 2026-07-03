@@ -1,4 +1,12 @@
 import { getDictionary } from "@/features/i18n/translate";
+import type {
+  ServiceItemManagedContent,
+  ServicesPageManagedContent,
+} from "@/features/page-content/types/page-content.types";
+import type {
+  ServiceDetailData,
+  ServiceDetailSlug,
+} from "@/data/fixtures/service-details";
 
 const mirroredImages = {
   logoService1: "/legacy/images/mirrored/logo-service-1.png",
@@ -557,3 +565,29 @@ export const officeGallery = [
   "/legacy/images/Office-2-1_1Office 2 (1).webp",
   "/legacy/images/Office-3-1_1Office 3 (1).webp",
 ];
+
+export const buildServiceDetailData = (
+  service: ServiceItemManagedContent,
+): ServiceDetailData => ({
+  slug: service.slug as ServiceDetailSlug,
+  seo: service.seo,
+  banner: {
+    title: service.banner.title,
+    description: service.banner.description,
+    backgroundImage: service.banner.backgroundImage,
+    theme: "dark",
+    align: "split",
+  },
+  intro: {
+    title: service.intro.title,
+    body: service.intro.body,
+    image: service.intro.image,
+    highlights: service.intro.highlights,
+  },
+  faqs: service.faqs.map((faq) => ({ question: faq.question, answerHtml: faq.answer })),
+});
+
+export const buildServicesPageData = (content: ServicesPageManagedContent) => ({
+  seo: content.seo,
+  services: content.services.map((service) => buildServiceDetailData(service)),
+});

@@ -15,6 +15,7 @@ import type {
   PricingPageManagedContent,
   PsychotherapyPageManagedContent,
   ScopePageManagedContent,
+  ServicesPageManagedContent,
 } from "@/features/page-content/types/page-content.types";
 
 const requiredText = z.string().trim().min(1);
@@ -677,6 +678,80 @@ export const parsePricingPageManagedContentForm = (input: unknown): PricingPageM
     },
     plans,
     infoCards,
+  });
+};
+
+const SERVICE_SLUGS = ["psihoterapija", "psiholosko-savetovanje", "konsultacije"] as const;
+
+const serviceItemSchema = z.object({
+  slug: requiredText,
+  seo: seoSchema,
+  banner: bannerSchema,
+  intro: z.object({
+    title: requiredText,
+    body: richTextRequired,
+    image: requiredText,
+    highlights: z.array(requiredText).min(1),
+  }),
+  faqs: z.array(faqItemSchema).min(1),
+});
+
+export const servicesPageManagedContentSchema: z.ZodType<ServicesPageManagedContent> = z.object({
+  seo: seoSchema,
+  hiddenBlocks: hiddenBlocksSchema,
+  blockBackgrounds: blockBackgroundsSchema,
+  services: z.array(serviceItemSchema).length(3),
+});
+
+export const parseServicesPageManagedContent = (input: unknown) =>
+  servicesPageManagedContentSchema.parse(input);
+
+export const parseServicesPageManagedContentForm = (
+  input: unknown,
+): ServicesPageManagedContent => {
+  const values = toInputRecord(input);
+
+  const services = SERVICE_SLUGS.map((slug, serviceIndex) => {
+    const highlights = getIndexedTextValues(values, `svc${serviceIndex}_highlight`);
+    const faqs = getIndexedFieldMatches(
+      values,
+      new RegExp(`^svc${serviceIndex}_faq_(\\d+)_question$`),
+    ).map((index) =>
+      faqItemSchema.parse({
+        question: values[`svc${serviceIndex}_faq_${index}_question`],
+        answer: values[`svc${serviceIndex}_faq_${index}_answer`],
+      }),
+    );
+
+    return serviceItemSchema.parse({
+      slug,
+      seo: {
+        title: values[`svc${serviceIndex}_seoTitle`],
+        description: values[`svc${serviceIndex}_seoDescription`],
+      },
+      banner: {
+        title: values[`svc${serviceIndex}_bannerTitle`],
+        description: values[`svc${serviceIndex}_bannerDescription`],
+        backgroundImage: values[`svc${serviceIndex}_bannerImage`],
+      },
+      intro: {
+        title: values[`svc${serviceIndex}_introTitle`],
+        body: values[`svc${serviceIndex}_introBody`],
+        image: values[`svc${serviceIndex}_introImage`],
+        highlights,
+      },
+      faqs,
+    });
+  });
+
+  return servicesPageManagedContentSchema.parse({
+    seo: {
+      title: values["svc0_seoTitle"],
+      description: values["svc0_seoDescription"],
+    },
+    hiddenBlocks: collectHiddenBlocksFromForm(values),
+    blockBackgrounds: collectBlockBackgroundsFromForm(values),
+    services,
   });
 };
 

@@ -12,6 +12,8 @@ export const getPublicPageHref = (pageKey: PageKey) => {
       return "/psihoterapija/";
     case "scope":
       return "/psihoterapija/";
+    case "services":
+      return "/usluge/psihoterapija/";
     case "pricing":
       return "/cena/";
     case "appointment":

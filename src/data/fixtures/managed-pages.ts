@@ -20,6 +20,7 @@ import type {
   PricingPageManagedContent,
   PsychotherapyPageManagedContent,
   ScopePageManagedContent,
+  ServicesPageManagedContent,
 } from "@/features/page-content/types/page-content.types";
 import { getDictionary } from "@/features/i18n/translate";
 import { siteConfig } from "@/lib/config/site";
@@ -31,6 +32,139 @@ const defaultScopeSlugs = [
   "depresivna-stanja",
   "trauma",
 ];
+
+const serviceParagraphs = (paragraphs: string[]) =>
+  paragraphs.map((paragraph) => `<p>${paragraph}</p>`).join("");
+
+export const getDefaultServicesPageManagedContent = (): ServicesPageManagedContent => {
+  const dictionary = getDictionary();
+  const items = dictionary.homePage.services.items;
+  const psychotherapyFaqs = dictionary.pages.psychotherapy.faqs;
+  const appointmentFaqs = dictionary.pages.appointment.faqs;
+  const toFaqs = (list: Array<{ question: string; answer: string }>) =>
+    list.map((faq) => ({ question: faq.question, answer: `<p>${faq.answer}</p>` }));
+
+  return {
+    seo: {
+      title: `${items[0].title} | Psihoterapijski kabinet Ikar`,
+      description: dictionary.meta.psychotherapy.description,
+    },
+    services: [
+      {
+        slug: "psihoterapija",
+        seo: {
+          title: `${items[0].title} | Psihoterapijski kabinet Ikar`,
+          description: dictionary.meta.psychotherapy.description,
+        },
+        banner: {
+          title: items[0].title,
+          description:
+            "<p>Psihodinamska psihoterapija je dugoročniji proces usmeren na razumevanje dubljih uzroka psiholoških teškoća i postepeno stvaranje trajnih promena.</p>",
+          backgroundImage: "/legacy/images/mirrored/session-banner.webp",
+        },
+        intro: {
+          title: "Kako izgleda psihoterapijski rad",
+          body: serviceParagraphs([
+            "Psihodinamska psihoterapija ne bavi se samo ublažavanjem simptoma, već razumevanjem unutrašnjih konflikata, obrazaca odnosa i načina na koje lična istorija oblikuje sadašnji život.",
+            "U fokusu rada su teme koje se ponavljaju, odnosi koji iscrpljuju, osećanja koja dugo traju i teškoće koje utiču na svakodnevno funkcionisanje. Proces se razvija postepeno, u ritmu koji je prilagođen osobi.",
+            "Cilj nije brzo rešenje, već dublje razumevanje sebe i stabilnija promena koja može da se održi i van terapijskog prostora.",
+          ]),
+          image: "/legacy/images/mirrored/service-3.png",
+          highlights: [
+            "Dugoročniji i kontinuiran proces",
+            "Rad na dubljim uzrocima teškoća",
+            "Individualno prilagođen ritam susreta",
+          ],
+        },
+        faqs: toFaqs(psychotherapyFaqs.slice(1, 4)),
+      },
+      {
+        slug: "psiholosko-savetovanje",
+        seo: {
+          title: `${items[1].title} | Psihoterapijski kabinet Ikar`,
+          description: items[1].copy,
+        },
+        banner: {
+          title: items[1].title,
+          description:
+            "<p>Psihološko savetovanje pruža jasniju podršku u periodima stresa, krize, dilema i životnih prelaza, kada je potreban fokusiraniji i kraći oblik rada.</p>",
+          backgroundImage: "/legacy/images/Banner-Home-3-1_1Banner Home 3 (1).webp",
+        },
+        intro: {
+          title: "Kada savetovanje ima najviše smisla",
+          body: serviceParagraphs([
+            "Psihološko savetovanje je namenjeno situacijama u kojima je osobi potrebna stručna podrška, ali ne nužno i dugoročan psihoterapijski proces. Najčešće je korisno u periodima stresa, akutnih kriza, važnih odluka ili promena.",
+            "Za razliku od psihoterapije, savetovanje je više usmereno na aktuelnu situaciju, njeno razumevanje i traženje održivog načina da se osoba kroz nju kreće sa što više stabilnosti.",
+            "Ovakav rad može biti kraćeg trajanja, ali i dalje podrazumeva aktivno učešće, promišljanje i saradnju, a ne gotova rešenja koja neko drugi nameće.",
+          ]),
+          image: "/legacy/images/mirrored/service-img.png",
+          highlights: [
+            "Podrška u stresu, krizi i dilemi",
+            "Kraći i fokusiraniji format rada",
+            "Jasniji plan narednih koraka",
+          ],
+        },
+        faqs: toFaqs([
+          {
+            question: 'Da li psihološko savetovanje može da "leči" mentalne bolesti?',
+            answer:
+              "Cilj psihološkog savetovanja nije lečenje mentalnih poremećaja, već pružanje podrške i pomoći pri nošenju sa njima, posebno u kriznim i prelaznim životnim periodima.",
+          },
+          {
+            question: 'Kako se psihodinamsko savetovanje razlikuje od "običnog" savetovanja?',
+            answer:
+              "Psihodinamsko savetovanje uzima u obzir širu sliku ličnosti i životnog konteksta, pa se ne zadržava samo na površinskom uklanjanju neprijatnih osećanja, već pokušava da razume njihovo značenje i funkciju.",
+          },
+          {
+            question: "Koliko dugo traje savetodavni proces?",
+            answer:
+              "Savetovanje je uglavnom kraće od psihoterapije, ali nema unapred zadat rok. Nekome je dovoljan jedan susret, a nekome nekoliko meseci kontinuiteta, u zavisnosti od situacije i potreba.",
+          },
+        ]),
+      },
+      {
+        slug: "konsultacije",
+        seo: {
+          title: `${items[2].title} | Psihoterapijski kabinet Ikar`,
+          description: items[2].copy,
+        },
+        banner: {
+          title: items[2].title,
+          description:
+            "<p>Konsultativni termin je namenjen razjašnjavanju dilema, informisanju i proceni koji oblik podrške najviše odgovara Vašoj situaciji.</p>",
+          backgroundImage: "/legacy/images/Banner-Contact-1_1Banner Contact (1).webp",
+        },
+        intro: {
+          title: "Čemu služi konsultativni termin",
+          body: serviceParagraphs([
+            "Konsultacije su dobar prvi korak kada osoba još nije sigurna da li joj je potrebna psihoterapija, savetovanje ili samo dodatno pojašnjenje u vezi sa sopstvenom situacijom.",
+            "Na konsultativnom terminu razgovaramo o razlogu javljanja, trenutnim teškoćama, očekivanjima i mogućim pravcima daljeg rada. Cilj nije da se odmah otvori dubinski proces, već da se napravi jasnija procena.",
+            "Ovakav susret može biti koristan i kada Vam je potrebna profesionalna orijentacija, dodatno objašnjenje terapijskog procesa ili pomoć da odlučite šta je u ovom trenutku za Vas najadekvatnije.",
+          ]),
+          image: "/legacy/images/mirrored/session-img-1.png",
+          highlights: [
+            "Prvi korak bez pritiska da odmah ulazite u proces",
+            "Procena formata podrške koji Vam najviše odgovara",
+            "Jasnije razumevanje narednih koraka",
+          ],
+        },
+        faqs: toFaqs([
+          appointmentFaqs[0],
+          {
+            question: "Da li konsultacije znače da moram da nastavim dalje sa radom?",
+            answer:
+              "Ne. Konsultativni termin služi da razjasnimo potrebe i mogućnosti. Nakon razgovora možete odlučiti da li želite nastavak rada i u kom formatu.",
+          },
+          {
+            question: "Šta mogu da očekujem od prvog konsultativnog susreta?",
+            answer:
+              "Možete očekivati strukturisan razgovor o tome zbog čega se javljate, šta Vas opterećuje i koji oblik podrške bi u datom trenutku mogao biti najkorisniji za Vas.",
+          },
+        ]),
+      },
+    ],
+  };
+};
 
 export const getDefaultAboutPageManagedContent = (): AboutPageManagedContent => {
   const content = getAboutPageData();

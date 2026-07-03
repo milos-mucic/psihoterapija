@@ -37,6 +37,11 @@ const pageDefinitions: Array<{ pageKey: PageKey; title: string; copy: string }> 
     copy: "Uvod, fokus sekcija i sve detail teme.",
   },
   {
+    pageKey: "services",
+    title: "Usluge",
+    copy: "Tri stranice usluga (baner, uvod, ključne stavke i FAQ) sa homepage-a.",
+  },
+  {
     pageKey: "pricing",
     title: "Cena",
     copy: "Cenovne kartice i dodatna pojašnjenja.",

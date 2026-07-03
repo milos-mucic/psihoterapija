@@ -28,6 +28,10 @@ const pageConfig = {
     title: "Oblast rada",
     copy: "Uvod, fokus blok, blog blok i sve četiri teme sa detail stranicama.",
   },
+  services: {
+    title: "Usluge",
+    copy: "Tri stranice usluga sa banerom, uvodom, ključnim stavkama i FAQ blokom.",
+  },
   pricing: {
     title: "Cena",
     copy: "Tri cenovne kartice i info blokovi ispod njih.",
@@ -71,6 +75,7 @@ const content = await (async () => {
     case "biography":     return pageContentService.getManagedBiographyContent();
     case "psychotherapy": return pageContentService.getManagedPsychotherapyContent();
     case "scope":         return pageContentService.getManagedScopeContent();
+    case "services":      return pageContentService.getManagedServicesContent();
     case "pricing":       return pageContentService.getManagedPricingContent();
     case "appointment":   return pageContentService.getManagedAppointmentContent();
     case "faq":           return pageContentService.getManagedFaqContent();

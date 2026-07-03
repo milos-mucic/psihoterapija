@@ -9,6 +9,7 @@ import FaqPage from "@/components/pages/FaqPage.astro";
 import PricingPage from "@/components/pages/PricingPage.astro";
 import PsychotherapyPage from "@/components/pages/PsychotherapyPage.astro";
 import ScopePage from "@/components/pages/ScopePage.astro";
+import ServiceDetailPage from "@/components/pages/ServiceDetailPage.astro";
 import HomeHeroSection from "@/components/sections/HomeHeroSection.astro";
 import HomePageContent from "@/components/sections/HomePageContent.astro";
 import { blogService } from "@/features/blog/services/blog.service";
@@ -25,6 +26,7 @@ const supportedPages = new Set<PageKey>([
   "biography",
   "psychotherapy",
   "scope",
+  "services",
   "pricing",
   "appointment",
   "faq",
@@ -77,6 +79,13 @@ const scopeContent =
   pageParam === "scope"
     ? ((await pageContentService.getPreviewPageData("scope", token)) as Awaited<
         ReturnType<typeof pageContentService.getScopePageData>
+      >)
+    : undefined;
+
+const servicesContent =
+  pageParam === "services"
+    ? ((await pageContentService.getPreviewPageData("services", token)) as Awaited<
+        ReturnType<typeof pageContentService.getServicesPageData>
       >)
     : undefined;
 
@@ -160,6 +169,18 @@ const blogIndexPosts =
       canonicalPath={publicHref}
     >
       <ScopePage content={scopeContent} />
+    </BaseLayout>
+  ) : pageParam === "services" && servicesContent ? (
+    <BaseLayout
+      title={servicesContent.seo.title}
+      description={servicesContent.seo.description}
+      canonicalPath={publicHref}
+      appBarTone="dark"
+      appBarOverlay={true}
+    >
+      {servicesContent.services.map((service) => (
+        <ServiceDetailPage data={service} />
+      ))}
     </BaseLayout>
   ) : pageParam === "pricing" && pricingContent ? (
     <BaseLayout

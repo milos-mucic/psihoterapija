@@ -20,7 +20,10 @@ import {
   getDefaultPricingPageManagedContent,
   getDefaultPsychotherapyPageManagedContent,
   getDefaultScopePageManagedContent,
+  getDefaultServicesPageManagedContent,
 } from "@/data/fixtures/managed-pages";
+import { buildServiceDetailData, buildServicesPageData } from "@/data/fixtures/public-pages";
+import { isServiceDetailSlug } from "@/data/fixtures/service-details";
 import { AstroDbPageContentRepository } from "@/features/page-content/repositories/astro-db-page-content.repository";
 import {
   parseAboutPageManagedContent,
@@ -41,6 +44,8 @@ import {
   parsePsychotherapyPageManagedContentForm,
   parseScopePageManagedContent,
   parseScopePageManagedContentForm,
+  parseServicesPageManagedContent,
+  parseServicesPageManagedContentForm,
 } from "@/features/page-content/schemas/managed-pages.schema";
 import {
   parseHomePageManagedContent,
@@ -60,6 +65,7 @@ import type {
   PricingPageManagedContent,
   PsychotherapyPageManagedContent,
   ScopePageManagedContent,
+  ServicesPageManagedContent,
 } from "@/features/page-content/types/page-content.types";
 import { pagePreviewService } from "@/features/page-content/services/page-preview.service";
 
@@ -80,6 +86,8 @@ const parseManagedPageContentForm = <TPageKey extends PageKey>(
       return parsePsychotherapyPageManagedContentForm(input) as ManagedPageContentMap[TPageKey];
     case "scope":
       return parseScopePageManagedContentForm(input) as ManagedPageContentMap[TPageKey];
+    case "services":
+      return parseServicesPageManagedContentForm(input) as ManagedPageContentMap[TPageKey];
     case "pricing":
       return parsePricingPageManagedContentForm(input) as ManagedPageContentMap[TPageKey];
     case "appointment":
@@ -108,6 +116,8 @@ const buildManagedPageData = <TPageKey extends PageKey>(
       return buildPsychotherapyPageData(content as PsychotherapyPageManagedContent);
     case "scope":
       return buildScopePageData(content as ScopePageManagedContent);
+    case "services":
+      return buildServicesPageData(content as ServicesPageManagedContent);
     case "pricing":
       return buildPricingPageData(content as PricingPageManagedContent);
     case "appointment":
@@ -164,6 +174,8 @@ export const pageContentService = {
         return (await this.getManagedPsychotherapyContent()) as ManagedPageContentMap[TPageKey];
       case "scope":
         return (await this.getManagedScopeContent()) as ManagedPageContentMap[TPageKey];
+      case "services":
+        return (await this.getManagedServicesContent()) as ManagedPageContentMap[TPageKey];
       case "pricing":
         return (await this.getManagedPricingContent()) as ManagedPageContentMap[TPageKey];
       case "appointment":
@@ -209,6 +221,8 @@ export const pageContentService = {
         return await this.getPsychotherapyPageData();
       case "scope":
         return await this.getScopePageData();
+      case "services":
+        return await this.getServicesPageData();
       case "pricing":
         return await this.getPricingPageData();
       case "appointment":
@@ -330,6 +344,38 @@ export const pageContentService = {
     const content = parseScopePageManagedContentForm(input);
     await repository.upsert("scope", content);
     pagePreviewService.clearDrafts("scope");
+    return content;
+  },
+  async getManagedServicesContent(): Promise<ServicesPageManagedContent> {
+    const record = await repository.get("services");
+
+    if (!record) {
+      return getDefaultServicesPageManagedContent();
+    }
+
+    try {
+      return parseServicesPageManagedContent(record.content);
+    } catch {
+      return getDefaultServicesPageManagedContent();
+    }
+  },
+  async getServicesPageData() {
+    return buildServicesPageData(await this.getManagedServicesContent());
+  },
+  async getServiceDetailPageData(slug: string) {
+    if (!isServiceDetailSlug(slug)) {
+      return undefined;
+    }
+
+    const content = await this.getManagedServicesContent();
+    const service = content.services.find((item) => item.slug === slug);
+
+    return service ? buildServiceDetailData(service) : undefined;
+  },
+  async updateServicesContent(input: unknown) {
+    const content = parseServicesPageManagedContentForm(input);
+    await repository.upsert("services", content);
+    pagePreviewService.clearDrafts("services");
     return content;
   },
   async getManagedPricingContent(): Promise<PricingPageManagedContent> {

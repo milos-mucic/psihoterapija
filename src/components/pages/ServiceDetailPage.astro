@@ -2,16 +2,15 @@
 import AppointmentForm from "@/components/components/AppointmentForm.astro";
 import FaqAccordionSection from "@/components/sections/FaqAccordionSection.astro";
 import PageBanner from "@/components/sections/PageBanner.astro";
-import { getServiceDetailData, type ServiceDetailSlug } from "@/data/fixtures/service-details";
+import type { ServiceDetailData } from "@/data/fixtures/service-details";
 import { getDictionary } from "@/features/i18n/translate";
 
 type Props = {
-  slug: ServiceDetailSlug;
+  data: ServiceDetailData;
 };
 
-const { slug } = Astro.props;
+const { data: content } = Astro.props;
 const dictionary = getDictionary();
-const content = getServiceDetailData(slug);
 const formats = dictionary.pages.appointment.formats;
 const formatLabel = dictionary.pages.appointment.formatLabel;
 const summaryTitle = dictionary.common.serviceSummaryTitle;
@@ -67,20 +66,6 @@ const bookingCopy = dictionary.common.serviceBookingCopy;
 <FaqAccordionSection items={content.faqs} image={content.intro.image} sectionId="service-faq" />
 
 <style>
-  .service-detail-page__banner :global(.page-banner) {
-    background: none;
-    padding: 10px 0 clamp(1.9rem, 4vw, 2.5rem);
-  }
-
-  .service-detail-page__banner :global(.page-banner__content) {
-    align-items: center;
-    gap: 0.85rem 1.7rem;
-  }
-
-  .service-detail-page__banner :global(.page-banner h1) {
-    font-size: clamp(2.15rem, 4vw, 3.35rem);
-  }
-
   .service-detail-page__grid {
     display: grid;
     grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.9fr);

@@ -9,6 +9,7 @@ const supportedPages = new Set([
   "biography",
   "psychotherapy",
   "scope",
+  "services",
   "pricing",
   "appointment",
   "faq",
@@ -55,6 +56,9 @@ export const POST: APIRoute = async (context) => {
         break;
       case "scope":
         await pageContentService.updateScopeContent(payload);
+        break;
+      case "services":
+        await pageContentService.updateServicesContent(payload);
         break;
       case "pricing":
         await pageContentService.updatePricingContent(payload);

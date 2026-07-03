@@ -1,27 +1,24 @@
 ---
+export const prerender = false;
+
 import BaseLayout from "@/components/components/BaseLayout.astro";
 import ServiceDetailPage from "@/components/pages/ServiceDetailPage.astro";
-import {
-  getServiceDetailData,
-  serviceDetailSlugs,
-  type ServiceDetailSlug,
-} from "@/data/fixtures/service-details";
+import { pageContentService } from "@/features/page-content/services/page-content.service";
 
-export const getStaticPaths = () =>
-  serviceDetailSlugs.map((slug) => ({
-    params: { slug },
-  }));
+const slug = Astro.params.slug as string;
+const content = await pageContentService.getServiceDetailPageData(slug);
 
-const slug = Astro.params.slug as ServiceDetailSlug;
-const content = getServiceDetailData(slug);
+if (!content) {
+  return new Response("Not found", { status: 404 });
+}
 ---
 
 <BaseLayout
   title={content.seo.title}
   description={content.seo.description}
-  canonicalPath={`/usluge/${slug}/`}
+  canonicalPath={`/usluge/${content.slug}/`}
   appBarTone="dark"
   appBarOverlay={true}
 >
-  <ServiceDetailPage slug={slug} />
+  <ServiceDetailPage data={content} />
 </BaseLayout>
