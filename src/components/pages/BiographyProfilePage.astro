@@ -1,7 +1,6 @@
 ---
 import { stripHtmlTags } from "@/features/page-content/admin/technical-fields";
 import AppointmentForm from "@/components/components/AppointmentForm.astro";
-import PageBanner from "@/components/sections/PageBanner.astro";
 import { getDictionary } from "@/features/i18n/translate";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 
@@ -19,11 +18,7 @@ if (!content) {
 }
 ---
 
-<div class="biography-profile-page__banner">
-  <PageBanner {...content.banner} />
-</div>
-
-<section class="page-section biography-profile-page__intro">
+<section class="page-section biography-profile-page__intro biography-profile-page__intro--top">
   <div class="container">
     <div class="biography-profile-page__grid">
       <div class="biography-profile-page__media" data-reveal="left">
@@ -36,8 +31,8 @@ if (!content) {
       </div>
 
       <div class="biography-profile-page__copy" data-reveal="right" style="--reveal-delay: 90ms;">
-        <p class="biography-profile-page__role" set:html={content.profile.role} />
         <h1 set:html={content.profile.title} />
+        <p class="biography-profile-page__role" set:html={content.profile.role} />
         <div
           class="biography-profile-page__summary richtext-shell"
           set:html={content.profile.summary}

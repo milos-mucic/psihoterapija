@@ -633,18 +633,11 @@ const buildPricingEditor = (content: PricingPageManagedContent): ManagedPageEdit
       fields: [
         { key: "title", kind: "text", label: "Naslov" },
         { key: "price", kind: "text", label: "Cena" },
-        {
-          key: "outsideSerbiaPrice",
-          kind: "richText",
-          label: "Napomena za uplate iz inostranstva",
-          full: true,
-        },
         { key: "ctaLabel", kind: "text", label: "Labela CTA" },
       ],
       items: content.plans.map((plan) => ({
         title: plan.title,
         price: plan.price,
-        outsideSerbiaPrice: plan.outsideSerbiaPrice,
         ctaLabel: plan.ctaLabel,
       })),
     },

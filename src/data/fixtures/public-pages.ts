@@ -80,7 +80,6 @@ type ScopeTabSeed = Omit<ScopeTab, "cardTitle" | "cardCopy" | "href">;
 type PricingPlan = {
   title: string;
   price: string;
-  outsideSerbiaPrice: string;
   ctaHref: string;
   ctaLabel: string;
 };
@@ -385,21 +384,18 @@ export const getPricingPageData = () => {
     {
       title: "Psihoterapijska seansa",
       price: "3500 RSD",
-      outsideSerbiaPrice: "Za uplate izvan Republike Srbije, cena iznosi 35 € + provizija.",
       ctaHref: "/zakazivanje/",
       ctaLabel: "Zakažite termin",
     },
     {
       title: "Psihološko savetovanje",
       price: "3500 RSD",
-      outsideSerbiaPrice: "Za uplate izvan Republike Srbije, cena iznosi 35 € + provizija.",
       ctaHref: "/zakazivanje/",
       ctaLabel: "Zakažite termin",
     },
     {
       title: "Konsultacija",
       price: "4000 RSD",
-      outsideSerbiaPrice: "Za uplate izvan Republike Srbije, cena iznosi 40 € + provizija.",
       ctaHref: "/zakazivanje/",
       ctaLabel: "Zakažite termin",
     },

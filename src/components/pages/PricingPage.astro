@@ -29,7 +29,6 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
           >
             <h3 set:html={plan.title} />
             <p class="pricing-page__price" set:html={plan.price} />
-            <div class="pricing-page__outside richtext-shell" set:html={plan.outsideSerbiaPrice} />
             <a class="pricing-page__cta" href={plan.ctaHref}>
               <span class="pricing-page__cta-label">{plan.ctaLabel}</span>
               <span class="pricing-page__cta-arrow" aria-hidden="true">→</span>

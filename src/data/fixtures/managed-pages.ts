@@ -543,7 +543,6 @@ export const getDefaultPricingPageManagedContent = (): PricingPageManagedContent
     plans: content.plans.map((plan) => ({
       title: plan.title,
       price: plan.price,
-      outsideSerbiaPrice: plan.outsideSerbiaPrice,
       ctaLabel: plan.ctaLabel,
     })),
     infoCards: content.infoCards,

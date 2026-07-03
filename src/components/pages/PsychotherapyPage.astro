@@ -29,7 +29,6 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
         <img src={introImage} alt="" loading="lazy" data-image-component />
       </div>
       <div class="psychotherapy-page__intro-copy">
-        <p class="psychotherapy-page__eyebrow" set:html={dictionary.nav.psychotherapy} />
         <h1 set:html={content.banner.title} />
         <div class="psychotherapy-page__intro-text richtext-shell" set:html={content.banner.description} />
       </div>
@@ -363,10 +362,44 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
           activateAtIndex(nextIndex, { focus: false });
         });
 
-        const firstTab = triggers[0];
-        if (firstTab instanceof HTMLElement && firstTab.dataset.tabId) {
-          setActiveTab(firstTab.dataset.tabId, { scroll: false });
+        const getHashTabId = () => {
+          const match = /^#tema-(.+)$/.exec(window.location.hash);
+          return match ? decodeURIComponent(match[1]) : null;
+        };
+
+        const findTriggerByTabId = (tabId: string) =>
+          triggers.find(
+            (trigger) => trigger instanceof HTMLElement && trigger.dataset.tabId === tabId,
+          );
+
+        const activateFromHash = (options: { scrollIntoView?: boolean } = {}) => {
+          const hashTabId = getHashTabId();
+          if (!hashTabId) return false;
+
+          const target = findTriggerByTabId(hashTabId);
+          if (!(target instanceof HTMLElement) || !target.dataset.tabId) return false;
+
+          setActiveTab(target.dataset.tabId, { scroll: true });
+
+          if (options.scrollIntoView !== false) {
+            window.requestAnimationFrame(() => {
+              tabsRoot.scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+          }
+
+          return true;
+        };
+
+        if (!activateFromHash()) {
+          const firstTab = triggers[0];
+          if (firstTab instanceof HTMLElement && firstTab.dataset.tabId) {
+            setActiveTab(firstTab.dataset.tabId, { scroll: false });
+          }
         }
+
+        window.addEventListener("hashchange", () => {
+          activateFromHash();
+        });
 
         tabsRoot.dataset.bound = "true";
       });

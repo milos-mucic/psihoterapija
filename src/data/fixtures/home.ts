@@ -274,15 +274,15 @@ export const buildHomePageData = (
       items: [
         {
           ...content.themes.items[0],
-          href: "/psihoterapija/",
+          href: "/psihoterapija/#tema-anksiozna-stanja",
         },
         {
           ...content.themes.items[1],
-          href: "/psihoterapija/",
+          href: "/psihoterapija/#tema-poremecaji-licnosti",
         },
         {
           ...content.themes.items[2],
-          href: "/psihoterapija/",
+          href: "/psihoterapija/#tema-traume",
         },
       ],
     },

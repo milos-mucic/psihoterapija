@@ -622,7 +622,6 @@ export const parseScopePageManagedContentForm = (input: unknown): ScopePageManag
 const pricingPlanSchema = z.object({
   title: requiredText,
   price: requiredText,
-  outsideSerbiaPrice: requiredText,
   ctaLabel: requiredText,
 });
 
@@ -653,7 +652,6 @@ export const parsePricingPageManagedContentForm = (input: unknown): PricingPageM
     pricingPlanSchema.parse({
       title: values[`pricingPlan_${index}_title`],
       price: values[`pricingPlan_${index}_price`],
-      outsideSerbiaPrice: values[`pricingPlan_${index}_outsideSerbiaPrice`],
       ctaLabel: values[`pricingPlan_${index}_ctaLabel`],
     }),
   );

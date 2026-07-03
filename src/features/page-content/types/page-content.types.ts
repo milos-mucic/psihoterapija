@@ -239,7 +239,6 @@ export type PricingPageManagedContent = {
   plans: Array<{
     title: string;
     price: string;
-    outsideSerbiaPrice: string;
     ctaLabel: string;
   }>;
   infoCards: ManagedTextCard[];

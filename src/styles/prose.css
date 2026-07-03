@@ -149,3 +149,21 @@
     margin: 0 0 1.2rem;
   }
 }
+
+/* Reliable blank-line spacing from the admin rich-text editor.
+   Empty paragraphs (a blank line created by pressing Enter) previously rendered
+   inconsistently — a truly empty <p> has no height and adjacent paragraph margins
+   collapse, so gaps sometimes appeared and sometimes did not. Forcing a full
+   line-box on every blank paragraph makes each intentional gap render reliably. */
+.prose-shell p:empty,
+.richtext-shell p:empty,
+.prose-shell p:has(> br:only-child),
+.richtext-shell p:has(> br:only-child) {
+  min-height: 1.1em;
+  margin: 0 0 1.1rem;
+}
+
+.prose-shell p:empty::before,
+.richtext-shell p:empty::before {
+  content: "\00a0";
+}
