@@ -4,17 +4,15 @@ import AppointmentForm from "@/components/components/AppointmentForm.astro";
 import PageBanner from "@/components/sections/PageBanner.astro";
 import { getDictionary } from "@/features/i18n/translate";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
-import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
-  locale: SiteLocale;
   slug: string;
 };
 
-const { locale, slug } = Astro.props;
-const content = await pageContentService.getBiographyProfilePageData(locale, slug);
-const appointmentContent = await pageContentService.getAppointmentPageData(locale);
-const dictionary = getDictionary(locale);
+const { slug } = Astro.props;
+const content = await pageContentService.getBiographyProfilePageData(slug);
+const appointmentContent = await pageContentService.getAppointmentPageData();
+const dictionary = getDictionary();
 
 if (!content) {
   throw new Error(`Missing biography profile data for slug: ${slug}`);
@@ -75,7 +73,6 @@ if (!content) {
 
       <div data-reveal="up" style="--reveal-delay: 90ms;">
         <AppointmentForm
-          locale={locale}
           labels={dictionary.forms}
           formatLabel={appointmentContent.formatLabel}
           formats={appointmentContent.formats}

@@ -1,8 +1,6 @@
-import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import { sanitizeInlineRichTextHtml, sanitizeRichTextHtml } from "@/features/blog/utils/rich-text";
 import type { HomePageManagedContent } from "@/features/page-content/types/page-content.types";
-import type { SiteLocale } from "@/lib/config/site";
 
 type LinkCard = {
   title: string;
@@ -86,10 +84,9 @@ export type HomePageData = {
 const toParagraphHtml = (value: string) => sanitizeRichTextHtml(value);
 
 const ensureServiceItems = (
-  locale: SiteLocale,
   items: HomePageManagedContent["services"]["items"],
 ) => {
-  const dictionaryItems = getDictionary(locale).homePage.services.items;
+  const dictionaryItems = getDictionary().homePage.services.items;
   const defaultImages = [
     "/legacy/images/White-Icon-2.png",
     "/legacy/images/mirrored/logo-service-3.png",
@@ -113,9 +110,9 @@ const toCombinedRichTextHtml = (paragraphs: string[], bullets: string[]) => {
   return sanitizeRichTextHtml(`${paragraphHtml}${listHtml}`);
 };
 
-export const getDefaultHomePageManagedContent = (locale: SiteLocale): HomePageManagedContent => {
-  const content = getDictionary(locale).homePage;
-  const dictionary = getDictionary(locale);
+export const getDefaultHomePageManagedContent = (): HomePageManagedContent => {
+  const content = getDictionary().homePage;
+  const dictionary = getDictionary();
 
   return {
     seo: {
@@ -142,7 +139,7 @@ export const getDefaultHomePageManagedContent = (locale: SiteLocale): HomePageMa
     services: {
       title: content.services.title,
       copy: toParagraphHtml(content.services.copy),
-      items: ensureServiceItems(locale, [
+      items: ensureServiceItems([
         {
           title: content.services.items[0].title,
           copy: toParagraphHtml(content.services.items[0].copy),
@@ -211,11 +208,10 @@ export const getDefaultHomePageManagedContent = (locale: SiteLocale): HomePageMa
 };
 
 export const buildHomePageData = (
-  locale: SiteLocale,
   content: HomePageManagedContent,
 ): HomePageData => {
-  const dictionary = getDictionary(locale);
-  const serviceItems = ensureServiceItems(locale, content.services.items);
+  const dictionary = getDictionary();
+  const serviceItems = ensureServiceItems(content.services.items);
 
   return {
     seo: content.seo,
@@ -225,24 +221,24 @@ export const buildHomePageData = (
       titleHtml: content.hero.titleHtml,
       description: content.hero.description,
       primaryAction: {
-        href: localizePath(locale, "/zakazivanje/"),
+        href: "/zakazivanje/",
         label: content.hero.primaryActionLabel,
       },
       secondaryAction: {
-        href: localizePath(locale, "/o-nama/"),
+        href: "/o-nama/",
         label: content.hero.secondaryActionLabel,
       },
     },
     prompt: {
       title: content.prompt.title,
       copy: content.prompt.copy,
-      href: localizePath(locale, "/kontakt/"),
+      href: "/kontakt/",
       label: content.prompt.label,
     },
     about: {
       title: content.about.title,
       body: content.about.body,
-      href: localizePath(locale, "/biografija/nemanja-zajkeskovic/"),
+      href: "/biografija/nemanja-zajkeskovic/",
       label: content.about.label,
       image: content.about.image,
     },
@@ -252,24 +248,24 @@ export const buildHomePageData = (
       items: [
         {
           ...serviceItems[0],
-          href: localizePath(locale, "/usluge/psihoterapija/"),
+          href: "/usluge/psihoterapija/",
           label: dictionary.homePage.services.items[0].label,
         },
         {
           ...serviceItems[1],
-          href: localizePath(locale, "/usluge/psiholosko-savetovanje/"),
+          href: "/usluge/psiholosko-savetovanje/",
           label: dictionary.homePage.services.items[1].label,
         },
         {
           ...serviceItems[2],
-          href: localizePath(locale, "/usluge/konsultacije/"),
+          href: "/usluge/konsultacije/",
           label: dictionary.homePage.services.items[2].label,
         },
       ],
     },
     promo: {
       title: dictionary.homePage.promo.title,
-      href: localizePath(locale, "/kontakt/"),
+      href: "/kontakt/",
       label: dictionary.homePage.promo.label,
       image: "/legacy/images/Appointmebt-Img_1Appointmebt Img.webp",
     },
@@ -278,15 +274,15 @@ export const buildHomePageData = (
       items: [
         {
           ...content.themes.items[0],
-          href: localizePath(locale, "/psihoterapija/"),
+          href: "/psihoterapija/",
         },
         {
           ...content.themes.items[1],
-          href: localizePath(locale, "/psihoterapija/"),
+          href: "/psihoterapija/",
         },
         {
           ...content.themes.items[2],
-          href: localizePath(locale, "/psihoterapija/"),
+          href: "/psihoterapija/",
         },
       ],
     },
@@ -294,9 +290,9 @@ export const buildHomePageData = (
       title: content.reasons.title,
       copy: content.reasons.copy,
       items: [
-        { ...content.reasons.items[0], href: localizePath(locale, "/psihoterapija/") },
-        { ...content.reasons.items[1], href: localizePath(locale, "/pitanja/") },
-        { ...content.reasons.items[2], href: localizePath(locale, "/kontakt/") },
+        { ...content.reasons.items[0], href: "/psihoterapija/" },
+        { ...content.reasons.items[1], href: "/pitanja/" },
+        { ...content.reasons.items[2], href: "/kontakt/" },
       ],
       videoHref: content.reasons.videoUrl,
       videoImage: content.reasons.videoImage,
@@ -311,12 +307,12 @@ export const buildHomePageData = (
     recent: {
       title: content.recent.title,
       copy: content.recent.copy,
-      href: localizePath(locale, "/blog/"),
+      href: "/blog/",
       label: content.recent.label,
       empty: content.recent.empty,
     },
   };
 };
 
-export const getHomePageData = (locale: SiteLocale): HomePageData =>
-  buildHomePageData(locale, getDefaultHomePageManagedContent(locale));
+export const getHomePageData = (): HomePageData =>
+  buildHomePageData(getDefaultHomePageManagedContent());

@@ -28,7 +28,6 @@ export const POST: APIRoute = async (context) => {
 
   const archivedPost = await blogService.updatePost(id, {
     slug: existingPost.slug,
-    locale: existingPost.locale,
     title: existingPost.title,
     excerpt: existingPost.excerpt,
     body: existingPost.body,

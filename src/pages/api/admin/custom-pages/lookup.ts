@@ -1,10 +1,9 @@
 import type { APIRoute } from "astro";
 import { requireAdminApiAuth } from "@/features/admin/auth/admin-api-auth";
 import { customPageService } from "@/features/custom-pages/services/custom-page.service";
-import type { SiteLocale } from "@/lib/config/site";
 
 /**
- * GET /api/admin/custom-pages/lookup?href=<url>&locale=<sr-latn|sr-cyrl>
+ * GET /api/admin/custom-pages/lookup?href=<url>
  *
  * Used by the navigation editor to check whether a URL maps to:
  *  - a system page (predefined in routing)
@@ -12,35 +11,20 @@ import type { SiteLocale } from "@/lib/config/site";
  *  - an orphan URL (doesn't exist — admin should be offered to create one)
  */
 
-const SYSTEM_PATHS: Record<SiteLocale, Set<string>> = {
-  "sr-latn": new Set([
-    "",
-    "/",
-    "/o-nama/",
-    "/biografija/",
-    "/usluge/",
-    "/usluge/psihoterapija/",
-    "/usluge/oblast-rada/",
-    "/usluge/cena/",
-    "/zakazivanje/",
-    "/pitanja/",
-    "/kontakt/",
-    "/blog/",
-  ]),
-  "sr-cyrl": new Set([
-    "/cir/",
-    "/cir/o-nama/",
-    "/cir/biografija/",
-    "/cir/usluge/",
-    "/cir/usluge/psihoterapija/",
-    "/cir/usluge/oblast-rada/",
-    "/cir/usluge/cena/",
-    "/cir/zakazivanje/",
-    "/cir/pitanja/",
-    "/cir/kontakt/",
-    "/cir/blog/",
-  ]),
-};
+const SYSTEM_PATHS = new Set<string>([
+  "",
+  "/",
+  "/o-nama/",
+  "/biografija/",
+  "/usluge/",
+  "/usluge/psihoterapija/",
+  "/usluge/oblast-rada/",
+  "/usluge/cena/",
+  "/zakazivanje/",
+  "/pitanja/",
+  "/kontakt/",
+  "/blog/",
+]);
 
 const normalizeHref = (raw: string): string => {
   if (!raw) return "";
@@ -50,14 +34,8 @@ const normalizeHref = (raw: string): string => {
   return href.toLowerCase();
 };
 
-const extractSlug = (href: string, locale: SiteLocale): string | null => {
-  let path = href;
-  if (locale === "sr-cyrl") {
-    if (!path.startsWith("/cir/")) return null;
-    path = path.slice(5); // strip "/cir/"
-  } else {
-    path = path.replace(/^\//, "");
-  }
+const extractSlug = (href: string): string | null => {
+  const path = href.replace(/^\//, "");
   return path.replace(/\/+$/, "").toLowerCase();
 };
 
@@ -66,8 +44,6 @@ export const GET: APIRoute = async (context) => {
   if (authError) return authError;
 
   const href = normalizeHref(context.url.searchParams.get("href") ?? "");
-  const localeRaw = context.url.searchParams.get("locale");
-  const locale: SiteLocale = localeRaw === "sr-cyrl" ? "sr-cyrl" : "sr-latn";
 
   if (!href || !href.startsWith("/")) {
     return new Response(JSON.stringify({ status: "external" }), {
@@ -76,14 +52,14 @@ export const GET: APIRoute = async (context) => {
     });
   }
 
-  if (SYSTEM_PATHS[locale].has(href)) {
+  if (SYSTEM_PATHS.has(href)) {
     return new Response(JSON.stringify({ status: "system" }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   }
 
-  const slug = extractSlug(href, locale);
+  const slug = extractSlug(href);
   if (!slug) {
     return new Response(JSON.stringify({ status: "external" }), {
       status: 200,
@@ -91,7 +67,7 @@ export const GET: APIRoute = async (context) => {
     });
   }
 
-  const page = await customPageService.getBySlug(locale, slug);
+  const page = await customPageService.getBySlug(slug);
 
   if (page) {
     return new Response(

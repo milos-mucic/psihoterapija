@@ -3,7 +3,6 @@ import { ZodError } from "zod";
 import { requireAdminApiAuth } from "@/features/admin/auth/admin-api-auth";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import { adminConfig } from "@/lib/config/admin";
-import type { SiteLocale } from "@/lib/config/site";
 
 const supportedPages = new Set([
   "about",
@@ -42,53 +41,51 @@ export const POST: APIRoute = async (context) => {
   }
 
   const payload = await toPayload(context.request);
-  const locale = payload.locale === "sr-cyrl" ? "sr-cyrl" : "sr-latn";
-  const localeValue = locale as SiteLocale;
 
   try {
     switch (page) {
       case "about":
-        await pageContentService.updateAboutContent(localeValue, payload);
+        await pageContentService.updateAboutContent(payload);
         break;
       case "biography":
-        await pageContentService.updateBiographyContent(localeValue, payload);
+        await pageContentService.updateBiographyContent(payload);
         break;
       case "psychotherapy":
-        await pageContentService.updatePsychotherapyContent(localeValue, payload);
+        await pageContentService.updatePsychotherapyContent(payload);
         break;
       case "scope":
-        await pageContentService.updateScopeContent(localeValue, payload);
+        await pageContentService.updateScopeContent(payload);
         break;
       case "pricing":
-        await pageContentService.updatePricingContent(localeValue, payload);
+        await pageContentService.updatePricingContent(payload);
         break;
       case "appointment":
-        await pageContentService.updateAppointmentContent(localeValue, payload);
+        await pageContentService.updateAppointmentContent(payload);
         break;
       case "faq":
-        await pageContentService.updateFaqContent(localeValue, payload);
+        await pageContentService.updateFaqContent(payload);
         break;
       case "contact":
-        await pageContentService.updateContactContent(localeValue, payload);
+        await pageContentService.updateContactContent(payload);
         break;
       case "blog":
-        await pageContentService.updateBlogIndexContent(localeValue, payload);
+        await pageContentService.updateBlogIndexContent(payload);
         break;
       default:
         return context.redirect(`${adminConfig.basePath}/pages/`);
     }
 
-    return context.redirect(`${adminConfig.basePath}/pages/${page}/?locale=${locale}&saved=1`);
+    return context.redirect(`${adminConfig.basePath}/pages/${page}/?saved=1`);
   } catch (error) {
     if (error instanceof ZodError) {
       return context.redirect(
-        `${adminConfig.basePath}/pages/${page}/?locale=${locale}&error=validation`,
+        `${adminConfig.basePath}/pages/${page}/?error=validation`,
       );
     }
 
     console.error(error);
     return context.redirect(
-      `${adminConfig.basePath}/pages/${page}/?locale=${locale}&error=validation`,
+      `${adminConfig.basePath}/pages/${page}/?error=validation`,
     );
   }
 };

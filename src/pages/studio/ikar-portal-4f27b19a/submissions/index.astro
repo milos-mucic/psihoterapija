@@ -12,7 +12,7 @@ import type { SubmissionStatus } from "@/features/forms/types/submission.types";
 const guard = adminGuard(Astro);
 if (guard) return guard;
 
-const dictionary = getDictionary("sr-latn");
+const dictionary = getDictionary();
 const submissions = await submissionService.listSubmissions();
 
 const filter = (Astro.url.searchParams.get("status") ?? "all") as "all" | SubmissionStatus;

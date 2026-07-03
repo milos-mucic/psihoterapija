@@ -5,7 +5,6 @@ import type {
   CustomPageListItem,
   CustomPageRecord,
 } from "@/features/custom-pages/types/custom-page.types";
-import type { SiteLocale } from "@/lib/config/site";
 
 export class CustomPageValidationError extends Error {
   constructor(public issues: { path: string; message: string }[]) {
@@ -15,8 +14,8 @@ export class CustomPageValidationError extends Error {
 }
 
 export class CustomPageSlugConflictError extends Error {
-  constructor(public slug: string, public locale: SiteLocale) {
-    super(`Slug "${slug}" already exists for ${locale}.`);
+  constructor(public slug: string) {
+    super(`Slug "${slug}" already exists.`);
     this.name = "CustomPageSlugConflictError";
   }
 }
@@ -66,9 +65,9 @@ export const customPageService = {
     }
   },
 
-  async listPublished(locale: SiteLocale): Promise<CustomPageListItem[]> {
+  async listPublished(): Promise<CustomPageListItem[]> {
     try {
-      return await customPageRepository.listPublished(locale);
+      return await customPageRepository.listPublished();
     } catch (error) {
       if (logMissingTable("listPublished", error)) return [];
       throw error;
@@ -84,9 +83,9 @@ export const customPageService = {
     }
   },
 
-  async getBySlug(locale: SiteLocale, slug: string): Promise<CustomPageRecord | undefined> {
+  async getBySlug(slug: string): Promise<CustomPageRecord | undefined> {
     try {
-      return await customPageRepository.getBySlug(locale, slug);
+      return await customPageRepository.getBySlug(slug);
     } catch (error) {
       if (logMissingTable("getBySlug", error)) return undefined;
       throw error;
@@ -95,18 +94,18 @@ export const customPageService = {
 
   async create(input: unknown): Promise<CustomPageRecord> {
     const parsed = parseInput(input);
-    const existing = await customPageRepository.getBySlug(parsed.locale, parsed.slug);
+    const existing = await customPageRepository.getBySlug(parsed.slug);
     if (existing) {
-      throw new CustomPageSlugConflictError(parsed.slug, parsed.locale);
+      throw new CustomPageSlugConflictError(parsed.slug);
     }
     return customPageRepository.create(parsed);
   },
 
   async update(id: string, input: unknown): Promise<CustomPageRecord | undefined> {
     const parsed = parseInput(input);
-    const existing = await customPageRepository.getBySlug(parsed.locale, parsed.slug);
+    const existing = await customPageRepository.getBySlug(parsed.slug);
     if (existing && existing.id !== id) {
-      throw new CustomPageSlugConflictError(parsed.slug, parsed.locale);
+      throw new CustomPageSlugConflictError(parsed.slug);
     }
     return customPageRepository.update(id, parsed);
   },

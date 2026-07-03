@@ -2,15 +2,13 @@
 import PageBanner from "@/components/sections/PageBanner.astro";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import { getBlockBackgroundStyle } from "@/features/page-content/admin/block-backgrounds";
-import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
-  locale: SiteLocale;
   content?: Awaited<ReturnType<typeof pageContentService.getPricingPageData>>;
 };
 
-const { locale, content: previewContent } = Astro.props;
-const content = previewContent ?? (await pageContentService.getPricingPageData(locale));
+const { content: previewContent } = Astro.props;
+const content = previewContent ?? (await pageContentService.getPricingPageData());
 const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackgrounds, fragment);
 ---
 

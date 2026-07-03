@@ -5,13 +5,11 @@ import {
   parseBlogPostCreateInput,
   parseBlogPostUpdateInput,
 } from "@/features/blog/schemas/blog-post.schema";
-import type { SiteLocale } from "@/lib/config/site";
 
 const createSeedInput = (
   post: Awaited<ReturnType<typeof listContentCollectionBlogPosts>>[number],
 ) => ({
   slug: post.slug,
-  locale: post.locale,
   title: post.title,
   excerpt: post.excerpt,
   body: post.body,
@@ -55,17 +53,17 @@ const getRepository = () => {
 };
 
 export const blogService = {
-  async listPublishedPosts(locale: SiteLocale) {
+  async listPublishedPosts() {
     const repository = await getRepository();
-    return repository.listPublished(locale);
+    return repository.listPublished();
   },
   async listAllPosts() {
     const repository = await getRepository();
     return repository.listAll();
   },
-  async getPostBySlug(locale: SiteLocale, slug: string) {
+  async getPostBySlug(slug: string) {
     const repository = await getRepository();
-    return repository.getBySlug(locale, slug);
+    return repository.getBySlug(slug);
   },
   async getPostById(id: string) {
     const repository = await getRepository();

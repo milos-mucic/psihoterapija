@@ -24,7 +24,7 @@ type Props = {
   breadcrumb?: Crumb[];
 };
 
-const dictionary = getDictionary("sr-latn");
+const dictionary = getDictionary();
 const {
   title,
   description = dictionary.meta.admin.layoutDescription,
@@ -60,7 +60,6 @@ const nav: Array<{
       title={title}
       description={description}
       canonicalPath={Astro.url.pathname}
-      locale="sr-latn"
     />
     <meta name="robots" content="noindex" />
   </head>

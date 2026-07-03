@@ -11,7 +11,7 @@ import { adminGuard } from "@/features/admin/auth/admin-guard";
 const guard = adminGuard(Astro);
 if (guard) return guard;
 
-const dictionary = getDictionary("sr-latn");
+const dictionary = getDictionary();
 const { id } = Astro.params;
 const post = id ? await blogService.getPostById(id) : undefined;
 
@@ -61,10 +61,6 @@ const error = params.get("error");
                 <div class="card" style="padding: 1rem;">
                   <dt>{dictionary.admin.blogEdit.labels.status}</dt>
                   <dd style="margin: 0.4rem 0 0;">{post.status}</dd>
-                </div>
-                <div class="card" style="padding: 1rem;">
-                  <dt>{dictionary.admin.blogEdit.labels.locale}</dt>
-                  <dd style="margin: 0.4rem 0 0;">{post.locale}</dd>
                 </div>
                 <div class="card" style="padding: 1rem;">
                   <dt>{dictionary.admin.blogEdit.labels.published}</dt>

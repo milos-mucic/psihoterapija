@@ -4,7 +4,6 @@ export const Submissions = defineTable({
   columns: {
     id: column.text({ primaryKey: true }),
     type: column.text({ enum: ["contact", "appointment"] }),
-    locale: column.text({ enum: ["sr-latn", "sr-cyrl"] }),
     name: column.text(),
     email: column.text(),
     phone: column.text({ optional: true }),
@@ -34,7 +33,6 @@ export const BlogPosts = defineTable({
   columns: {
     id: column.text({ primaryKey: true }),
     slug: column.text(),
-    locale: column.text({ enum: ["sr-latn", "sr-cyrl"] }),
     title: column.text(),
     excerpt: column.text(),
     body: column.text({ multiline: true }),
@@ -49,8 +47,8 @@ export const BlogPosts = defineTable({
   },
   indexes: [
     { on: ["publishedAt"] },
-    { on: ["locale", "status"] },
-    { on: ["locale", "slug"], unique: true },
+    { on: ["status"] },
+    { on: ["slug"], unique: true },
   ],
 });
 
@@ -58,12 +56,11 @@ export const PageContent = defineTable({
   columns: {
     id: column.text({ primaryKey: true }),
     pageKey: column.text(),
-    locale: column.text({ enum: ["sr-latn", "sr-cyrl"] }),
     content: column.json(),
     createdAt: column.date(),
     updatedAt: column.date(),
   },
-  indexes: [{ on: ["pageKey", "locale"], unique: true }],
+  indexes: [{ on: ["pageKey"], unique: true }],
 });
 
 /**
@@ -74,7 +71,6 @@ export const CustomPages = defineTable({
   columns: {
     id: column.text({ primaryKey: true }),
     slug: column.text(),
-    locale: column.text({ enum: ["sr-latn", "sr-cyrl"] }),
     title: column.text(),
     description: column.text({ optional: true }),
     blocks: column.json(),
@@ -83,7 +79,7 @@ export const CustomPages = defineTable({
     updatedAt: column.date(),
   },
   indexes: [
-    { on: ["locale", "slug"], unique: true },
+    { on: ["slug"], unique: true },
     { on: ["status"] },
   ],
 });

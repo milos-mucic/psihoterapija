@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { CustomPages, and, db, desc, eq } from "astro:db";
+import { CustomPages, db, desc, eq } from "astro:db";
 import type {
   CustomPageBlock,
   CustomPageInput,
@@ -7,7 +7,6 @@ import type {
   CustomPageRecord,
   CustomPageStatus,
 } from "@/features/custom-pages/types/custom-page.types";
-import type { SiteLocale } from "@/lib/config/site";
 
 const toDate = (value: Date | string) => (value instanceof Date ? value : new Date(value));
 
@@ -25,14 +24,12 @@ const parseBlocks = (value: unknown): CustomPageBlock[] => {
 const toListItem = (row: {
   id: string;
   slug: string;
-  locale: SiteLocale;
   title: string;
   status: CustomPageStatus;
   updatedAt: Date | string;
 }): CustomPageListItem => ({
   id: row.id,
   slug: row.slug,
-  locale: row.locale,
   title: row.title,
   status: row.status,
   updatedAt: toDate(row.updatedAt),
@@ -41,7 +38,6 @@ const toListItem = (row: {
 const toRecord = (row: {
   id: string;
   slug: string;
-  locale: SiteLocale;
   title: string;
   description: string | null;
   blocks: unknown;
@@ -51,7 +47,6 @@ const toRecord = (row: {
 }): CustomPageRecord => ({
   id: row.id,
   slug: row.slug,
-  locale: row.locale,
   title: row.title,
   description: row.description ?? undefined,
   blocks: parseBlocks(row.blocks),
@@ -74,11 +69,11 @@ export const customPageRepository = {
     return rows.map(toListItem);
   },
 
-  async listPublished(locale: SiteLocale): Promise<CustomPageListItem[]> {
+  async listPublished(): Promise<CustomPageListItem[]> {
     const rows = await db
       .select()
       .from(CustomPages)
-      .where(and(eq(CustomPages.locale, locale), eq(CustomPages.status, "published")))
+      .where(eq(CustomPages.status, "published"))
       .orderBy(desc(CustomPages.updatedAt));
     return rows.map(toListItem);
   },
@@ -89,12 +84,12 @@ export const customPageRepository = {
     return row ? toRecord(row) : undefined;
   },
 
-  async getBySlug(locale: SiteLocale, slug: string): Promise<CustomPageRecord | undefined> {
+  async getBySlug(slug: string): Promise<CustomPageRecord | undefined> {
     const normalized = normalizeSlug(slug);
     const rows = await db
       .select()
       .from(CustomPages)
-      .where(and(eq(CustomPages.locale, locale), eq(CustomPages.slug, normalized)))
+      .where(eq(CustomPages.slug, normalized))
       .limit(1);
     const row = rows[0];
     return row ? toRecord(row) : undefined;
@@ -107,7 +102,6 @@ export const customPageRepository = {
     await db.insert(CustomPages).values({
       id,
       slug: normalizedSlug,
-      locale: input.locale,
       title: input.title,
       description: input.description ?? null,
       blocks: input.blocks,
@@ -118,7 +112,6 @@ export const customPageRepository = {
     return {
       id,
       slug: normalizedSlug,
-      locale: input.locale,
       title: input.title,
       description: input.description,
       blocks: input.blocks,
@@ -137,7 +130,6 @@ export const customPageRepository = {
       .update(CustomPages)
       .set({
         slug: normalizedSlug,
-        locale: input.locale,
         title: input.title,
         description: input.description ?? null,
         blocks: input.blocks,
@@ -148,7 +140,6 @@ export const customPageRepository = {
     return {
       ...existing,
       slug: normalizedSlug,
-      locale: input.locale,
       title: input.title,
       description: input.description,
       blocks: input.blocks,

@@ -1,15 +1,13 @@
 ---
 import PageBanner from "@/components/sections/PageBanner.astro";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
-import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
-  locale: SiteLocale;
   slug: string;
 };
 
-const { locale, slug } = Astro.props;
-const content = await pageContentService.getScopeDetailPageData(locale, slug);
+const { slug } = Astro.props;
+const content = await pageContentService.getScopeDetailPageData(slug);
 
 if (!content) {
   throw new Error(`Missing scope detail data for slug: ${slug}`);

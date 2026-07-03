@@ -11,7 +11,7 @@ if (!slug) {
   throw new Error("Missing blog slug.");
 }
 
-const post = await blogService.getPostBySlug("sr-latn", slug);
+const post = await blogService.getPostBySlug(slug);
 
 if (!post || post.status !== "published") {
   return Astro.redirect("/blog/");
@@ -21,7 +21,6 @@ if (!post || post.status !== "published") {
 <BlogPostLayout
   title={post.title}
   description={extractPlainTextFromHtml(post.seoDescription ?? post.excerpt)}
-  locale="sr-latn"
   canonicalPath={`/blog/${post.slug}/`}
   publishedAt={post.publishedAt}
 >

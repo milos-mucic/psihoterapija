@@ -1,5 +1,3 @@
-import type { SiteLocale } from "@/lib/config/site";
-
 export type PageKey =
   | "home"
   | "about"
@@ -326,7 +324,6 @@ export type BlogIndexPageManagedContent = {
 export type PageContentRecord = {
   id: string;
   pageKey: PageKey;
-  locale: SiteLocale;
   content: unknown;
   createdAt: Date;
   updatedAt: Date;

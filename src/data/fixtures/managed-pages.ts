@@ -21,9 +21,8 @@ import type {
   PsychotherapyPageManagedContent,
   ScopePageManagedContent,
 } from "@/features/page-content/types/page-content.types";
-import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
-import { siteConfig, type SiteLocale } from "@/lib/config/site";
+import { siteConfig } from "@/lib/config/site";
 
 const aboutShowcaseHrefs = ["/zakazivanje/", "/psihoterapija/", "/psihoterapija/"];
 const defaultScopeSlugs = [
@@ -33,9 +32,9 @@ const defaultScopeSlugs = [
   "trauma",
 ];
 
-export const getDefaultAboutPageManagedContent = (locale: SiteLocale): AboutPageManagedContent => {
-  const content = getAboutPageData(locale);
-  const dictionary = getDictionary(locale);
+export const getDefaultAboutPageManagedContent = (): AboutPageManagedContent => {
+  const content = getAboutPageData();
+  const dictionary = getDictionary();
 
   return {
     seo: {
@@ -74,7 +73,7 @@ export const getDefaultAboutPageManagedContent = (locale: SiteLocale): AboutPage
   };
 };
 
-export const buildAboutPageData = (locale: SiteLocale, content: AboutPageManagedContent) => ({
+export const buildAboutPageData = (content: AboutPageManagedContent) => ({
   seo: content.seo,
   hiddenBlocks: content.hiddenBlocks ?? [],
   blockBackgrounds: content.blockBackgrounds ?? {},
@@ -90,7 +89,7 @@ export const buildAboutPageData = (locale: SiteLocale, content: AboutPageManaged
   showcaseVideoImage: content.showcase.videoImage,
   showcaseCards: content.showcase.cards.map((card, index) => ({
     ...card,
-    href: localizePath(locale, aboutShowcaseHrefs[index] ?? "/psihoterapija/"),
+    href: aboutShowcaseHrefs[index] ?? "/psihoterapija/",
   })),
   ideaTitle: content.idea.title,
   ideaHtml: content.idea.body,
@@ -98,16 +97,14 @@ export const buildAboutPageData = (locale: SiteLocale, content: AboutPageManaged
   focusItems: content.focus.items,
   recentTitle: content.recent.title,
   recentCopy: content.recent.copy,
-  recentHref: localizePath(locale, "/blog/"),
+  recentHref: "/blog/",
   recentLabel: content.recent.label,
   recentEmptyLabel: content.recent.empty,
 });
 
-export const getDefaultBiographyPageManagedContent = (
-  locale: SiteLocale,
-): BiographyPageManagedContent => {
-  const content = getBiographyPageData(locale);
-  const dictionary = getDictionary(locale);
+export const getDefaultBiographyPageManagedContent = (): BiographyPageManagedContent => {
+  const content = getBiographyPageData();
+  const dictionary = getDictionary();
 
   return {
     seo: {
@@ -142,10 +139,7 @@ export const getDefaultBiographyPageManagedContent = (
   };
 };
 
-export const buildBiographyPageData = (
-  locale: SiteLocale,
-  content: BiographyPageManagedContent,
-) => ({
+export const buildBiographyPageData = (content: BiographyPageManagedContent) => ({
   seo: content.seo,
   hiddenBlocks: content.hiddenBlocks ?? [],
   blockBackgrounds: content.blockBackgrounds ?? {},
@@ -160,24 +154,23 @@ export const buildBiographyPageData = (
   cardsCopy: content.cardsSection.copy,
   cards: content.cardsSection.cards.map((card) => ({
     ...card,
-    href: localizePath(locale, `/biografija/${card.slug}/`),
+    href: `/biografija/${card.slug}/`,
   })),
   approachTitle: content.approach.title,
   approachCopy: content.approach.copy,
   approachPoints: content.approach.points,
   approachImage: content.approach.image,
-  ctaHref: localizePath(locale, "/zakazivanje/"),
+  ctaHref: "/zakazivanje/",
   ctaLabel: content.approach.ctaLabel,
 });
 
 export const buildBiographyDetailPageData = (
-  locale: SiteLocale,
   content: BiographyPageManagedContent,
   slug: string,
 ) => {
   const cards = content.cardsSection.cards.map((card) => ({
     ...card,
-    href: localizePath(locale, `/biografija/${card.slug}/`),
+    href: `/biografija/${card.slug}/`,
   }));
   const profile = cards.find((card) => card.slug === slug);
 
@@ -194,19 +187,17 @@ export const buildBiographyDetailPageData = (
       align: "split" as const,
     },
     profile,
-    backHref: localizePath(locale, "/biografija/"),
+    backHref: "/biografija/",
     backLabel: content.banner.title,
     relatedTitle: content.cardsSection.title,
     relatedProfiles: cards.filter((card) => card.slug !== slug),
   };
 };
 
-export const getDefaultPsychotherapyPageManagedContent = (
-  locale: SiteLocale,
-): PsychotherapyPageManagedContent => {
-  const content = getPsychotherapyPageData(locale);
-  const home = getHomePageData(locale);
-  const dictionary = getDictionary(locale);
+export const getDefaultPsychotherapyPageManagedContent = (): PsychotherapyPageManagedContent => {
+  const content = getPsychotherapyPageData();
+  const home = getHomePageData();
+  const dictionary = getDictionary();
 
   return {
     seo: {
@@ -245,10 +236,7 @@ export const getDefaultPsychotherapyPageManagedContent = (
   };
 };
 
-export const buildPsychotherapyPageData = (
-  locale: SiteLocale,
-  content: PsychotherapyPageManagedContent,
-) => ({
+export const buildPsychotherapyPageData = (content: PsychotherapyPageManagedContent) => ({
   seo: content.seo,
   hiddenBlocks: content.hiddenBlocks ?? [],
   blockBackgrounds: content.blockBackgrounds ?? {},
@@ -263,7 +251,7 @@ export const buildPsychotherapyPageData = (
   scopeItems: content.scope.items,
   serviceCards: content.services.cards.map((card) => ({
     ...card,
-    href: localizePath(locale, "/zakazivanje/"),
+    href: "/zakazivanje/",
     label: "",
   })),
   booking: {
@@ -279,10 +267,10 @@ export const buildPsychotherapyPageData = (
   faqImage: content.faq.image,
 });
 
-export const getDefaultScopePageManagedContent = (locale: SiteLocale): ScopePageManagedContent => {
-  const content = getScopePageData(locale);
-  const firstDetail = getScopeDetailPageData(locale, defaultScopeSlugs[0]);
-  const dictionary = getDictionary(locale);
+export const getDefaultScopePageManagedContent = (): ScopePageManagedContent => {
+  const content = getScopePageData();
+  const firstDetail = getScopeDetailPageData(defaultScopeSlugs[0]);
+  const dictionary = getDictionary();
 
   return {
     seo: {
@@ -335,7 +323,7 @@ export const getDefaultScopePageManagedContent = (locale: SiteLocale): ScopePage
   };
 };
 
-export const buildScopePageData = (locale: SiteLocale, content: ScopePageManagedContent) => ({
+export const buildScopePageData = (content: ScopePageManagedContent) => ({
   seo: content.seo,
   hiddenBlocks: content.hiddenBlocks ?? [],
   blockBackgrounds: content.blockBackgrounds ?? {},
@@ -350,7 +338,7 @@ export const buildScopePageData = (locale: SiteLocale, content: ScopePageManaged
     ...tab,
     cardTitle: tab.summaryTitle,
     cardCopy: tab.summaryCopy,
-    href: localizePath(locale, `/psihoterapija/#psych-tab-${tab.id}`),
+    href: `/psihoterapija/#psych-tab-${tab.id}`,
   })),
   scopeTitle: content.intro.title,
   scopeItems: content.intro.items,
@@ -358,17 +346,16 @@ export const buildScopePageData = (locale: SiteLocale, content: ScopePageManaged
   focusCopy: content.focus.copy,
   focusSecondaryCopy: content.focus.secondaryCopy,
   focusImage: content.focus.image,
-  focusCtaHref: localizePath(locale, "/o-nama/"),
+  focusCtaHref: "/o-nama/",
   focusCtaLabel: content.focus.ctaLabel,
   recentTitle: content.recent.title,
   recentCopy: content.recent.copy,
-  recentHref: localizePath(locale, "/blog/"),
+  recentHref: "/blog/",
   recentLabel: content.recent.label,
   recentEmpty: content.recent.empty,
 });
 
 export const buildScopeDetailPageData = (
-  locale: SiteLocale,
   content: ScopePageManagedContent,
   slug: string,
 ) => {
@@ -376,7 +363,7 @@ export const buildScopeDetailPageData = (
     ...tab,
     cardTitle: tab.summaryTitle,
     cardCopy: tab.summaryCopy,
-    href: localizePath(locale, `/psihoterapija/#psych-tab-${tab.id}`),
+    href: `/psihoterapija/#psych-tab-${tab.id}`,
   }));
   const currentTab = tabs.find((tab) => tab.id === slug);
 
@@ -396,20 +383,18 @@ export const buildScopeDetailPageData = (
     lead: currentTab.detailLead,
     image: currentTab.detailImage,
     items: currentTab.items,
-    backHref: localizePath(locale, "/psihoterapija/"),
+    backHref: "/psihoterapija/",
     backLabel: currentTab.detailBackLabel,
-    ctaHref: localizePath(locale, "/zakazivanje/"),
+    ctaHref: "/zakazivanje/",
     ctaLabel: currentTab.detailCtaLabel,
     relatedTitle: content.detail.relatedTitle,
     relatedTabs: tabs.filter((tab) => tab.id !== slug),
   };
 };
 
-export const getDefaultPricingPageManagedContent = (
-  locale: SiteLocale,
-): PricingPageManagedContent => {
-  const content = getPricingPageData(locale);
-  const dictionary = getDictionary(locale);
+export const getDefaultPricingPageManagedContent = (): PricingPageManagedContent => {
+  const content = getPricingPageData();
+  const dictionary = getDictionary();
 
   return {
     seo: {
@@ -431,7 +416,7 @@ export const getDefaultPricingPageManagedContent = (
   };
 };
 
-export const buildPricingPageData = (locale: SiteLocale, content: PricingPageManagedContent) => ({
+export const buildPricingPageData = (content: PricingPageManagedContent) => ({
   seo: content.seo,
   hiddenBlocks: content.hiddenBlocks ?? [],
   blockBackgrounds: content.blockBackgrounds ?? {},
@@ -444,16 +429,14 @@ export const buildPricingPageData = (locale: SiteLocale, content: PricingPageMan
   },
   plans: content.plans.map((plan) => ({
     ...plan,
-    ctaHref: localizePath(locale, "/zakazivanje/"),
+    ctaHref: "/zakazivanje/",
   })),
   infoCards: content.infoCards,
 });
 
-export const getDefaultAppointmentPageManagedContent = (
-  locale: SiteLocale,
-): AppointmentPageManagedContent => {
-  const content = getAppointmentPageData(locale);
-  const dictionary = getDictionary(locale);
+export const getDefaultAppointmentPageManagedContent = (): AppointmentPageManagedContent => {
+  const content = getAppointmentPageData();
+  const dictionary = getDictionary();
 
   return {
     seo: {
@@ -481,10 +464,7 @@ export const getDefaultAppointmentPageManagedContent = (
   };
 };
 
-export const buildAppointmentPageData = (
-  _locale: SiteLocale,
-  content: AppointmentPageManagedContent,
-) => ({
+export const buildAppointmentPageData = (content: AppointmentPageManagedContent) => ({
   seo: content.seo,
   hiddenBlocks: content.hiddenBlocks ?? [],
   blockBackgrounds: content.blockBackgrounds ?? {},
@@ -506,9 +486,9 @@ export const buildAppointmentPageData = (
   faqImage: content.faq.image,
 });
 
-export const getDefaultFaqPageManagedContent = (locale: SiteLocale): FaqPageManagedContent => {
-  const content = getFaqPageData(locale);
-  const dictionary = getDictionary(locale);
+export const getDefaultFaqPageManagedContent = (): FaqPageManagedContent => {
+  const content = getFaqPageData();
+  const dictionary = getDictionary();
 
   return {
     seo: {
@@ -536,7 +516,7 @@ export const getDefaultFaqPageManagedContent = (locale: SiteLocale): FaqPageMana
   };
 };
 
-export const buildFaqPageData = (_locale: SiteLocale, content: FaqPageManagedContent) => ({
+export const buildFaqPageData = (content: FaqPageManagedContent) => ({
   seo: content.seo,
   hiddenBlocks: content.hiddenBlocks ?? [],
   blockBackgrounds: content.blockBackgrounds ?? {},
@@ -558,11 +538,9 @@ export const buildFaqPageData = (_locale: SiteLocale, content: FaqPageManagedCon
   formats: content.booking.formats,
 });
 
-export const getDefaultContactPageManagedContent = (
-  locale: SiteLocale,
-): ContactPageManagedContent => {
-  const content = getContactPageData(locale);
-  const dictionary = getDictionary(locale);
+export const getDefaultContactPageManagedContent = (): ContactPageManagedContent => {
+  const content = getContactPageData();
+  const dictionary = getDictionary();
   const bannerDescription =
     "description" in content.banner && typeof content.banner.description === "string"
       ? content.banner.description
@@ -587,17 +565,17 @@ export const getDefaultContactPageManagedContent = (
     socialLinks: [
       {
         platform: "facebook",
-        label: locale === "sr-cyrl" ? "Фејсбук профил" : "Fejsbuk profil",
+        label: "Fejsbuk profil",
         href: "https://www.facebook.com/",
       },
       {
         platform: "instagram",
-        label: locale === "sr-cyrl" ? "Инстаграм профил" : "Instagram profil",
+        label: "Instagram profil",
         href: "https://www.instagram.com/",
       },
       {
         platform: "linkedin",
-        label: locale === "sr-cyrl" ? "Линкедин профил" : "LinkedIn profil",
+        label: "LinkedIn profil",
         href: "https://www.linkedin.com/",
       },
     ],
@@ -611,7 +589,7 @@ export const getDefaultContactPageManagedContent = (
   };
 };
 
-export const buildContactPageData = (_locale: SiteLocale, content: ContactPageManagedContent) => ({
+export const buildContactPageData = (content: ContactPageManagedContent) => ({
   seo: content.seo,
   hiddenBlocks: content.hiddenBlocks ?? [],
   blockBackgrounds: content.blockBackgrounds ?? {},
@@ -634,10 +612,8 @@ export const buildContactPageData = (_locale: SiteLocale, content: ContactPageMa
   officeGallery: content.officeGallery,
 });
 
-export const getDefaultBlogIndexPageManagedContent = (
-  locale: SiteLocale,
-): BlogIndexPageManagedContent => {
-  const dictionary = getDictionary(locale);
+export const getDefaultBlogIndexPageManagedContent = (): BlogIndexPageManagedContent => {
+  const dictionary = getDictionary();
   const ui = dictionary.blog.index;
 
   return {
@@ -662,10 +638,7 @@ export const getDefaultBlogIndexPageManagedContent = (
   };
 };
 
-export const buildBlogIndexPageData = (
-  _locale: SiteLocale,
-  content: BlogIndexPageManagedContent,
-) => ({
+export const buildBlogIndexPageData = (content: BlogIndexPageManagedContent) => ({
   seo: content.seo,
   hiddenBlocks: content.hiddenBlocks ?? [],
   blockBackgrounds: content.blockBackgrounds ?? {},

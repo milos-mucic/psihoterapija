@@ -1,30 +1,18 @@
 ---
-import type { SiteLocale } from "@/lib/config/site";
 import { stripHtmlTags } from "@/features/page-content/admin/technical-fields";
 
 type Props = {
   title: string;
   description: string;
   canonicalPath: string;
-  locale: SiteLocale;
 };
 
 const rawProps = Astro.props;
 const title = stripHtmlTags(rawProps.title);
 const description = stripHtmlTags(rawProps.description);
-const { canonicalPath, locale } = rawProps;
+const { canonicalPath } = rawProps;
 const siteUrl = new URL(canonicalPath, Astro.site);
 const isPublicPage = canonicalPath.startsWith("/") && !canonicalPath.startsWith("/studio/");
-const latnPath = canonicalPath.startsWith("/cir/")
-  ? canonicalPath.replace(/^\/cir/, "") || "/"
-  : canonicalPath === "/cir/"
-    ? "/"
-    : canonicalPath;
-const cyrlPath = canonicalPath.startsWith("/cir/")
-  ? canonicalPath
-  : canonicalPath === "/"
-    ? "/cir/"
-    : `/cir${canonicalPath}`;
 ---
 
 <meta charset="utf-8" />
@@ -36,21 +24,16 @@ const cyrlPath = canonicalPath.startsWith("/cir/")
 <meta property="og:description" content={description} />
 <meta property="og:type" content="website" />
 <meta property="og:url" content={siteUrl.toString()} />
-<meta property="og:locale" content={locale === "sr-cyrl" ? "sr_Cyrl_RS" : "sr_RS"} />
+<meta property="og:locale" content="sr_RS" />
 <link rel="canonical" href={siteUrl.toString()} />
 {
   isPublicPage ? (
-    <link rel="alternate" hreflang="sr-Latn-RS" href={new URL(latnPath, Astro.site).toString()} />
+    <link rel="alternate" hreflang="sr-Latn-RS" href={siteUrl.toString()} />
   ) : null
 }
 {
   isPublicPage ? (
-    <link rel="alternate" hreflang="sr-Cyrl-RS" href={new URL(cyrlPath, Astro.site).toString()} />
-  ) : null
-}
-{
-  isPublicPage ? (
-    <link rel="alternate" hreflang="x-default" href={new URL(latnPath, Astro.site).toString()} />
+    <link rel="alternate" hreflang="x-default" href={siteUrl.toString()} />
   ) : null
 }
 <link rel="sitemap" type="application/xml" href={new URL("/sitemap-index.xml", Astro.site).toString()} />

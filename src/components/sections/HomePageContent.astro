@@ -2,20 +2,17 @@
 import { stripHtmlTags } from "@/features/page-content/admin/technical-fields";
 import AppointmentForm from "@/components/components/AppointmentForm.astro";
 import type { HomePageData } from "@/data/fixtures/home";
-import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import { getBlockBackgroundStyle } from "@/features/page-content/admin/block-backgrounds";
 import type { BlogListItem } from "@/features/blog/types/blog.types";
-import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
-  locale: SiteLocale;
   content: HomePageData;
   posts: BlogListItem[];
 };
 
-const { locale, content, posts } = Astro.props;
-const dictionary = getDictionary(locale);
+const { content, posts } = Astro.props;
+const dictionary = getDictionary();
 const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackgrounds, fragment);
 // Video plejer privremeno onemogucen — ostaje samo poster slika.
 // const youtubeShortCodeMatch = content.reasons.videoHref.match(/youtu\.be\/([^?&#]+)/);
@@ -383,7 +380,6 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
 
       <div data-reveal="up" style="--reveal-delay: 90ms;">
         <AppointmentForm
-          locale={locale}
           labels={dictionary.forms}
           formatLabel={content.booking.formatLabel}
           formats={content.booking.formats}
@@ -421,7 +417,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
               data-reveal="up"
               style={`--reveal-delay: ${index * 90}ms;`}
             >
-              <a class="home-blog-card__media" href={localizePath(locale, `/blog/${post.slug}/`)}>
+              <a class="home-blog-card__media" href={`/blog/${post.slug}/`}>
                 <img
                   src={post.coverImage ?? "/legacy/images/Blog-1_1Blog 1.webp"}
                   alt={stripHtmlTags(post.title)}
@@ -432,9 +428,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
               <div class="home-blog-card__body">
                 <div class="home-post-meta">
                   <span>
-                    {post.publishedAt.toLocaleDateString(
-                      locale === "sr-cyrl" ? "sr-Cyrl-RS" : "sr-RS",
-                    )}
+                    {post.publishedAt.toLocaleDateString("sr-RS")}
                   </span>
                   <span>&bull;</span>
                   <span>{post.tags.join(", ") || dictionary.blog.defaultTag}</span>
@@ -445,7 +439,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
                 </div>
                 <a
                   class="home-blog-card__action"
-                  href={localizePath(locale, `/blog/${post.slug}/`)}
+                  href={`/blog/${post.slug}/`}
                 >
                   <span>{dictionary.blog.readMoreLabel}</span>
                   <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">

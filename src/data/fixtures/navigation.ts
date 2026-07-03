@@ -1,6 +1,4 @@
-import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
-import type { SiteLocale } from "@/lib/config/site";
 
 export type NavLeaf = {
   label: string;
@@ -18,13 +16,13 @@ export type NavItem = NavLeaf | NavGroup;
 export const isNavGroup = (item: NavItem): item is NavGroup =>
   "children" in item && Array.isArray((item as NavGroup).children);
 
-export const getNavigation = (locale: SiteLocale): NavItem[] => {
-  const dictionary = getDictionary(locale);
-  const biographyHref = localizePath(locale, "/biografija/nemanja-zajkeskovic/");
-  const aboutHref = localizePath(locale, "/o-nama/");
+export const getNavigation = (): NavItem[] => {
+  const dictionary = getDictionary();
+  const biographyHref = "/biografija/nemanja-zajkeskovic/";
+  const aboutHref = "/o-nama/";
 
   return [
-    { label: dictionary.nav.home, href: localizePath(locale, "/") },
+    { label: dictionary.nav.home, href: "/" },
     {
       label: dictionary.nav.about,
       href: aboutHref,
@@ -33,8 +31,8 @@ export const getNavigation = (locale: SiteLocale): NavItem[] => {
         { label: dictionary.nav.aboutLinks.biography, href: biographyHref },
       ],
     },
-    { label: dictionary.nav.psychotherapy, href: localizePath(locale, "/psihoterapija/") },
-    { label: dictionary.nav.blog, href: localizePath(locale, "/blog/") },
-    { label: dictionary.nav.faq, href: localizePath(locale, "/pitanja/") },
+    { label: dictionary.nav.psychotherapy, href: "/psihoterapija/" },
+    { label: dictionary.nav.blog, href: "/blog/" },
+    { label: dictionary.nav.faq, href: "/pitanja/" },
   ];
 };

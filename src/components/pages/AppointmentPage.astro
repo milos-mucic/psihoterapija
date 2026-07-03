@@ -4,16 +4,14 @@ import AppointmentForm from "@/components/components/AppointmentForm.astro";
 import { getDictionary } from "@/features/i18n/translate";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import { getBlockBackgroundStyle } from "@/features/page-content/admin/block-backgrounds";
-import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
-  locale: SiteLocale;
   content?: Awaited<ReturnType<typeof pageContentService.getAppointmentPageData>>;
 };
 
-const { locale, content: previewContent } = Astro.props;
-const content = previewContent ?? (await pageContentService.getAppointmentPageData(locale));
-const dictionary = getDictionary(locale);
+const { content: previewContent } = Astro.props;
+const content = previewContent ?? (await pageContentService.getAppointmentPageData());
+const dictionary = getDictionary();
 const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackgrounds, fragment);
 ---
 
@@ -32,7 +30,6 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
 
       <div data-reveal="up" style="--reveal-delay: 90ms;">
         <AppointmentForm
-          locale={locale}
           labels={dictionary.forms}
           formatLabel={content.formatLabel}
           formats={content.formats}

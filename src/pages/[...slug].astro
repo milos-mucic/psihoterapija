@@ -14,7 +14,7 @@ if (!slug) {
   return new Response("Not found", { status: 404 });
 }
 
-const page = await customPageService.getBySlug("sr-latn", slug);
+const page = await customPageService.getBySlug(slug);
 
 if (!page || page.status !== "published") {
   return new Response("Not found", { status: 404 });
@@ -24,7 +24,6 @@ if (!page || page.status !== "published") {
 <BaseLayout
   title={`${page.title} | ${siteConfig.name}`}
   description={page.description ?? page.title}
-  locale="sr-latn"
   canonicalPath={Astro.url.pathname}
 >
   <CustomPageBlocks blocks={page.blocks} />

@@ -62,7 +62,6 @@ export const customPageInputSchema = z.object({
     .string()
     .min(1, "Slug je obavezan.")
     .regex(/^[a-z0-9-/]+$/, "Slug može sadržati samo mala slova, brojeve, kose crte i crtice."),
-  locale: z.enum(["sr-latn", "sr-cyrl"]),
   title: z.string().min(1, "Naslov je obavezan."),
   description: z.string().optional(),
   blocks: z.array(customPageBlockSchema).default([]),

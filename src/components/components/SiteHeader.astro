@@ -1,25 +1,16 @@
 ---
 import { stripHtmlTags } from "@/features/page-content/admin/technical-fields";
 import { getNavigation, isNavGroup } from "@/data/fixtures/navigation";
-import { getLocalePrefix, localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
-import { siteConfig, type SiteLocale } from "@/lib/config/site";
+import { siteConfig } from "@/lib/config/site";
 
 type Props = {
-  locale: SiteLocale;
   pathname: string;
 };
 
-const { locale, pathname } = Astro.props;
-const dictionary = getDictionary(locale);
-const navigation = getNavigation(locale);
-const alternateLocale = locale === "sr-cyrl" ? "sr-latn" : "sr-cyrl";
-const currentWithoutPrefix =
-  locale === "sr-cyrl" ? pathname.replace(/^\/cir/, "") || "/" : pathname || "/";
-const localeSwitcherHref =
-  alternateLocale === "sr-cyrl"
-    ? `${getLocalePrefix(alternateLocale)}${currentWithoutPrefix}`.replace("//", "/")
-    : currentWithoutPrefix;
+const { pathname } = Astro.props;
+const dictionary = getDictionary();
+const navigation = getNavigation();
 const isActivePath = (href: string) =>
   href === "/" ? pathname === href : pathname.startsWith(href);
 const siteMeta = siteConfig.name.replace(" Ikar", "");
@@ -28,7 +19,7 @@ const siteMeta = siteConfig.name.replace(" Ikar", "");
 <header class="section site-header">
   <div class="container">
     <div class="card site-header__inner">
-      <a class="site-brand" href={localizePath(locale, "/")} aria-label={stripHtmlTags(siteConfig.name)}>
+      <a class="site-brand" href="/" aria-label={stripHtmlTags(siteConfig.name)}>
         <img class="site-brand__logo" src="/legacy/images/Logo-Dark.svg" alt={stripHtmlTags(siteConfig.name)} />
         <span>
           <span class="site-brand__title">Ikar</span>
@@ -94,11 +85,8 @@ const siteMeta = siteConfig.name.replace(" Ikar", "");
       </nav>
 
       <div class="site-header__actions">
-        <a class="button-secondary" href={localizePath(locale, "/zakazivanje/")}>
+        <a class="button-secondary" href="/zakazivanje/">
           {dictionary.nav.appointment}
-        </a>
-        <a class="button-ghost site-locale-switcher" href={localeSwitcherHref}>
-          {getDictionary(alternateLocale).localeLabel}
         </a>
       </div>
     </div>

@@ -6,7 +6,6 @@ import type {
   BlogPostRecord,
   BlogPostUpdateInput,
 } from "@/features/blog/types/blog.types";
-import type { SiteLocale } from "@/lib/config/site";
 
 const normalizeSlug = (value: string) => value.split("/").at(-1) ?? value;
 
@@ -15,7 +14,6 @@ type BlogCollectionEntry = CollectionEntry<"blog">;
 const toListItem = (entry: BlogCollectionEntry): BlogListItem => ({
   id: entry.id,
   slug: normalizeSlug(entry.slug),
-  locale: entry.data.locale,
   title: entry.data.title,
   excerpt: entry.data.excerpt,
   coverImage: entry.data.coverImage,
@@ -42,10 +40,10 @@ export const listContentCollectionBlogPosts = async (): Promise<BlogPostRecord[]
 };
 
 export class ContentCollectionBlogRepository implements BlogRepository {
-  async listPublished(locale: SiteLocale) {
+  async listPublished() {
     const entries = await getCollection(
       "blog",
-      ({ data }) => data.locale === locale && data.status === "published",
+      ({ data }) => data.status === "published",
     );
 
     return entries
@@ -61,8 +59,8 @@ export class ContentCollectionBlogRepository implements BlogRepository {
       .sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
   }
 
-  async getBySlug(locale: SiteLocale, slug: string) {
-    const entries = await getCollection("blog", ({ data }) => data.locale === locale);
+  async getBySlug(slug: string) {
+    const entries = await getCollection("blog");
     const entry = entries.find((candidate) => normalizeSlug(candidate.slug) === slug);
     return entry ? toPostRecord(entry) : undefined;
   }

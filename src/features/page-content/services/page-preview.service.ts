@@ -3,12 +3,10 @@ import type {
   AnyManagedPageContent,
   PageKey,
 } from "@/features/page-content/types/page-content.types";
-import type { SiteLocale } from "@/lib/config/site";
 
 type PreviewEntry = {
   token: string;
   pageKey: PageKey;
-  locale: SiteLocale;
   content: AnyManagedPageContent;
   updatedAt: number;
 };
@@ -41,19 +39,13 @@ const pruneExpiredEntries = () => {
 };
 
 export const pagePreviewService = {
-  saveDraft(
-    pageKey: PageKey,
-    locale: SiteLocale,
-    content: AnyManagedPageContent,
-    currentToken?: string,
-  ) {
+  saveDraft(pageKey: PageKey, content: AnyManagedPageContent, currentToken?: string) {
     pruneExpiredEntries();
 
     const token = currentToken && getStore().has(currentToken) ? currentToken : randomUUID();
     const entry: PreviewEntry = {
       token,
       pageKey,
-      locale,
       content,
       updatedAt: Date.now(),
     };
@@ -61,7 +53,7 @@ export const pagePreviewService = {
     getStore().set(token, entry);
     return entry;
   },
-  getDraft(token: string | null | undefined, pageKey: PageKey, locale: SiteLocale) {
+  getDraft(token: string | null | undefined, pageKey: PageKey) {
     if (!token) {
       return undefined;
     }
@@ -70,19 +62,19 @@ export const pagePreviewService = {
 
     const entry = getStore().get(token);
 
-    if (!entry || entry.pageKey !== pageKey || entry.locale !== locale) {
+    if (!entry || entry.pageKey !== pageKey) {
       return undefined;
     }
 
     return entry;
   },
-  getLatestDraftUpdatedAt(pageKey: PageKey, locale: SiteLocale) {
+  getLatestDraftUpdatedAt(pageKey: PageKey) {
     pruneExpiredEntries();
 
     let latestUpdatedAt: number | undefined;
 
     getStore().forEach((entry) => {
-      if (entry.pageKey !== pageKey || entry.locale !== locale) {
+      if (entry.pageKey !== pageKey) {
         return;
       }
 
@@ -93,11 +85,11 @@ export const pagePreviewService = {
 
     return latestUpdatedAt;
   },
-  clearDrafts(pageKey: PageKey, locale: SiteLocale) {
+  clearDrafts(pageKey: PageKey) {
     pruneExpiredEntries();
 
     getStore().forEach((entry, token) => {
-      if (entry.pageKey === pageKey && entry.locale === locale) {
+      if (entry.pageKey === pageKey) {
         getStore().delete(token);
       }
     });

@@ -4,7 +4,7 @@ import { adminAuthService } from "@/features/admin/auth/admin-auth.service";
 import { adminConfig } from "@/lib/config/admin";
 
 export const POST: APIRoute = async ({ request, cookies }) => {
-  const dictionary = getDictionary("sr-latn");
+  const dictionary = getDictionary();
   const body = await request.json().catch(() => null);
   const password = typeof body?.password === "string" ? body.password : "";
 

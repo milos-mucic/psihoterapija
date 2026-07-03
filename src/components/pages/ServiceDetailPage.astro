@@ -4,16 +4,14 @@ import FaqAccordionSection from "@/components/sections/FaqAccordionSection.astro
 import PageBanner from "@/components/sections/PageBanner.astro";
 import { getServiceDetailData, type ServiceDetailSlug } from "@/data/fixtures/service-details";
 import { getDictionary } from "@/features/i18n/translate";
-import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
-  locale: SiteLocale;
   slug: ServiceDetailSlug;
 };
 
-const { locale, slug } = Astro.props;
-const dictionary = getDictionary(locale);
-const content = getServiceDetailData(locale, slug);
+const { slug } = Astro.props;
+const dictionary = getDictionary();
+const content = getServiceDetailData(slug);
 const formats = dictionary.pages.appointment.formats;
 const formatLabel = dictionary.pages.appointment.formatLabel;
 const summaryTitle = dictionary.common.serviceSummaryTitle;
@@ -57,7 +55,6 @@ const bookingCopy = dictionary.common.serviceBookingCopy;
 
       <div data-reveal="up" style="--reveal-delay: 90ms;">
         <AppointmentForm
-          locale={locale}
           labels={dictionary.forms}
           formatLabel={formatLabel}
           formats={formats}

@@ -4,7 +4,6 @@ import { requireAdminApiAuth } from "@/features/admin/auth/admin-api-auth";
 import { getAdminPreviewHref } from "@/features/page-content/admin/page-route-map";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import type { PageKey } from "@/features/page-content/types/page-content.types";
-import type { SiteLocale } from "@/lib/config/site";
 
 const supportedPages = new Set<PageKey>([
   "home",
@@ -39,7 +38,6 @@ export const POST: APIRoute = async (context) => {
 
   const payload = await toPayload(context.request);
   const pageKey = typeof payload.pageKey === "string" ? (payload.pageKey as PageKey) : undefined;
-  const locale = payload.locale === "sr-cyrl" ? "sr-cyrl" : "sr-latn";
   const token = typeof payload.previewToken === "string" ? payload.previewToken : undefined;
 
   if (!pageKey || !supportedPages.has(pageKey)) {
@@ -50,7 +48,6 @@ export const POST: APIRoute = async (context) => {
   try {
     const entry = pageContentService.savePreviewDraft(
       pageKey,
-      locale as SiteLocale,
       payload,
       token,
     );
@@ -58,7 +55,7 @@ export const POST: APIRoute = async (context) => {
     return new Response(
       JSON.stringify({
         token: entry.token,
-        previewHref: getAdminPreviewHref(pageKey, locale as SiteLocale, entry.token),
+        previewHref: getAdminPreviewHref(pageKey, entry.token),
       }),
       {
         headers: {

@@ -1,7 +1,5 @@
 import { sanitizeRichTextHtml } from "@/features/blog/utils/rich-text";
-import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
-import type { SiteLocale } from "@/lib/config/site";
 
 export const serviceDetailSlugs = [
   "psihoterapija",
@@ -47,10 +45,9 @@ const toFaqs = (items: Array<{ question: string; answer: string }>) =>
   }));
 
 export const getServiceDetailData = (
-  locale: SiteLocale,
   slug: ServiceDetailSlug,
 ): ServiceDetailData => {
-  const dictionary = getDictionary(locale);
+  const dictionary = getDictionary();
   const serviceItems = dictionary.homePage.services.items;
   const appointmentFaqs = dictionary.pages.appointment.faqs;
   const psychotherapyFaqs = dictionary.pages.psychotherapy.faqs;
@@ -88,7 +85,7 @@ export const getServiceDetailData = (
         ],
       },
       faqs: toFaqs(psychotherapyFaqs.slice(1, 4)),
-      ctaHref: localizePath(locale, "/zakazivanje/"),
+      ctaHref: "/zakazivanje/",
       ctaLabel: dictionary.nav.appointment,
     };
   }
@@ -138,7 +135,7 @@ export const getServiceDetailData = (
             "Savetovanje je uglavnom kraće od psihoterapije, ali nema unapred zadat rok. Nekome je dovoljan jedan susret, a nekome nekoliko meseci kontinuiteta, u zavisnosti od situacije i potreba.",
         },
       ]),
-      ctaHref: localizePath(locale, "/zakazivanje/"),
+      ctaHref: "/zakazivanje/",
       ctaLabel: dictionary.nav.appointment,
     };
   }
@@ -183,7 +180,7 @@ export const getServiceDetailData = (
           "Možete očekivati strukturisan razgovor o tome zbog čega se javljate, šta Vas opterećuje i koji oblik podrške bi u datom trenutku mogao biti najkorisniji za Vas.",
       },
     ]),
-    ctaHref: localizePath(locale, "/zakazivanje/"),
+    ctaHref: "/zakazivanje/",
     ctaLabel: dictionary.nav.appointment,
   };
 };

@@ -5,25 +5,18 @@ import { AdminMediaField } from "@/components/components/AdminMediaField";
 import { AdminRichTextField } from "@/components/components/AdminRichTextField";
 import { getDictionary } from "@/features/i18n/translate";
 import type { HomePageManagedContent } from "@/features/page-content/types/page-content.types";
-import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
   action: string;
   content: HomePageManagedContent;
-  locale: SiteLocale;
   previewBaseHref: string;
-  localeLabel: string;
 };
 
-const { action, content, locale, previewBaseHref, localeLabel } = Astro.props;
+const { action, content, previewBaseHref } = Astro.props;
 const hiddenBlocksList = content.hiddenBlocks ?? [];
 const blockBackgrounds = content.blockBackgrounds ?? {};
 const isBlockHidden = (fragment: string) => hiddenBlocksList.includes(fragment);
 const getBlockBackgroundKey = (fragment: string) => blockBackgrounds[fragment] ?? "default";
-const localeOptions: Array<{ value: SiteLocale; label: string }> = [
-  { value: "sr-latn", label: "Latinica" },
-  { value: "sr-cyrl", label: "Ćirilica" },
-];
 const videoAccept = "video/*,.mp4,.webm,.mov,.ogg,.ogv";
 const richTextLabels = {
   bold: "Bold",
@@ -54,18 +47,18 @@ const heroTitleRichTextLabels = {
 };
 const defaultServiceItems = [
   {
-    title: getDictionary(locale).homePage.services.items[0].title,
-    copy: `<p>${getDictionary(locale).homePage.services.items[0].copy}</p>`,
+    title: getDictionary().homePage.services.items[0].title,
+    copy: `<p>${getDictionary().homePage.services.items[0].copy}</p>`,
     image: "/legacy/images/White-Icon-2.png",
   },
   {
-    title: getDictionary(locale).homePage.services.items[1].title,
-    copy: `<p>${getDictionary(locale).homePage.services.items[1].copy}</p>`,
+    title: getDictionary().homePage.services.items[1].title,
+    copy: `<p>${getDictionary().homePage.services.items[1].copy}</p>`,
     image: "/legacy/images/mirrored/logo-service-3.png",
   },
   {
-    title: getDictionary(locale).homePage.services.items[2].title,
-    copy: `<p>${getDictionary(locale).homePage.services.items[2].copy}</p>`,
+    title: getDictionary().homePage.services.items[2].title,
+    copy: `<p>${getDictionary().homePage.services.items[2].copy}</p>`,
     image: "/legacy/images/White-Icon-1.png",
   },
 ];
@@ -83,28 +76,9 @@ const normalizedServiceItems = Array.from({ length: 3 }, (_, index) => ({
   data-admin-section-preview-root
   data-admin-preview-endpoint="/api/admin/pages/preview"
   data-preview-base-href={previewBaseHref}
-  data-preview-locale-label={localeLabel}
 >
-  <input type="hidden" name="locale" value={locale} />
   <input type="hidden" name="pageKey" value="home" />
   <input type="hidden" name="previewToken" value="" data-admin-preview-token />
-
-  <div class="card" style="padding: 1.5rem;">
-    <div class="admin-form__grid">
-      <label class="admin-form__field">
-        <span>Jezik sadržaja</span>
-        <select class="input-control" name="localeDisplay" disabled>
-          {
-            localeOptions.map((option) => (
-              <option value={option.value} selected={option.value === locale}>
-                {option.label}
-              </option>
-            ))
-          }
-        </select>
-      </label>
-    </div>
-  </div>
 
   <div
     class="card"

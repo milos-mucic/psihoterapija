@@ -10,7 +10,7 @@ import { adminGuard } from "@/features/admin/auth/admin-guard";
 const guard = adminGuard(Astro);
 if (guard) return guard;
 
-const dictionary = getDictionary("sr-latn");
+const dictionary = getDictionary();
 const posts = await blogService.listAllPosts();
 const params = Astro.url.searchParams;
 const archived = params.get("archived") === "1";
@@ -59,7 +59,6 @@ const error = params.get("error");
         <thead>
           <tr>
             <th>{dictionary.admin.blogIndex.headers.title}</th>
-            <th>{dictionary.admin.blogIndex.headers.locale}</th>
             <th>{dictionary.admin.blogIndex.headers.status}</th>
             <th>{dictionary.admin.blogIndex.headers.date}</th>
             <th class="admin-table__actions">{dictionary.admin.blogIndex.headers.actions}</th>
@@ -69,19 +68,17 @@ const error = params.get("error");
           {
             posts.length === 0 ? (
               <tr>
-                <td colspan="5">{dictionary.admin.blogIndex.empty}</td>
+                <td colspan="4">{dictionary.admin.blogIndex.empty}</td>
               </tr>
             ) : (
               posts.map((post) => {
-                const publicHref =
-                  post.locale === "sr-cyrl" ? `/cir/blog/${post.slug}/` : `/blog/${post.slug}/`;
+                const publicHref = `/blog/${post.slug}/`;
                 const canView = post.status === "published";
                 const canArchive = post.status !== "archived";
 
                 return (
                   <tr>
                     <td>{post.title}</td>
-                    <td>{post.locale}</td>
                     <td>{post.status}</td>
                     <td>{post.publishedAt.toLocaleDateString("sr-RS")}</td>
                     <td class="admin-table__actions-cell">

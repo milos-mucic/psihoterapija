@@ -1,5 +1,3 @@
-import type { SiteLocale } from "@/lib/config/site";
-
 export type CustomPageStatus = "draft" | "published";
 
 export type HeroBlockData = {
@@ -45,7 +43,6 @@ export type CustomPageBlockType = CustomPageBlock["type"];
 export type CustomPageRecord = {
   id: string;
   slug: string;
-  locale: SiteLocale;
   title: string;
   description?: string;
   blocks: CustomPageBlock[];
@@ -56,12 +53,11 @@ export type CustomPageRecord = {
 
 export type CustomPageListItem = Pick<
   CustomPageRecord,
-  "id" | "slug" | "locale" | "title" | "status" | "updatedAt"
+  "id" | "slug" | "title" | "status" | "updatedAt"
 >;
 
 export type CustomPageInput = {
   slug: string;
-  locale: SiteLocale;
   title: string;
   description?: string;
   blocks: CustomPageBlock[];

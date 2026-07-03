@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { BlogPosts, and, db, desc, eq } from "astro:db";
+import { BlogPosts, db, desc, eq } from "astro:db";
 import type { BlogRepository } from "@/features/blog/repositories/blog.repository";
 import type {
   BlogListItem,
@@ -8,7 +8,6 @@ import type {
   BlogPostUpdateInput,
   BlogStatus,
 } from "@/features/blog/types/blog.types";
-import type { SiteLocale } from "@/lib/config/site";
 
 const toDate = (value: Date | string) => (value instanceof Date ? value : new Date(value));
 
@@ -18,7 +17,6 @@ const parseTags = (value: unknown) =>
 const toListItem = (row: {
   id: string;
   slug: string;
-  locale: SiteLocale;
   title: string;
   excerpt: string;
   coverImage: string | null;
@@ -29,7 +27,6 @@ const toListItem = (row: {
 }): BlogListItem => ({
   id: row.id,
   slug: row.slug,
-  locale: row.locale,
   title: row.title,
   excerpt: row.excerpt,
   coverImage: row.coverImage ?? undefined,
@@ -42,7 +39,6 @@ const toListItem = (row: {
 const toPostRecord = (row: {
   id: string;
   slug: string;
-  locale: SiteLocale;
   title: string;
   excerpt: string;
   body: string;
@@ -69,11 +65,11 @@ const normalizeTags = (tags: string[]) =>
     .slice(0, 20);
 
 export class AstroDbBlogRepository implements BlogRepository {
-  async listPublished(locale: SiteLocale) {
+  async listPublished() {
     const rows = await db
       .select()
       .from(BlogPosts)
-      .where(and(eq(BlogPosts.locale, locale), eq(BlogPosts.status, "published")))
+      .where(eq(BlogPosts.status, "published"))
       .orderBy(desc(BlogPosts.publishedAt));
 
     return rows.map(toListItem);
@@ -84,11 +80,11 @@ export class AstroDbBlogRepository implements BlogRepository {
     return rows.map(toListItem);
   }
 
-  async getBySlug(locale: SiteLocale, slug: string) {
+  async getBySlug(slug: string) {
     const rows = await db
       .select()
       .from(BlogPosts)
-      .where(and(eq(BlogPosts.locale, locale), eq(BlogPosts.slug, slug)))
+      .where(eq(BlogPosts.slug, slug))
       .limit(1);
 
     const row = rows[0];
@@ -105,7 +101,6 @@ export class AstroDbBlogRepository implements BlogRepository {
     const record = {
       id: randomUUID(),
       slug: input.slug,
-      locale: input.locale,
       title: input.title,
       excerpt: input.excerpt,
       body: input.body,
@@ -152,7 +147,6 @@ export class AstroDbBlogRepository implements BlogRepository {
       .update(BlogPosts)
       .set({
         slug: next.slug,
-        locale: next.locale,
         title: next.title,
         excerpt: next.excerpt,
         body: next.body,

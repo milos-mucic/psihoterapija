@@ -5,7 +5,7 @@ import { blogService } from "@/features/blog/services/blog.service";
 import { getDictionary } from "@/features/i18n/translate";
 import { adminConfig } from "@/lib/config/admin";
 
-const dictionary = getDictionary("sr-latn");
+const dictionary = getDictionary();
 
 const isUniqueConstraintError = (error: unknown) =>
   error instanceof Error && /UNIQUE constraint failed/i.test(error.message);

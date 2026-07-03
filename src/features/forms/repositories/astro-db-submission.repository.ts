@@ -8,7 +8,6 @@ const toIsoString = (value: Date | string) => (value instanceof Date ? value.toI
 const mapRecord = (row: {
   id: string;
   type: SubmissionRecord["type"];
-  locale: SubmissionRecord["locale"];
   name: string;
   email: string;
   phone: string | null;
@@ -19,7 +18,6 @@ const mapRecord = (row: {
 }): SubmissionRecord => ({
   id: row.id,
   type: row.type,
-  locale: row.locale,
   name: row.name,
   email: row.email,
   phone: row.phone ?? undefined,
@@ -45,7 +43,6 @@ export class AstroDbSubmissionRepository implements SubmissionRepository {
     const record = {
       id: randomUUID(),
       type: input.type,
-      locale: input.locale,
       name: input.name,
       email: input.email,
       phone: input.phone?.trim() || undefined,

@@ -12,7 +12,7 @@ import { adminConfig } from "@/lib/config/admin";
 const guard = adminGuard(Astro);
 if (guard) return guard;
 
-const dictionary = getDictionary("sr-latn");
+const dictionary = getDictionary();
 const [pageOverview, customPages] = await Promise.all([
   pageDashboardService.listPages(),
   customPageService.listAll(),
@@ -58,8 +58,8 @@ const base = adminConfig.basePath;
       <div class="admin-stat">
         <span class="admin-stat__dot" style="background:#b48324;"></span>
         <div class="admin-stat__body">
-          <div class="admin-stat__label">Potrebno prevesti</div>
-          <div class="admin-stat__value">{pageStats.pagesNeedingTranslation}</div>
+          <div class="admin-stat__label">Neobjavljene promene</div>
+          <div class="admin-stat__value">{pageStats.pagesWithUnpublishedChanges}</div>
         </div>
       </div>
       <div class="admin-stat">
@@ -94,7 +94,6 @@ const base = adminConfig.basePath;
             <tr>
               <th>Naslov</th>
               <th>URL</th>
-              <th>Pismo</th>
               <th>Status</th>
               <th>Izmena</th>
               <th class="admin-tbl__actions"></th>
@@ -106,10 +105,9 @@ const base = adminConfig.basePath;
                 <td><strong>{p.title}</strong></td>
                 <td>
                   <code style="font-family:ui-monospace,Menlo,monospace;font-size:0.78rem;color:var(--shell-gold-strong);">
-                    {p.locale === "sr-cyrl" ? "/cir/" : "/"}{p.slug}/
+                    /{p.slug}/
                   </code>
                 </td>
-                <td>{p.locale === "sr-cyrl" ? "Ћирилица" : "Latinica"}</td>
                 <td>
                   <span class={`badge badge--${p.status === "published" ? "published" : "draft"}`}>
                     {p.status === "published" ? "Objavljeno" : "Skica"}
@@ -124,7 +122,7 @@ const base = adminConfig.basePath;
                   </a>
                   {p.status === "published" && (
                     <a
-                      href={`${p.locale === "sr-cyrl" ? "/cir/" : "/"}${p.slug}/`}
+                      href={`/${p.slug}/`}
                       target="_blank"
                       rel="noreferrer"
                       title="Otvori javnu stranicu"
@@ -159,26 +157,20 @@ const base = adminConfig.basePath;
                 <h3>{page.title}</h3>
                 <p class="admin-tile__copy">{page.copy}</p>
               </div>
+              <span class={`badge badge--${page.statusTone === "success" ? "published" : "draft"}`}>
+                {page.statusLabel}
+              </span>
             </div>
 
-            <div class="admin-page-card__locale-list">
-              {page.locales.map((locale) => (
-                <section class="admin-page-locale">
-                  <div class="admin-page-locale__head">
-                    <div>
-                      <h4>{locale.label}</h4>
-                      <p>{locale.updatedAtLabel}</p>
-                    </div>
-                  </div>
+            <div class="admin-page-card__meta">
+              <p>{page.updatedAtLabel}</p>
+            </div>
 
-                  <div class="admin-page-locale__actions">
-                    <a class="button-secondary" href={locale.editorHref}>Uredi</a>
-                    <a class="button-secondary" href={locale.publicHref} target="_blank" rel="noreferrer">
-                      Javna strana
-                    </a>
-                  </div>
-                </section>
-              ))}
+            <div class="admin-page-card__actions">
+              <a class="button-secondary" href={page.editorHref}>Uredi</a>
+              <a class="button-secondary" href={page.publicHref} target="_blank" rel="noreferrer">
+                Javna strana
+              </a>
             </div>
           </article>
         ))}

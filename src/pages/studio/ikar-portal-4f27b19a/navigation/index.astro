@@ -4,19 +4,15 @@ export const prerender = false;
 import AdminLayout from "@/components/components/AdminLayout.astro";
 import AdminNavigationForm from "@/components/components/AdminNavigationForm.astro";
 import { navigationService } from "@/features/navigation/service";
-import { adminConfig } from "@/lib/config/admin";
-import type { SiteLocale } from "@/lib/config/site";
 import { adminGuard } from "@/features/admin/auth/admin-guard";
 
 const guard = adminGuard(Astro);
 if (guard) return guard;
 
-const localeParam = Astro.url.searchParams.get("locale");
-const locale: SiteLocale = localeParam === "sr-cyrl" ? "sr-cyrl" : "sr-latn";
 const saved = Astro.url.searchParams.get("saved") === "1";
 const errorParam = Astro.url.searchParams.get("error");
 
-const navigation = await navigationService.getNavigation(locale);
+const navigation = await navigationService.getNavigation();
 const action = `/api/admin/navigation`;
 ---
 
@@ -36,25 +32,6 @@ const action = `/api/admin/navigation`;
           uređivati.
         </p>
       </div>
-
-      <div class="admin-stat-strip">
-        <a
-          class="admin-stat-pill"
-          href={`${adminConfig.basePath}/navigation/?locale=sr-latn`}
-          style={locale === "sr-latn" ? "outline: 2px solid var(--primary);" : ""}
-        >
-          <span class="admin-stat-pill__label">Pismo</span>
-          <strong>Latinica</strong>
-        </a>
-        <a
-          class="admin-stat-pill"
-          href={`${adminConfig.basePath}/navigation/?locale=sr-cyrl`}
-          style={locale === "sr-cyrl" ? "outline: 2px solid var(--primary);" : ""}
-        >
-          <span class="admin-stat-pill__label">Pismo</span>
-          <strong>Ћирилица</strong>
-        </a>
-      </div>
     </div>
 
     {saved ? <p class="admin-alert admin-alert--success">Navigacija je sačuvana.</p> : null}
@@ -64,6 +41,6 @@ const action = `/api/admin/navigation`;
       </p>
     ) : null}
 
-    <AdminNavigationForm action={action} navigation={navigation} locale={locale} />
+    <AdminNavigationForm action={action} navigation={navigation} />
   </div>
 </AdminLayout>

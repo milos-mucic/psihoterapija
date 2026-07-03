@@ -21,7 +21,6 @@ import type {
   PsychotherapyPageManagedContent,
   ScopePageManagedContent,
 } from "@/features/page-content/types/page-content.types";
-import type { SiteLocale } from "@/lib/config/site";
 
 type SupportedPage = Exclude<PageKey, "home">;
 
@@ -38,12 +37,10 @@ type Props = {
     | FaqPageManagedContent
     | ContactPageManagedContent
     | BlogIndexPageManagedContent;
-  locale: SiteLocale;
   previewBaseHref: string;
-  localeLabel: string;
 };
 
-const { action, content, locale, page, previewBaseHref, localeLabel } = Astro.props;
+const { action, content, page, previewBaseHref } = Astro.props;
 const editorConfig: ManagedPageEditorConfig = getManagedPageEditorConfig(
   page as SupportedManagedPage,
   content,
@@ -109,9 +106,7 @@ const richTextLabels = {
   data-admin-section-preview-root
   data-admin-preview-endpoint="/api/admin/pages/preview"
   data-preview-base-href={previewBaseHref}
-  data-preview-locale-label={localeLabel}
 >
-  <input type="hidden" name="locale" value={locale} />
   <input type="hidden" name="pageKey" value={page} />
   <input type="hidden" name="previewToken" value="" data-admin-preview-token />
 

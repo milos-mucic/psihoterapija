@@ -6,12 +6,9 @@ import { pageContentService } from "@/features/page-content/services/page-conten
 import { pagePreviewService } from "@/features/page-content/services/page-preview.service";
 import type {
   AnyManagedPageContent,
-  PageContentRecord,
   PageKey,
 } from "@/features/page-content/types/page-content.types";
-import { siteConfig, type SiteLocale } from "@/lib/config/site";
-
-const translationLagMs = 1000 * 60 * 5;
+import { siteConfig } from "@/lib/config/site";
 
 const pageDefinitions: Array<{ pageKey: PageKey; title: string; copy: string }> = [
   {
@@ -66,18 +63,9 @@ const pageDefinitions: Array<{ pageKey: PageKey; title: string; copy: string }> 
   },
 ];
 
-const localeLabels: Record<SiteLocale, string> = {
-  "sr-latn": "Latinica",
-  "sr-cyrl": "Ćirilica",
-};
-
-const getRecordKey = (pageKey: PageKey, locale: SiteLocale) => `${pageKey}:${locale}`;
-
-const getLocaleTag = (locale: SiteLocale) => (locale === "sr-cyrl" ? "sr-Cyrl-RS" : "sr-RS");
-
-const formatUpdatedAt = (date: Date | undefined, locale: SiteLocale) =>
+const formatUpdatedAt = (date: Date | undefined) =>
   date
-    ? date.toLocaleString(getLocaleTag(locale), {
+    ? date.toLocaleString("sr-RS", {
         dateStyle: "medium",
         timeStyle: "short",
       })
@@ -124,108 +112,51 @@ const analyzeContent = (content: AnyManagedPageContent) => {
   };
 };
 
-const getNeedsTranslation = (
-  currentRecord: PageContentRecord | undefined,
-  counterpartRecord: PageContentRecord | undefined,
-) => {
-  if (!counterpartRecord) {
-    return false;
-  }
-
-  if (!currentRecord) {
-    return true;
-  }
-
-  return (
-    counterpartRecord.updatedAt.getTime() - currentRecord.updatedAt.getTime() > translationLagMs
-  );
-};
-
-export type PageDashboardLocaleSummary = {
-  locale: SiteLocale;
-  label: string;
+export type PageDashboardSummary = {
+  pageKey: PageKey;
+  title: string;
+  copy: string;
   statusLabel: string;
   statusTone: "success" | "muted";
   updatedAt?: Date;
   updatedAtLabel: string;
   completionPercent: number;
   missingImages: number;
-  needsTranslation: boolean;
   hasUnpublishedChanges: boolean;
   editorHref: string;
   previewHref: string;
   publicHref: string;
 };
 
-export type PageDashboardSummary = {
-  pageKey: PageKey;
-  title: string;
-  copy: string;
-  updatedAt?: Date;
-  completionPercent: number;
-  missingImages: number;
-  needsTranslation: boolean;
-  hasUnpublishedChanges: boolean;
-  locales: PageDashboardLocaleSummary[];
-};
-
 export const pageDashboardService = {
   async listPages(): Promise<PageDashboardSummary[]> {
     const storedRecords = await pageContentService.listStoredPageContentRecords();
-    const recordMap = new Map<string, PageContentRecord>(
-      storedRecords.map((record) => [getRecordKey(record.pageKey, record.locale), record]),
-    );
+    const recordMap = new Map(storedRecords.map((record) => [record.pageKey, record]));
 
     return Promise.all(
       pageDefinitions.map(async (page) => {
-        const locales = await Promise.all(
-          siteConfig.locales.map(async (locale) => {
-            const record = recordMap.get(getRecordKey(page.pageKey, locale));
-            const counterpartLocale = locale === "sr-latn" ? "sr-cyrl" : "sr-latn";
-            const counterpartRecord = recordMap.get(getRecordKey(page.pageKey, counterpartLocale));
-            const content = await pageContentService.getManagedPageContent(page.pageKey, locale);
-            const analysis = analyzeContent(content as AnyManagedPageContent);
-            const latestDraftUpdatedAt = pagePreviewService.getLatestDraftUpdatedAt(
-              page.pageKey,
-              locale,
-            );
-            const hasUnpublishedChanges = latestDraftUpdatedAt
-              ? !record || latestDraftUpdatedAt > record.updatedAt.getTime()
-              : false;
-
-            return {
-              locale,
-              label: localeLabels[locale],
-              statusLabel: record ? "Objavljeno" : "Početni sadržaj",
-              statusTone: record ? "success" : "muted",
-              updatedAt: record?.updatedAt,
-              updatedAtLabel: formatUpdatedAt(record?.updatedAt, locale),
-              completionPercent: analysis.completionPercent,
-              missingImages: analysis.missingImages,
-              needsTranslation: getNeedsTranslation(record, counterpartRecord),
-              hasUnpublishedChanges,
-              editorHref: `${siteConfig.adminPath}/pages/${page.pageKey}/?locale=${locale}`,
-              previewHref: getAdminPreviewHref(page.pageKey, locale),
-              publicHref: getPublicPageHref(page.pageKey, locale),
-            } satisfies PageDashboardLocaleSummary;
-          }),
-        );
+        const record = recordMap.get(page.pageKey);
+        const content = await pageContentService.getManagedPageContent(page.pageKey);
+        const analysis = analyzeContent(content as AnyManagedPageContent);
+        const latestDraftUpdatedAt = pagePreviewService.getLatestDraftUpdatedAt(page.pageKey);
+        const hasUnpublishedChanges = latestDraftUpdatedAt
+          ? !record || latestDraftUpdatedAt > record.updatedAt.getTime()
+          : false;
 
         return {
           pageKey: page.pageKey,
           title: page.title,
           copy: page.copy,
-          updatedAt: locales
-            .map((locale) => locale.updatedAt)
-            .filter((value): value is Date => value instanceof Date)
-            .sort((left, right) => right.getTime() - left.getTime())[0],
-          completionPercent: Math.round(
-            locales.reduce((sum, locale) => sum + locale.completionPercent, 0) / locales.length,
-          ),
-          missingImages: locales.reduce((sum, locale) => sum + locale.missingImages, 0),
-          needsTranslation: locales.some((locale) => locale.needsTranslation),
-          hasUnpublishedChanges: locales.some((locale) => locale.hasUnpublishedChanges),
-          locales,
+          statusLabel: record ? "Objavljeno" : "Početni sadržaj",
+          statusTone: record ? "success" : "muted",
+          updatedAt: record?.updatedAt,
+          updatedAtLabel: formatUpdatedAt(record?.updatedAt),
+          completionPercent: analysis.completionPercent,
+          missingImages: analysis.missingImages,
+          hasUnpublishedChanges,
+          editorHref: `${siteConfig.adminPath}/pages/${page.pageKey}/`,
+          previewHref: getAdminPreviewHref(page.pageKey),
+          publicHref: getPublicPageHref(page.pageKey),
         } satisfies PageDashboardSummary;
       }),
     );
@@ -233,7 +164,6 @@ export const pageDashboardService = {
   getStats(pages: PageDashboardSummary[]) {
     return {
       totalPages: pages.length,
-      pagesNeedingTranslation: pages.filter((page) => page.needsTranslation).length,
       pagesWithMissingImages: pages.filter((page) => page.missingImages > 0).length,
       pagesWithUnpublishedChanges: pages.filter((page) => page.hasUnpublishedChanges).length,
     };

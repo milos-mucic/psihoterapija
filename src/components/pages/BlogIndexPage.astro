@@ -2,22 +2,19 @@
 import { stripHtmlTags } from "@/features/page-content/admin/technical-fields";
 import PageBanner from "@/components/sections/PageBanner.astro";
 import { extractPlainTextFromHtml } from "@/features/blog/utils/rich-text";
-import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import { getBlockBackgroundStyle } from "@/features/page-content/admin/block-backgrounds";
 import type { BlogListItem } from "@/features/blog/types/blog.types";
-import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
-  locale: SiteLocale;
   posts: BlogListItem[];
   content?: Awaited<ReturnType<typeof pageContentService.getBlogIndexPageData>>;
 };
 
-const { locale, posts, content: previewContent } = Astro.props;
-const dictionary = getDictionary(locale);
-const content = previewContent ?? (await pageContentService.getBlogIndexPageData(locale));
+const { posts, content: previewContent } = Astro.props;
+const dictionary = getDictionary();
+const content = previewContent ?? (await pageContentService.getBlogIndexPageData());
 const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackgrounds, fragment);
 const recentPosts = posts.slice(0, 3);
 const keywordSet = new Set<string>();
@@ -74,7 +71,7 @@ const keywords = Array.from(keywordSet);
                 >
                   <a
                     class="blog-index__card-image-link"
-                    href={localizePath(locale, `/blog/${post.slug}/`)}
+                    href={`/blog/${post.slug}/`}
                   >
                     <img
                       class="blog-index__card-image"
@@ -89,7 +86,7 @@ const keywords = Array.from(keywordSet);
                     <span class="blog-index__card-category" set:html={firstTag} />
                     <a
                       class="blog-index__card-title-link"
-                      href={localizePath(locale, `/blog/${post.slug}/`)}
+                      href={`/blog/${post.slug}/`}
                     >
                       <h3 set:html={post.title} />
                     </a>
@@ -103,7 +100,7 @@ const keywords = Array.from(keywordSet);
 
                     <a
                       class="blog-index__read-more"
-                      href={localizePath(locale, `/blog/${post.slug}/`)}
+                      href={`/blog/${post.slug}/`}
                     >
                       {dictionary.blog.readMoreLabel}
                       <span aria-hidden="true">→</span>
@@ -145,7 +142,7 @@ const keywords = Array.from(keywordSet);
                 <article class="blog-index__recent-item">
                   <a
                     class="blog-index__recent-image-link"
-                    href={localizePath(locale, `/blog/${post.slug}/`)}
+                    href={`/blog/${post.slug}/`}
                   >
                     <img
                       class="blog-index__recent-image"
@@ -156,13 +153,11 @@ const keywords = Array.from(keywordSet);
                     />
                   </a>
                   <div class="blog-index__recent-copy">
-                    <a href={localizePath(locale, `/blog/${post.slug}/`)}>
+                    <a href={`/blog/${post.slug}/`}>
                       <h5 set:html={post.title} />
                     </a>
                     <p>
-                      {post.publishedAt.toLocaleDateString(
-                        locale === "sr-cyrl" ? "sr-Cyrl-RS" : "sr-RS",
-                      )}
+                      {post.publishedAt.toLocaleDateString("sr-RS")}
                     </p>
                   </div>
                 </article>

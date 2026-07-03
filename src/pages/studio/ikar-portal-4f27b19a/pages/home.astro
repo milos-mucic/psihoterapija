@@ -5,7 +5,6 @@ import AdminHomePageForm from "@/components/components/AdminHomePageForm.astro";
 import { getDictionary } from "@/features/i18n/translate";
 import { getAdminPreviewHref } from "@/features/page-content/admin/page-route-map";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
-import type { SiteLocale } from "@/lib/config/site";
 import { adminConfig } from "@/lib/config/admin";
 import AdminLayout from "@/components/components/AdminLayout.astro";
 import { adminGuard } from "@/features/admin/auth/admin-guard";
@@ -13,14 +12,11 @@ import { adminGuard } from "@/features/admin/auth/admin-guard";
 const guard = adminGuard(Astro);
 if (guard) return guard;
 
-const dictionary = getDictionary("sr-latn");
-const localeParam = Astro.url.searchParams.get("locale");
-const locale: SiteLocale = localeParam === "sr-cyrl" ? "sr-cyrl" : "sr-latn";
-const content = await pageContentService.getManagedHomeContent(locale);
+const dictionary = getDictionary();
+const content = await pageContentService.getManagedHomeContent();
 const saved = Astro.url.searchParams.get("saved") === "1";
 const error = Astro.url.searchParams.get("error");
-const localeLabel = locale === "sr-cyrl" ? "Ćirilica" : "Latinica";
-const previewHref = getAdminPreviewHref("home", locale);
+const previewHref = getAdminPreviewHref("home");
 ---
 
 <AdminLayout
@@ -49,28 +45,7 @@ const previewHref = getAdminPreviewHref("home", locale);
           <h2>{dictionary.admin.pages.homeTitle}</h2>
           <p class="admin-page-header__copy">{dictionary.admin.pages.homeCopy}</p>
         </div>
-
-        <div class="admin-page-header__actions">
-          <a
-            class:list={["button-secondary", locale === "sr-latn" && "is-active"]}
-            href={`${adminConfig.basePath}/pages/home/?locale=sr-latn`}
-          >
-            Latinica
-          </a>
-          <a
-            class:list={["button-secondary", locale === "sr-cyrl" && "is-active"]}
-            href={`${adminConfig.basePath}/pages/home/?locale=sr-cyrl`}
-          >
-            Ćirilica
-          </a>
-        </div>
       </div>
-    </div>
-
-    <div class="card admin-meta-card">
-      <p>
-        Uređujete sadržaj za: <strong style="color: var(--foreground);">{localeLabel}</strong>
-      </p>
     </div>
 
     <div class="admin-editor-layout" data-admin-page-editor>
@@ -78,9 +53,7 @@ const previewHref = getAdminPreviewHref("home", locale);
         <AdminHomePageForm
           action="/api/admin/pages/home"
           content={content}
-          locale={locale}
           previewBaseHref={previewHref}
-          localeLabel={localeLabel}
         />
       </div>
     </div>

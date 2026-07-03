@@ -13,7 +13,7 @@ import { getDictionary } from "@/features/i18n/translate";
 const guard = adminGuard(Astro);
 if (guard) return guard;
 
-const dictionary = getDictionary("sr-latn");
+const dictionary = getDictionary();
 
 const [posts, submissions, pages] = await Promise.all([
   blogService.listAllPosts().catch(() => []),
@@ -163,8 +163,8 @@ const base = adminConfig.basePath;
       <div class="admin-card__body">
         <div style="display:grid;gap:0.6rem;">
           <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.85rem;">
-            <span style="color:var(--shell-text-soft);">Potrebno prevesti</span>
-            <span style="font-family:var(--font-display);font-size:1.25rem;">{pageStats.pagesNeedingTranslation}</span>
+            <span style="color:var(--shell-text-soft);">Ukupno stranica</span>
+            <span style="font-family:var(--font-display);font-size:1.25rem;">{pageStats.totalPages}</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.85rem;">
             <span style="color:var(--shell-text-soft);">Nedostaje slika</span>
@@ -250,12 +250,12 @@ const base = adminConfig.basePath;
           {recentPosts.map((p) => (
             <li>
               <span class="admin-avatar" style={`background:${p.status === "published" ? "#e2f1e9" : p.status === "draft" ? "#e7eef1" : "rgba(22, 60, 61, 0.06)"};color:${p.status === "published" ? "#2e7d6b" : "#2a5758"};`}>
-                {p.locale === "sr-cyrl" ? "ћ" : "L"}
+                {p.title.charAt(0)}
               </span>
               <div class="admin-list__main">
                 <div class="admin-list__title">{p.title}</div>
                 <div class="admin-list__meta">
-                  {p.locale} · {new Date(p.publishedAt).toLocaleDateString("sr-RS", { day: "numeric", month: "short", year: "numeric" })}
+                  {new Date(p.publishedAt).toLocaleDateString("sr-RS", { day: "numeric", month: "short", year: "numeric" })}
                 </div>
               </div>
               <span class={`badge badge--${p.status}`}>{p.status === "published" ? "Objavljen" : p.status === "draft" ? "Skica" : "Arhiviran"}</span>

@@ -1,6 +1,4 @@
 import { readFile } from "node:fs/promises";
-import { localizePath } from "@/features/i18n/locale";
-import type { SiteLocale } from "@/lib/config/site";
 
 const biographySourceUrl = new URL("../../../webflow-old/our-team.html", import.meta.url);
 const biographyHeadHtml = `
@@ -9,8 +7,7 @@ const biographyHeadHtml = `
   <link href="/legacy/css/psihoterapijski-kabinet-ikar-website.webflow.css" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&display=swap">
 `;
-const biographyContentTranslations: Record<SiteLocale, Array<[string, string]>> = {
-  "sr-latn": [
+const biographyContentTranslations: Array<[string, string]> = [
     ["Our Team", "Biografija"],
     [
       "Exploring various psychological concepts, theories, and research findings in an accessible way.",
@@ -49,48 +46,7 @@ const biographyContentTranslations: Record<SiteLocale, Array<[string, string]>> 
       "The psychologist may ask questions to better understand your thoughts, feelings, and behaviors. This process helps in assessing the factors contributing to your concerns.",
       "Terapeut može postavljati pitanja kako bi bolje razumeo Vaše misli, osećanja i ponašanja. Taj proces pomaže da se sagledaju faktori koji doprinose teškoćama sa kojima dolazite.",
     ],
-  ],
-  "sr-cyrl": [
-    ["Our Team", "Биографија"],
-    [
-      "Exploring various psychological concepts, theories, and research findings in an accessible way.",
-      "На приступачан и јасан начин представљамо професионални пут, приступ раду и психолошке увиде који обликују овај простор.",
-    ],
-    ["Meet Our Specialists", "Стручни профил"],
-    [
-      "These professionals may include clinical psychologists, counseling psychologists, psychotherapists, psychiatrists, and other specialists.",
-      "Овај приступ ослања се на знања из клиничке психологије, саветодавне психологије, психотерапије, психијатрије и сродних области менталног здравља.",
-    ],
-    ["No items found.", "Детаљи ће ускоро бити допуњени."],
-    ['aria-label="List"', 'aria-label="Листа"'],
-    ['aria-label="Previous Page"', 'aria-label="Претходна страница"'],
-    [">Previous<", ">Претходна<"],
-    ['aria-label="Next Page"', 'aria-label="Следећа страница"'],
-    [">Next<", ">Следећа<"],
-    ['alt="Psychology Therapy"', 'alt="Психотерапијски рад"'],
-    ["We Love Our Clients", "Приступ раду"],
-    [
-      "Psychologist centers are staffed by licensed psychologists and mental health professionals.",
-      "Психотерапијски рад заснива се на лиценцираним психолозима и стручњацима за ментално здравље.",
-    ],
-    [
-      "Psychologist centers are staffed by licensed psychologists and mental health professionals. These professionals may include clinical psychologists, counseling psychologists, psychotherapists, psychiatrists, and other specialists.",
-      "Психотерапијски рад заснива се на лиценцираном стручном вођењу, поверењу и континуираном разумевању унутрашњих процеса, мисли, осећања и понашања.",
-    ],
-    [
-      "Therapy is a collaborative process. You&#x27;ll have the opportunity to discuss your experiences, concerns, and any challenges you&#x27;re facing. The psychologist will provide support and insights.",
-      "Терапија је сараднички процес. Имаћете прилику да говорите о својим искуствима, бригама и изазовима са којима се суочавате, а терапеут ће Вам пружити подршку и увиде.",
-    ],
-    [
-      "Together with the psychologist, you&#x27;ll discuss your goals for therapy. This could include addressing specific issues, improving coping skills, or working towards personal growth.",
-      "Заједно са терапеутом дефинисаћете циљеве рада. То може укључивати рад на конкретним тешкоћама, јачање капацитета за суочавање и лични развој.",
-    ],
-    [
-      "The psychologist may ask questions to better understand your thoughts, feelings, and behaviors. This process helps in assessing the factors contributing to your concerns.",
-      "Терапеут може постављати питања како би боље разумео Ваше мисли, осећања и понашања. Тај процес помаже да се сагледају фактори који доприносе тешкоћама са којима долазите.",
-    ],
-  ],
-};
+];
 
 const legacyImageAliases = new Map([
   ["Team-Img-1_1Team-Img-1.webp", "Team-Img-1_1Team%20Img%20(1).webp"],
@@ -100,24 +56,24 @@ const legacyImageAliases = new Map([
   ["Appointmebt-Img_1Appointmebt-Img.webp", "Appointmebt-Img_1Appointmebt%20Img.webp"],
 ]);
 
-export const getBiographyPageParts = async (locale: SiteLocale) => {
+export const getBiographyPageParts = async () => {
   let html = await readFile(biographySourceUrl, "utf-8");
 
   const pathMap = new Map([
-    ["home-1.html", localizePath(locale, "/")],
-    ["index.html", localizePath(locale, "/")],
-    ["about-us-2.html", localizePath(locale, "/o-nama/")],
-    ["about-us-1.html", localizePath(locale, "/biografija/")],
-    ["our-team.html", localizePath(locale, "/biografija/")],
-    ["services.html", localizePath(locale, "/psihoterapija/")],
-    ["pricing.html", localizePath(locale, "/psihoterapija/")],
-    ["sessions.html", localizePath(locale, "/psihoterapija/")],
-    ["appointment.html", localizePath(locale, "/zakazivanje/")],
-    ["blog-1.html", localizePath(locale, "/blog/")],
-    ["blog-2.html", localizePath(locale, "/blog/")],
-    ["blog-3.html", localizePath(locale, "/blog/")],
-    ["faq.html", localizePath(locale, "/pitanja/")],
-    ["contact-us.html", localizePath(locale, "/kontakt/")],
+    ["home-1.html", "/"],
+    ["index.html", "/"],
+    ["about-us-2.html", "/o-nama/"],
+    ["about-us-1.html", "/biografija/"],
+    ["our-team.html", "/biografija/"],
+    ["services.html", "/psihoterapija/"],
+    ["pricing.html", "/psihoterapija/"],
+    ["sessions.html", "/psihoterapija/"],
+    ["appointment.html", "/zakazivanje/"],
+    ["blog-1.html", "/blog/"],
+    ["blog-2.html", "/blog/"],
+    ["blog-3.html", "/blog/"],
+    ["faq.html", "/pitanja/"],
+    ["contact-us.html", "/kontakt/"],
   ]);
 
   const replacements: Array<[string, string]> = [
@@ -164,7 +120,7 @@ export const getBiographyPageParts = async (locale: SiteLocale) => {
     .trim()
     .replaceAll(' style="opacity:0"', "");
 
-  for (const [from, to] of biographyContentTranslations[locale]) {
+  for (const [from, to] of biographyContentTranslations) {
     contentHtml = contentHtml.replaceAll(from, to);
   }
 

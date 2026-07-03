@@ -5,7 +5,7 @@ type Props = {
   returnPath: string;
 };
 
-const dictionary = getDictionary("sr-latn");
+const dictionary = getDictionary();
 
 export function AdminPasswordModal({ returnPath }: Props) {
   const [password, setPassword] = useState("");

@@ -3,7 +3,6 @@ import { ZodError } from "zod";
 import { requireAdminApiAuth } from "@/features/admin/auth/admin-api-auth";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import { adminConfig } from "@/lib/config/admin";
-import type { SiteLocale } from "@/lib/config/site";
 
 const toPayload = async (request: Request) => {
   const formData = await request.formData();
@@ -24,17 +23,16 @@ export const POST: APIRoute = async (context) => {
   }
 
   const payload = await toPayload(context.request);
-  const locale = payload.locale === "sr-cyrl" ? "sr-cyrl" : "sr-latn";
 
   try {
-    await pageContentService.updateHomeContent(locale as SiteLocale, payload);
-    return context.redirect(`${adminConfig.basePath}/pages/home/?locale=${locale}&saved=1`);
+    await pageContentService.updateHomeContent(payload);
+    return context.redirect(`${adminConfig.basePath}/pages/home/?saved=1`);
   } catch (error) {
     if (error instanceof ZodError) {
-      return context.redirect(`${adminConfig.basePath}/pages/home/?locale=${locale}&error=validation`);
+      return context.redirect(`${adminConfig.basePath}/pages/home/?error=validation`);
     }
 
     console.error(error);
-    return context.redirect(`${adminConfig.basePath}/pages/home/?locale=${locale}&error=validation`);
+    return context.redirect(`${adminConfig.basePath}/pages/home/?error=validation`);
   }
 };

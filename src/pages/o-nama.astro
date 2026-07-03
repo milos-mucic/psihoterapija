@@ -5,15 +5,13 @@ import AboutPage from "@/components/pages/AboutPage.astro";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import BaseLayout from "@/components/components/BaseLayout.astro";
 
-const locale = "sr-latn";
-const content = await pageContentService.getAboutPageData(locale);
+const content = await pageContentService.getAboutPageData();
 ---
 
 <BaseLayout
   title={content.seo.title}
   description={content.seo.description}
-  locale={locale}
   canonicalPath="/o-nama/"
 >
-  <AboutPage locale={locale} />
+  <AboutPage />
 </BaseLayout>

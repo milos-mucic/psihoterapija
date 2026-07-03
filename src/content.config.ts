@@ -2,7 +2,6 @@ import { defineCollection, z } from "astro:content";
 
 const blog = defineCollection({
   schema: z.object({
-    locale: z.enum(["sr-latn", "sr-cyrl"]),
     title: z.string(),
     excerpt: z.string(),
     publishedAt: z.coerce.date(),

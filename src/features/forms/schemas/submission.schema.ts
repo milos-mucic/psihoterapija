@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 const commonFields = {
-  locale: z.enum(["sr-latn", "sr-cyrl"]),
   name: z.string().trim().min(2).max(120),
   email: z.email(),
 };

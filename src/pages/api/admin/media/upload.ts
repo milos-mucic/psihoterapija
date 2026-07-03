@@ -66,7 +66,7 @@ export const POST: APIRoute = async (context) => {
     return authError;
   }
 
-  const dictionary = getDictionary("sr-latn");
+  const dictionary = getDictionary();
 
   try {
     const formData = await context.request.formData();

@@ -1,11 +1,8 @@
-import type { SiteLocale } from "@/lib/config/site";
-
 export type BlogStatus = "draft" | "published" | "archived";
 
 export type BlogListItem = {
   id: string;
   slug: string;
-  locale: SiteLocale;
   title: string;
   excerpt: string;
   coverImage?: string;
@@ -24,7 +21,6 @@ export type BlogPostRecord = BlogListItem & {
 
 export type BlogPostInput = {
   slug: string;
-  locale: SiteLocale;
   title: string;
   excerpt: string;
   body: string;

@@ -5,16 +5,14 @@ import AppointmentPage from "@/components/pages/AppointmentPage.astro";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import BaseLayout from "@/components/components/BaseLayout.astro";
 
-const locale = "sr-latn";
-const content = await pageContentService.getAppointmentPageData(locale);
+const content = await pageContentService.getAppointmentPageData();
 ---
 
 <BaseLayout
   title={content.seo.title}
   description={content.seo.description}
-  locale={locale}
   canonicalPath="/zakazivanje/"
   appBarTone="light"
 >
-  <AppointmentPage locale={locale} />
+  <AppointmentPage />
 </BaseLayout>

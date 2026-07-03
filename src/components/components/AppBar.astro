@@ -1,29 +1,21 @@
 ---
 import { stripHtmlTags } from "@/features/page-content/admin/technical-fields";
-import { getLocalePrefix, localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import { navigationService } from "@/features/navigation/service";
 import { siteSettingsService } from "@/features/site-settings/services/site-settings.service";
-import { siteConfig, type SiteLocale } from "@/lib/config/site";
+import { siteConfig } from "@/lib/config/site";
 
 type Props = {
-  locale: SiteLocale;
   pathname: string;
   initialTone?: "light" | "dark";
 };
 
-const { locale, pathname, initialTone = "light" } = Astro.props;
-const dictionary = getDictionary(locale);
-const latnDictionary = getDictionary("sr-latn");
-const cyrlDictionary = getDictionary("sr-cyrl");
-const currentWithoutPrefix =
-  locale === "sr-cyrl" ? pathname.replace(/^\/cir/, "") || "/" : pathname || "/";
-const latnHref = currentWithoutPrefix;
-const cyrlHref = `${getLocalePrefix("sr-cyrl")}${currentWithoutPrefix}`.replace("//", "/");
+const { pathname, initialTone = "light" } = Astro.props;
+const dictionary = getDictionary();
 const isActivePath = (href: string) =>
   href === "/" ? pathname === href : pathname.startsWith(href);
 
-const navigation = await navigationService.getNavigation(locale);
+const navigation = await navigationService.getNavigation();
 const navItems = navigation.items;
 
 const brand = (await siteSettingsService.get()).brand;
@@ -35,7 +27,7 @@ const showText = Boolean(brand.name || brand.tagline);
 <header class="appbar appbar--solid" data-appbar-root data-initial-tone={initialTone}>
   <div class="container">
     <div class="appbar__panel">
-      <a class="appbar__brand" href={localizePath(locale, "/")} aria-label={brandAriaLabel}>
+      <a class="appbar__brand" href="/" aria-label={brandAriaLabel}>
         {showLogo && (
           <>
             {brand.logoLight && (
@@ -100,50 +92,7 @@ const showText = Boolean(brand.name || brand.tagline);
         </nav>
 
         <div class="appbar__actions">
-          <div
-            class="appbar__locale-toggle"
-            aria-label={dictionary.a11y.localeSwitch}
-            data-locale-toggle
-            data-active-locale={locale}
-          >
-            {
-              locale === "sr-latn" ? (
-                <span class="appbar__locale-chip" aria-current="page" data-locale-chip-id="sr-latn">
-                  {latnDictionary.localeShortLabel}
-                </span>
-              ) : (
-                <a
-                  class="appbar__locale-chip"
-                  href={latnHref}
-                  data-astro-prefetch
-                  data-locale-chip-target
-                  data-next-locale="sr-latn"
-                  data-locale-chip-id="sr-latn"
-                >
-                  {latnDictionary.localeShortLabel}
-                </a>
-              )
-            }
-            {
-              locale === "sr-cyrl" ? (
-                <span class="appbar__locale-chip" aria-current="page" data-locale-chip-id="sr-cyrl">
-                  {cyrlDictionary.localeShortLabel}
-                </span>
-              ) : (
-                <a
-                  class="appbar__locale-chip"
-                  href={cyrlHref}
-                  data-astro-prefetch
-                  data-locale-chip-target
-                  data-next-locale="sr-cyrl"
-                  data-locale-chip-id="sr-cyrl"
-                >
-                  {cyrlDictionary.localeShortLabel}
-                </a>
-              )
-            }
-          </div>
-          <a class="appbar__cta" href={localizePath(locale, "/kontakt/")}>
+          <a class="appbar__cta" href="/kontakt/">
             {dictionary.nav.contact}
           </a>
         </div>
@@ -213,58 +162,7 @@ const showText = Boolean(brand.name || brand.tagline);
           </div>
 
           <div class="appbar__drawer-actions">
-            <div
-              class="appbar__locale-toggle appbar__locale-toggle--drawer"
-              aria-label={dictionary.a11y.localeSwitch}
-              data-locale-toggle
-              data-active-locale={locale}
-            >
-              {
-                locale === "sr-latn" ? (
-                  <span
-                    class="appbar__locale-chip"
-                    aria-current="page"
-                    data-locale-chip-id="sr-latn"
-                  >
-                    {latnDictionary.localeShortLabel}
-                  </span>
-                ) : (
-                  <a
-                    class="appbar__locale-chip"
-                    href={latnHref}
-                    data-astro-prefetch
-                    data-locale-chip-target
-                    data-next-locale="sr-latn"
-                    data-locale-chip-id="sr-latn"
-                  >
-                    {latnDictionary.localeShortLabel}
-                  </a>
-                )
-              }
-              {
-                locale === "sr-cyrl" ? (
-                  <span
-                    class="appbar__locale-chip"
-                    aria-current="page"
-                    data-locale-chip-id="sr-cyrl"
-                  >
-                    {cyrlDictionary.localeShortLabel}
-                  </span>
-                ) : (
-                  <a
-                    class="appbar__locale-chip"
-                    href={cyrlHref}
-                    data-astro-prefetch
-                    data-locale-chip-target
-                    data-next-locale="sr-cyrl"
-                    data-locale-chip-id="sr-cyrl"
-                  >
-                    {cyrlDictionary.localeShortLabel}
-                  </a>
-                )
-              }
-            </div>
-            <a class="appbar__cta" href={localizePath(locale, "/zakazivanje/")}>
+            <a class="appbar__cta" href="/zakazivanje/">
               {dictionary.nav.appointment}
             </a>
           </div>

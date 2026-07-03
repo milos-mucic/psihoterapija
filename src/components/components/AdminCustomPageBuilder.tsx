@@ -10,7 +10,6 @@ import type {
   RichTextBlockData,
   CtaBlockData,
 } from "@/features/custom-pages/types/custom-page.types";
-import type { SiteLocale } from "@/lib/config/site";
 
 const RTF_LABELS: AdminRichTextFieldProps["labels"] = {
   bold: "Bold",
@@ -70,7 +69,6 @@ type Props = {
   pageId?: string;
   initial: {
     slug: string;
-    locale: SiteLocale;
     title: string;
     description: string;
     blocks: CustomPageBlock[];
@@ -115,7 +113,6 @@ const randomId = () =>
 export function AdminCustomPageBuilder({ pageId, initial, action, mode }: Props) {
   const formId = useId();
   const [slug, setSlug] = useState(initial.slug);
-  const [locale, setLocale] = useState(initial.locale);
   const [title, setTitle] = useState(initial.title);
   const [description, setDescription] = useState(initial.description);
   const [status, setStatus] = useState<CustomPageStatus>(initial.status);
@@ -126,8 +123,8 @@ export function AdminCustomPageBuilder({ pageId, initial, action, mode }: Props)
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const payload = useMemo(
-    () => JSON.stringify({ slug, locale, title, description, blocks, status }),
-    [slug, locale, title, description, blocks, status],
+    () => JSON.stringify({ slug, title, description, blocks, status }),
+    [slug, title, description, blocks, status],
   );
 
   const updateBlock = (id: string, patch: Partial<CustomPageBlock["data"]>) => {
@@ -237,14 +234,7 @@ export function AdminCustomPageBuilder({ pageId, initial, action, mode }: Props)
               placeholder="npr. o-nasem-timu (bez leading /)"
               disabled={mode === "edit"}
             />
-            <small>Javni URL: <code>{locale === "sr-cyrl" ? "/cir/" : "/"}{slug || "..."}</code></small>
-          </label>
-          <label className="cpb__field cpb__field--row">
-            <span>Pismo *</span>
-            <select value={locale} onChange={(e) => setLocale(e.target.value as SiteLocale)} disabled={mode === "edit"}>
-              <option value="sr-latn">Latinica</option>
-              <option value="sr-cyrl">Ћирилица</option>
-            </select>
+            <small>Javni URL: <code>/{slug || "..."}</code></small>
           </label>
           <label className="cpb__field cpb__field--row">
             <span>Status</span>
@@ -307,7 +297,7 @@ export function AdminCustomPageBuilder({ pageId, initial, action, mode }: Props)
 
       <div className="cpb__save-bar">
         {pageId && (
-          <a className="cpb__save-secondary" href={`${locale === "sr-cyrl" ? "/cir/" : "/"}${slug}/`} target="_blank" rel="noreferrer">
+          <a className="cpb__save-secondary" href={`/${slug}/`} target="_blank" rel="noreferrer">
             Otvori javnu stranicu ↗
           </a>
         )}

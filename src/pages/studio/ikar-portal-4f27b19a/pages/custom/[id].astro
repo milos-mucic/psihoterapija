@@ -22,7 +22,6 @@ const saved = params.get("saved") === "1";
 
 const initial = {
   slug: page.slug,
-  locale: page.locale,
   title: page.title,
   description: page.description ?? "",
   blocks: page.blocks,
@@ -46,7 +45,7 @@ const initial = {
       </p>
     </div>
     <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-      <a class="btn-ghost" href={`${page.locale === "sr-cyrl" ? "/cir/" : "/"}${page.slug}/`} target="_blank" rel="noreferrer">
+      <a class="btn-ghost" href={`/${page.slug}/`} target="_blank" rel="noreferrer">
         Otvori javnu stranicu ↗
       </a>
       <form method="POST" action={`/api/admin/custom-pages/${page.id}/delete/`} onsubmit="return confirm('Obrisati ovu stranicu? Ova akcija je nepovratna.')" style="display:inline;">

@@ -54,7 +54,6 @@ const publishedAtSchema = z
   });
 
 const blogPostPayloadSchema = z.object({
-  locale: z.enum(["sr-latn", "sr-cyrl"]).default("sr-latn"),
   title: z.string().trim().min(1),
   slug: optionalTextSchema,
   excerpt: optionalTextSchema,
@@ -100,7 +99,6 @@ const normalizeInput = (
   const fallbackSlug = `post-${Date.now()}`;
 
   return {
-    locale: parsed.locale,
     title: parsed.title,
     slug: slug || toSlug(fallbackSlugSeed) || fallbackSlug,
     excerpt: excerpt ?? sanitizeInlineRichTextHtml(toExcerpt(body) || parsed.title),

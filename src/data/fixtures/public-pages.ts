@@ -1,6 +1,4 @@
-import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
-import type { SiteLocale } from "@/lib/config/site";
 
 const mirroredImages = {
   logoService1: "/legacy/images/mirrored/logo-service-1.png",
@@ -92,8 +90,8 @@ type PsychotherapyServiceCard = {
   image: string;
 };
 
-export const getAboutPageData = (locale: SiteLocale) => {
-  const dictionary = getDictionary(locale);
+export const getAboutPageData = () => {
+  const dictionary = getDictionary();
   const content = dictionary.pages.about;
   const serviceItems = dictionary.homePage.services.items;
 
@@ -112,19 +110,19 @@ export const getAboutPageData = (locale: SiteLocale) => {
       {
         title: serviceItems[2].title,
         copy: serviceItems[2].copy,
-        href: localizePath(locale, "/zakazivanje/"),
+        href: "/zakazivanje/",
         image: mirroredImages.logoService1,
       },
       {
         title: serviceItems[0].title,
         copy: serviceItems[0].copy,
-        href: localizePath(locale, "/psihoterapija/"),
+        href: "/psihoterapija/",
         image: mirroredImages.logoService2,
       },
       {
         title: serviceItems[1].title,
         copy: serviceItems[1].copy,
-        href: localizePath(locale, "/psihoterapija/"),
+        href: "/psihoterapija/",
         image: mirroredImages.logoService3,
       },
     ],
@@ -134,36 +132,36 @@ export const getAboutPageData = (locale: SiteLocale) => {
     focusItems: content.focusItems,
     recentTitle: content.recentTitle,
     recentCopy: content.recentCopy,
-    recentHref: localizePath(locale, "/blog/"),
+    recentHref: "/blog/",
     recentLabel: content.recentLabel,
     recentReadMoreLabel: content.recentReadMoreLabel,
     recentEmptyLabel: content.recentEmptyLabel,
   };
 };
 
-export const getPsychotherapyPageData = (locale: SiteLocale) => {
-  const dictionary = getDictionary(locale);
+export const getPsychotherapyPageData = () => {
+  const dictionary = getDictionary();
   const content = dictionary.pages.psychotherapy;
   const serviceItems = dictionary.homePage.services.items;
   const serviceCards: PsychotherapyServiceCard[] = [
     {
       title: serviceItems[0].title,
       copy: serviceItems[0].copy,
-      href: localizePath(locale, "/zakazivanje/"),
+      href: "/zakazivanje/",
       label: serviceItems[0].label,
       image: mirroredImages.service3,
     },
     {
       title: serviceItems[1].title,
       copy: serviceItems[1].copy,
-      href: localizePath(locale, "/zakazivanje/"),
+      href: "/zakazivanje/",
       label: serviceItems[1].label,
       image: mirroredImages.serviceImage,
     },
     {
       title: serviceItems[2].title,
       copy: serviceItems[2].copy,
-      href: localizePath(locale, "/zakazivanje/"),
+      href: "/zakazivanje/",
       label: serviceItems[2].label,
       image: mirroredImages.sessionImage,
     },
@@ -186,201 +184,105 @@ export const getPsychotherapyPageData = (locale: SiteLocale) => {
   };
 };
 
-const getScopeTabSeeds = (locale: SiteLocale): ScopeTabSeed[] => {
-  const isCyrillic = locale === "sr-cyrl";
+const getScopeTabSeeds = (): ScopeTabSeed[] => [
+  {
+    id: "anksiozna-stanja",
+    label: "Anksiozna stanja",
+    icon: mirroredImages.scopeIcon1,
+    detailImage: mirroredImages.scopeIcon1,
+    detailLead:
+      "Kada napetost postane stalno prisutna, psihoterapijski proces pomaže da se razumeju unutrašnji konflikti i postepeno vrati osećaj stabilnosti.",
+    items: [
+      {
+        title: "Anksiozna stanja i poremećaji",
+        copy: "Kada napetost, strah i ubrzane misli dugotrajno remete svakodnevno funkcionisanje.",
+      },
+      {
+        title: "Panični napadi i telesni simptomi",
+        copy: "Rad na razumevanju okidača, osećaja gubitka kontrole i ciklusa izbegavanja.",
+      },
+      {
+        title: "Opsesivne i ruminativne misli",
+        copy: "Postupno prepoznavanje obrazaca koji održavaju anksioznost i unutrašnju napetost.",
+      },
+    ],
+  },
+  {
+    id: "depresivna-stanja",
+    label: "Depresivna stanja",
+    icon: mirroredImages.scopeIcon3,
+    detailImage: mirroredImages.scopeIcon3,
+    detailLead:
+      "U terapiji radimo na razumevanju osećaja bezvoljnosti, unutrašnje praznine i gubitka smisla kroz stabilan i kontinuiran proces.",
+    items: [
+      {
+        title: "Depresivna stanja i poremećaji",
+        copy: "Pad energije, bezvoljnost i gubitak smisla koji traju i utiču na kvalitet života.",
+      },
+      {
+        title: "Povlačenje i gubitak motivacije",
+        copy: "Postupno vraćanje u kontakt sa ličnim potrebama, ritmom i osloncima.",
+      },
+      {
+        title: "Samokritičnost i osećaj bezvrednosti",
+        copy: "Rad na unutrašnjem dijalogu i obrascima koji održavaju depresivnost.",
+      },
+    ],
+  },
+  {
+    id: "poremecaji-licnosti",
+    label: "Poremećaji ličnosti",
+    icon: mirroredImages.scopeIcon2,
+    detailImage: mirroredImages.scopeIcon2,
+    detailLead:
+      "Fokus rada je na obrascima odnosa, doživljaju sebe i načinima emocionalne regulacije koji se dugotrajno ponavljaju.",
+    items: [
+      {
+        title: "Poremećaji ličnosti",
+        copy: "Ponavljajući obrasci odnosa i slike o sebi koji dugotrajno stvaraju teškoće.",
+      },
+      {
+        title: "Hronične poteškoće u odnosima",
+        copy: "Teme bliskosti, granica, odbacivanja i konflikta u partnerskim i porodičnim odnosima.",
+      },
+      {
+        title: "Emocionalna nestabilnost",
+        copy: "Rad na prepoznavanju i regulaciji intenzivnih emocija i impulsivnih reakcija.",
+      },
+    ],
+  },
+  {
+    id: "traume",
+    label: "Traume",
+    icon: mirroredImages.scopeIcon4,
+    detailImage: mirroredImages.scopeIcon4,
+    detailLead:
+      "Traumatska iskustva ostavljaju trajne emocionalne tragove. Cilj terapije je postepena integracija iskustva i stabilizacija svakodnevnog funkcionisanja.",
+    items: [
+      {
+        title: "Trauma i posttraumatske reakcije",
+        copy: "Iskustva koja ostaju psihološki aktivna i nakon što su se objektivno završila.",
+      },
+      {
+        title: "Gubitak i krize identiteta",
+        copy: "Periodi intenzivnih promena u kojima se preispituju uloge, smisao i lični pravac.",
+      },
+      {
+        title: "Ponavljanje destruktivnih obrazaca",
+        copy: "Razumevanje nesvesnih ponavljanja i njihovog uticaja na odnose i životne izbore.",
+      },
+    ],
+  },
+];
 
-  return isCyrillic
-    ? [
-        {
-          id: "anksiozna-stanja",
-          label: "Анксиозна стања",
-          icon: mirroredImages.scopeIcon1,
-          detailImage: mirroredImages.scopeIcon1,
-          detailLead:
-            "Када напетост постане стално присутна, психотерапијски процес помаже да се разумеју унутрашњи конфликти и постепено врати осећај стабилности.",
-          items: [
-            {
-              title: "Анксиозна стања и поремећаји",
-              copy: "Када напетост, страх и убрзане мисли дуготрајно ремете свакодневно функционисање.",
-            },
-            {
-              title: "Панични напади и телесни симптоми",
-              copy: "Рад на разумевању окидача, осећаја губитка контроле и циклуса избегавања.",
-            },
-            {
-              title: "Опсесивне и руминативне мисли",
-              copy: "Поступно препознавање образаца који одржавају анксиозност и унутрашњу напетост.",
-            },
-          ],
-        },
-        {
-          id: "depresivna-stanja",
-          label: "Депресивна стања",
-          icon: mirroredImages.scopeIcon3,
-          detailImage: mirroredImages.scopeIcon3,
-          detailLead:
-            "У терапији радимо на разумевању осећаја безвољности, унутрашње празнине и губитка смисла, кроз стабилан и континуиран процес.",
-          items: [
-            {
-              title: "Депресивна стања и поремећаји",
-              copy: "Пад енергије, безвољност и губитак смисла који трају и утичу на квалитет живота.",
-            },
-            {
-              title: "Повлачење и губитак мотивације",
-              copy: "Поступно враћање у контакт са личним потребама, ритмом и ослонцима.",
-            },
-            {
-              title: "Самокритичност и осећај безвредности",
-              copy: "Рад на унутрашњем дијалогу и обрасцима који одржавају депресивност.",
-            },
-          ],
-        },
-        {
-          id: "poremecaji-licnosti",
-          label: "Поремећаји личности",
-          icon: mirroredImages.scopeIcon2,
-          detailImage: mirroredImages.scopeIcon2,
-          detailLead:
-            "Фокус рада је на обрасцима односа, доживљају себе и начинима емоционалне регулације који се дуготрајно понављају.",
-          items: [
-            {
-              title: "Поремећаји личности",
-              copy: "Понављајући обрасци односа и слике о себи који дуготрајно стварају тешкоће.",
-            },
-            {
-              title: "Хроничне потешкоће у односима",
-              copy: "Теме блискости, граница, одбацивања и конфликта у партнерским и породичним односима.",
-            },
-            {
-              title: "Емоционална нестабилност",
-              copy: "Рад на препознавању и регулацији интензивних емоција и импулсивних реакција.",
-            },
-          ],
-        },
-        {
-          id: "traume",
-          label: "Трауме",
-          icon: mirroredImages.scopeIcon4,
-          detailImage: mirroredImages.scopeIcon4,
-          detailLead:
-            "Трауматска искуства остављају трајне емоционалне трагове. Циљ терапије је постепена интеграција искуства и стабилизација свакодневног функционисања.",
-          items: [
-            {
-              title: "Траума и посттрауматске реакције",
-              copy: "Искуства која остају психолошки активна и након што су се објективно завршила.",
-            },
-            {
-              title: "Губитак и кризе идентитета",
-              copy: "Периоди интензивних промена у којима се преиспитују улоге, смисао и лични правац.",
-            },
-            {
-              title: "Понављање деструктивних образаца",
-              copy: "Разумевање несвесних понављања и њиховог утицаја на односе и животне изборе.",
-            },
-          ],
-        },
-      ]
-    : [
-        {
-          id: "anksiozna-stanja",
-          label: "Anksiozna stanja",
-          icon: mirroredImages.scopeIcon1,
-          detailImage: mirroredImages.scopeIcon1,
-          detailLead:
-            "Kada napetost postane stalno prisutna, psihoterapijski proces pomaže da se razumeju unutrašnji konflikti i postepeno vrati osećaj stabilnosti.",
-          items: [
-            {
-              title: "Anksiozna stanja i poremećaji",
-              copy: "Kada napetost, strah i ubrzane misli dugotrajno remete svakodnevno funkcionisanje.",
-            },
-            {
-              title: "Panični napadi i telesni simptomi",
-              copy: "Rad na razumevanju okidača, osećaja gubitka kontrole i ciklusa izbegavanja.",
-            },
-            {
-              title: "Opsesivne i ruminativne misli",
-              copy: "Postupno prepoznavanje obrazaca koji održavaju anksioznost i unutrašnju napetost.",
-            },
-          ],
-        },
-        {
-          id: "depresivna-stanja",
-          label: "Depresivna stanja",
-          icon: mirroredImages.scopeIcon3,
-          detailImage: mirroredImages.scopeIcon3,
-          detailLead:
-            "U terapiji radimo na razumevanju osećaja bezvoljnosti, unutrašnje praznine i gubitka smisla kroz stabilan i kontinuiran proces.",
-          items: [
-            {
-              title: "Depresivna stanja i poremećaji",
-              copy: "Pad energije, bezvoljnost i gubitak smisla koji traju i utiču na kvalitet života.",
-            },
-            {
-              title: "Povlačenje i gubitak motivacije",
-              copy: "Postupno vraćanje u kontakt sa ličnim potrebama, ritmom i osloncima.",
-            },
-            {
-              title: "Samokritičnost i osećaj bezvrednosti",
-              copy: "Rad na unutrašnjem dijalogu i obrascima koji održavaju depresivnost.",
-            },
-          ],
-        },
-        {
-          id: "poremecaji-licnosti",
-          label: "Poremećaji ličnosti",
-          icon: mirroredImages.scopeIcon2,
-          detailImage: mirroredImages.scopeIcon2,
-          detailLead:
-            "Fokus rada je na obrascima odnosa, doživljaju sebe i načinima emocionalne regulacije koji se dugotrajno ponavljaju.",
-          items: [
-            {
-              title: "Poremećaji ličnosti",
-              copy: "Ponavljajući obrasci odnosa i slike o sebi koji dugotrajno stvaraju teškoće.",
-            },
-            {
-              title: "Hronične poteškoće u odnosima",
-              copy: "Teme bliskosti, granica, odbacivanja i konflikta u partnerskim i porodičnim odnosima.",
-            },
-            {
-              title: "Emocionalna nestabilnost",
-              copy: "Rad na prepoznavanju i regulaciji intenzivnih emocija i impulsivnih reakcija.",
-            },
-          ],
-        },
-        {
-          id: "traume",
-          label: "Traume",
-          icon: mirroredImages.scopeIcon4,
-          detailImage: mirroredImages.scopeIcon4,
-          detailLead:
-            "Traumatska iskustva ostavljaju trajne emocionalne tragove. Cilj terapije je postepena integracija iskustva i stabilizacija svakodnevnog funkcionisanja.",
-          items: [
-            {
-              title: "Trauma i posttraumatske reakcije",
-              copy: "Iskustva koja ostaju psihološki aktivna i nakon što su se objektivno završila.",
-            },
-            {
-              title: "Gubitak i krize identiteta",
-              copy: "Periodi intenzivnih promena u kojima se preispituju uloge, smisao i lični pravac.",
-            },
-            {
-              title: "Ponavljanje destruktivnih obrazaca",
-              copy: "Razumevanje nesvesnih ponavljanja i njihovog uticaja na odnose i životne izbore.",
-            },
-          ],
-        },
-      ];
-};
-
-const getScopeTabs = (locale: SiteLocale): ScopeTab[] =>
-  getScopeTabSeeds(locale).map((tab) => {
-    const isCyrillic = locale === "sr-cyrl";
+const getScopeTabs = (): ScopeTab[] =>
+  getScopeTabSeeds().map((tab) => {
     const itemCount = tab.items.length;
-    const countLabel = isCyrillic ? "теме у фокусу" : "teme u fokusu";
-    const panelEyebrow = isCyrillic ? "Област рада" : "Oblast rada";
-    const detailBackLabel = isCyrillic ? "Назад на област рада" : "Nazad na oblast rada";
-    const detailCtaLabel = isCyrillic ? "Закажите термин" : "Zakažite termin";
-    const panelCtaLabel = isCyrillic ? "Погледај страницу" : "Pogledaj stranicu";
+    const countLabel = "teme u fokusu";
+    const panelEyebrow = "Oblast rada";
+    const detailBackLabel = "Nazad na oblast rada";
+    const detailCtaLabel = "Zakažite termin";
+    const panelCtaLabel = "Pogledaj stranicu";
     const summaryTitle = tab.items[0]?.title ?? tab.label;
     const summaryCopy = tab.items[0]?.copy ?? "";
 
@@ -398,22 +300,20 @@ const getScopeTabs = (locale: SiteLocale): ScopeTab[] =>
       detailCtaLabel,
       cardTitle: summaryTitle,
       cardCopy: summaryCopy,
-      href: localizePath(locale, `/psihoterapija/#psych-tab-${tab.id}`),
+      href: `/psihoterapija/#psych-tab-${tab.id}`,
     };
   });
 
-export const getScopePageData = (locale: SiteLocale) => {
-  const dictionary = getDictionary(locale);
+export const getScopePageData = () => {
+  const dictionary = getDictionary();
   const content = dictionary.pages.psychotherapy;
-  const isCyrillic = locale === "sr-cyrl";
-  const tabs = getScopeTabs(locale);
+  const tabs = getScopeTabs();
 
   return {
     banner: {
-      title: isCyrillic ? "Област рада" : "Oblast rada",
-      description: isCyrillic
-        ? "Овде можете прочитати детаљније о различитим менталним поремећајима, психолошким стањима и темама са којима радимо."
-        : "Ovde možete pročitati detaljnije o različitim mentalnim poremećajima, psihološkim stanjima i temama sa kojima radimo.",
+      title: "Oblast rada",
+      description:
+        "Ovde možete pročitati detaljnije o različitim mentalnim poremećajima, psihološkim stanjima i temama sa kojima radimo.",
       theme: "dark" as const,
       backgroundImage: mirroredImages.sessionBanner,
       align: "split" as const,
@@ -421,33 +321,27 @@ export const getScopePageData = (locale: SiteLocale) => {
     tabs,
     scopeTitle: content.scopeTitle,
     scopeItems: content.scopeItems,
-    focusTitle: isCyrillic
-      ? "Водећи центар за психотерапијско саветовање"
-      : "Vodeći centar za psihoterapijsko savetovanje",
-    focusCopy: isCyrillic
-      ? "Психотерапијски рад се заснива на јасном професионалном оквиру, континуитету и односу поверења."
-      : "Psihoterapijski rad se zasniva na jasnom profesionalnom okviru, kontinuitetu i odnosu poverenja.",
-    focusSecondaryCopy: isCyrillic
-      ? "Процес је прилагођен појединцу и усмерен на разумевање узрока потешкоћа, а не само њихових последица."
-      : "Proces je prilagođen pojedincu i usmeren na razumevanje uzroka teškoća, a ne samo njihovih posledica.",
+    focusTitle: "Vodeći centar za psihoterapijsko savetovanje",
+    focusCopy:
+      "Psihoterapijski rad se zasniva na jasnom profesionalnom okviru, kontinuitetu i odnosu poverenja.",
+    focusSecondaryCopy:
+      "Proces je prilagođen pojedincu i usmeren na razumevanje uzroka teškoća, a ne samo njihovih posledica.",
     focusImage: "/legacy/images/Video-BG-About-Us-1_1Video BG About Us (1).webp",
-    focusCtaHref: localizePath(locale, "/o-nama/"),
+    focusCtaHref: "/o-nama/",
     focusCtaLabel: dictionary.nav.about,
     recentTitle: dictionary.homePage.recent.title,
     recentCopy: dictionary.homePage.recent.copy,
-    recentHref: localizePath(locale, "/blog/"),
+    recentHref: "/blog/",
     recentLabel: dictionary.homePage.recent.label,
     recentEmpty: dictionary.homePage.recent.empty,
   };
 };
 
-export const getScopeDetailSlugs = (locale: SiteLocale) =>
-  getScopeTabs(locale).map((tab) => tab.id);
+export const getScopeDetailSlugs = () => getScopeTabs().map((tab) => tab.id);
 
-export const getScopeDetailPageData = (locale: SiteLocale, slug: string) => {
-  const dictionary = getDictionary(locale);
-  const isCyrillic = locale === "sr-cyrl";
-  const tabs = getScopeTabs(locale);
+export const getScopeDetailPageData = (slug: string) => {
+  const dictionary = getDictionary();
+  const tabs = getScopeTabs();
   const currentTab = tabs.find((tab) => tab.id === slug);
 
   if (!currentTab) {
@@ -462,75 +356,66 @@ export const getScopeDetailPageData = (locale: SiteLocale, slug: string) => {
       backgroundImage: mirroredImages.sessionBanner,
       align: "split" as const,
     },
-    eyebrow: isCyrillic ? "Област рада" : "Oblast rada",
+    eyebrow: "Oblast rada",
     lead: currentTab.detailLead,
     image: currentTab.detailImage,
     items: currentTab.items,
-    backHref: localizePath(locale, "/psihoterapija/"),
-    backLabel: isCyrillic ? "Назад на психотерапију" : "Nazad na psihoterapiju",
-    ctaHref: localizePath(locale, "/zakazivanje/"),
+    backHref: "/psihoterapija/",
+    backLabel: "Nazad na psihoterapiju",
+    ctaHref: "/zakazivanje/",
     ctaLabel: dictionary.nav.appointment,
-    relatedTitle: isCyrillic ? "Остале теме" : "Ostale teme",
+    relatedTitle: "Ostale teme",
     relatedTabs: tabs.filter((tab) => tab.id !== slug),
   };
 };
 
-export const getPricingPageData = (locale: SiteLocale) => {
-  const dictionary = getDictionary(locale);
+export const getPricingPageData = () => {
+  const dictionary = getDictionary();
   const serviceItems = dictionary.homePage.services.items;
-  const isCyrillic = locale === "sr-cyrl";
 
   const plans: PricingPlan[] = [
     {
-      title: isCyrillic ? "Психотерапијска сеанса" : "Psihoterapijska seansa",
+      title: "Psihoterapijska seansa",
       price: "3500 RSD",
-      outsideSerbiaPrice: isCyrillic
-        ? "За уплате изван Републике Србије, цена износи 35 € + провизија."
-        : "Za uplate izvan Republike Srbije, cena iznosi 35 € + provizija.",
-      ctaHref: localizePath(locale, "/zakazivanje/"),
-      ctaLabel: isCyrillic ? "Закажите термин" : "Zakažite termin",
+      outsideSerbiaPrice: "Za uplate izvan Republike Srbije, cena iznosi 35 € + provizija.",
+      ctaHref: "/zakazivanje/",
+      ctaLabel: "Zakažite termin",
     },
     {
-      title: isCyrillic ? "Психолошко саветовање" : "Psihološko savetovanje",
+      title: "Psihološko savetovanje",
       price: "3500 RSD",
-      outsideSerbiaPrice: isCyrillic
-        ? "За уплате изван Републике Србије, цена износи 35 € + провизија."
-        : "Za uplate izvan Republike Srbije, cena iznosi 35 € + provizija.",
-      ctaHref: localizePath(locale, "/zakazivanje/"),
-      ctaLabel: isCyrillic ? "Закажите термин" : "Zakažite termin",
+      outsideSerbiaPrice: "Za uplate izvan Republike Srbije, cena iznosi 35 € + provizija.",
+      ctaHref: "/zakazivanje/",
+      ctaLabel: "Zakažite termin",
     },
     {
-      title: isCyrillic ? "Консултација" : "Konsultacija",
+      title: "Konsultacija",
       price: "4000 RSD",
-      outsideSerbiaPrice: isCyrillic
-        ? "За уплате изван Републике Србије, цена износи 40 € + провизија."
-        : "Za uplate izvan Republike Srbije, cena iznosi 40 € + provizija.",
-      ctaHref: localizePath(locale, "/zakazivanje/"),
-      ctaLabel: isCyrillic ? "Закажите термин" : "Zakažite termin",
+      outsideSerbiaPrice: "Za uplate izvan Republike Srbije, cena iznosi 40 € + provizija.",
+      ctaHref: "/zakazivanje/",
+      ctaLabel: "Zakažite termin",
     },
   ];
 
   const infoCards: PricingInfoCard[] = [
     {
-      title: isCyrillic ? "Психотерапијске сеансе" : "Psihoterapijske seanse",
+      title: "Psihoterapijske seanse",
       copy: serviceItems[0].copy,
     },
     {
-      title: isCyrillic ? "Психолошко саветовање" : "Psihološko savetovanje",
+      title: "Psihološko savetovanje",
       copy: serviceItems[1].copy,
     },
     {
-      title: isCyrillic ? "Консултације" : "Konsultacije",
+      title: "Konsultacije",
       copy: serviceItems[2].copy,
     },
   ];
 
   return {
     banner: {
-      title: isCyrillic ? "Цена" : "Cena",
-      description: isCyrillic
-        ? "Испод можете видети различите врсте услуга које наш кабинет нуди."
-        : "Ispod možete videti različite vrste usluga koje naš kabinet nudi.",
+      title: "Cena",
+      description: "Ispod možete videti različite vrste usluga koje naš kabinet nudi.",
       theme: "dark" as const,
       backgroundImage: "/legacy/images/Pricing_1Pricing.webp",
       align: "split" as const,
@@ -540,8 +425,8 @@ export const getPricingPageData = (locale: SiteLocale) => {
   };
 };
 
-export const getFaqPageData = (locale: SiteLocale) => {
-  const dictionary = getDictionary(locale);
+export const getFaqPageData = () => {
+  const dictionary = getDictionary();
   const content = dictionary.pages.faq;
 
   return {
@@ -563,8 +448,8 @@ export const getFaqPageData = (locale: SiteLocale) => {
   };
 };
 
-export const getContactPageData = (locale: SiteLocale) => {
-  const content = getDictionary(locale).pages.contact;
+export const getContactPageData = () => {
+  const content = getDictionary().pages.contact;
 
   return {
     banner: {
@@ -582,8 +467,8 @@ export const getContactPageData = (locale: SiteLocale) => {
   };
 };
 
-export const getAppointmentPageData = (locale: SiteLocale) => {
-  const content = getDictionary(locale).pages.appointment;
+export const getAppointmentPageData = () => {
+  const content = getDictionary().pages.appointment;
 
   return {
     banner: {
@@ -600,93 +485,69 @@ export const getAppointmentPageData = (locale: SiteLocale) => {
   };
 };
 
-export const getBiographyPageData = (locale: SiteLocale) => {
-  const dictionary = getDictionary(locale);
-  const isCyrillic = locale === "sr-cyrl";
+export const getBiographyPageData = () => {
+  const dictionary = getDictionary();
   const services = dictionary.homePage.services.items;
   const biographySlugs = ["nemanja-zajkeskovic", "kabinet-ikar", "prostor-za-terapijski-rad"];
 
   const cards: BiographyCard[] = [
     {
       slug: biographySlugs[0],
-      title: isCyrillic ? "Немања Зајкешковић" : "Nemanja Zajkešković",
-      role: isCyrillic
-        ? "Мастер психолог и психодинамски психотерапеут"
-        : "Master psiholog i psihodinamski psihoterapeut",
+      title: "Nemanja Zajkešković",
+      role: "Master psiholog i psihodinamski psihoterapeut",
       summary: dictionary.homePage.about.paragraphs[0],
       body: dictionary.homePage.about.paragraphs[0],
       image: "/legacy/images/Doctor--1_1Doctor  (1).webp",
-      href: localizePath(locale, `/biografija/${biographySlugs[0]}/`),
-      highlights: isCyrillic
-        ? ["Психодинамска психотерапија", "Индивидуални рад", "Дугорочни процес"]
-        : ["Psihodinamska psihoterapija", "Individualni rad", "Dugoročni proces"],
+      href: `/biografija/${biographySlugs[0]}/`,
+      highlights: ["Psihodinamska psihoterapija", "Individualni rad", "Dugoročni proces"],
     },
     {
       slug: biographySlugs[1],
-      title: isCyrillic ? "Психотерапијски кабинет Икар" : "Psihoterapijski kabinet Ikar",
-      role: isCyrillic
-        ? "Структура рада и професионални оквир"
-        : "Struktura rada i profesionalni okvir",
-      summary: isCyrillic
-        ? "Рад се одвија у јасном професионалном оквиру, уз стабилан ритам сусрета, договорена правила и континуирано праћење циљева."
-        : "Rad se odvija u jasnom profesionalnom okviru, uz stabilan ritam susreta, dogovorena pravila i kontinuirano praćenje ciljeva.",
-      body: isCyrillic
-        ? "Рад се одвија у јасном професионалном оквиру, уз стабилан ритам сусрета, договорена правила и континуирано праћење циљева."
-        : "Rad se odvija u jasnom profesionalnom okviru, uz stabilan ritam susreta, dogovorena pravila i kontinuirano praćenje ciljeva.",
+      title: "Psihoterapijski kabinet Ikar",
+      role: "Struktura rada i profesionalni okvir",
+      summary:
+        "Rad se odvija u jasnom profesionalnom okviru, uz stabilan ritam susreta, dogovorena pravila i kontinuirano praćenje ciljeva.",
+      body: "Rad se odvija u jasnom profesionalnom okviru, uz stabilan ritam susreta, dogovorena pravila i kontinuirano praćenje ciljeva.",
       image: "/legacy/images/Team-Details_1Team Details.webp",
-      href: localizePath(locale, `/biografija/${biographySlugs[1]}/`),
+      href: `/biografija/${biographySlugs[1]}/`,
       highlights: [services[0].title, services[1].title, services[2].title],
     },
     {
       slug: biographySlugs[2],
-      title: isCyrillic ? "Простор за терапијски рад" : "Prostor za terapijski rad",
-      role: isCyrillic ? "Уживо и online формати" : "Uživo i online formati",
-      summary: isCyrillic
-        ? "Терапијски сусрети се организују уживо или online, у складу са проценом потреба и јасно дефинисаним планом рада."
-        : "Terapijski susreti se organizuju uživo ili online, u skladu sa procenom potreba i jasno definisanim planom rada.",
-      body: isCyrillic
-        ? "Терапијски сусрети се организују уживо или online, у складу са проценом потреба и јасно дефинисаним планом рада."
-        : "Terapijski susreti se organizuju uživo ili online, u skladu sa procenom potreba i jasno definisanim planom rada.",
+      title: "Prostor za terapijski rad",
+      role: "Uživo i online formati",
+      summary:
+        "Terapijski susreti se organizuju uživo ili online, u skladu sa procenom potreba i jasno definisanim planom rada.",
+      body: "Terapijski susreti se organizuju uživo ili online, u skladu sa procenom potreba i jasno definisanim planom rada.",
       image: "/legacy/images/Team-Img-1_1Team Img (1).webp",
-      href: localizePath(locale, `/biografija/${biographySlugs[2]}/`),
-      highlights: isCyrillic
-        ? ["Поверљивост", "Континуитет", "Фокус на промену"]
-        : ["Poverljivost", "Kontinuitet", "Fokus na promenu"],
+      href: `/biografija/${biographySlugs[2]}/`,
+      highlights: ["Poverljivost", "Kontinuitet", "Fokus na promenu"],
     },
   ];
 
   return {
     banner: {
       title: dictionary.nav.biography,
-      description: isCyrillic
-        ? "Професионални пут, приступ раду и вредности на којима заснивамо психотерапијски процес."
-        : "Profesionalni put, pristup radu i vrednosti na kojima zasnivamo psihoterapijski proces.",
+      description:
+        "Profesionalni put, pristup radu i vrednosti na kojima zasnivamo psihoterapijski proces.",
       theme: "dark" as const,
       backgroundImage: "/legacy/images/Our-team_1Our team.webp",
       align: "split" as const,
     },
-    cardsTitle: isCyrillic ? "Стручни профил и радни контекст" : "Stručni profil i radni kontekst",
-    cardsCopy: isCyrillic
-      ? "На једном месту можете видети ко води рад, како је процес постављен и у ком оквиру се терапија одвија."
-      : "Na jednom mestu možete videti ko vodi rad, kako je proces postavljen i u kom okviru se terapija odvija.",
+    cardsTitle: "Stručni profil i radni kontekst",
+    cardsCopy:
+      "Na jednom mestu možete videti ko vodi rad, kako je proces postavljen i u kom okviru se terapija odvija.",
     cards,
-    approachTitle: isCyrillic ? "Приступ раду" : "Pristup radu",
-    approachCopy: isCyrillic
-      ? "Психотерапија се поставља као сараднички процес у ком се постепено развија разумевање личне динамике, односа и унутрашњих конфликата."
-      : "Psihoterapija se postavlja kao saradnički proces u kom se postepeno razvija razumevanje lične dinamike, odnosa i unutrašnjih konflikata.",
-    approachPoints: isCyrillic
-      ? [
-          "Терапија је простор за рад на темама које се понављају и утичу на свакодневно функционисање.",
-          "Циљеви рада се дефинишу заједно и повремено преиспитују како би процес имао јасну смерницу.",
-          "Континуитет и редовност су кључни за дубинске и стабилне психолошке промене.",
-        ]
-      : [
-          "Terapija je prostor za rad na temama koje se ponavljaju i utiču na svakodnevno funkcionisanje.",
-          "Ciljevi rada se definišu zajedno i povremeno preispituju kako bi proces imao jasnu smernicu.",
-          "Kontinuitet i redovnost su ključni za dubinske i stabilne psihološke promene.",
-        ],
+    approachTitle: "Pristup radu",
+    approachCopy:
+      "Psihoterapija se postavlja kao saradnički proces u kom se postepeno razvija razumevanje lične dinamike, odnosa i unutrašnjih konflikata.",
+    approachPoints: [
+      "Terapija je prostor za rad na temama koje se ponavljaju i utiču na svakodnevno funkcionisanje.",
+      "Ciljevi rada se definišu zajedno i povremeno preispituju kako bi proces imao jasnu smernicu.",
+      "Kontinuitet i redovnost su ključni za dubinske i stabilne psihološke promene.",
+    ],
     approachImage: "/legacy/images/Our-team_1Our team.webp",
-    ctaHref: localizePath(locale, "/zakazivanje/"),
+    ctaHref: "/zakazivanje/",
     ctaLabel: dictionary.homePage.hero.primaryActionLabel,
   };
 };

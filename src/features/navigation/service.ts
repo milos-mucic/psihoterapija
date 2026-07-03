@@ -2,13 +2,11 @@ import { getDefaultNavigation } from "@/features/navigation/defaults";
 import { navigationRepository } from "@/features/navigation/repository";
 import { parseManagedNavigation } from "@/features/navigation/schema";
 import type { ManagedNavigation, ManagedNavItem } from "@/features/navigation/types";
-import type { SiteLocale } from "@/lib/config/site";
 
 const mergeWithDefaults = (
-  locale: SiteLocale,
   stored: ManagedNavigation | undefined,
 ): ManagedNavigation => {
-  const defaults = getDefaultNavigation(locale);
+  const defaults = getDefaultNavigation();
 
   if (!stored) {
     return defaults;
@@ -59,20 +57,20 @@ const mergeWithDefaults = (
 };
 
 export const navigationService = {
-  async getNavigation(locale: SiteLocale): Promise<ManagedNavigation> {
+  async getNavigation(): Promise<ManagedNavigation> {
     try {
-      const stored = await navigationRepository.get(locale);
-      return mergeWithDefaults(locale, stored);
+      const stored = await navigationRepository.get();
+      return mergeWithDefaults(stored);
     } catch (error) {
       console.error("[navigation] failed to load, falling back to defaults", error);
-      return getDefaultNavigation(locale);
+      return getDefaultNavigation();
     }
   },
 
-  async saveNavigation(locale: SiteLocale, input: unknown): Promise<ManagedNavigation> {
+  async saveNavigation(input: unknown): Promise<ManagedNavigation> {
     const parsed = parseManagedNavigation(input);
-    await navigationRepository.upsert(locale, parsed);
-    return mergeWithDefaults(locale, parsed);
+    await navigationRepository.upsert(parsed);
+    return mergeWithDefaults(parsed);
   },
 
   getDefaultNavigation,

@@ -10,7 +10,7 @@ import { adminConfig } from "@/lib/config/admin";
 const guard = adminGuard(Astro);
 if (guard) return guard;
 
-const dictionary = getDictionary("sr-latn");
+const dictionary = getDictionary();
 const error = Astro.url.searchParams.get("error");
 ---
 

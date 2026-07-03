@@ -5,17 +5,15 @@ import ContactPage from "@/components/pages/ContactPage.astro";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import BaseLayout from "@/components/components/BaseLayout.astro";
 
-const locale = "sr-latn";
-const content = await pageContentService.getContactPageData(locale);
+const content = await pageContentService.getContactPageData();
 ---
 
 <BaseLayout
   title={content.seo.title}
   description={content.seo.description}
-  locale={locale}
   canonicalPath="/kontakt/"
   appBarTone="dark"
   appBarOverlay={true}
 >
-  <ContactPage locale={locale} content={content} />
+  <ContactPage content={content} />
 </BaseLayout>

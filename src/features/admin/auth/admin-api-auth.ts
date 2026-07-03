@@ -9,7 +9,7 @@ export const requireAdminApiAuth = (context: Pick<ApiContext, "cookies">) => {
     return undefined;
   }
 
-  const dictionary = getDictionary("sr-latn");
+  const dictionary = getDictionary();
 
   return new Response(JSON.stringify({ message: dictionary.api.adminAccessDenied }), {
     status: 403,

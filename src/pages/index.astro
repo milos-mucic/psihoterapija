@@ -8,15 +8,13 @@ import { pageContentService } from "@/features/page-content/services/page-conten
 import { getBlockBackgroundStyle } from "@/features/page-content/admin/block-backgrounds";
 import BaseLayout from "@/components/components/BaseLayout.astro";
 
-const locale = "sr-latn";
-const content = await pageContentService.getHomePageData(locale);
-const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
+const content = await pageContentService.getHomePageData();
+const posts = (await blogService.listPublishedPosts()).slice(0, 3);
 ---
 
 <BaseLayout
   title={content.seo.title}
   description={content.seo.description}
-  locale={locale}
   canonicalPath="/"
 >
   {!content.hiddenBlocks?.includes("home-hero") && (
@@ -29,5 +27,5 @@ const posts = (await blogService.listPublishedPosts(locale)).slice(0, 3);
     />
   )}
 
-  <HomePageContent locale={locale} content={content} posts={posts} />
+  <HomePageContent content={content} posts={posts} />
 </BaseLayout>

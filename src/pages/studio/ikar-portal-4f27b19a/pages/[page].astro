@@ -6,7 +6,6 @@ import { getAdminPreviewHref } from "@/features/page-content/admin/page-route-ma
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import type { PageKey } from "@/features/page-content/types/page-content.types";
 import { adminConfig } from "@/lib/config/admin";
-import type { SiteLocale } from "@/lib/config/site";
 import AdminLayout from "@/components/components/AdminLayout.astro";
 import { adminGuard } from "@/features/admin/auth/admin-guard";
 
@@ -61,25 +60,22 @@ const guard = adminGuard(Astro);
 if (guard) return guard;
 
 const page = pageParam as SupportedPage;
-const localeParam = Astro.url.searchParams.get("locale");
-const locale: SiteLocale = localeParam === "sr-cyrl" ? "sr-cyrl" : "sr-latn";
 const saved = Astro.url.searchParams.get("saved") === "1";
 const error = Astro.url.searchParams.get("error");
-const localeLabel = locale === "sr-cyrl" ? "Ćirilica" : "Latinica";
 const config = pageConfig[page];
-const previewHref = getAdminPreviewHref(page, locale);
+const previewHref = getAdminPreviewHref(page);
 
 const content = await (async () => {
   switch (page) {
-    case "about":         return pageContentService.getManagedAboutContent(locale);
-    case "biography":     return pageContentService.getManagedBiographyContent(locale);
-    case "psychotherapy": return pageContentService.getManagedPsychotherapyContent(locale);
-    case "scope":         return pageContentService.getManagedScopeContent(locale);
-    case "pricing":       return pageContentService.getManagedPricingContent(locale);
-    case "appointment":   return pageContentService.getManagedAppointmentContent(locale);
-    case "faq":           return pageContentService.getManagedFaqContent(locale);
-    case "contact":       return pageContentService.getManagedContactContent(locale);
-    case "blog":          return pageContentService.getManagedBlogIndexContent(locale);
+    case "about":         return pageContentService.getManagedAboutContent();
+    case "biography":     return pageContentService.getManagedBiographyContent();
+    case "psychotherapy": return pageContentService.getManagedPsychotherapyContent();
+    case "scope":         return pageContentService.getManagedScopeContent();
+    case "pricing":       return pageContentService.getManagedPricingContent();
+    case "appointment":   return pageContentService.getManagedAppointmentContent();
+    case "faq":           return pageContentService.getManagedFaqContent();
+    case "contact":       return pageContentService.getManagedContactContent();
+    case "blog":          return pageContentService.getManagedBlogIndexContent();
   }
 })();
 ---
@@ -110,28 +106,7 @@ const content = await (async () => {
               <h2>{config.title}</h2>
               <p class="admin-page-header__copy">{config.copy}</p>
             </div>
-
-            <div class="admin-page-header__actions">
-              <a
-                class:list={["button-secondary", locale === "sr-latn" && "is-active"]}
-                href={`${adminConfig.basePath}/pages/${page}/?locale=sr-latn`}
-              >
-                Latinica
-              </a>
-              <a
-                class:list={["button-secondary", locale === "sr-cyrl" && "is-active"]}
-                href={`${adminConfig.basePath}/pages/${page}/?locale=sr-cyrl`}
-              >
-                Ćirilica
-              </a>
-            </div>
           </div>
-        </div>
-
-        <div class="card admin-meta-card">
-          <p>
-            Uređujete sadržaj za: <strong style="color: var(--foreground);">{localeLabel}</strong>
-          </p>
         </div>
 
         {content ? (
@@ -141,9 +116,7 @@ const content = await (async () => {
                 action={`/api/admin/pages/${page}`}
                 page={page}
                 content={content}
-                locale={locale}
                 previewBaseHref={previewHref}
-                localeLabel={localeLabel}
               />
             </div>
           </div>

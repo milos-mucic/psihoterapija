@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { PageContent, db, eq, and } from "astro:db";
+import { PageContent, db, eq } from "astro:db";
 import { sql } from "drizzle-orm";
-import type { SiteLocale } from "@/lib/config/site";
 import type { ManagedNavigation } from "@/features/navigation/types";
 
 const NAV_PAGE_KEY = "navigation";
@@ -13,12 +12,12 @@ const ensureSchema = async () => {
     ensureSchemaPromise = (async () => {
       await db.run(
         sql.raw(
-          'CREATE TABLE IF NOT EXISTS "PageContent" ("id" text PRIMARY KEY, "pageKey" text NOT NULL, "locale" text NOT NULL, "content" text NOT NULL, "createdAt" text NOT NULL, "updatedAt" text NOT NULL)',
+          'CREATE TABLE IF NOT EXISTS "PageContent" ("id" text PRIMARY KEY, "pageKey" text NOT NULL, "content" text NOT NULL, "createdAt" text NOT NULL, "updatedAt" text NOT NULL)',
         ),
       );
       await db.run(
         sql.raw(
-          'CREATE UNIQUE INDEX IF NOT EXISTS "PageContent_locale_pageKey_idx" ON "PageContent" ("locale", "pageKey")',
+          'CREATE UNIQUE INDEX IF NOT EXISTS "PageContent_pageKey_idx" ON "PageContent" ("pageKey")',
         ),
       );
     })().catch((error) => {
@@ -31,13 +30,13 @@ const ensureSchema = async () => {
 };
 
 export class NavigationRepository {
-  async get(locale: SiteLocale): Promise<ManagedNavigation | undefined> {
+  async get(): Promise<ManagedNavigation | undefined> {
     await ensureSchema();
 
     const rows = await db
       .select()
       .from(PageContent)
-      .where(and(eq(PageContent.pageKey, NAV_PAGE_KEY), eq(PageContent.locale, locale)))
+      .where(eq(PageContent.pageKey, NAV_PAGE_KEY))
       .limit(1);
 
     const row = rows[0];
@@ -49,13 +48,13 @@ export class NavigationRepository {
     return row.content as ManagedNavigation;
   }
 
-  async upsert(locale: SiteLocale, content: ManagedNavigation): Promise<void> {
+  async upsert(content: ManagedNavigation): Promise<void> {
     await ensureSchema();
 
     const existing = await db
       .select()
       .from(PageContent)
-      .where(and(eq(PageContent.pageKey, NAV_PAGE_KEY), eq(PageContent.locale, locale)))
+      .where(eq(PageContent.pageKey, NAV_PAGE_KEY))
       .limit(1);
 
     const now = new Date();
@@ -64,7 +63,6 @@ export class NavigationRepository {
       await db.insert(PageContent).values({
         id: randomUUID(),
         pageKey: NAV_PAGE_KEY,
-        locale,
         content,
         createdAt: now,
         updatedAt: now,

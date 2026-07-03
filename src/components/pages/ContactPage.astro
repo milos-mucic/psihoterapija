@@ -4,16 +4,14 @@ import PageBanner from "@/components/sections/PageBanner.astro";
 import { getDictionary } from "@/features/i18n/translate";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import { getBlockBackgroundStyle } from "@/features/page-content/admin/block-backgrounds";
-import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
-  locale: SiteLocale;
   content?: Awaited<ReturnType<typeof pageContentService.getContactPageData>>;
 };
 
-const { locale, content: previewContent } = Astro.props;
-const content = previewContent ?? (await pageContentService.getContactPageData(locale));
-const dictionary = getDictionary(locale);
+const { content: previewContent } = Astro.props;
+const content = previewContent ?? (await pageContentService.getContactPageData());
+const dictionary = getDictionary();
 const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackgrounds, fragment);
 ---
 
@@ -86,7 +84,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
 
       <div class="page-form-shell page-form-shell--contact" data-reveal="right">
         <h2 set:html={content.formTitle} />
-        <ContactForm locale={locale} labels={dictionary.forms} />
+        <ContactForm labels={dictionary.forms} />
       </div>
     </div>
   </div>

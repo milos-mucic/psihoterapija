@@ -10,7 +10,6 @@ type Props = {
   labels: {
     title: string;
     slug: string;
-    locale: string;
     status: string;
     publishedAt: string;
     excerpt: string;
@@ -26,8 +25,6 @@ type Props = {
     tags: string;
   };
   options: {
-    latin: string;
-    cyrillic: string;
     draft: string;
     published: string;
     archived: string;
@@ -91,18 +88,6 @@ const tagsValue = post?.tags.join(", ") ?? "";
         placeholder={placeholders.slug}
         value={post?.slug ?? ""}
       />
-    </label>
-
-    <label class="admin-form__field">
-      <span>{labels.locale}</span>
-      <select class="input-control" name="locale" required>
-        <option value="sr-latn" selected={(post?.locale ?? "sr-latn") === "sr-latn"}>
-          {options.latin}
-        </option>
-        <option value="sr-cyrl" selected={post?.locale === "sr-cyrl"}>
-          {options.cyrillic}
-        </option>
-      </select>
     </label>
 
     <label class="admin-form__field">

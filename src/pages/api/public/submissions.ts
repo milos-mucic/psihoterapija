@@ -5,8 +5,7 @@ import { submissionService } from "@/features/forms/services/submission.service"
 
 export const POST: APIRoute = async ({ request }) => {
   const body = await request.json().catch(() => null);
-  const locale = body?.locale === "sr-cyrl" ? "sr-cyrl" : "sr-latn";
-  const dictionary = getDictionary(locale);
+  const dictionary = getDictionary();
 
   try {
     const submission = await submissionService.createSubmission(body);

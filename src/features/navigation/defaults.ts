@@ -1,10 +1,8 @@
-import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
-import type { SiteLocale } from "@/lib/config/site";
 import type { ManagedNavigation } from "@/features/navigation/types";
 
-export const getDefaultNavigation = (locale: SiteLocale): ManagedNavigation => {
-  const dictionary = getDictionary(locale);
+export const getDefaultNavigation = (): ManagedNavigation => {
+  const dictionary = getDictionary();
 
   return {
     items: [
@@ -14,7 +12,7 @@ export const getDefaultNavigation = (locale: SiteLocale): ManagedNavigation => {
         lockDelete: true,
         lockHref: true,
         label: dictionary.nav.home,
-        href: localizePath(locale, "/"),
+        href: "/",
       },
       {
         id: "about",
@@ -22,7 +20,7 @@ export const getDefaultNavigation = (locale: SiteLocale): ManagedNavigation => {
         lockDelete: true,
         lockHref: true,
         label: dictionary.nav.about,
-        href: localizePath(locale, "/o-nama/"),
+        href: "/o-nama/",
         children: [
           {
             id: "about-idea",
@@ -30,7 +28,7 @@ export const getDefaultNavigation = (locale: SiteLocale): ManagedNavigation => {
             lockDelete: true,
             lockHref: true,
             label: dictionary.nav.aboutLinks.about,
-            href: localizePath(locale, "/o-nama/"),
+            href: "/o-nama/",
           },
           {
             id: "about-biography",
@@ -38,7 +36,7 @@ export const getDefaultNavigation = (locale: SiteLocale): ManagedNavigation => {
             lockDelete: true,
             lockHref: true,
             label: dictionary.nav.aboutLinks.biography,
-            href: localizePath(locale, "/biografija/nemanja-zajkeskovic/"),
+            href: "/biografija/nemanja-zajkeskovic/",
           },
         ],
       },
@@ -48,7 +46,7 @@ export const getDefaultNavigation = (locale: SiteLocale): ManagedNavigation => {
         lockDelete: true,
         lockHref: true,
         label: dictionary.nav.psychotherapy,
-        href: localizePath(locale, "/psihoterapija/"),
+        href: "/psihoterapija/",
         children: [
           {
             id: "therapy-approach",
@@ -56,17 +54,17 @@ export const getDefaultNavigation = (locale: SiteLocale): ManagedNavigation => {
             lockDelete: true,
             lockHref: true,
             label: dictionary.nav.therapyLinks.approach,
-            href: localizePath(locale, "/psihoterapija/"),
+            href: "/psihoterapija/",
           },
           {
             id: "therapy-pricing",
             label: dictionary.nav.therapyLinks.pricing,
-            href: localizePath(locale, "/cena/"),
+            href: "/cena/",
           },
           {
             id: "therapy-appointment",
             label: dictionary.nav.therapyLinks.appointment,
-            href: localizePath(locale, "/zakazivanje/"),
+            href: "/zakazivanje/",
           },
         ],
       },
@@ -76,7 +74,7 @@ export const getDefaultNavigation = (locale: SiteLocale): ManagedNavigation => {
         lockDelete: true,
         lockHref: true,
         label: dictionary.nav.blog,
-        href: localizePath(locale, "/blog/"),
+        href: "/blog/",
       },
       {
         id: "faq",
@@ -84,7 +82,7 @@ export const getDefaultNavigation = (locale: SiteLocale): ManagedNavigation => {
         lockDelete: true,
         lockHref: true,
         label: dictionary.nav.faq,
-        href: localizePath(locale, "/pitanja/"),
+        href: "/pitanja/",
       },
     ],
   };

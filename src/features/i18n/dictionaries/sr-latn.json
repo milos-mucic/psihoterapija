@@ -1,9 +1,6 @@
 {
-  "localeLabel": "Latinica",
-  "localeShortLabel": "LAT",
   "a11y": {
     "appbarPrimaryNav": "Glavna navigacija",
-    "localeSwitch": "Prebacivanje pisma",
     "toggleNavigation": "Otvori navigaciju",
     "footerNav": "Navigacija u podnožju"
   },
@@ -483,8 +480,6 @@
         "tags": "psihoterapija, proces"
       },
       "options": {
-        "latin": "Latinica",
-        "cyrillic": "Cirilica",
         "draft": "Draft",
         "published": "Published",
         "archived": "Archived"

@@ -6,18 +6,16 @@ import { blogService } from "@/features/blog/services/blog.service";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import BaseLayout from "@/components/components/BaseLayout.astro";
 
-const locale = "sr-latn";
-const content = await pageContentService.getBlogIndexPageData(locale);
-const posts = await blogService.listPublishedPosts(locale);
+const content = await pageContentService.getBlogIndexPageData();
+const posts = await blogService.listPublishedPosts();
 ---
 
 <BaseLayout
   title={content.seo.title}
   description={content.seo.description}
-  locale={locale}
   canonicalPath="/blog/"
   appBarTone="dark"
   appBarOverlay={true}
 >
-  <BlogIndexPage locale={locale} posts={posts} content={content} />
+  <BlogIndexPage posts={posts} content={content} />
 </BaseLayout>

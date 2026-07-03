@@ -5,17 +5,15 @@ import BaseLayout from "@/components/components/BaseLayout.astro";
 import PricingPage from "@/components/pages/PricingPage.astro";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 
-const locale = "sr-latn";
-const content = await pageContentService.getPricingPageData(locale);
+const content = await pageContentService.getPricingPageData();
 ---
 
 <BaseLayout
   title={content.seo.title}
   description={content.seo.description}
-  locale={locale}
   canonicalPath="/cena/"
   appBarTone="dark"
   appBarOverlay={true}
 >
-  <PricingPage locale={locale} />
+  <PricingPage />
 </BaseLayout>

@@ -61,7 +61,6 @@ import type {
   PsychotherapyPageManagedContent,
   ScopePageManagedContent,
 } from "@/features/page-content/types/page-content.types";
-import type { SiteLocale } from "@/lib/config/site";
 import { pagePreviewService } from "@/features/page-content/services/page-preview.service";
 
 const repository = new AstroDbPageContentRepository();
@@ -96,44 +95,42 @@ const parseManagedPageContentForm = <TPageKey extends PageKey>(
 
 const buildManagedPageData = <TPageKey extends PageKey>(
   pageKey: TPageKey,
-  locale: SiteLocale,
   content: ManagedPageContentMap[TPageKey],
 ) => {
   switch (pageKey) {
     case "home":
-      return buildHomePageData(locale, content as HomePageManagedContent);
+      return buildHomePageData(content as HomePageManagedContent);
     case "about":
-      return buildAboutPageData(locale, content as AboutPageManagedContent);
+      return buildAboutPageData(content as AboutPageManagedContent);
     case "biography":
-      return buildBiographyPageData(locale, content as BiographyPageManagedContent);
+      return buildBiographyPageData(content as BiographyPageManagedContent);
     case "psychotherapy":
-      return buildPsychotherapyPageData(locale, content as PsychotherapyPageManagedContent);
+      return buildPsychotherapyPageData(content as PsychotherapyPageManagedContent);
     case "scope":
-      return buildScopePageData(locale, content as ScopePageManagedContent);
+      return buildScopePageData(content as ScopePageManagedContent);
     case "pricing":
-      return buildPricingPageData(locale, content as PricingPageManagedContent);
+      return buildPricingPageData(content as PricingPageManagedContent);
     case "appointment":
-      return buildAppointmentPageData(locale, content as AppointmentPageManagedContent);
+      return buildAppointmentPageData(content as AppointmentPageManagedContent);
     case "faq":
-      return buildFaqPageData(locale, content as FaqPageManagedContent);
+      return buildFaqPageData(content as FaqPageManagedContent);
     case "contact":
-      return buildContactPageData(locale, content as ContactPageManagedContent);
+      return buildContactPageData(content as ContactPageManagedContent);
     case "blog":
-      return buildBlogIndexPageData(locale, content as BlogIndexPageManagedContent);
+      return buildBlogIndexPageData(content as BlogIndexPageManagedContent);
   }
 };
 
 const getPreviewManagedContent = <TPageKey extends PageKey>(
   pageKey: TPageKey,
-  locale: SiteLocale,
   token?: string | null,
 ): ManagedPageContentMap[TPageKey] | undefined => {
-  const entry = pagePreviewService.getDraft(token, pageKey, locale);
+  const entry = pagePreviewService.getDraft(token, pageKey);
   return entry?.content as ManagedPageContentMap[TPageKey] | undefined;
 };
 
-const getStoredHomeContent = async (locale: SiteLocale) => {
-  const record = await repository.get("home", locale);
+const getStoredHomeContent = async () => {
+  const record = await repository.get("home");
 
   if (!record) {
     return undefined;
@@ -155,303 +152,294 @@ export const pageContentService = {
   },
   async getManagedPageContent<TPageKey extends PageKey>(
     pageKey: TPageKey,
-    locale: SiteLocale,
   ): Promise<ManagedPageContentMap[TPageKey]> {
     switch (pageKey) {
       case "home":
-        return (await this.getManagedHomeContent(locale)) as ManagedPageContentMap[TPageKey];
+        return (await this.getManagedHomeContent()) as ManagedPageContentMap[TPageKey];
       case "about":
-        return (await this.getManagedAboutContent(locale)) as ManagedPageContentMap[TPageKey];
+        return (await this.getManagedAboutContent()) as ManagedPageContentMap[TPageKey];
       case "biography":
-        return (await this.getManagedBiographyContent(locale)) as ManagedPageContentMap[TPageKey];
+        return (await this.getManagedBiographyContent()) as ManagedPageContentMap[TPageKey];
       case "psychotherapy":
-        return (await this.getManagedPsychotherapyContent(
-          locale,
-        )) as ManagedPageContentMap[TPageKey];
+        return (await this.getManagedPsychotherapyContent()) as ManagedPageContentMap[TPageKey];
       case "scope":
-        return (await this.getManagedScopeContent(locale)) as ManagedPageContentMap[TPageKey];
+        return (await this.getManagedScopeContent()) as ManagedPageContentMap[TPageKey];
       case "pricing":
-        return (await this.getManagedPricingContent(locale)) as ManagedPageContentMap[TPageKey];
+        return (await this.getManagedPricingContent()) as ManagedPageContentMap[TPageKey];
       case "appointment":
-        return (await this.getManagedAppointmentContent(locale)) as ManagedPageContentMap[TPageKey];
+        return (await this.getManagedAppointmentContent()) as ManagedPageContentMap[TPageKey];
       case "faq":
-        return (await this.getManagedFaqContent(locale)) as ManagedPageContentMap[TPageKey];
+        return (await this.getManagedFaqContent()) as ManagedPageContentMap[TPageKey];
       case "contact":
-        return (await this.getManagedContactContent(locale)) as ManagedPageContentMap[TPageKey];
+        return (await this.getManagedContactContent()) as ManagedPageContentMap[TPageKey];
       case "blog":
-        return (await this.getManagedBlogIndexContent(locale)) as ManagedPageContentMap[TPageKey];
+        return (await this.getManagedBlogIndexContent()) as ManagedPageContentMap[TPageKey];
     }
   },
   savePreviewDraft<TPageKey extends PageKey>(
     pageKey: TPageKey,
-    locale: SiteLocale,
     input: unknown,
     currentToken?: string,
   ) {
     const content = parseManagedPageContentForm(pageKey, input);
     return pagePreviewService.saveDraft(
       pageKey,
-      locale,
       content as AnyManagedPageContent,
       currentToken,
     );
   },
   async getPreviewPageData<TPageKey extends PageKey>(
     pageKey: TPageKey,
-    locale: SiteLocale,
     token?: string | null,
   ) {
-    const previewContent = getPreviewManagedContent(pageKey, locale, token);
+    const previewContent = getPreviewManagedContent(pageKey, token);
 
     if (previewContent) {
-      return buildManagedPageData(pageKey, locale, previewContent);
+      return buildManagedPageData(pageKey, previewContent);
     }
 
     switch (pageKey) {
       case "home":
-        return await this.getHomePageData(locale);
+        return await this.getHomePageData();
       case "about":
-        return await this.getAboutPageData(locale);
+        return await this.getAboutPageData();
       case "biography":
-        return await this.getBiographyPageData(locale);
+        return await this.getBiographyPageData();
       case "psychotherapy":
-        return await this.getPsychotherapyPageData(locale);
+        return await this.getPsychotherapyPageData();
       case "scope":
-        return await this.getScopePageData(locale);
+        return await this.getScopePageData();
       case "pricing":
-        return await this.getPricingPageData(locale);
+        return await this.getPricingPageData();
       case "appointment":
-        return await this.getAppointmentPageData(locale);
+        return await this.getAppointmentPageData();
       case "faq":
-        return await this.getFaqPageData(locale);
+        return await this.getFaqPageData();
       case "contact":
-        return await this.getContactPageData(locale);
+        return await this.getContactPageData();
       case "blog":
-        return await this.getBlogIndexPageData(locale);
+        return await this.getBlogIndexPageData();
     }
   },
-  async getManagedHomeContent(locale: SiteLocale): Promise<HomePageManagedContent> {
-    const stored = await getStoredHomeContent(locale);
-    return stored ?? getDefaultHomePageManagedContent(locale);
+  async getManagedHomeContent(): Promise<HomePageManagedContent> {
+    const stored = await getStoredHomeContent();
+    return stored ?? getDefaultHomePageManagedContent();
   },
-  async getHomePageData(locale: SiteLocale) {
-    const content = await this.getManagedHomeContent(locale);
-    return buildHomePageData(locale, content);
+  async getHomePageData() {
+    const content = await this.getManagedHomeContent();
+    return buildHomePageData(content);
   },
-  async updateHomeContent(locale: SiteLocale, input: unknown) {
+  async updateHomeContent(input: unknown) {
     const content = parseHomePageManagedContentForm(input);
-    await repository.upsert("home", locale, content);
-    pagePreviewService.clearDrafts("home", locale);
+    await repository.upsert("home", content);
+    pagePreviewService.clearDrafts("home");
     return content;
   },
-  async getManagedAboutContent(locale: SiteLocale): Promise<AboutPageManagedContent> {
-    const record = await repository.get("about", locale);
+  async getManagedAboutContent(): Promise<AboutPageManagedContent> {
+    const record = await repository.get("about");
 
     if (!record) {
-      return getDefaultAboutPageManagedContent(locale);
+      return getDefaultAboutPageManagedContent();
     }
 
     try {
       return parseAboutPageManagedContent(record.content);
     } catch {
-      return getDefaultAboutPageManagedContent(locale);
+      return getDefaultAboutPageManagedContent();
     }
   },
-  async getAboutPageData(locale: SiteLocale) {
-    return buildAboutPageData(locale, await this.getManagedAboutContent(locale));
+  async getAboutPageData() {
+    return buildAboutPageData(await this.getManagedAboutContent());
   },
-  async updateAboutContent(locale: SiteLocale, input: unknown) {
+  async updateAboutContent(input: unknown) {
     const content = parseAboutPageManagedContentForm(input);
-    await repository.upsert("about", locale, content);
-    pagePreviewService.clearDrafts("about", locale);
+    await repository.upsert("about", content);
+    pagePreviewService.clearDrafts("about");
     return content;
   },
-  async getManagedBiographyContent(locale: SiteLocale): Promise<BiographyPageManagedContent> {
-    const record = await repository.get("biography", locale);
+  async getManagedBiographyContent(): Promise<BiographyPageManagedContent> {
+    const record = await repository.get("biography");
 
     if (!record) {
-      return getDefaultBiographyPageManagedContent(locale);
+      return getDefaultBiographyPageManagedContent();
     }
 
     try {
       return parseBiographyPageManagedContent(record.content);
     } catch {
-      return getDefaultBiographyPageManagedContent(locale);
+      return getDefaultBiographyPageManagedContent();
     }
   },
-  async getBiographyPageData(locale: SiteLocale) {
-    return buildBiographyPageData(locale, await this.getManagedBiographyContent(locale));
+  async getBiographyPageData() {
+    return buildBiographyPageData(await this.getManagedBiographyContent());
   },
-  async getBiographyProfilePageData(locale: SiteLocale, slug: string) {
+  async getBiographyProfilePageData(slug: string) {
     return buildBiographyDetailPageData(
-      locale,
-      await this.getManagedBiographyContent(locale),
+      await this.getManagedBiographyContent(),
       slug,
     );
   },
-  async updateBiographyContent(locale: SiteLocale, input: unknown) {
+  async updateBiographyContent(input: unknown) {
     const content = parseBiographyPageManagedContentForm(input);
-    await repository.upsert("biography", locale, content);
-    pagePreviewService.clearDrafts("biography", locale);
+    await repository.upsert("biography", content);
+    pagePreviewService.clearDrafts("biography");
     return content;
   },
-  async getManagedPsychotherapyContent(
-    locale: SiteLocale,
-  ): Promise<PsychotherapyPageManagedContent> {
-    const record = await repository.get("psychotherapy", locale);
+  async getManagedPsychotherapyContent(): Promise<PsychotherapyPageManagedContent> {
+    const record = await repository.get("psychotherapy");
 
     if (!record) {
-      return getDefaultPsychotherapyPageManagedContent(locale);
+      return getDefaultPsychotherapyPageManagedContent();
     }
 
     try {
       return parsePsychotherapyPageManagedContent(record.content);
     } catch {
-      return getDefaultPsychotherapyPageManagedContent(locale);
+      return getDefaultPsychotherapyPageManagedContent();
     }
   },
-  async getPsychotherapyPageData(locale: SiteLocale) {
-    return buildPsychotherapyPageData(locale, await this.getManagedPsychotherapyContent(locale));
+  async getPsychotherapyPageData() {
+    return buildPsychotherapyPageData(await this.getManagedPsychotherapyContent());
   },
-  async updatePsychotherapyContent(locale: SiteLocale, input: unknown) {
+  async updatePsychotherapyContent(input: unknown) {
     const content = parsePsychotherapyPageManagedContentForm(input);
-    await repository.upsert("psychotherapy", locale, content);
-    pagePreviewService.clearDrafts("psychotherapy", locale);
+    await repository.upsert("psychotherapy", content);
+    pagePreviewService.clearDrafts("psychotherapy");
     return content;
   },
-  async getManagedScopeContent(locale: SiteLocale): Promise<ScopePageManagedContent> {
-    const record = await repository.get("scope", locale);
+  async getManagedScopeContent(): Promise<ScopePageManagedContent> {
+    const record = await repository.get("scope");
 
     if (!record) {
-      return getDefaultScopePageManagedContent(locale);
+      return getDefaultScopePageManagedContent();
     }
 
     try {
       return parseScopePageManagedContent(record.content);
     } catch {
-      return getDefaultScopePageManagedContent(locale);
+      return getDefaultScopePageManagedContent();
     }
   },
-  async getScopePageData(locale: SiteLocale) {
-    return buildScopePageData(locale, await this.getManagedScopeContent(locale));
+  async getScopePageData() {
+    return buildScopePageData(await this.getManagedScopeContent());
   },
-  async getScopeDetailPageData(locale: SiteLocale, slug: string) {
-    return buildScopeDetailPageData(locale, await this.getManagedScopeContent(locale), slug);
+  async getScopeDetailPageData(slug: string) {
+    return buildScopeDetailPageData(await this.getManagedScopeContent(), slug);
   },
-  async updateScopeContent(locale: SiteLocale, input: unknown) {
+  async updateScopeContent(input: unknown) {
     const content = parseScopePageManagedContentForm(input);
-    await repository.upsert("scope", locale, content);
-    pagePreviewService.clearDrafts("scope", locale);
+    await repository.upsert("scope", content);
+    pagePreviewService.clearDrafts("scope");
     return content;
   },
-  async getManagedPricingContent(locale: SiteLocale): Promise<PricingPageManagedContent> {
-    const record = await repository.get("pricing", locale);
+  async getManagedPricingContent(): Promise<PricingPageManagedContent> {
+    const record = await repository.get("pricing");
 
     if (!record) {
-      return getDefaultPricingPageManagedContent(locale);
+      return getDefaultPricingPageManagedContent();
     }
 
     try {
       return parsePricingPageManagedContent(record.content);
     } catch {
-      return getDefaultPricingPageManagedContent(locale);
+      return getDefaultPricingPageManagedContent();
     }
   },
-  async getPricingPageData(locale: SiteLocale) {
-    return buildPricingPageData(locale, await this.getManagedPricingContent(locale));
+  async getPricingPageData() {
+    return buildPricingPageData(await this.getManagedPricingContent());
   },
-  async updatePricingContent(locale: SiteLocale, input: unknown) {
+  async updatePricingContent(input: unknown) {
     const content = parsePricingPageManagedContentForm(input);
-    await repository.upsert("pricing", locale, content);
-    pagePreviewService.clearDrafts("pricing", locale);
+    await repository.upsert("pricing", content);
+    pagePreviewService.clearDrafts("pricing");
     return content;
   },
-  async getManagedAppointmentContent(locale: SiteLocale): Promise<AppointmentPageManagedContent> {
-    const record = await repository.get("appointment", locale);
+  async getManagedAppointmentContent(): Promise<AppointmentPageManagedContent> {
+    const record = await repository.get("appointment");
 
     if (!record) {
-      return getDefaultAppointmentPageManagedContent(locale);
+      return getDefaultAppointmentPageManagedContent();
     }
 
     try {
       return parseAppointmentPageManagedContent(record.content);
     } catch {
-      return getDefaultAppointmentPageManagedContent(locale);
+      return getDefaultAppointmentPageManagedContent();
     }
   },
-  async getAppointmentPageData(locale: SiteLocale) {
-    return buildAppointmentPageData(locale, await this.getManagedAppointmentContent(locale));
+  async getAppointmentPageData() {
+    return buildAppointmentPageData(await this.getManagedAppointmentContent());
   },
-  async updateAppointmentContent(locale: SiteLocale, input: unknown) {
+  async updateAppointmentContent(input: unknown) {
     const content = parseAppointmentPageManagedContentForm(input);
-    await repository.upsert("appointment", locale, content);
-    pagePreviewService.clearDrafts("appointment", locale);
+    await repository.upsert("appointment", content);
+    pagePreviewService.clearDrafts("appointment");
     return content;
   },
-  async getManagedFaqContent(locale: SiteLocale): Promise<FaqPageManagedContent> {
-    const record = await repository.get("faq", locale);
+  async getManagedFaqContent(): Promise<FaqPageManagedContent> {
+    const record = await repository.get("faq");
 
     if (!record) {
-      return getDefaultFaqPageManagedContent(locale);
+      return getDefaultFaqPageManagedContent();
     }
 
     try {
       return parseFaqPageManagedContent(record.content);
     } catch {
-      return getDefaultFaqPageManagedContent(locale);
+      return getDefaultFaqPageManagedContent();
     }
   },
-  async getFaqPageData(locale: SiteLocale) {
-    return buildFaqPageData(locale, await this.getManagedFaqContent(locale));
+  async getFaqPageData() {
+    return buildFaqPageData(await this.getManagedFaqContent());
   },
-  async updateFaqContent(locale: SiteLocale, input: unknown) {
+  async updateFaqContent(input: unknown) {
     const content = parseFaqPageManagedContentForm(input);
-    await repository.upsert("faq", locale, content);
-    pagePreviewService.clearDrafts("faq", locale);
+    await repository.upsert("faq", content);
+    pagePreviewService.clearDrafts("faq");
     return content;
   },
-  async getManagedContactContent(locale: SiteLocale): Promise<ContactPageManagedContent> {
-    const record = await repository.get("contact", locale);
+  async getManagedContactContent(): Promise<ContactPageManagedContent> {
+    const record = await repository.get("contact");
 
     if (!record) {
-      return getDefaultContactPageManagedContent(locale);
+      return getDefaultContactPageManagedContent();
     }
 
     try {
       return parseContactPageManagedContent(record.content);
     } catch {
-      return getDefaultContactPageManagedContent(locale);
+      return getDefaultContactPageManagedContent();
     }
   },
-  async getContactPageData(locale: SiteLocale) {
-    return buildContactPageData(locale, await this.getManagedContactContent(locale));
+  async getContactPageData() {
+    return buildContactPageData(await this.getManagedContactContent());
   },
-  async updateContactContent(locale: SiteLocale, input: unknown) {
+  async updateContactContent(input: unknown) {
     const content = parseContactPageManagedContentForm(input);
-    await repository.upsert("contact", locale, content);
-    pagePreviewService.clearDrafts("contact", locale);
+    await repository.upsert("contact", content);
+    pagePreviewService.clearDrafts("contact");
     return content;
   },
-  async getManagedBlogIndexContent(locale: SiteLocale): Promise<BlogIndexPageManagedContent> {
-    const record = await repository.get("blog", locale);
+  async getManagedBlogIndexContent(): Promise<BlogIndexPageManagedContent> {
+    const record = await repository.get("blog");
 
     if (!record) {
-      return getDefaultBlogIndexPageManagedContent(locale);
+      return getDefaultBlogIndexPageManagedContent();
     }
 
     try {
       return parseBlogIndexPageManagedContent(record.content);
     } catch {
-      return getDefaultBlogIndexPageManagedContent(locale);
+      return getDefaultBlogIndexPageManagedContent();
     }
   },
-  async getBlogIndexPageData(locale: SiteLocale) {
-    return buildBlogIndexPageData(locale, await this.getManagedBlogIndexContent(locale));
+  async getBlogIndexPageData() {
+    return buildBlogIndexPageData(await this.getManagedBlogIndexContent());
   },
-  async updateBlogIndexContent(locale: SiteLocale, input: unknown) {
+  async updateBlogIndexContent(input: unknown) {
     const content = parseBlogIndexPageManagedContentForm(input);
-    await repository.upsert("blog", locale, content);
-    pagePreviewService.clearDrafts("blog", locale);
+    await repository.upsert("blog", content);
+    pagePreviewService.clearDrafts("blog");
     return content;
   },
 };

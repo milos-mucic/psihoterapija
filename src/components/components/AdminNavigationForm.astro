@@ -1,19 +1,16 @@
 ---
 import type { ManagedNavigation } from "@/features/navigation/types";
-import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
   action: string;
   navigation: ManagedNavigation;
-  locale: SiteLocale;
 };
 
-const { action, navigation, locale } = Astro.props;
+const { action, navigation } = Astro.props;
 const navigationJson = JSON.stringify(navigation);
 ---
 
 <form class="admin-form" method="post" action={action} data-nav-form>
-  <input type="hidden" name="locale" value={locale} />
   <input type="hidden" name="payload" data-nav-payload value={navigationJson} />
 
   <div class="card" style="padding: 1.5rem;">
@@ -337,24 +334,19 @@ const navigationJson = JSON.stringify(navigation);
       | { status: "custom"; id: string; title: string; slug: string; published: boolean }
       | { status: "orphan"; slug: string };
 
-    const localeInput = form.querySelector<HTMLInputElement>('input[name="locale"]');
-    const currentLocale = (): "sr-latn" | "sr-cyrl" =>
-      (localeInput?.value === "sr-cyrl" ? "sr-cyrl" : "sr-latn");
-
     const ADMIN_BASE = "/studio/ikar-portal-4f27b19a";
 
     const lookupCache = new Map<string, UrlLookup>();
     const inflight = new Map<string, Promise<UrlLookup>>();
 
     async function lookupUrl(href: string): Promise<UrlLookup> {
-      const locale = currentLocale();
-      const key = `${locale}::${href}`;
+      const key = href;
       const cached = lookupCache.get(key);
       if (cached) return cached;
       const existing = inflight.get(key);
       if (existing) return existing;
       const promise = fetch(
-        `/api/admin/custom-pages/lookup?href=${encodeURIComponent(href)}&locale=${locale}`,
+        `/api/admin/custom-pages/lookup?href=${encodeURIComponent(href)}`,
       )
         .then((r) => r.json() as Promise<UrlLookup>)
         .then((data) => {
@@ -398,9 +390,8 @@ const navigationJson = JSON.stringify(navigation);
             `<span class="admin-nav-url-status__dot"></span>${label}` +
             ` <a href="${ADMIN_BASE}/pages/custom/${result.id}/" target="_blank" rel="noreferrer">Uredi ↗</a>`;
         } else if (result.status === "orphan") {
-          const locale = currentLocale();
           const slug = result.slug;
-          const createHref = `${ADMIN_BASE}/pages/new/?slug=${encodeURIComponent(slug)}&locale=${locale}`;
+          const createHref = `${ADMIN_BASE}/pages/new/?slug=${encodeURIComponent(slug)}`;
           statusEl.dataset.tone = "warn";
           statusEl.innerHTML =
             '<span class="admin-nav-url-status__dot"></span>' +

@@ -7,7 +7,7 @@ type Props = {
 };
 
 const { pathname } = Astro.props;
-const dictionary = getDictionary("sr-latn");
+const dictionary = getDictionary();
 const normalizedPath = pathname.replace(/\/$/, "") || "/";
 const normalizedBase = adminConfig.basePath.replace(/\/$/, "");
 

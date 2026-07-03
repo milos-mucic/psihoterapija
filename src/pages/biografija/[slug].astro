@@ -4,14 +4,13 @@ import BiographyProfilePage from "@/components/pages/BiographyProfilePage.astro"
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import { siteConfig } from "@/lib/config/site";
 
-const locale = "sr-latn";
 const { slug } = Astro.params;
 
 if (!slug) {
   throw new Error("Missing biography profile slug.");
 }
 
-const content = await pageContentService.getBiographyProfilePageData(locale, slug);
+const content = await pageContentService.getBiographyProfilePageData(slug);
 
 if (!content) {
   return Astro.redirect("/biografija/");
@@ -21,10 +20,9 @@ if (!content) {
 <BaseLayout
   title={`${content.profile.title} | ${siteConfig.name}`}
   description={content.profile.summary}
-  locale={locale}
   canonicalPath={`/biografija/${slug}/`}
   appBarTone="dark"
   appBarOverlay={true}
 >
-  <BiographyProfilePage locale={locale} slug={slug} />
+  <BiographyProfilePage slug={slug} />
 </BaseLayout>

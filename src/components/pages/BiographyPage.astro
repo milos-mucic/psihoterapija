@@ -2,28 +2,24 @@
 import { stripHtmlTags } from "@/features/page-content/admin/technical-fields";
 import BaseLayout from "@/components/components/BaseLayout.astro";
 import PageBanner from "@/components/sections/PageBanner.astro";
-import { localizePath } from "@/features/i18n/locale";
 import { getDictionary } from "@/features/i18n/translate";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import { getBlockBackgroundStyle } from "@/features/page-content/admin/block-backgrounds";
-import type { SiteLocale } from "@/lib/config/site";
 
 type Props = {
-  locale: SiteLocale;
   content?: Awaited<ReturnType<typeof pageContentService.getBiographyPageData>>;
 };
 
-const { locale, content: previewContent } = Astro.props;
-const dictionary = getDictionary(locale);
-const canonicalPath = localizePath(locale, "/biografija/");
-const content = previewContent ?? (await pageContentService.getBiographyPageData(locale));
+const { content: previewContent } = Astro.props;
+const dictionary = getDictionary();
+const canonicalPath = "/biografija/";
+const content = previewContent ?? (await pageContentService.getBiographyPageData());
 const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackgrounds, fragment);
 ---
 
 <BaseLayout
   title={stripHtmlTags(content.seo.title)}
   description={content.seo.description}
-  locale={locale}
   canonicalPath={canonicalPath}
   appBarTone="dark"
   appBarOverlay={true}
