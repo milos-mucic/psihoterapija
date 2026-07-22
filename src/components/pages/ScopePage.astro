@@ -211,9 +211,7 @@ const scopeTabsNextLabel = dictionary.common.scopeTabNext;
           class="scope-page__focus-secondary richtext-shell"
           set:html={content.focusSecondaryCopy}
         />
-        <a class="home-button" href={content.focusCtaHref}>
-          {content.focusCtaLabel}
-        </a>
+        <a class="home-button" href={content.focusCtaHref} set:html={content.focusCtaLabel} />
       </div>
     </div>
   </div>
@@ -228,7 +226,7 @@ const scopeTabsNextLabel = dictionary.common.scopeTabNext;
         <h2 set:html={content.recentTitle} />
         <div class="scope-page__recent-copy richtext-shell" set:html={content.recentCopy} />
       </div>
-      <a class="home-button" href={content.recentHref}>{content.recentLabel}</a>
+      <a class="home-button" href={content.recentHref} set:html={content.recentLabel} />
     </div>
 
     {

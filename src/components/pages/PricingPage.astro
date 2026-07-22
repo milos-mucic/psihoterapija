@@ -22,18 +22,19 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
     <div class="pricing-page__grid">
       {
         content.plans.map((plan, index) => (
-          <article
+          <a
             class="pricing-page__card"
+            href={plan.ctaHref}
             data-reveal="up"
             style={`--reveal-delay: ${index * 90}ms;`}
           >
             <h3 set:html={plan.title} />
             <p class="pricing-page__price" set:html={plan.price} />
-            <a class="pricing-page__cta" href={plan.ctaHref}>
-              <span class="pricing-page__cta-label">{plan.ctaLabel}</span>
+            <span class="pricing-page__cta">
+              <span class="pricing-page__cta-label" set:html={plan.ctaLabel} />
               <span class="pricing-page__cta-arrow" aria-hidden="true">→</span>
-            </a>
-          </article>
+            </span>
+          </a>
         ))
       }
     </div>
@@ -64,8 +65,10 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
 
 <style>
   .pricing-page__plans-section {
-    padding-top: clamp(2.5rem, 5vw, 4rem);
-    padding-bottom: 1rem;
+    /* Top is normalized to 2.5rem by the global `.page-banner + *` rule; match the bottom
+       so the cards sit equally far from the banner above and the footer below. */
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
   }
 
   .pricing-page__grid {
@@ -84,6 +87,32 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
     border: 1px solid rgba(15, 60, 61, 0.12);
     background: #f9f8f5;
     box-shadow: 0 14px 34px rgba(16, 47, 48, 0.08);
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 300ms ease,
+      border-color 300ms ease,
+      background 300ms ease;
+  }
+
+  .pricing-page__card:hover,
+  .pricing-page__card:focus-visible {
+    transform: translateY(-8px);
+    border-color: var(--accent-strong);
+    background: #fff;
+    box-shadow: 0 24px 48px rgba(16, 47, 48, 0.16);
+    outline: none;
+  }
+
+  .pricing-page__card:focus-visible {
+    outline: 2px solid var(--accent-strong);
+    outline-offset: 3px;
+  }
+
+  .pricing-page__card:active {
+    transform: translateY(-4px);
   }
 
   .pricing-page__card h3 {
@@ -152,26 +181,33 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
     transition: transform 260ms ease;
   }
 
-  .pricing-page__cta:hover {
+  .pricing-page__card:hover .pricing-page__cta,
+  .pricing-page__card:focus-visible .pricing-page__cta {
     color: var(--accent-strong);
   }
 
-  .pricing-page__cta:hover .pricing-page__cta-label::after,
-  .pricing-page__cta:focus-visible .pricing-page__cta-label::after {
+  .pricing-page__card:hover .pricing-page__cta-label::after,
+  .pricing-page__card:focus-visible .pricing-page__cta-label::after {
     transform: scaleX(1);
     transform-origin: left center;
   }
 
-  .pricing-page__cta:hover .pricing-page__cta-arrow,
-  .pricing-page__cta:focus-visible .pricing-page__cta-arrow {
-    transform: translateX(4px);
+  .pricing-page__card:hover .pricing-page__cta-arrow,
+  .pricing-page__card:focus-visible .pricing-page__cta-arrow {
+    transform: translateX(5px);
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .pricing-page__card,
     .pricing-page__cta,
     .pricing-page__cta-label::after,
     .pricing-page__cta-arrow {
       transition: none;
+    }
+
+    .pricing-page__card:hover,
+    .pricing-page__card:focus-visible {
+      transform: none;
     }
   }
 
@@ -191,6 +227,16 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
     background: #fff;
     box-shadow: 0 12px 30px rgba(16, 47, 48, 0.07);
     padding: 1.2rem 1.2rem;
+    text-align: center;
+  }
+
+  .pricing-page__info-card :global(.richtext-shell),
+  .pricing-page__info-card :global(p),
+  .pricing-page__info-card :global(ul),
+  .pricing-page__info-card :global(ol),
+  .pricing-page__info-card :global(li) {
+    text-align: center;
+    list-style-position: inside;
   }
 
   .pricing-page__info-card h4 {
@@ -215,6 +261,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
   @media (max-width: 760px) {
     .pricing-page__plans-section {
       padding-top: 2rem;
+      padding-bottom: 2rem;
     }
 
     .pricing-page__grid,

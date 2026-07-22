@@ -73,10 +73,11 @@ export const homePageManagedContentSchema: z.ZodType<HomePageManagedContent> = z
     items: z
       .array(
         z.object({
-          title: requiredText,
-          copy: richTextRequired,
-          label: requiredText,
           image: requiredText,
+          themeTabIndex: z.number().int().min(0).optional(),
+          label: optionalText,
+          title: optionalText,
+          copy: optionalText,
         }),
       )
       .length(3),
@@ -137,17 +138,17 @@ const formPayloadSchema = z.object({
   service3Copy: richTextRequired,
   service3Image: requiredText,
   themesTitle: requiredText,
-  theme1Title: requiredText,
-  theme1Copy: richTextRequired,
-  theme1Label: requiredText,
+  theme1Title: optionalText,
+  theme1Copy: optionalText,
+  theme1Label: optionalText,
   theme1Image: requiredText,
-  theme2Title: requiredText,
-  theme2Copy: richTextRequired,
-  theme2Label: requiredText,
+  theme2Title: optionalText,
+  theme2Copy: optionalText,
+  theme2Label: optionalText,
   theme2Image: requiredText,
-  theme3Title: requiredText,
-  theme3Copy: richTextRequired,
-  theme3Label: requiredText,
+  theme3Title: optionalText,
+  theme3Copy: optionalText,
+  theme3Label: optionalText,
   theme3Image: requiredText,
   reasonsTitle: requiredText,
   reasonsCopy: richTextRequired,
@@ -174,6 +175,11 @@ const formPayloadSchema = z.object({
   recentLabel: requiredText,
   recentEmpty: requiredText,
 });
+
+const parseCardIndex = (value: unknown, fallback: number): number => {
+  const parsed = Number.parseInt(String(value ?? ""), 10);
+  return Number.isInteger(parsed) && parsed >= 0 ? parsed : fallback;
+};
 
 export const parseHomePageManagedContent = (input: unknown) => {
   return homePageManagedContentSchema.parse(input);
@@ -232,22 +238,25 @@ export const parseHomePageManagedContentForm = (input: unknown): HomePageManaged
       title: parsed.themesTitle,
       items: [
         {
+          image: parsed.theme1Image,
+          themeTabIndex: parseCardIndex(values.theme1TabIndex, 0),
+          label: parsed.theme1Label,
           title: parsed.theme1Title,
           copy: parsed.theme1Copy,
-          label: parsed.theme1Label,
-          image: parsed.theme1Image,
         },
         {
+          image: parsed.theme2Image,
+          themeTabIndex: parseCardIndex(values.theme2TabIndex, 1),
+          label: parsed.theme2Label,
           title: parsed.theme2Title,
           copy: parsed.theme2Copy,
-          label: parsed.theme2Label,
-          image: parsed.theme2Image,
         },
         {
+          image: parsed.theme3Image,
+          themeTabIndex: parseCardIndex(values.theme3TabIndex, 2),
+          label: parsed.theme3Label,
           title: parsed.theme3Title,
           copy: parsed.theme3Copy,
-          label: parsed.theme3Label,
-          image: parsed.theme3Image,
         },
       ],
     },

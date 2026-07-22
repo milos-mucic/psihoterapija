@@ -92,7 +92,16 @@ export type HomePageManagedContent = {
   };
   themes: {
     title: string;
-    items: HomeEditableMediaCard[];
+    items: Array<{
+      /** Image shown in the home theme card (editable per slot). */
+      image: string;
+      /** Index into the scope page's tabs pool (the "teme") this slot displays. */
+      themeTabIndex?: number;
+      /** CTA label under the card (editable per slot). */
+      label?: string;
+      title?: string;
+      copy?: string;
+    }>;
   };
   reasons: {
     title: string;
@@ -160,6 +169,10 @@ export type BiographyPageManagedContent = {
     image: string;
     ctaLabel: string;
   };
+  /** Profile detail pages: show the highlight labels/tags. Hidden by default. */
+  profileHighlightsVisible?: boolean;
+  /** Profile detail pages: show the "back to biography" button. Hidden by default. */
+  profileBackLinkVisible?: boolean;
 };
 
 export type PsychotherapyPageManagedContent = {
@@ -212,6 +225,8 @@ export type ScopePageManagedContent = {
     detailBackLabel: string;
     detailCtaLabel: string;
     items: ManagedTextCard[];
+    /** Blog post slugs shown as the "teme u fokusu" cards for this theme (admin-selected). */
+    blogSlugs: string[];
   }>;
   detail: {
     relatedTitle: string;

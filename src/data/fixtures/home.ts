@@ -95,9 +95,7 @@ const ensureServiceItems = (
 
   return Array.from({ length: 3 }, (_, index) => ({
     title: items[index]?.title ?? dictionaryItems[index]?.title ?? "",
-    copy:
-      items[index]?.copy ??
-      toParagraphHtml(dictionaryItems[index]?.copy ?? ""),
+    copy: items[index]?.copy ?? toParagraphHtml(dictionaryItems[index]?.copy ?? ""),
     image: items[index]?.image ?? defaultImages[index] ?? defaultImages[0],
   }));
 };
@@ -209,6 +207,7 @@ export const getDefaultHomePageManagedContent = (): HomePageManagedContent => {
 
 export const buildHomePageData = (
   content: HomePageManagedContent,
+  themeTabPool: Array<{ id: string; label: string; summaryTitle: string; summaryCopy: string }> = [],
 ): HomePageData => {
   const dictionary = getDictionary();
   const serviceItems = ensureServiceItems(content.services.items);
@@ -245,23 +244,8 @@ export const buildHomePageData = (
     services: {
       title: content.services.title,
       copy: content.services.copy,
-      items: [
-        {
-          ...serviceItems[0],
-          href: "/usluge/psihoterapija/",
-          label: dictionary.homePage.services.items[0].label,
-        },
-        {
-          ...serviceItems[1],
-          href: "/usluge/psiholosko-savetovanje/",
-          label: dictionary.homePage.services.items[1].label,
-        },
-        {
-          ...serviceItems[2],
-          href: "/usluge/konsultacije/",
-          label: dictionary.homePage.services.items[2].label,
-        },
-      ],
+      // Static informational cards — no link/redirect. All text + images edited in the home admin.
+      items: [serviceItems[0], serviceItems[1], serviceItems[2]],
     },
     promo: {
       title: dictionary.homePage.promo.title,
@@ -271,20 +255,16 @@ export const buildHomePageData = (
     },
     themes: {
       title: content.themes.title,
-      items: [
-        {
-          ...content.themes.items[0],
-          href: "/psihoterapija/#tema-anksiozna-stanja",
-        },
-        {
-          ...content.themes.items[1],
-          href: "/psihoterapija/#tema-poremecaji-licnosti",
-        },
-        {
-          ...content.themes.items[2],
-          href: "/psihoterapija/#tema-traume",
-        },
-      ],
+      items: content.themes.items.map((item, index) => {
+        const tab = themeTabPool[item.themeTabIndex ?? index] ?? themeTabPool[index];
+        return {
+          title: tab?.summaryTitle ?? item.title ?? "",
+          copy: tab?.summaryCopy ?? item.copy ?? "",
+          label: item.label ?? "",
+          image: item.image,
+          href: tab ? `/psihoterapija/#tema-${tab.id}` : "/psihoterapija/",
+        };
+      }),
     },
     reasons: {
       title: content.reasons.title,

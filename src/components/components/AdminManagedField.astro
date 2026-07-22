@@ -1,6 +1,7 @@
 ---
 import { AdminMediaField } from "@/components/components/AdminMediaField";
 import { AdminRichTextField } from "@/components/components/AdminRichTextField";
+import AdminToggleField from "@/components/components/AdminToggleField.astro";
 import type { ManagedPageEditorField } from "@/features/page-content/admin/managed-page-editor.config";
 import { isTechnicalFieldName } from "@/features/page-content/admin/technical-fields";
 
@@ -20,8 +21,9 @@ const fieldClass =
 
 // Promote text/textarea fields to RTF unless they look "technical" (SEO, URL, email, alt, label, slug, placeholder).
 // Technical fields go into HTML attributes or constrained UI elements where HTML markup would break things.
+const forceRich = field.kind === "text" && field.rich === true;
 const promoteText =
-  field.kind === "text" && !isTechnicalFieldName(field.name);
+  field.kind === "text" && (forceRich || !isTechnicalFieldName(field.name));
 const promoteTextarea =
   field.kind === "textarea" && !isTechnicalFieldName(field.name);
 const renderAsRichText =
@@ -59,6 +61,10 @@ const richTextMode: "full" | "inline" = promoteText ? "inline" : "full";
         {field.value}
       </textarea>
     </label>
+  ) : field.kind === "toggle" ? (
+    <div class={fieldClass}>
+      <AdminToggleField name={field.name} label={field.label} value={field.value} />
+    </div>
   ) : (
     <AdminMediaField
       client:load

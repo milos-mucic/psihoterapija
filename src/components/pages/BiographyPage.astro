@@ -88,9 +88,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
           <ul class="home-list biography-page__list">
             {content.approachPoints.map((point) => <li set:html={point} />)}
           </ul>
-          <a class="home-button" href={content.ctaHref}>
-            {content.ctaLabel}
-          </a>
+          <a class="home-button" href={content.ctaHref} set:html={content.ctaLabel} />
         </div>
       </div>
     </div>

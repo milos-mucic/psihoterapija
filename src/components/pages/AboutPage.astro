@@ -52,7 +52,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
           <h2 set:html={content.recentTitle} />
           <div class="home-richtext" set:html={content.recentCopy} />
         </div>
-        <a class="home-button" href={content.recentHref}>{content.recentLabel}</a>
+        <a class="home-button" href={content.recentHref} set:html={content.recentLabel} />
       </div>
 
       {

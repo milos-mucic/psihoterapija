@@ -11,7 +11,20 @@ const fieldClass = field.full ? "admin-form__field admin-form__field--full" : "a
 ---
 
 {
-  field.kind === "text" ? (
+  field.kind === "text" && field.rich ? (
+    <div class={fieldClass}>
+      <span>{field.label}</span>
+      <div
+        class="admin-repeatable-group-rich-text"
+        data-repeatable-group-field={field.key}
+        data-rtf-mode="inline"
+      >
+        <textarea data-repeatable-group-rtf-initial hidden>
+          {value}
+        </textarea>
+      </div>
+    </div>
+  ) : field.kind === "text" ? (
     <label class={fieldClass}>
       <span>{field.label}</span>
       <input class="input-control" data-repeatable-group-field={field.key} value={value} />

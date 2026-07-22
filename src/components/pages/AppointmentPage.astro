@@ -1,4 +1,5 @@
 ---
+import PageBanner from "@/components/sections/PageBanner.astro";
 import FaqAccordionSection from "@/components/sections/FaqAccordionSection.astro";
 import AppointmentForm from "@/components/components/AppointmentForm.astro";
 import { getDictionary } from "@/features/i18n/translate";
@@ -14,6 +15,14 @@ const content = previewContent ?? (await pageContentService.getAppointmentPageDa
 const dictionary = getDictionary();
 const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackgrounds, fragment);
 ---
+
+{!content.hiddenBlocks?.includes("appointment-banner") && (
+  <PageBanner
+    {...content.banner}
+    sectionId="appointment-banner"
+    blockStyle={blockBg("appointment-banner")}
+  />
+)}
 
 {!content.hiddenBlocks?.includes("appointment-booking") && (
 <section

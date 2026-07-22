@@ -394,7 +394,23 @@ const normalizeInlineEditorHtml = (value: string) => {
       continue;
     }
 
-    const segment = node.tagName === "P" ? node.innerHTML.trim() : node.outerHTML.trim();
+    if (node.tagName === "P") {
+      const inner = node.innerHTML.trim();
+
+      if (!inner || inner === "<br>" || inner === "<br />") {
+        continue;
+      }
+
+      // Preserve block-level paragraph styling (e.g. text-align) that would otherwise
+      // be lost when the <p> wrapper is dropped in inline mode. A display:block span
+      // keeps the styling AND stays valid phrasing content inside the headings/paragraphs
+      // these inline fields get injected into via set:html.
+      const style = node.getAttribute("style")?.trim();
+      segments.push(style ? `<span style="display: block; ${style}">${inner}</span>` : inner);
+      continue;
+    }
+
+    const segment = node.outerHTML.trim();
 
     if (segment && segment !== "<br>" && segment !== "<br />") {
       segments.push(segment);

@@ -317,6 +317,22 @@
   color: var(--primary-light);
 }
 
+/* Static informational variant — no link, so no interactive hover cues. */
+.home-service-card--static {
+  cursor: default;
+}
+
+.home-service-card--static:hover {
+  transform: none;
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: none;
+}
+
+.home-service-card--static:hover .home-service-title {
+  color: inherit;
+}
+
 .home-service-card__icon {
   width: auto;
   height: 2.9rem;

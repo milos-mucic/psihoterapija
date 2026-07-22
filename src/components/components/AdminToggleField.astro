@@ -1,0 +1,149 @@
+---
+// A standalone on/off switch bound to a named form field (value "1" when on, "0" when off).
+// Unlike AdminBlockVisibilityToggle (which encodes hide-semantics into hiddenBlocks), this
+// writes a plain boolean field the page schema reads directly. Used for opt-in features that
+// must default to OFF.
+type Props = {
+  name: string;
+  label: string;
+  value: boolean;
+};
+
+const { name, label, value } = Astro.props;
+---
+
+<div class="admin-toggle-field" data-admin-toggle-field>
+  <input type="hidden" name={name} value={value ? "1" : "0"} data-admin-toggle-value />
+  <label class="admin-toggle-field__label">
+    <input
+      type="checkbox"
+      class="admin-toggle-field__checkbox"
+      data-admin-toggle-checkbox
+      checked={value}
+    />
+    <span class="admin-toggle-field__track" aria-hidden="true">
+      <span class="admin-toggle-field__thumb"></span>
+    </span>
+    <span class="admin-toggle-field__text">{label}</span>
+    <span class="admin-toggle-field__state" data-admin-toggle-state>
+      {value ? "Uključeno" : "Isključeno"}
+    </span>
+  </label>
+</div>
+
+<style>
+  .admin-toggle-field {
+    display: flex;
+    align-items: center;
+    padding: 0.7rem 0.9rem;
+    border-radius: 0.6rem;
+    background: rgba(22, 60, 61, 0.05);
+    border: 1px solid rgba(22, 60, 61, 0.1);
+  }
+
+  .admin-toggle-field__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    user-select: none;
+    font-size: 0.92rem;
+    color: var(--foreground);
+  }
+
+  .admin-toggle-field__checkbox {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+  }
+
+  .admin-toggle-field__track {
+    position: relative;
+    display: inline-block;
+    width: 2.4rem;
+    height: 1.35rem;
+    border-radius: 999px;
+    background: rgba(22, 60, 61, 0.25);
+    transition: background-color 160ms ease;
+    flex: 0 0 auto;
+  }
+
+  .admin-toggle-field__thumb {
+    position: absolute;
+    top: 0.15rem;
+    left: 0.15rem;
+    width: 1.05rem;
+    height: 1.05rem;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(16, 47, 48, 0.18);
+    transition: transform 160ms ease;
+  }
+
+  .admin-toggle-field__checkbox:checked ~ .admin-toggle-field__track {
+    background: var(--primary);
+  }
+
+  .admin-toggle-field__checkbox:checked ~ .admin-toggle-field__track .admin-toggle-field__thumb {
+    transform: translateX(1.05rem);
+  }
+
+  .admin-toggle-field__checkbox:focus-visible ~ .admin-toggle-field__track {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  .admin-toggle-field__text {
+    font-weight: 500;
+  }
+
+  .admin-toggle-field__state {
+    margin-left: 0.4rem;
+    padding: 0.12rem 0.5rem;
+    border-radius: 999px;
+    background: rgba(22, 60, 61, 0.08);
+    color: var(--primary);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+</style>
+
+<script>
+  (() => {
+    const init = () => {
+      document.querySelectorAll("[data-admin-toggle-field]").forEach((wrapper) => {
+        if (!(wrapper instanceof HTMLElement) || wrapper.dataset.bound === "true") {
+          return;
+        }
+
+        const hiddenInput = wrapper.querySelector("[data-admin-toggle-value]");
+        const toggle = wrapper.querySelector("[data-admin-toggle-checkbox]");
+        const stateLabel = wrapper.querySelector("[data-admin-toggle-state]");
+
+        if (!(hiddenInput instanceof HTMLInputElement) || !(toggle instanceof HTMLInputElement)) {
+          return;
+        }
+
+        const sync = () => {
+          hiddenInput.value = toggle.checked ? "1" : "0";
+
+          if (stateLabel instanceof HTMLElement) {
+            stateLabel.textContent = toggle.checked ? "Uključeno" : "Isključeno";
+          }
+
+          hiddenInput.dispatchEvent(new Event("change", { bubbles: true }));
+          hiddenInput.dispatchEvent(new Event("input", { bubbles: true }));
+        };
+
+        toggle.addEventListener("change", sync);
+        wrapper.dataset.bound = "true";
+      });
+    };
+
+    init();
+    document.addEventListener("astro:page-load", init);
+  })();
+</script>

@@ -325,6 +325,8 @@ export const buildBiographyDetailPageData = (
     backLabel: content.banner.title,
     relatedTitle: content.cardsSection.title,
     relatedProfiles: cards.filter((card) => card.slug !== slug),
+    showHighlights: content.profileHighlightsVisible ?? false,
+    showBackLink: content.profileBackLinkVisible ?? false,
   };
 };
 
@@ -406,6 +408,32 @@ export const getDefaultScopePageManagedContent = (): ScopePageManagedContent => 
   const firstDetail = getScopeDetailPageData(defaultScopeSlugs[0]);
   const dictionary = getDictionary();
 
+  // Example "teme u fokusu" — which blog posts appear under each theme (admin-editable).
+  const focusBlogsByTab: Record<string, string[]> = {
+    "anksiozna-stanja": [
+      "kako-prepoznati-anksioznost-na-vreme",
+      "panicni-napad-sta-se-zaista-desava",
+      "kada-je-pravo-vreme-za-psihoterapiju",
+      "sta-ocekivati-na-prvom-susretu",
+      "prvi-korak-kada-potraziti-pomoc",
+    ],
+    "depresivna-stanja": [
+      "depresija-nije-samo-tuga",
+      "prvi-korak-kada-potraziti-pomoc",
+      "zasto-je-kontinuitet-vazan-u-radu",
+    ],
+    "poremecaji-licnosti": [
+      "zasto-ponavljamo-iste-obrasce-u-vezama",
+      "granice-u-odnosima-zasto-su-vazne",
+      "zasto-je-kontinuitet-vazan-u-radu",
+    ],
+    traume: [
+      "trauma-i-telo-kako-se-povezuju",
+      "kada-je-pravo-vreme-za-psihoterapiju",
+      "sta-ocekivati-na-prvom-susretu",
+    ],
+  };
+
   return {
     seo: {
       title: `${dictionary.nav.therapyLinks.scope} | ${siteConfig.name}`,
@@ -437,6 +465,7 @@ export const getDefaultScopePageManagedContent = (): ScopePageManagedContent => 
       detailBackLabel: tab.detailBackLabel,
       detailCtaLabel: tab.detailCtaLabel,
       items: tab.items,
+      blogSlugs: focusBlogsByTab[tab.id] ?? [],
     })),
     detail: {
       relatedTitle: firstDetail?.relatedTitle ?? "",
@@ -535,6 +564,8 @@ export const getDefaultPricingPageManagedContent = (): PricingPageManagedContent
       title: `${dictionary.nav.therapyLinks.pricing} | ${siteConfig.name}`,
       description: content.banner.description ?? "",
     },
+    // Info kartice ispod cena su podrazumevano sakrivene; admin ih može uključiti prekidačem.
+    hiddenBlocks: ["pricing-info"],
     banner: {
       title: content.banner.title,
       description: content.banner.description ?? "",

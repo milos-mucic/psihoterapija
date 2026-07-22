@@ -60,7 +60,7 @@ const {
     {
       type === "appointment" ? (
         <label class="stack-form__field">
-          <span class="stack-form__label">{formatLabel ?? labels.formatLabel}</span>
+          <span class="stack-form__label" set:html={formatLabel ?? labels.formatLabel} />
           <select class="input-control" name="format" required>
             <option value="" selected disabled>
               {labels.chooseOption}

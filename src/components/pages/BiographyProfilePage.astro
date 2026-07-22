@@ -38,20 +38,24 @@ if (!content) {
           set:html={content.profile.summary}
         />
 
-        <ul class="biography-profile-page__tags">
-          {content.profile.highlights.map((tag) => <li>{tag}</li>)}
-        </ul>
+        {content.showHighlights && (
+          <ul class="biography-profile-page__tags">
+            {content.profile.highlights.map((tag) => <li>{tag}</li>)}
+          </ul>
+        )}
 
-        <div class="biography-profile-page__actions">
-          <a class="home-button" href={content.backHref}>{content.backLabel}</a>
-        </div>
+        {content.showBackLink && (
+          <div class="biography-profile-page__actions">
+            <a class="home-button" href={content.backHref}>{content.backLabel}</a>
+          </div>
+        )}
       </div>
     </div>
   </div>
 </section>
 
 <section class="page-section page-section--soft biography-profile-page__body">
-  <div class="container container--narrow">
+  <div class="container">
     <div class="biography-profile-page__body-card" data-reveal="up">
       <div class="richtext-shell" set:html={content.profile.body} />
     </div>
@@ -85,9 +89,11 @@ if (!content) {
           <div class="home-heading-copy">
             <h2 set:html={content.relatedTitle} />
           </div>
-          <a class="home-button" href={content.backHref}>
-            {content.backLabel}
-          </a>
+          {content.showBackLink && (
+            <a class="home-button" href={content.backHref}>
+              {content.backLabel}
+            </a>
+          )}
         </div>
 
         <div class="biography-profile-page__related-grid">

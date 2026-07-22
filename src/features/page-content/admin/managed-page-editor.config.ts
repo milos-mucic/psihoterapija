@@ -22,6 +22,8 @@ export type ManagedPageEditorField =
       name: string;
       value: string;
       full?: boolean;
+      /** Force an inline rich-text editor even for a name that would otherwise stay a plain input. */
+      rich?: boolean;
     }
   | {
       kind: "textarea";
@@ -46,6 +48,13 @@ export type ManagedPageEditorField =
       accept?: string;
       helpText?: string;
       uploadLabel?: string;
+    }
+  | {
+      kind: "toggle";
+      label: string;
+      name: string;
+      value: boolean;
+      full?: boolean;
     };
 
 export type ManagedPageEditorFieldGroup = {
@@ -101,6 +110,8 @@ export type ManagedPageEditorRepeatableGroupField = {
   accept?: string;
   helpText?: string;
   uploadLabel?: string;
+  /** For kind "text": force an inline rich-text editor instead of a plain input. */
+  rich?: boolean;
 };
 
 export type ManagedPageEditorRepeatableGroupSection = {
@@ -144,7 +155,7 @@ const text = (
   name: string,
   label: string,
   value: string,
-  options: { full?: boolean } = {},
+  options: { full?: boolean; rich?: boolean } = {},
 ): ManagedPageEditorField => ({
   kind: "text",
   label,
@@ -191,6 +202,19 @@ const media = (
   name,
   value,
   uploadLabel: options.uploadLabel ?? "Otpremi sliku",
+  ...options,
+});
+
+const toggle = (
+  name: string,
+  label: string,
+  value: boolean,
+  options: { full?: boolean } = {},
+): ManagedPageEditorField => ({
+  kind: "toggle",
+  label,
+  name,
+  value,
   ...options,
 });
 
@@ -296,7 +320,7 @@ const buildAboutEditor = (content: AboutPageManagedContent): ManagedPageEditorCo
       copy: "Tekstualni blok iznad poslednjih blog postova.",
       entries: [
         text("recentTitle", "Naslov", content.recent.title),
-        text("recentLabel", "Labela dugmeta", content.recent.label),
+        text("recentLabel", "Labela dugmeta", content.recent.label, { rich: true }),
         richText("recentCopy", "Opis", content.recent.copy),
         textarea("recentEmpty", "Poruka kada nema postova", content.recent.empty, {
           full: true,
@@ -339,7 +363,7 @@ const buildBiographyEditor = (content: BiographyPageManagedContent): ManagedPage
         text("approachTitle", "Naslov", content.approach.title, { full: true }),
         richText("approachCopy", "Opis", content.approach.copy),
         media("approachImage", "Slika", content.approach.image),
-        text("approachCtaLabel", "Labela CTA dugmeta", content.approach.ctaLabel),
+        text("approachCtaLabel", "Labela CTA dugmeta", content.approach.ctaLabel, { rich: true }),
       ],
     },
     {
@@ -352,6 +376,24 @@ const buildBiographyEditor = (content: BiographyPageManagedContent): ManagedPage
       values: content.approach.points,
       addButtonLabel: "Dodaj stavku",
       minItems: 1,
+    },
+    {
+      kind: "standard",
+      fragment: "biography-approach",
+      title: "Profil stranice — opcije",
+      copy: "Kontrola elemenata na pojedinačnim stranicama profila. Podrazumevano isključeno.",
+      entries: [
+        toggle(
+          "profileHighlightsVisible",
+          "Prikaži oznake (labele) na stranici profila",
+          content.profileHighlightsVisible ?? false,
+        ),
+        toggle(
+          "profileBackLinkVisible",
+          'Prikaži dugme za povratak ("Biografija") na stranici profila',
+          content.profileBackLinkVisible ?? false,
+        ),
+      ],
     },
   ],
 });
@@ -395,7 +437,7 @@ const buildPsychotherapyEditor = (
       kind: "repeatableGroup",
       fragment: "psychotherapy-services",
       title: "Usluge",
-      copy: "Tri vizuelne kartice usluga.",
+      copy: "Kartice usluga.",
       itemLabel: "Kartica",
       itemNamePrefix: "serviceCard",
       addButtonLabel: "Dodaj karticu usluge",
@@ -419,7 +461,7 @@ const buildPsychotherapyEditor = (
       entries: [
         text("bookingTitle", "Naslov", content.booking.title, { full: true }),
         richText("bookingCopy", "Opis", content.booking.copy),
-        text("bookingFormatLabel", "Labela formata", content.booking.formatLabel),
+        text("bookingFormatLabel", "Labela formata", content.booking.formatLabel, { rich: true }),
       ],
     },
     {
@@ -511,7 +553,7 @@ const buildScopeEditor = (content: ScopePageManagedContent): ManagedPageEditorCo
         richText("focusCopy", "Prvi pasus", content.focus.copy),
         richText("focusSecondaryCopy", "Drugi pasus", content.focus.secondaryCopy),
         media("focusImage", "Slika", content.focus.image),
-        text("focusCtaLabel", "Labela CTA", content.focus.ctaLabel),
+        text("focusCtaLabel", "Labela CTA", content.focus.ctaLabel, { rich: true }),
       ],
     },
     {
@@ -521,7 +563,7 @@ const buildScopeEditor = (content: ScopePageManagedContent): ManagedPageEditorCo
       copy: "Tekstualni blok ispod fokus sekcije.",
       entries: [
         text("recentTitle", "Naslov", content.recent.title),
-        text("recentLabel", "Labela dugmeta", content.recent.label),
+        text("recentLabel", "Labela dugmeta", content.recent.label, { rich: true }),
         richText("recentCopy", "Opis", content.recent.copy),
         textarea("recentEmpty", "Poruka kada nema postova", content.recent.empty, {
           full: true,
@@ -631,9 +673,9 @@ const buildPricingEditor = (content: PricingPageManagedContent): ManagedPageEdit
       addButtonLabel: "Dodaj plan",
       minItems: 1,
       fields: [
-        { key: "title", kind: "text", label: "Naslov" },
-        { key: "price", kind: "text", label: "Cena" },
-        { key: "ctaLabel", kind: "text", label: "Labela CTA" },
+        { key: "title", kind: "text", label: "Naslov", rich: true },
+        { key: "price", kind: "text", label: "Cena", rich: true },
+        { key: "ctaLabel", kind: "text", label: "Labela CTA", rich: true },
       ],
       items: content.plans.map((plan) => ({
         title: plan.title,
@@ -651,7 +693,7 @@ const buildPricingEditor = (content: PricingPageManagedContent): ManagedPageEdit
       addButtonLabel: "Dodaj info karticu",
       minItems: 1,
       fields: [
-        { key: "title", kind: "text", label: "Naslov" },
+        { key: "title", kind: "text", label: "Naslov", rich: true },
         { key: "copy", kind: "richText", label: "Opis", full: true },
       ],
       items: content.infoCards.map((card) => ({
@@ -667,19 +709,29 @@ const buildAppointmentEditor = (
 ): ManagedPageEditorConfig => ({
   uploadFolder: "pages/appointment",
   sections: [
-    seoSection(content.seo, { fragment: "appointment-booking" }),
+    seoSection(content.seo, { fragment: "appointment-banner" }),
+    {
+      kind: "standard",
+      fragment: "appointment-banner",
+      title: "Hero banner",
+      copy: "Naslov, opis i pozadinska slika hero bloka na vrhu stranice za zakazivanje.",
+      previewCopy:
+        "Hero banner se prikazuje na vrhu stranice za zakazivanje. Isključite prekidač da ga sakrijete.",
+      entries: [
+        text("bannerTitle", "Naslov", content.banner.title),
+        richText("bannerDescription", "Opis", content.banner.description),
+        media("bannerBackgroundImage", "Pozadinska slika", content.banner.backgroundImage),
+      ],
+    },
     {
       kind: "standard",
       fragment: "appointment-booking",
-      title: "Banner i uvod",
-      copy: "SEO opis i glavni tekst uz formu.",
+      title: "Uvod i forma",
+      copy: "Naslov i uvodni tekst uz formu za zakazivanje.",
       entries: [
-        text("bannerTitle", "Naslov", content.banner.title),
-        richText("bannerDescription", "SEO opis", content.banner.description),
-        media("bannerBackgroundImage", "Pozadinska slika", content.banner.backgroundImage),
         text("bookingTitle", "Naslov forme", content.booking.title, { full: true }),
         richText("bookingCopy", "Uvodni tekst", content.booking.copy),
-        text("bookingFormatLabel", "Labela formata", content.booking.formatLabel),
+        text("bookingFormatLabel", "Labela formata", content.booking.formatLabel, { rich: true }),
       ],
     },
     {
@@ -769,7 +821,7 @@ const buildFaqEditor = (content: FaqPageManagedContent): ManagedPageEditorConfig
       entries: [
         text("bookingTitle", "Naslov", content.booking.title, { full: true }),
         richText("bookingCopy", "Opis", content.booking.copy),
-        text("bookingFormatLabel", "Labela formata", content.booking.formatLabel),
+        text("bookingFormatLabel", "Labela formata", content.booking.formatLabel, { rich: true }),
       ],
     },
     {
@@ -804,23 +856,39 @@ const buildContactEditor = (content: ContactPageManagedContent): ManagedPageEdit
     {
       kind: "standard",
       fragment: "contact-details",
-      title: "Kontakt uvod",
-      copy: "Uvodni tekst, forma i osnovni kontakt podaci.",
+      title: "Kontakt uvod i forma",
+      copy: "Uvodni tekst i naslov forme za kontakt.",
       entries: [
         text("introTitle", "Naslov uvoda", content.introTitle),
         richText("introCopy", "Opis uvoda", content.introCopy),
         text("formTitle", "Naslov forme", content.formTitle),
-        text("contactLabelPhone", "Labela telefon", content.contactLabels.phone),
-        text("contactLabelEmail", "Labela email", content.contactLabels.email),
-        text("contactLabelSocials", "Labela drustvene mreze", content.contactLabels.socials),
+      ],
+    },
+    {
+      kind: "standard",
+      fragment: "contact-cards",
+      title: "Kontakt podaci (telefon i email)",
+      copy: "Kartice sa telefonom i email adresom.",
+      entries: [
+        text("contactLabelPhone", "Labela telefon", content.contactLabels.phone, { rich: true }),
         text("phone", "Telefon", content.phone),
+        text("contactLabelEmail", "Labela email", content.contactLabels.email, { rich: true }),
         text("email", "Email", content.email),
       ],
     },
     {
-      kind: "repeatableGroup",
-      fragment: "contact-details",
+      kind: "standard",
+      fragment: "contact-socials",
       title: "Drustvene mreze",
+      copy: "Naslov bloka sa drustvenim mrezama.",
+      entries: [
+        text("contactLabelSocials", "Labela drustvene mreze", content.contactLabels.socials, { rich: true }),
+      ],
+    },
+    {
+      kind: "repeatableGroup",
+      fragment: "contact-socials",
+      title: "Linkovi drustvenih mreza",
       copy: "Dodajte mreze koje zelite da prikazete na kontakt stranici.",
       itemLabel: "Mreza",
       itemNamePrefix: "socialLink",
@@ -849,7 +917,7 @@ const buildContactEditor = (content: ContactPageManagedContent): ManagedPageEdit
     },
     {
       kind: "repeatableGroup",
-      fragment: "contact-offices",
+      fragment: "contact-gallery",
       title: "Galerija prostora",
       copy: "Dodajte ili uklonite fotografije kancelarije.",
       itemLabel: "Fotografija",
@@ -884,13 +952,13 @@ const buildBlogIndexEditor = (content: BlogIndexPageManagedContent): ManagedPage
       copy: "Tekstovi za listu postova, pretragu i filtere.",
       entries: [
         text("allPostsTitle", "Naslov liste", content.allPostsTitle),
-        text("postsLabel", "Labela brojaca postova", content.postsLabel),
+        text("postsLabel", "Labela brojaca postova", content.postsLabel, { rich: true }),
         text("searchTitle", "Naslov pretrage", content.searchTitle),
         text("searchPlaceholder", "Placeholder pretrage", content.searchPlaceholder),
-        text("searchActionLabel", "Labela dugmeta pretrage", content.searchActionLabel),
+        text("searchActionLabel", "Labela dugmeta pretrage", content.searchActionLabel, { rich: true }),
         text("recentTitle", "Naslov recent sekcije", content.recentTitle),
         text("keywordsTitle", "Naslov keyword sekcije", content.keywordsTitle),
-        text("allKeywordsLabel", "Labela svih keyworda", content.allKeywordsLabel),
+        text("allKeywordsLabel", "Labela svih keyworda", content.allKeywordsLabel, { rich: true }),
         textarea("noResultsText", "Poruka bez rezultata", content.noResultsText, {
           full: true,
           rows: 3,

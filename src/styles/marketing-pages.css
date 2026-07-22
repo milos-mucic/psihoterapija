@@ -32,6 +32,12 @@
   padding: 7rem 0 2.45rem;
 }
 
+/* Uniforman razmak izmedju hero bannera i prvog bloka na svim stranama.
+   Nadjacava per-page padding-top (npr. #faq-items id-selektor, pricing/appointment). */
+.page-banner + * {
+  padding-top: 2.5rem !important;
+}
+
 .page-banner--dark {
   color: var(--white);
 }
@@ -657,6 +663,10 @@
 @media (max-width: 720px) {
   .page-banner {
     padding: 2.8rem 0 1.7rem;
+  }
+
+  .page-banner + * {
+    padding-top: 2rem !important;
   }
 
   .page-section {

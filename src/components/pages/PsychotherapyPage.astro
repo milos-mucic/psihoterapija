@@ -14,7 +14,8 @@ const content = previewContent ?? (await pageContentService.getPsychotherapyPage
 const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackgrounds, fragment);
 const scopeContent = await pageContentService.getScopePageData();
 const dictionary = getDictionary();
-const posts = (await blogService.listPublishedPosts()).slice(0, 3);
+const allBlogPosts = await blogService.listPublishedPosts();
+const blogBySlug = new Map(allBlogPosts.map((post) => [post.slug, post]));
 const scopeTabListLabel = dictionary.common.scopeTabList;
 const scopeTabsPrevLabel = dictionary.common.scopeTabPrev;
 const scopeTabsNextLabel = dictionary.common.scopeTabNext;
@@ -116,7 +117,12 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
 
       <div class="psychotherapy-page__tab-panels">
         {
-          scopeContent.tabs.map((tab, tabIndex) => (
+          scopeContent.tabs.map((tab, tabIndex) => {
+            const tabBlogs = (tab.blogSlugs ?? [])
+              .map((slug) => blogBySlug.get(slug))
+              .filter((post) => Boolean(post));
+            const focusCount = tabBlogs.length || tab.items.length;
+            return (
             <section
               class="psychotherapy-page__tab-panel"
               role="tabpanel"
@@ -162,7 +168,7 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
 
                     <div class="psychotherapy-page__tab-summary-footer">
                       <div class="psychotherapy-page__tab-stat">
-                        <strong>{String(tab.items.length).padStart(2, "0")}</strong>
+                        <strong>{String(focusCount).padStart(2, "0")}</strong>
                         <span>{tab.panelStatLabel}</span>
                       </div>
                     </div>
@@ -172,25 +178,47 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
                     <div class="psychotherapy-page__tab-points-head">
                       <p>{scopeTabListLabel}</p>
                     </div>
-                    <div class="psychotherapy-page__tab-points-grid">
-                      {tab.items.map((item, itemIndex) => (
-                        <article class="psychotherapy-page__tab-point">
-                          <span class="psychotherapy-page__tab-point-index">
-                            {String(itemIndex + 1).padStart(2, "0")}
-                          </span>
-                          <h4 set:html={item.title} />
-                          <div
-                            class="psychotherapy-page__tab-point-copy richtext-shell"
-                            set:html={item.copy}
-                          />
-                        </article>
-                      ))}
+                    <div
+                      class:list={[
+                        "psychotherapy-page__tab-points-grid",
+                        tabBlogs.length > 4 && "psychotherapy-page__tab-points-grid--scroll",
+                      ]}
+                    >
+                      {tabBlogs.length > 0
+                        ? tabBlogs.map((post) => (
+                            <a class="psychotherapy-page__tab-blog" href={`/blog/${post.slug}/`}>
+                              <span class="psychotherapy-page__tab-blog-media">
+                                <img
+                                  src={post.coverImage ?? "/legacy/images/Blog-1_1Blog 1.webp"}
+                                  alt={stripHtmlTags(post.title)}
+                                  loading="lazy"
+                                  data-image-component
+                                />
+                              </span>
+                              <h4 set:html={post.title} />
+                              <div class="psychotherapy-page__tab-point-copy" set:html={post.excerpt} />
+                              <span class="psychotherapy-page__tab-blog-more">{dictionary.blog.readMoreLabel}</span>
+                            </a>
+                          ))
+                        : tab.items.map((item, itemIndex) => (
+                            <article class="psychotherapy-page__tab-point">
+                              <span class="psychotherapy-page__tab-point-index">
+                                {String(itemIndex + 1).padStart(2, "0")}
+                              </span>
+                              <h4 set:html={item.title} />
+                              <div
+                                class="psychotherapy-page__tab-point-copy richtext-shell"
+                                set:html={item.copy}
+                              />
+                            </article>
+                          ))}
                     </div>
                   </div>
                 </div>
               </article>
             </section>
-          ))
+            );
+          })
         }
       </div>
     </div>
@@ -198,69 +226,6 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
 </section>
 )}
 
-<section id="psychotherapy-blog" class="home-section home-section--tight">
-  <div class="container">
-    <div class="home-heading-row home-heading-row--blog" data-reveal="up">
-      <div class="home-heading-copy">
-        <h2 set:html={scopeContent.recentTitle} />
-        <div class="psychotherapy-page__recent-copy richtext-shell" set:html={scopeContent.recentCopy} />
-      </div>
-      <a class="home-button" href={scopeContent.recentHref}>{scopeContent.recentLabel}</a>
-    </div>
-
-    {
-      posts.length > 0 ? (
-        <div class="home-card-grid home-card-grid--blog">
-          {posts.map((post, index) => (
-            <article
-              class="home-blog-card"
-              data-reveal="up"
-              style={`--reveal-delay: ${index * 90}ms;`}
-            >
-              <a class="home-blog-card__media" href={`/blog/${post.slug}/`}>
-                <img
-                  src={post.coverImage ?? "/legacy/images/Blog-1_1Blog 1.webp"}
-                  alt={stripHtmlTags(post.title)}
-                  loading="lazy"
-                  data-image-component
-                />
-              </a>
-              <div class="home-blog-card__body">
-                <div class="home-post-meta">
-                  <span>
-                    {post.publishedAt.toLocaleDateString("sr-RS")}
-                  </span>
-                  <span>&bull;</span>
-                  <span>{post.tags.join(", ") || dictionary.blog.defaultTag}</span>
-                </div>
-                <div class="home-blog-card__copy">
-                  <h3 set:html={post.title} />
-                  <div class="home-blog-card__excerpt" set:html={post.excerpt} />
-                </div>
-                <a class="home-blog-card__action" href={`/blog/${post.slug}/`}>
-                  <span>{dictionary.blog.readMoreLabel}</span>
-                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
-                    <path
-                      d="M7 17L17 7M9 7H17V15"
-                      stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="1.9"
-                    />
-                  </svg>
-                </a>
-              </div>
-            </article>
-          ))}
-        </div>
-      ) : (
-        <div class="home-card" data-reveal="up">
-          <p set:html={scopeContent.recentEmpty} />
-        </div>
-      )
-    }
-  </div>
-</section>
 
 <script>
   (() => {
@@ -618,7 +583,7 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
 
   .psychotherapy-page__tab-summary {
     display: grid;
-    grid-template-columns: minmax(19rem, 0.95fr) minmax(0, 1.15fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: 1rem;
     align-items: stretch;
   }
@@ -633,11 +598,40 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
 
   .psychotherapy-page__tab-summary-card {
     display: grid;
-    gap: 1.05rem;
-    padding: 1.5rem;
+    grid-template-columns: minmax(0, 1.55fr) minmax(12rem, 0.6fr);
+    grid-template-areas:
+      "top  art"
+      "copy art"
+      "lead art"
+      "foot art";
+    column-gap: 1.75rem;
+    row-gap: 0.95rem;
+    align-items: start;
+    padding: 1.75rem;
     background:
       radial-gradient(circle at top right, rgba(230, 237, 210, 0.4), transparent 30%),
       linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 244, 236, 0.94));
+  }
+
+  .psychotherapy-page__tab-summary-top {
+    grid-area: top;
+  }
+
+  .psychotherapy-page__tab-item-copy {
+    grid-area: copy;
+  }
+
+  .psychotherapy-page__tab-lead {
+    grid-area: lead;
+  }
+
+  .psychotherapy-page__tab-summary-footer {
+    grid-area: foot;
+  }
+
+  .psychotherapy-page__tab-summary-art {
+    grid-area: art;
+    align-self: stretch;
   }
 
   .psychotherapy-page__tab-summary-art {
@@ -765,8 +759,24 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
 
   .psychotherapy-page__tab-points-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
     gap: 0.85rem;
+  }
+
+  /* When a theme has more than 4 items in focus, scroll sideways instead of wrapping. */
+  .psychotherapy-page__tab-points-grid--scroll {
+    display: flex;
+    flex-wrap: nowrap;
+    grid-template-columns: none;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    padding-bottom: 0.6rem;
+    scrollbar-width: thin;
+  }
+
+  .psychotherapy-page__tab-points-grid--scroll > * {
+    flex: 0 0 clamp(15rem, 32%, 18rem);
+    scroll-snap-align: start;
   }
 
   .psychotherapy-page__tab-point {
@@ -788,13 +798,86 @@ const introImage = content.serviceCards[0]?.image ?? "/legacy/images/mirrored/se
     line-height: 1.6;
   }
 
-  @media (max-width: 960px) {
-    .psychotherapy-page__intro-card,
-    .psychotherapy-page__tab-summary,
-    .psychotherapy-page__tab-points-grid {
+  .psychotherapy-page__tab-blog {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0.85rem 0.85rem 1.1rem;
+    border-radius: 1rem;
+    background: linear-gradient(180deg, rgba(226, 237, 223, 0.48), rgba(248, 244, 234, 0.82));
+    border: 1px solid rgba(15, 60, 61, 0.08);
+    color: var(--foreground);
+    text-decoration: none;
+    transition:
+      transform 200ms ease,
+      border-color 200ms ease,
+      box-shadow 200ms ease;
+  }
+
+  .psychotherapy-page__tab-blog:hover {
+    transform: translateY(-3px);
+    border-color: rgba(22, 60, 61, 0.24);
+    box-shadow: 0 18px 34px rgba(16, 47, 48, 0.12);
+  }
+
+  .psychotherapy-page__tab-blog-media {
+    display: block;
+    overflow: hidden;
+    border-radius: 0.75rem;
+    aspect-ratio: 16 / 10;
+    background: rgba(22, 60, 61, 0.06);
+  }
+
+  .psychotherapy-page__tab-blog-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .psychotherapy-page__tab-blog h4 {
+    margin: 0.15rem 0 0;
+    color: var(--primary);
+    font-size: 1.02rem;
+    line-height: 1.25;
+  }
+
+  .psychotherapy-page__tab-blog .psychotherapy-page__tab-point-copy {
+    margin: 0;
+    color: rgba(83, 91, 83, 0.9);
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+
+  .psychotherapy-page__tab-blog-more {
+    margin-top: auto;
+    color: var(--accent-strong, var(--primary));
+    font-size: 0.84rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  @media (max-width: 820px) {
+    .psychotherapy-page__intro-card {
       grid-template-columns: 1fr;
     }
 
+    .psychotherapy-page__tab-summary-card {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "top"
+        "art"
+        "copy"
+        "lead"
+        "foot";
+    }
+
+    .psychotherapy-page__tab-summary-art {
+      min-height: 12rem;
+    }
+  }
+
+  @media (max-width: 960px) {
     .psychotherapy-page__tabs-menu {
       grid-auto-columns: calc((100% - 0.85rem) / 2);
     }

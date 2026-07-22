@@ -2,6 +2,7 @@
 export const prerender = false;
 
 import AdminManagedPageForm from "@/components/components/AdminManagedPageForm.astro";
+import { blogService } from "@/features/blog/services/blog.service";
 import { getAdminPreviewHref } from "@/features/page-content/admin/page-route-map";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
 import type { PageKey } from "@/features/page-content/types/page-content.types";
@@ -83,6 +84,14 @@ const content = await (async () => {
     case "blog":          return pageContentService.getManagedBlogIndexContent();
   }
 })();
+
+const allBlogs =
+  page === "scope"
+    ? (await blogService.listPublishedPosts()).map((post) => ({
+        slug: post.slug,
+        title: post.title,
+      }))
+    : [];
 ---
 
 <AdminLayout
@@ -122,6 +131,7 @@ const content = await (async () => {
                 page={page}
                 content={content}
                 previewBaseHref={previewHref}
+                allBlogs={allBlogs}
               />
             </div>
           </div>

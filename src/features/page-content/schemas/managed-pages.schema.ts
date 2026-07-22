@@ -265,6 +265,8 @@ export const biographyPageManagedContentSchema: z.ZodType<BiographyPageManagedCo
     image: requiredText,
     ctaLabel: requiredText,
   }),
+  profileHighlightsVisible: z.boolean().optional(),
+  profileBackLinkVisible: z.boolean().optional(),
 });
 
 const biographyPageFormSchema = z.object({
@@ -352,6 +354,8 @@ export const parseBiographyPageManagedContentForm = (
       image: parsed.approachImage,
       ctaLabel: parsed.approachCtaLabel,
     },
+    profileHighlightsVisible: values.profileHighlightsVisible === "1",
+    profileBackLinkVisible: values.profileBackLinkVisible === "1",
   });
 };
 
@@ -466,6 +470,7 @@ const scopeTabSchema = z.object({
   detailBackLabel: requiredText,
   detailCtaLabel: requiredText,
   items: z.array(textCardSchema).min(1),
+  blogSlugs: z.array(z.string().trim().min(1)).default([]),
 });
 
 export const scopePageManagedContentSchema: z.ZodType<ScopePageManagedContent> = z.object({
@@ -549,6 +554,19 @@ const getScopeTabItemIndexes = (input: Record<string, unknown>, tabIndex: number
   return Array.from(indexes).sort((left, right) => left - right);
 };
 
+const getScopeTabBlogSlugs = (input: Record<string, unknown>, tabIndex: number) => {
+  const prefix = `scopeTab_${tabIndex}_blog_`;
+  const slugs: string[] = [];
+
+  for (const key of Object.keys(input)) {
+    if (key.startsWith(prefix) && String(input[key] ?? "") === "1") {
+      slugs.push(key.slice(prefix.length));
+    }
+  }
+
+  return slugs;
+};
+
 const toScopeTab = (input: Record<string, unknown>, tabIndex: number) =>
   scopeTabSchema.parse({
     id: input[`scopeTab_${tabIndex}_id`],
@@ -572,6 +590,7 @@ const toScopeTab = (input: Record<string, unknown>, tabIndex: number) =>
         copy: input[`scopeTab_${tabIndex}_item_${itemIndex}_copy`],
       }),
     ),
+    blogSlugs: getScopeTabBlogSlugs(input, tabIndex),
   });
 
 export const parseScopePageManagedContent = (input: unknown) =>

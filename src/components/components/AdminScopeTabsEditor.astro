@@ -10,9 +10,10 @@ type Props = {
   tabs: ScopePageManagedContent["tabs"];
   richTextLabels: Record<string, string>;
   blockMeta?: { fragment: string; hidden: boolean; backgroundKey: string };
+  allBlogs?: Array<{ slug: string; title: string }>;
 };
 
-const { fragment, title, copy, tabs, richTextLabels, blockMeta } = Astro.props;
+const { fragment, title, copy, tabs, richTextLabels, blockMeta, allBlogs = [] } = Astro.props;
 ---
 
 <div
@@ -258,6 +259,31 @@ const { fragment, title, copy, tabs, richTextLabels, blockMeta } = Astro.props;
                   />
                 </label>
 
+                <div class="admin-form__field admin-form__field--full admin-scope-tab-blogs" data-scope-tab-blogs>
+                  <span>Teme u fokusu — izaberi blog postove za ovu karticu</span>
+                  <div class="admin-scope-tab-blogs__grid">
+                    {allBlogs.length === 0 ? (
+                      <p class="section-copy">Nema objavljenih blogova.</p>
+                    ) : (
+                      allBlogs.map((blog) => (
+                        <label class="admin-scope-tab-blogs__option">
+                          <input
+                            type="checkbox"
+                            data-scope-tab-blog
+                            data-blog-slug={blog.slug}
+                            name={`scopeTab_${index}_blog_${blog.slug}`}
+                            value="1"
+                            checked={(tab.blogSlugs ?? []).includes(blog.slug)}
+                          />
+                          <span set:html={blog.title} />
+                        </label>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                <details class="admin-scope-tab-items-fallback">
+                  <summary>Fallback tekst stavke (koristi se ako nema izabranih blogova)</summary>
                 <div class="admin-form__field admin-form__field--full" data-scope-tab-item-list>
                   {tab.items.map((item) => (
                     <div
@@ -299,6 +325,7 @@ const { fragment, title, copy, tabs, richTextLabels, blockMeta } = Astro.props;
                     Dodaj stavku
                   </button>
                 </div>
+                </details>
               </div>
             </div>
           ))
@@ -485,6 +512,20 @@ const { fragment, title, copy, tabs, richTextLabels, blockMeta } = Astro.props;
               <input class="input-control" data-scope-tab-field="detailCtaLabel" />
             </label>
 
+            <div class="admin-form__field admin-form__field--full admin-scope-tab-blogs" data-scope-tab-blogs>
+              <span>Teme u fokusu — izaberi blog postove za ovu karticu</span>
+              <div class="admin-scope-tab-blogs__grid">
+                {allBlogs.map((blog) => (
+                  <label class="admin-scope-tab-blogs__option">
+                    <input type="checkbox" data-scope-tab-blog data-blog-slug={blog.slug} value="1" />
+                    <span set:html={blog.title} />
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <details class="admin-scope-tab-items-fallback">
+              <summary>Fallback tekst stavke (koristi se ako nema izabranih blogova)</summary>
             <div class="admin-form__field admin-form__field--full" data-scope-tab-item-list>
               {
                 [0, 1, 2].map(() => (
@@ -524,9 +565,44 @@ const { fragment, title, copy, tabs, richTextLabels, blockMeta } = Astro.props;
                 Dodaj stavku
               </button>
             </div>
+            </details>
           </div>
         </div>
       </template>
     </div>
   </div>
 </div>
+
+<style>
+  .admin-scope-tab-blogs__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 0.4rem 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .admin-scope-tab-blogs__option {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    line-height: 1.35;
+    cursor: pointer;
+  }
+
+  .admin-scope-tab-blogs__option input {
+    margin-top: 0.15rem;
+    flex: 0 0 auto;
+  }
+
+  .admin-scope-tab-items-fallback {
+    margin-top: 0.4rem;
+  }
+
+  .admin-scope-tab-items-fallback > summary {
+    cursor: pointer;
+    color: var(--muted, #535b53);
+    font-size: 0.85rem;
+    padding: 0.35rem 0;
+  }
+</style>

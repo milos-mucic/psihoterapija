@@ -12,7 +12,8 @@ const content = await pageContentService.getAppointmentPageData();
   title={content.seo.title}
   description={content.seo.description}
   canonicalPath="/zakazivanje/"
-  appBarTone="light"
+  appBarTone="dark"
+  appBarOverlay={true}
 >
   <AppointmentPage />
 </BaseLayout>

@@ -207,6 +207,10 @@ export const pageContentService = {
     const previewContent = getPreviewManagedContent(pageKey, token);
 
     if (previewContent) {
+      if (pageKey === "home") {
+        const scope = await this.getManagedScopeContent();
+        return buildHomePageData(previewContent as HomePageManagedContent, scope.tabs);
+      }
       return buildManagedPageData(pageKey, previewContent);
     }
 
@@ -241,7 +245,8 @@ export const pageContentService = {
   },
   async getHomePageData() {
     const content = await this.getManagedHomeContent();
-    return buildHomePageData(content);
+    const scope = await this.getManagedScopeContent();
+    return buildHomePageData(content, scope.tabs);
   },
   async updateHomeContent(input: unknown) {
     const content = parseHomePageManagedContentForm(input);

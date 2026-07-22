@@ -40,9 +40,10 @@ type Props = {
     | ContactPageManagedContent
     | BlogIndexPageManagedContent;
   previewBaseHref: string;
+  allBlogs?: Array<{ slug: string; title: string }>;
 };
 
-const { action, content, page, previewBaseHref } = Astro.props;
+const { action, content, page, previewBaseHref, allBlogs = [] } = Astro.props;
 const editorConfig: ManagedPageEditorConfig = getManagedPageEditorConfig(
   page as SupportedManagedPage,
   content,
@@ -143,6 +144,7 @@ const richTextLabels = {
           tabs={section.tabs}
           richTextLabels={richTextLabels}
           blockMeta={blockMeta}
+          allBlogs={allBlogs}
         />
       ) : section.kind === "repeatableText" ? (
         <AdminRepeatableTextSection section={section} blockMeta={blockMeta} />
@@ -435,6 +437,7 @@ const richTextLabels = {
           const initialField = field.querySelector("[data-repeatable-group-rtf-initial]");
           const initialValue =
             initialField instanceof HTMLTextAreaElement ? initialField.value : "";
+          const mode = field.dataset.rtfMode === "inline" ? "inline" : "full";
 
           mountAdminRichTextField(field, {
             initialValue,
@@ -442,6 +445,7 @@ const richTextLabels = {
             name: `${prefix}_${index}_${fieldKey}`,
             uploadFolder,
             uploadUrl: "/api/admin/media/upload",
+            mode,
           });
         };
 
@@ -1336,6 +1340,20 @@ const richTextLabels = {
             }
 
             field.name = `scopeTab_${index}_${fieldName}`;
+          });
+
+          item.querySelectorAll("[data-scope-tab-blog]").forEach((checkbox) => {
+            if (!(checkbox instanceof HTMLInputElement)) {
+              return;
+            }
+
+            const slug = checkbox.dataset.blogSlug;
+
+            if (!slug) {
+              return;
+            }
+
+            checkbox.name = `scopeTab_${index}_blog_${slug}`;
           });
 
           const itemRows = Array.from(item.querySelectorAll("[data-scope-tab-item-row]"));

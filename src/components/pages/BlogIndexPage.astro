@@ -48,7 +48,7 @@ const keywords = Array.from(keywordSet);
           <h2 set:html={content.allPostsTitle} />
           <p>
             <span data-blog-count set:html={posts.length} />
-            {content.postsLabel}
+            <span set:html={content.postsLabel} />
           </p>
         </div>
 
@@ -128,9 +128,7 @@ const keywords = Array.from(keywordSet);
               placeholder={stripHtmlTags(content.searchPlaceholder)}
               autocomplete="off"
             />
-            <button class="button-primary blog-index__search-submit" type="submit">
-              {content.searchActionLabel}
-            </button>
+            <button class="button-primary blog-index__search-submit" type="submit" set:html={content.searchActionLabel} />
           </form>
         </div>
 
@@ -169,9 +167,7 @@ const keywords = Array.from(keywordSet);
         <div class="blog-index__panel" data-reveal="up" style="--reveal-delay: 140ms;">
           <h4 set:html={content.keywordsTitle} />
           <div class="blog-index__keywords-list">
-            <button type="button" class="blog-index__keyword-chip is-active" data-blog-tag="">
-              {content.allKeywordsLabel}
-            </button>
+            <button type="button" class="blog-index__keyword-chip is-active" data-blog-tag="" set:html={content.allKeywordsLabel} />
             {
               keywords.map((keyword) => (
                 <button
