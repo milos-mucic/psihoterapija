@@ -273,12 +273,14 @@ export function AdminMediaField({
       );
       const compressedFile = await compressImageToMaxSize(preparedFile, imageMaxBytes);
       await uploadFile(compressedFile);
-      uppy.clear();
-      setHasSelectedImage(false);
-      setShowUploader(false);
     } catch {
       setStatus("Obrada slike nije uspela.");
     } finally {
+      // Always clear the selection/pending state — even on failure — so a failed image
+      // upload can never leave the form stuck in "pending" and silently block saving.
+      uppy.clear();
+      setHasSelectedImage(false);
+      setShowUploader(false);
       setIsUploading(false);
       setUploadProgress((current) => (current === 100 ? current : null));
     }
