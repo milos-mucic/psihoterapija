@@ -2,7 +2,10 @@ import type { APIRoute } from "astro";
 import { ZodError } from "zod";
 import { requireAdminApiAuth } from "@/features/admin/auth/admin-api-auth";
 import { pageContentService } from "@/features/page-content/services/page-content.service";
+import { getDictionary } from "@/features/i18n/translate";
 import { adminConfig } from "@/lib/config/admin";
+
+const dictionary = getDictionary();
 
 const supportedPages = new Set([
   "about",
@@ -82,14 +85,16 @@ export const POST: APIRoute = async (context) => {
     return context.redirect(`${adminConfig.basePath}/pages/${page}/?saved=1`);
   } catch (error) {
     if (error instanceof ZodError) {
-      return context.redirect(
-        `${adminConfig.basePath}/pages/${page}/?error=validation`,
+      return new Response(
+        JSON.stringify({ message: dictionary.admin.pages.messages.validationError }),
+        { status: 400, headers: { "Content-Type": "application/json" } },
       );
     }
 
     console.error(error);
-    return context.redirect(
-      `${adminConfig.basePath}/pages/${page}/?error=validation`,
+    return new Response(
+      JSON.stringify({ message: dictionary.admin.pages.messages.validationError }),
+      { status: 500, headers: { "Content-Type": "application/json" } },
     );
   }
 };

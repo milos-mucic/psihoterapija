@@ -1721,7 +1721,10 @@ export function AdminRichTextField({
         SpanStyleImporterNode,
       ],
       onError: (editorError: Error) => {
-        throw editorError;
+        // Don't rethrow: an uncaught error here would unmount this field's React
+        // island, silently freezing its value while the rest of the form (and its
+        // other RTF fields) keeps working. Log it and keep the editor usable.
+        console.error(editorError);
       },
       theme: editorTheme,
       editorState:

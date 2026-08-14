@@ -1966,7 +1966,7 @@ body:has(.admin-login) .admin-alert--error {
   flex-direction: column;
   gap: 0.3rem;
 }
-.admin-shell-v2 .admin-form__field span {
+.admin-shell-v2 .admin-form__field > span {
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;

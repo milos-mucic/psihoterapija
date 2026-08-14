@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(gh pr create --title 'Add per-block show/hide toggles in admin' --body ' *)"
+      "Bash(gh pr create --title 'Add per-block show/hide toggles in admin' --body ' *)",
+      "Skill(run)",
+      "Skill(run:*)",
+      "Bash(npx --version)",
+      "Bash(node -e \"require.resolve\\('playwright'\\)\")",
+      "Bash(npm ls *)"
     ]
   }
 }

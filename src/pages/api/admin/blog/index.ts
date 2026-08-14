@@ -41,11 +41,17 @@ export const POST: APIRoute = async (context) => {
     return context.redirect(`${adminConfig.basePath}/blog/${post.id}/edit/?created=1`);
   } catch (error) {
     if (error instanceof ZodError) {
-      return context.redirect(`${adminConfig.basePath}/blog/new/?error=validation`);
+      return new Response(JSON.stringify({ message: dictionary.admin.blogMessages.validationError }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     if (isUniqueConstraintError(error)) {
-      return context.redirect(`${adminConfig.basePath}/blog/new/?error=slug-conflict`);
+      return new Response(JSON.stringify({ message: dictionary.admin.blogMessages.slugConflict }), {
+        status: 409,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     console.error(error);

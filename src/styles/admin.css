@@ -696,7 +696,7 @@
   gap: 0.5rem;
 }
 
-.admin-form__field span {
+.admin-form__field > span {
   color: var(--foreground);
   font-size: 0.9rem;
   font-weight: 500;
@@ -748,6 +748,10 @@
 
 .admin-form__save-status[data-tone="warning"] {
   color: #8f5a1a;
+}
+
+.admin-form__save-status[data-tone="error"] {
+  color: #962828;
 }
 
 .admin-form__fab {

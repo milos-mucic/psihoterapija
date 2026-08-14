@@ -266,19 +266,43 @@ const tagsValue = post?.tags.join(", ") ?? "";
       });
 
       form.addEventListener("submit", (event) => {
-        if (form.dataset.pendingUploads === "true") {
-          event.preventDefault();
-          syncSubmitState();
-          return;
-        }
+        event.preventDefault();
 
-        if (isSubmitting) {
-          event.preventDefault();
+        if (form.dataset.pendingUploads === "true" || isSubmitting) {
+          syncSubmitState();
           return;
         }
 
         isSubmitting = true;
         syncSubmitState();
+
+        fetch(form.action, {
+          method: "POST",
+          body: new FormData(form),
+          redirect: "follow",
+        })
+          .then(async (response) => {
+            if (response.redirected) {
+              window.location.href = response.url;
+              return;
+            }
+
+            const data = await response.json().catch(() => null);
+            isSubmitting = false;
+            syncSubmitState();
+            statusNodes.forEach((node) => {
+              node.textContent = data?.message ?? "Došlo je do greške pri čuvanju.";
+              node.dataset.tone = "error";
+            });
+          })
+          .catch(() => {
+            isSubmitting = false;
+            syncSubmitState();
+            statusNodes.forEach((node) => {
+              node.textContent = "Greška u komunikaciji sa serverom.";
+              node.dataset.tone = "error";
+            });
+          });
       });
 
       syncSubmitState();

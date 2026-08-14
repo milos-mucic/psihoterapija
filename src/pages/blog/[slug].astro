@@ -20,7 +20,9 @@ if (!post || post.status !== "published") {
 
 <BlogPostLayout
   title={post.title}
-  description={extractPlainTextFromHtml(post.seoDescription ?? post.excerpt)}
+  seoTitle={post.seoTitle || post.title}
+  seoDescription={extractPlainTextFromHtml(post.seoDescription ?? post.excerpt)}
+  excerpt={post.excerpt || undefined}
   canonicalPath={`/blog/${post.slug}/`}
   publishedAt={post.publishedAt}
 >

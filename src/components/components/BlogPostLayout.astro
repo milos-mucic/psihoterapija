@@ -3,15 +3,17 @@ import BaseLayout from "@/components/components/BaseLayout.astro";
 
 type Props = {
   title: string;
-  description: string;
+  seoTitle: string;
+  seoDescription: string;
+  excerpt?: string;
   canonicalPath: string;
   publishedAt: Date;
 };
 
-const { title, description, canonicalPath, publishedAt } = Astro.props;
+const { title, seoTitle, seoDescription, excerpt, canonicalPath, publishedAt } = Astro.props;
 ---
 
-<BaseLayout title={title} description={description} canonicalPath={canonicalPath}>
+<BaseLayout title={seoTitle} description={seoDescription} canonicalPath={canonicalPath}>
   <section class="section">
     <div class="container">
       <div class="card" style="padding: clamp(1.5rem, 4vw, 3rem);">
@@ -20,7 +22,7 @@ const { title, description, canonicalPath, publishedAt } = Astro.props;
             {publishedAt.toLocaleDateString("sr-RS")}
           </p>
           <h1 class="section-title" set:html={title} />
-          <p class="section-copy" set:html={description} />
+          {excerpt ? <p class="section-copy" set:html={excerpt} /> : null}
           <div class="prose-shell">
             <slot />
           </div>
