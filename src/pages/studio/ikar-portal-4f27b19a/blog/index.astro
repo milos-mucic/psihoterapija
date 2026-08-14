@@ -6,6 +6,7 @@ import { blogService } from "@/features/blog/services/blog.service";
 import { adminConfig } from "@/lib/config/admin";
 import AdminLayout from "@/components/components/AdminLayout.astro";
 import { adminGuard } from "@/features/admin/auth/admin-guard";
+import { stripHtmlTags } from "@/features/page-content/admin/technical-fields";
 
 const guard = adminGuard(Astro);
 if (guard) return guard;
@@ -78,7 +79,7 @@ const error = params.get("error");
 
                 return (
                   <tr>
-                    <td>{post.title}</td>
+                    <td set:html={post.title} />
                     <td>{post.status}</td>
                     <td>{post.publishedAt.toLocaleDateString("sr-RS")}</td>
                     <td class="admin-table__actions-cell">
@@ -169,7 +170,7 @@ const error = params.get("error");
                               type="button"
                               data-admin-archive-trigger
                               data-admin-form-id={`archive-form-${post.id}`}
-                              data-admin-post-title={post.title}
+                              data-admin-post-title={stripHtmlTags(post.title)}
                               aria-label={dictionary.admin.blogIndex.actions.archive}
                               title={dictionary.admin.blogIndex.actions.archive}
                             >

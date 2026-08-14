@@ -9,6 +9,7 @@ import { blogService } from "@/features/blog/services/blog.service";
 import { submissionService } from "@/features/forms/services/submission.service";
 import { pageDashboardService } from "@/features/page-content/admin/page-dashboard.service";
 import { getDictionary } from "@/features/i18n/translate";
+import { stripHtmlTags } from "@/features/page-content/admin/technical-fields";
 
 const guard = adminGuard(Astro);
 if (guard) return guard;
@@ -250,10 +251,10 @@ const base = adminConfig.basePath;
           {recentPosts.map((p) => (
             <li>
               <span class="admin-avatar" style={`background:${p.status === "published" ? "#e2f1e9" : p.status === "draft" ? "#e7eef1" : "rgba(22, 60, 61, 0.06)"};color:${p.status === "published" ? "#2e7d6b" : "#2a5758"};`}>
-                {p.title.charAt(0)}
+                {stripHtmlTags(p.title).charAt(0)}
               </span>
               <div class="admin-list__main">
-                <div class="admin-list__title">{p.title}</div>
+                <div class="admin-list__title" set:html={p.title} />
                 <div class="admin-list__meta">
                   {new Date(p.publishedAt).toLocaleDateString("sr-RS", { day: "numeric", month: "short", year: "numeric" })}
                 </div>

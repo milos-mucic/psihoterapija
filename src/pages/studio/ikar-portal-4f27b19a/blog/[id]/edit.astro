@@ -7,6 +7,7 @@ import { adminConfig } from "@/lib/config/admin";
 import AdminBlogPostForm from "@/components/components/AdminBlogPostForm.astro";
 import AdminLayout from "@/components/components/AdminLayout.astro";
 import { adminGuard } from "@/features/admin/auth/admin-guard";
+import { stripHtmlTags } from "@/features/page-content/admin/technical-fields";
 
 const guard = adminGuard(Astro);
 if (guard) return guard;
@@ -26,7 +27,7 @@ const error = params.get("error");
   active="blog"
   breadcrumb={[
     { label: "Blog", href: `${adminConfig.basePath}/blog/` },
-    { label: post?.title ?? "Edit" },
+    { label: post ? stripHtmlTags(post.title) : "Edit" },
   ]}
 >
   <div class="admin-grid">
@@ -55,7 +56,7 @@ const error = params.get("error");
         <>
           <div class="card" style="padding: 1.5rem;">
             <div class="page-grid">
-              <h2 style="margin: 0;">{post.title}</h2>
+              <h2 style="margin: 0;" set:html={post.title} />
               <p class="section-copy">{dictionary.admin.blogEdit.copy}</p>
               <dl style="display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 1rem;">
                 <div class="card" style="padding: 1rem;">
@@ -107,7 +108,7 @@ const error = params.get("error");
                   {dictionary.admin.blogEdit.deleteConfirm}
                 </h2>
                 <p class="admin-confirm-dialog__copy">{dictionary.admin.blogEdit.deleteHint}</p>
-                <p class="admin-confirm-dialog__meta">{post.title}</p>
+                <p class="admin-confirm-dialog__meta">{stripHtmlTags(post.title)}</p>
               </div>
               <div class="admin-confirm-dialog__actions">
                 <button type="button" class="button-secondary" data-admin-delete-cancel>
