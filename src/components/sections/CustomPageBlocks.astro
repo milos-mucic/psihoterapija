@@ -1,5 +1,5 @@
 ---
-import sanitizeHtml from "sanitize-html";
+import { sanitizeInlineRichTextHtml, sanitizeRichTextHtml } from "@/features/blog/utils/rich-text";
 import type {
   CustomPageBlock,
   HeroBlockData,
@@ -13,17 +13,9 @@ interface Props {
 }
 const { blocks } = Astro.props;
 
-const sanitizeBlockHtml = (html: string) =>
-  sanitizeHtml(html ?? "", {
-    allowedTags: ["p", "br", "strong", "b", "em", "i", "u", "ul", "ol", "li", "h2", "h3", "h4", "a", "blockquote"],
-    allowedAttributes: { a: ["href", "target", "rel"] },
-  });
+const sanitizeBlockHtml = (html: string) => sanitizeRichTextHtml(html ?? "");
 
-const sanitizeInlineHtml = (html: string) =>
-  sanitizeHtml(html ?? "", {
-    allowedTags: ["br", "strong", "b", "em", "i", "u", "a", "p"],
-    allowedAttributes: { a: ["href", "target", "rel"] },
-  });
+const sanitizeInlineHtml = (html: string) => sanitizeInlineRichTextHtml(html ?? "");
 ---
 
 {blocks.map((block) => (

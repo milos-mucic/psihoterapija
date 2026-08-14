@@ -86,7 +86,10 @@ export const POST: APIRoute = async (context) => {
   } catch (error) {
     if (error instanceof ZodError) {
       return new Response(
-        JSON.stringify({ message: dictionary.admin.pages.messages.validationError }),
+        JSON.stringify({
+          message: dictionary.admin.pages.messages.validationError,
+          issues: error.issues.map((issue) => ({ path: issue.path.join("."), message: issue.message })),
+        }),
         { status: 400, headers: { "Content-Type": "application/json" } },
       );
     }

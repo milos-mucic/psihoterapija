@@ -14,7 +14,9 @@
     "build": "ASTRO_DATABASE_FILE=file:./data/astro.db astro build",
     "build:remote": "astro build --remote",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@astrojs/db": "^0.20.1",
@@ -45,6 +47,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.8",
+    "@playwright/test": "^1.62.1",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "prettier": "^3.8.1",

@@ -93,15 +93,16 @@ const normalizeInput = (
   parsed: z.infer<typeof blogPostPayloadSchema>,
   fallbackSlugSeed: string,
 ): BlogPostInput => {
+  const title = sanitizeInlineRichTextHtml(parsed.title);
   const body = sanitizeRichTextHtml(parsed.body);
   const excerpt = parsed.excerpt ? sanitizeInlineRichTextHtml(parsed.excerpt) : undefined;
   const slug = toSlug(parsed.slug ?? parsed.title);
   const fallbackSlug = `post-${Date.now()}`;
 
   return {
-    title: parsed.title,
+    title,
     slug: slug || toSlug(fallbackSlugSeed) || fallbackSlug,
-    excerpt: excerpt ?? sanitizeInlineRichTextHtml(toExcerpt(body) || parsed.title),
+    excerpt: excerpt ?? sanitizeInlineRichTextHtml(toExcerpt(body) || title),
     body,
     coverImage: parsed.coverImage,
     publishedAt: parsed.publishedAt,

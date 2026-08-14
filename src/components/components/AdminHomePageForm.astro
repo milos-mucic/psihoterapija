@@ -640,44 +640,20 @@ const normalizedServiceItems = Array.from({ length: 3 }, (_, index) => ({
           />
         </label>
 
-        <div class="admin-form__field">
+        <label class="admin-form__field">
           <span>Format 1</span>
-          <AdminRichTextField
-            client:load
-            name="bookingFormat1"
-            initialValue={content.booking.formats[0] ?? ""}
-            mode="inline"
-            uploadUrl="/api/admin/media/upload"
-            uploadFolder="pages/home"
-            labels={richTextLabels}
-          />
-        </div>
+          <input class="input-control" name="bookingFormat1" value={content.booking.formats[0] ?? ""} />
+        </label>
 
-        <div class="admin-form__field">
+        <label class="admin-form__field">
           <span>Format 2</span>
-          <AdminRichTextField
-            client:load
-            name="bookingFormat2"
-            initialValue={content.booking.formats[1] ?? ""}
-            mode="inline"
-            uploadUrl="/api/admin/media/upload"
-            uploadFolder="pages/home"
-            labels={richTextLabels}
-          />
-        </div>
+          <input class="input-control" name="bookingFormat2" value={content.booking.formats[1] ?? ""} />
+        </label>
 
-        <div class="admin-form__field">
+        <label class="admin-form__field">
           <span>Format 3</span>
-          <AdminRichTextField
-            client:load
-            name="bookingFormat3"
-            initialValue={content.booking.formats[2] ?? ""}
-            mode="inline"
-            uploadUrl="/api/admin/media/upload"
-            uploadFolder="pages/home"
-            labels={richTextLabels}
-          />
-        </div>
+          <input class="input-control" name="bookingFormat3" value={content.booking.formats[2] ?? ""} />
+        </label>
       </div>
     </div>
   </div>

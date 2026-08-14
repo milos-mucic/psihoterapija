@@ -1,6 +1,18 @@
 import { z } from "zod";
+import { sanitizeInlineRichTextHtml, sanitizeRichTextHtml } from "@/features/blog/utils/rich-text";
 
 const blockId = z.string().min(1);
+
+const inlineRichText = z
+  .string()
+  .optional()
+  .default("")
+  .transform((value) => (value ? sanitizeInlineRichTextHtml(value) : ""));
+
+const richText = z
+  .string()
+  .default("")
+  .transform((value) => (value ? sanitizeRichTextHtml(value) : ""));
 
 const heroBlock = z.object({
   id: blockId,
@@ -8,7 +20,7 @@ const heroBlock = z.object({
   data: z.object({
     eyebrow: z.string().optional().default(""),
     title: z.string().min(1, "Hero blok mora imati naslov."),
-    subtitle: z.string().optional().default(""),
+    subtitle: inlineRichText,
     image: z.string().optional().default(""),
     ctaLabel: z.string().optional().default(""),
     ctaHref: z.string().optional().default(""),
@@ -20,7 +32,7 @@ const richTextBlock = z.object({
   id: blockId,
   type: z.literal("richtext"),
   data: z.object({
-    html: z.string().default(""),
+    html: richText,
   }),
 });
 
@@ -32,7 +44,7 @@ const imageBlock = z.object({
     alt: z.string().optional().default(""),
     layout: z.enum(["full", "side-text-right", "side-text-left"]).default("full"),
     title: z.string().optional().default(""),
-    text: z.string().optional().default(""),
+    text: inlineRichText,
     caption: z.string().optional().default(""),
   }),
 });
@@ -43,7 +55,7 @@ const ctaBlock = z.object({
   data: z.object({
     eyebrow: z.string().optional().default(""),
     title: z.string().min(1, "CTA blok mora imati naslov."),
-    copy: z.string().optional().default(""),
+    copy: inlineRichText,
     buttonLabel: z.string().min(1, "CTA dugme mora imati labelu."),
     buttonHref: z.string().min(1, "CTA dugme mora imati URL."),
     variant: z.enum(["light", "dark"]).default("light"),
