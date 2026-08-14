@@ -12,6 +12,7 @@ import type {
   ScopePageManagedContent,
   ServicesPageManagedContent,
 } from "@/features/page-content/types/page-content.types";
+import { stripHtmlTags } from "@/features/page-content/admin/technical-fields";
 
 export type SupportedManagedPage = Exclude<PageKey, "home">;
 
@@ -584,12 +585,16 @@ const buildServicesEditor = (content: ServicesPageManagedContent): ManagedPageEd
   uploadFolder: "pages/services",
   sections: content.services.flatMap((service, index): ManagedPageEditorSection[] => {
     const prefix = `svc${index}`;
+    // service.banner.title is a rich-text field (can contain inline
+    // font-size/color HTML); strip tags before using it inside these plain
+    // section header strings, or the raw markup shows up literally.
+    const serviceLabel = stripHtmlTags(service.banner.title);
 
     return [
       {
         kind: "standard",
         fragment: `services-${index}-banner`,
-        title: `${service.banner.title} — SEO i baner`,
+        title: `${serviceLabel} — SEO i baner`,
         copy: "SEO, naslov, opis i pozadinska slika banera ove usluge.",
         entries: [
           text(`${prefix}_seoTitle`, "SEO naslov", service.seo.title, { full: true }),
@@ -605,7 +610,7 @@ const buildServicesEditor = (content: ServicesPageManagedContent): ManagedPageEd
       {
         kind: "standard",
         fragment: `services-${index}-intro`,
-        title: `${service.banner.title} — Uvodni tekst`,
+        title: `${serviceLabel} — Uvodni tekst`,
         copy: "Naslov, glavni tekst i slika uvodne sekcije.",
         entries: [
           text(`${prefix}_introTitle`, "Naslov", service.intro.title, { full: true }),
@@ -616,7 +621,7 @@ const buildServicesEditor = (content: ServicesPageManagedContent): ManagedPageEd
       {
         kind: "repeatableText",
         fragment: `services-${index}-intro`,
-        title: `${service.banner.title} — Ključne stavke`,
+        title: `${serviceLabel} — Ključne stavke`,
         copy: 'Lista "Ukratko" pored slike.',
         itemLabel: "Stavka",
         itemNamePrefix: `${prefix}_highlight`,
@@ -627,7 +632,7 @@ const buildServicesEditor = (content: ServicesPageManagedContent): ManagedPageEd
       {
         kind: "repeatableGroup",
         fragment: `services-${index}-faq`,
-        title: `${service.banner.title} — FAQ`,
+        title: `${serviceLabel} — FAQ`,
         copy: "Pitanja i odgovori za ovu uslugu.",
         itemLabel: "Pitanje",
         itemNamePrefix: `${prefix}_faq`,
