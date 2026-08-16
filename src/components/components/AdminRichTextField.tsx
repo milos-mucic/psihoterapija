@@ -82,6 +82,7 @@ export type AdminRichTextFieldProps = {
   uploadUrl: string;
   uploadFolder?: string;
   mode?: "full" | "inline";
+  allowFontSize?: boolean;
   labels: {
     bold: string;
     italic: string;
@@ -956,10 +957,12 @@ function ImagePlugin() {
 function ToolbarPlugin({
   labels,
   mode,
+  allowFontSize,
   onImageSelect,
 }: {
   labels: Props["labels"];
   mode: EditorMode;
+  allowFontSize: boolean;
   onImageSelect: () => void;
 }) {
   const [editor] = useLexicalComposerContext();
@@ -1298,25 +1301,27 @@ function ToolbarPlugin({
 
       <span className="admin-rtf__divider" aria-hidden="true" />
 
-      <select
-        className="admin-rtf__select"
-        aria-label={labels.fontSize ?? "Veličina fonta"}
-        title={labels.fontSize ?? "Veličina fonta"}
-        value={fontSize}
-        onMouseDown={captureSelection}
-        onFocus={captureSelection}
-        onChange={(event) => {
-          const next = event.target.value;
-          applyStyle({ "font-size": next || null });
-        }}
-      >
-        <option value="">{labels.fontSize ?? "Veličina"}</option>
-        {fontSizeOptions.map((size) => (
-          <option key={size} value={size}>
-            {size}
-          </option>
-        ))}
-      </select>
+      {allowFontSize ? (
+        <select
+          className="admin-rtf__select"
+          aria-label={labels.fontSize ?? "Veličina fonta"}
+          title={labels.fontSize ?? "Veličina fonta"}
+          value={fontSize}
+          onMouseDown={captureSelection}
+          onFocus={captureSelection}
+          onChange={(event) => {
+            const next = event.target.value;
+            applyStyle({ "font-size": next || null });
+          }}
+        >
+          <option value="">{labels.fontSize ?? "Veličina"}</option>
+          {fontSizeOptions.map((size) => (
+            <option key={size} value={size}>
+              {size}
+            </option>
+          ))}
+        </select>
+      ) : null}
 
       <select
         className="admin-rtf__select"
@@ -1513,12 +1518,14 @@ function ToolbarPlugin({
 function AdminRichTextEditor({
   labels,
   mode,
+  allowFontSize,
   onValueChange,
   uploadFolder,
   uploadUrl,
 }: {
   labels: Props["labels"];
   mode: EditorMode;
+  allowFontSize: boolean;
   onValueChange: (value: string) => void;
   uploadFolder: string;
   uploadUrl: string;
@@ -1583,6 +1590,7 @@ function AdminRichTextEditor({
       <ToolbarPlugin
         labels={labels}
         mode={mode}
+        allowFontSize={allowFontSize}
         onImageSelect={() => {
           fileInputRef.current?.click();
         }}
@@ -1697,6 +1705,7 @@ export function AdminRichTextField({
   name,
   initialValue,
   mode = "full",
+  allowFontSize = true,
   uploadUrl,
   uploadFolder = "blog",
   labels,
@@ -1758,6 +1767,7 @@ export function AdminRichTextField({
         <AdminRichTextEditor
           labels={labels}
           mode={mode}
+          allowFontSize={allowFontSize}
           onValueChange={setValue}
           uploadUrl={uploadUrl}
           uploadFolder={uploadFolder}

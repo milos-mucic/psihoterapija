@@ -54,6 +54,13 @@ const styledTags = [
 const styleAttrFor = (tags: string[]): sanitizeHtml.IOptions["allowedAttributes"] =>
   Object.fromEntries(tags.map((tag) => [tag, ["style"]]));
 
+const withoutFontSize = (
+  styles: sanitizeHtml.IOptions["allowedStyles"],
+): sanitizeHtml.IOptions["allowedStyles"] => {
+  const { "font-size": _fontSize, ...rest } = styles?.["*"] ?? {};
+  return { ...styles, "*": rest };
+};
+
 const allowedAttributes: sanitizeHtml.IOptions["allowedAttributes"] = {
   ...styleAttrFor(styledTags),
   a: ["href", "target", "rel", "style"],
@@ -205,7 +212,14 @@ export const sanitizeRichTextHtml = (input: string) => {
   }).trim();
 };
 
-export const sanitizeInlineRichTextHtml = (input: string) => {
+export const sanitizeInlineRichTextHtml = (
+  input: string,
+  options?: { allowFontSize?: boolean },
+) => {
+  const allowFontSize = options?.allowFontSize ?? true;
+  const allowedStyles = allowFontSize
+    ? richTextAllowedStyles
+    : withoutFontSize(richTextAllowedStyles);
   const prepared = hasHtmlTag(input) ? input : convertPlainTextToInlineHtml(input);
   const normalized = prepared
     .replace(/<\s*\/(p|h[1-6]|blockquote)\s*>\s*<\s*(p|h[1-6]|blockquote)[^>]*\s*>/gi, "<br />")
@@ -223,7 +237,7 @@ export const sanitizeInlineRichTextHtml = (input: string) => {
   return sanitizeHtml(normalized, {
     allowedTags: inlineRichTextAllowedTags,
     allowedAttributes,
-    allowedStyles: richTextAllowedStyles,
+    allowedStyles,
     allowedSchemes: ["http", "https"],
     allowedSchemesByTag: {
       a: ["http", "https", "mailto", "tel"],

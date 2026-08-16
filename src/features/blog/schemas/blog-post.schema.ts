@@ -93,7 +93,7 @@ const normalizeInput = (
   parsed: z.infer<typeof blogPostPayloadSchema>,
   fallbackSlugSeed: string,
 ): BlogPostInput => {
-  const title = sanitizeInlineRichTextHtml(parsed.title);
+  const title = sanitizeInlineRichTextHtml(parsed.title, { allowFontSize: false });
   const body = sanitizeRichTextHtml(parsed.body);
   const excerpt = parsed.excerpt ? sanitizeInlineRichTextHtml(parsed.excerpt) : undefined;
   const slug = toSlug(parsed.slug ?? parsed.title);

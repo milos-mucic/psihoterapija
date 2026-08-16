@@ -20,7 +20,7 @@ const { title, seoTitle, seoDescription, canonicalPath, publishedAt } = Astro.pr
           <p class="eyebrow">
             {publishedAt.toLocaleDateString("sr-RS")}
           </p>
-          <h1 class="section-title" set:html={title} />
+          <h1 class="blog-post-title" set:html={title} />
           <div class="prose-shell">
             <slot />
           </div>
