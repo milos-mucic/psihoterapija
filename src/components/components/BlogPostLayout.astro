@@ -5,12 +5,11 @@ type Props = {
   title: string;
   seoTitle: string;
   seoDescription: string;
-  excerpt?: string;
   canonicalPath: string;
   publishedAt: Date;
 };
 
-const { title, seoTitle, seoDescription, excerpt, canonicalPath, publishedAt } = Astro.props;
+const { title, seoTitle, seoDescription, canonicalPath, publishedAt } = Astro.props;
 ---
 
 <BaseLayout title={seoTitle} description={seoDescription} canonicalPath={canonicalPath}>
@@ -22,7 +21,6 @@ const { title, seoTitle, seoDescription, excerpt, canonicalPath, publishedAt } =
             {publishedAt.toLocaleDateString("sr-RS")}
           </p>
           <h1 class="section-title" set:html={title} />
-          {excerpt ? <p class="section-copy" set:html={excerpt} /> : null}
           <div class="prose-shell">
             <slot />
           </div>

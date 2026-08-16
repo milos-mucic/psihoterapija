@@ -22,7 +22,6 @@ if (!post || post.status !== "published") {
   title={post.title}
   seoTitle={post.seoTitle || post.title}
   seoDescription={extractPlainTextFromHtml(post.seoDescription ?? post.excerpt)}
-  excerpt={post.excerpt || undefined}
   canonicalPath={`/blog/${post.slug}/`}
   publishedAt={post.publishedAt}
 >
