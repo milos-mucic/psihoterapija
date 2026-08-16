@@ -334,7 +334,8 @@
     },
     "contact": {
       "banner": {
-        "title": "Kontaktirajte nas"
+        "title": "Kontaktirajte nas",
+        "description": "Javite nam se putem forme, telefona ili e-pošte — odgovaramo u najkraćem mogućem roku."
       },
       "introTitle": "Psihološke poteškoće ne morate rešavati sami",
       "introCopy": "Ova stranica namenjena je prvom kontaktu, informisanju i postavljanju pitanja, sve u cilju razjašnjavanja nedoumica koje imate.",

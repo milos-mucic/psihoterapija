@@ -412,11 +412,19 @@ export const setupAdminFormExperience = () => {
             return;
           }
 
-          const data = (await response.json().catch(() => null)) as { message?: string } | null;
+          const data = (await response.json().catch(() => null)) as {
+            message?: string;
+            issues?: { path?: string; message?: string }[];
+          } | null;
           isSubmitting = false;
           syncSubmitState();
+          const baseMessage = data?.message ?? "Došlo je do greške pri čuvanju.";
+          const issuesSummary = data?.issues
+            ?.map((issue) => (issue.path ? `${issue.path}: ${issue.message}` : issue.message))
+            .filter(Boolean)
+            .join("; ");
           statusNodes.forEach((node) => {
-            node.textContent = data?.message ?? "Došlo je do greške pri čuvanju.";
+            node.textContent = issuesSummary ? `${baseMessage} (${issuesSummary})` : baseMessage;
             node.dataset.tone = "error";
           });
         })
