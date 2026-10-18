@@ -275,6 +275,110 @@
   max-width: 60ch;
 }
 
+/* Reassurance next to the form: free first call, price, what happens next. */
+.home-booking__notes {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-booking__note {
+  position: relative;
+  padding-left: 1.6rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.home-booking__note::before {
+  content: "";
+  position: absolute;
+  top: 0.5em;
+  left: 0.15rem;
+  width: 0.7rem;
+  height: 0.38rem;
+  border-bottom: 2px solid var(--accent);
+  border-left: 2px solid var(--accent);
+  transform: rotate(-45deg);
+}
+
+.home-booking__note--lead {
+  color: var(--foreground);
+  font-weight: 500;
+}
+
+.home-booking__note a {
+  /* 44px tap area without changing the line height. */
+  display: inline-block;
+  padding-block: 0.75rem;
+  margin-block: -0.75rem;
+  color: var(--foreground);
+  text-decoration: underline;
+  text-decoration-color: rgb(var(--primary-rgb) / 0.35);
+  text-underline-offset: 0.2em;
+}
+
+.home-booking__note a:hover {
+  text-decoration-color: currentColor;
+}
+
+.stack-form__optional {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* Sticky booking button, phones only (see HomePageContent.astro). */
+.home-sticky-cta {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .js .home-sticky-cta {
+    position: fixed;
+    right: clamp(1rem, 5vw, 3rem);
+    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+    left: clamp(1rem, 5vw, 3rem);
+    z-index: 35;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.25rem;
+    border-radius: 0.6rem;
+    background: var(--primary);
+    color: var(--white);
+    font-weight: 500;
+    box-shadow: 0 12px 30px rgb(var(--primary-rgb) / 0.32);
+    transition:
+      transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 220ms ease,
+      visibility 0s linear 0s;
+  }
+
+  .js .home-sticky-cta:hover,
+  .js .home-sticky-cta:focus-visible {
+    color: var(--white);
+  }
+
+  .js .home-sticky-cta.is-hidden {
+    transform: translateY(calc(100% + 1.5rem));
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 220ms ease,
+      visibility 0s linear 320ms;
+  }
+}
+
+@media (max-width: 720px) and (prefers-reduced-motion: reduce) {
+  .home-sticky-cta,
+  .home-sticky-cta.is-hidden {
+    transition: none;
+  }
+}
+
 .home-card-grid,
 .home-reasons__cards {
   display: grid;

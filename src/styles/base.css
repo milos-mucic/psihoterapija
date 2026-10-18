@@ -15,6 +15,39 @@ html {
   box-sizing: border-box;
 }
 
+::selection {
+  background: rgb(var(--primary-rgb) / 0.18);
+  color: var(--foreground);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+main:focus {
+  outline: none;
+}
+
+/* Keyboard users can jump past the header straight to the page content. */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  padding: 0.75rem 1rem;
+  border-radius: 0.6rem;
+  background: var(--primary);
+  color: var(--white);
+  font-weight: 500;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus-visible {
+  transform: none;
+  color: var(--white);
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -1452,6 +1485,12 @@ body.appbar-drawer-open {
   color: var(--foreground);
   /* 16px minimum: smaller inputs make iOS zoom in on focus. */
   font-size: max(1rem, 16px);
+}
+
+/* Browser default placeholder grey is ~2.8:1 on white; the muted text colour is ~7:1. */
+.input-control::placeholder {
+  color: var(--muted);
+  opacity: 1;
   transition:
     border-color 160ms ease,
     box-shadow 160ms ease,
@@ -1486,9 +1525,8 @@ body.appbar-drawer-open {
   width: 100%;
   padding: clamp(2rem, 4vw, 2.5rem) 0;
   color: rgba(255, 255, 255, 0.86);
-  background:
-    linear-gradient(145deg, rgba(9, 31, 32, 0.98), rgba(22, 60, 61, 0.92)),
-    url("/legacy/images/6_1-p-800.jpeg") center / cover no-repeat;
+  /* The photo that used to sit under this 92-98% wash never showed; dropped to save the download. */
+  background: linear-gradient(145deg, rgba(9, 31, 32, 0.98), rgba(22, 60, 61, 0.92));
   border: none;
   border-radius: 0;
 }
@@ -1658,14 +1696,6 @@ body.appbar-drawer-open {
     padding: 0.9rem 0;
   }
 
-  .appbar__desktop {
-    display: none;
-  }
-
-  .appbar__mobile {
-    display: block;
-  }
-
   /* Tablet: the hero sizes to its content instead of a mostly empty full-height photo. */
   .home-hero {
     min-height: auto;
@@ -1674,6 +1704,17 @@ body.appbar-drawer-open {
 
   .home-hero__container {
     min-height: 0;
+  }
+}
+
+/* The desktop nav (brand + 5 items + Kontakt + CTA) needs ~870px, so it stays up to 1025px. */
+@media (max-width: 1024px) {
+  .appbar__desktop {
+    display: none;
+  }
+
+  .appbar__mobile {
+    display: block;
   }
 }
 
