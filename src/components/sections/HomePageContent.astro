@@ -131,22 +131,23 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
               data-reveal="up"
               style={`--reveal-delay: ${index * 90}ms;`}
             >
-              <a href={item.href} class="link-block">
+              {/* One link per card: the title link covers the whole card (home.css). */}
+              <div class="link-block">
                 <img
                   class="service-img"
                   src={item.image}
-                  alt={stripHtmlTags(item.title)}
+                  alt=""
                   loading="lazy"
                   data-image-component
                 />
-              </a>
+              </div>
               <div class="info-collection-wrapper">
                 <a href={item.href}>
                   <h3 class="service-name" set:html={item.title} />
                 </a>
                 <div class="mt-0 home-richtext" set:html={item.copy} />
-                <div class="collection-link-wrapper">
-                  <a class="link-with-icon" href={item.href}>
+                <div class="collection-link-wrapper" aria-hidden="true">
+                  <span class="link-with-icon">
                     {item.label}
                     <svg
                       class="text-button-icon"
@@ -162,7 +163,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
                         stroke-width="1.9"
                       />
                     </svg>
-                  </a>
+                  </span>
                 </div>
               </div>
             </div>
@@ -207,6 +208,7 @@ const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackg
         {/* Video plejer privremeno onemogucen — ostaje samo poster slika. */}
         <div
           class="home-video-card home-video-card--static"
+          aria-hidden="true"
           data-reveal="grow"
           style="--reveal-delay: 180ms;"
         >

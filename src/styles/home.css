@@ -146,9 +146,13 @@
 
 .home-about {
   display: grid;
-  grid-template-columns: minmax(18rem, 35rem) minmax(0, 1fr);
-  gap: 1.35rem;
+  grid-template-columns: minmax(16rem, 0.85fr) minmax(0, 1.15fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
   align-items: center;
+}
+
+.home-about__content .home-richtext {
+  max-width: 62ch;
 }
 
 .home-about__image {
@@ -264,6 +268,11 @@
   display: grid;
   gap: 1rem;
   max-width: 50rem;
+}
+
+.home-reasons__intro .home-richtext,
+.home-booking__intro .home-richtext {
+  max-width: 60ch;
 }
 
 .home-card-grid,
@@ -458,15 +467,15 @@
 }
 
 .collection-list-session-home-3 {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 2.5rem 1.875rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 2.5rem clamp(1.25rem, 2.5vw, 1.875rem);
 }
 
+/* The whole card is one link: the title link stretches over it (see .service-name a::after). */
 .collection-item-session-home-3 {
-  width: calc((100% - 3.75rem) / 3);
+  position: relative;
 }
 
 .link-block {
@@ -479,14 +488,31 @@
 .service-img {
   display: block;
   width: 100%;
-  height: 18.75rem;
+  height: auto;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   border-radius: 0.75rem;
   transition: transform 0.3s ease-in-out;
 }
 
-.link-block:hover .service-img {
+.collection-item-session-home-3:hover .service-img {
   transform: scale(1.04);
+}
+
+.info-collection-wrapper > a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 0.75rem;
+}
+
+.info-collection-wrapper > a:focus-visible {
+  outline: none;
+}
+
+.info-collection-wrapper > a:focus-visible::after {
+  outline: 2px solid var(--primary);
+  outline-offset: 4px;
 }
 
 .info-collection-wrapper {
@@ -496,7 +522,6 @@
 }
 
 .service-name {
-  width: 91%;
   margin: 0;
   color: var(--foreground);
   text-transform: none;
@@ -505,7 +530,7 @@
   line-height: 1.2;
 }
 
-.service-name:hover {
+.collection-item-session-home-3:hover .service-name {
   color: var(--muted);
 }
 
@@ -530,7 +555,8 @@
     transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.link-with-icon:hover {
+.link-with-icon:hover,
+.collection-item-session-home-3:hover .link-with-icon {
   opacity: 0.7;
   transform: translateX(1px);
 }
@@ -582,12 +608,6 @@
     box-shadow 220ms ease-in-out;
 }
 
-.home-reason-panel:hover {
-  transform: translateY(-0.18rem);
-  border-color: rgba(189, 217, 170, 0.38);
-  background: rgba(255, 255, 255, 0.09);
-  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.18);
-}
 
 .home-reason-panel:hover .home-inline-link__icon {
   transform: translate(0.12rem, -0.06rem);
@@ -1041,8 +1061,34 @@
     height: auto;
   }
 
-  .collection-item-session-home-3 {
-    width: 47%;
+  /* Single column on tablet: a capped portrait instead of a 740px upscaled square. */
+  .home-about__image {
+    width: 100%;
+    max-width: 26rem;
+    aspect-ratio: 4 / 5;
+    object-position: center 20%;
+  }
+
+  .home-services__header .home-richtext,
+  .home-service-copy {
+    max-width: 62ch;
+  }
+
+  .home-video-card img {
+    min-height: 0;
+    aspect-ratio: 16 / 10;
+    max-height: 26rem;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 960px) {
+  /* Two blog cards side by side instead of three tall stacked ones. */
+  .home-card-grid--blog {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .home-card-grid--blog > :nth-child(3) {
+    display: none;
   }
 }
 
@@ -1064,7 +1110,8 @@
   }
 
   .home-reason-panel {
-    grid-template-columns: 1fr;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
     gap: 0.9rem;
     padding: 1.15rem;
   }
@@ -1097,8 +1144,13 @@
     margin-bottom: 2.5rem;
   }
 
-  .collection-item-session-home-3 {
-    width: 100%;
+  .collection-list-session-home-3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Poster-only filler (video player is disabled): skip it on phones. */
+  .home-video-card {
+    display: none;
   }
 
   .home-video-dialog {

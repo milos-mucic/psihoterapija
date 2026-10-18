@@ -46,6 +46,8 @@ const initialAppBarTone = appBarTone ?? derivedAppBarTone;
       canonicalPath={canonicalPath}
     />
     <slot name="head" />
+    <!-- Reveal animations hide content only once JS is known to run (see marketing-pages.css). -->
+    <script is:inline>document.documentElement.classList.add("js");</script>
   </head>
   <body
     class:list={[bodyClass, { "home-route": isHome, "appbar-overlay-route": isAppBarOverlayRoute }]}
