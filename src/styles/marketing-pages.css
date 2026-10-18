@@ -1,7 +1,4 @@
-/* Content is visible by default; it is only hidden for the entrance when JS runs
-   and the visitor has not asked for reduced motion. */
-@media (prefers-reduced-motion: no-preference) {
-.js [data-reveal] {
+[data-reveal] {
   opacity: 0;
   transform: translate3d(var(--reveal-x, 0), var(--reveal-y, 36px), 0) scale(var(--reveal-scale, 1));
   transition:
@@ -26,10 +23,9 @@
   --reveal-scale: 0.96;
 }
 
-.js [data-reveal].is-visible {
+[data-reveal].is-visible {
   opacity: 1;
   transform: translate3d(0, 0, 0) scale(1);
-}
 }
 
 .page-banner {
@@ -418,8 +414,7 @@
   resize: vertical;
 }
 
-.page-form-shell select.input-control,
-.stack-form select.input-control {
+.page-form-shell select.input-control {
   appearance: none;
   background-image:
     linear-gradient(45deg, transparent 50%, currentColor 50%),

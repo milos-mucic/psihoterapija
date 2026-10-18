@@ -1,12 +1,5 @@
 html {
-  /* Anchor jumps (e.g. #home-booking) land below the fixed header. */
-  scroll-padding-top: calc(var(--header-offset) + 1rem);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-behavior: smooth;
-  }
+  scroll-behavior: smooth;
 }
 
 *,
@@ -92,7 +85,6 @@ h6 {
   font-weight: 400;
   line-height: 1.1;
   letter-spacing: -0.04em;
-  text-wrap: balance;
 }
 
 p,
@@ -100,11 +92,6 @@ ul,
 ol {
   margin: 0;
   color: var(--muted);
-}
-
-p,
-li {
-  text-wrap: pretty;
 }
 
 button,
@@ -149,8 +136,7 @@ img {
 }
 
 .container {
-  /* Fluid side gutter: 16px on small phones, up to 48px on wide screens. */
-  width: min(calc(100% - 2 * clamp(1rem, 5vw, 3rem)), var(--container));
+  width: min(calc(100% - 1.875rem), var(--container));
   margin: 0 auto;
 }
 
@@ -323,11 +309,10 @@ img {
 
 .appbar.is-scrolled {
   border-bottom: 1px solid rgb(var(--primary-rgb) / 0.22);
-  /* Near-solid so white links keep their contrast over light sections. */
   background: linear-gradient(
     135deg,
-    rgb(var(--primary-rgb) / 0.96) 0%,
-    rgb(var(--primary-rgb) / 0.9) 100%
+    rgb(var(--primary-rgb) / 0.6) 0%,
+    rgb(var(--primary-rgb) / 0.42) 100%
   );
   backdrop-filter: blur(22px) saturate(150%);
   box-shadow:
@@ -338,8 +323,6 @@ img {
 .appbar__brand {
   position: relative;
   display: inline-flex;
-  align-items: center;
-  min-height: 2.75rem;
   align-items: center;
   flex: 0 0 auto;
 }
@@ -388,7 +371,6 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  min-height: 2.75rem;
   padding: 0.7rem 0.8rem;
   border: 1px solid transparent;
   border-radius: 0.5rem;
@@ -1017,8 +999,7 @@ body.appbar-drawer-open {
   position: relative;
   display: flex;
   align-items: center;
-  min-height: min(100vh, 60rem);
-  min-height: min(100svh, 60rem);
+  min-height: 100vh;
   padding: 10.5rem 0 5rem;
   background-image:
     linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
@@ -1035,7 +1016,7 @@ body.appbar-drawer-open {
 .home-hero__container {
   display: grid;
   align-items: center;
-  min-height: calc(min(100vh, 60rem) - 15.5rem);
+  min-height: calc(100vh - 15.5rem);
 }
 
 .home-hero__content {
@@ -1047,11 +1028,9 @@ body.appbar-drawer-open {
 .home-hero__title {
   color: var(--white);
   font-family: var(--font-display);
-  /* Fluid with a 40px floor so "Psihoterapijski" fits a 320px screen. */
-  font-size: clamp(2.5rem, 6vw + 1.4rem, 5rem);
+  font-size: clamp(3rem, 7vw, 5rem);
   line-height: 1.05;
   letter-spacing: -0.04em;
-  overflow-wrap: break-word;
 }
 
 .home-hero__title em {
@@ -1126,7 +1105,6 @@ body.appbar-drawer-open {
   display: inline-flex;
   align-items: center;
   gap: 0.2rem;
-  min-height: 2.75rem;
   color: var(--white);
   font-size: 1rem;
   font-weight: 500;
@@ -1450,8 +1428,6 @@ body.appbar-drawer-open {
   padding: 0.92rem 1rem;
   background: rgba(255, 255, 255, 0.92);
   color: var(--foreground);
-  /* 16px minimum: smaller inputs make iOS zoom in on focus. */
-  font-size: max(1rem, 16px);
   transition:
     border-color 160ms ease,
     box-shadow 160ms ease,
@@ -1665,16 +1641,6 @@ body.appbar-drawer-open {
   .appbar__mobile {
     display: block;
   }
-
-  /* Tablet: the hero sizes to its content instead of a mostly empty full-height photo. */
-  .home-hero {
-    min-height: auto;
-    padding: 9rem 0 5rem;
-  }
-
-  .home-hero__container {
-    min-height: 0;
-  }
 }
 
 @media (max-width: 720px) {
@@ -1708,16 +1674,8 @@ body.appbar-drawer-open {
   }
 
   .appbar__toggle {
-    width: 2.75rem;
-    height: 2.75rem;
-  }
-
-  /* Phone crop keeps the people in the photo instead of the lamp and sofa. */
-  .home-hero {
-    background-position:
-      0 0,
-      0 0,
-      28% center;
+    width: 2.55rem;
+    height: 2.55rem;
   }
 
   .home-hero {
