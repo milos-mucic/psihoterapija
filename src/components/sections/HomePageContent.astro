@@ -14,10 +14,6 @@ type Props = {
 const { content, posts } = Astro.props;
 const dictionary = getDictionary();
 const blockBg = (fragment: string) => getBlockBackgroundStyle(content.blockBackgrounds, fragment);
-// Empty CMS fields would otherwise render as blank gaps.
-const hasText = (html?: string) => Boolean(html && stripHtmlTags(html).trim());
-const promoTitle = stripHtmlTags(content.promo?.title ?? "").trim();
-const showBooking = !content.hiddenBlocks?.includes("home-booking");
 // Video plejer privremeno onemogucen — ostaje samo poster slika.
 // const youtubeShortCodeMatch = content.reasons.videoHref.match(/youtu\.be\/([^?&#]+)/);
 // const youtubeWatchMatch = content.reasons.videoHref.match(/[?&]v=([^&]+)/);
@@ -31,6 +27,27 @@ const showBooking = !content.hiddenBlocks?.includes("home-booking");
 //     ? `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`
 //     : content.reasons.videoHref;
 ---
+
+{!content.hiddenBlocks?.includes("home-prompt") && (
+<section id="home-prompt" class="home-section" style={blockBg("home-prompt")}>
+  <div class="container">
+    <div class="home-heading-row home-heading-row--prompt">
+      <div class="home-heading-copy home-heading-copy--prompt" data-reveal="up">
+        <h2 set:html={content.prompt.title} />
+        <div class="home-richtext" set:html={content.prompt.copy} />
+      </div>
+      <a
+        class="home-button"
+        href={content.prompt.href}
+        data-reveal="up"
+        style="--reveal-delay: 90ms;"
+        set:html={content.prompt.label}
+      />
+
+    </div>
+  </div>
+</section>
+)}
 
 {!content.hiddenBlocks?.includes("home-about") && (
 <section id="home-about" class="home-section home-section--tight" style={blockBg("home-about")}>
@@ -46,31 +63,9 @@ const showBooking = !content.hiddenBlocks?.includes("home-booking");
       />
       <div class="home-about__content" data-reveal="right" style="--reveal-delay: 90ms;">
         <h2 set:html={content.about.title} />
-        {hasText(content.about.body) && <div class="home-richtext" set:html={content.about.body} />}
+        <div class="home-richtext" set:html={content.about.body} />
         <a class="home-button" href={content.about.href} set:html={content.about.label} />
       </div>
-    </div>
-  </div>
-</section>
-)}
-
-{/* The contact prompt follows About, so visitors know who they are writing to first. */}
-{!content.hiddenBlocks?.includes("home-prompt") && (
-<section id="home-prompt" class="home-section" style={blockBg("home-prompt")}>
-  <div class="container">
-    <div class="home-heading-row home-heading-row--prompt">
-      <div class="home-heading-copy home-heading-copy--prompt" data-reveal="up">
-        <h2 set:html={content.prompt.title} />
-        {hasText(content.prompt.copy) && <div class="home-richtext" set:html={content.prompt.copy} />}
-      </div>
-      <a
-        class="home-button"
-        href={content.prompt.href}
-        data-reveal="up"
-        style="--reveal-delay: 90ms;"
-        set:html={content.prompt.label}
-      />
-
     </div>
   </div>
 </section>
@@ -82,7 +77,7 @@ const showBooking = !content.hiddenBlocks?.includes("home-booking");
     <div class="home-services">
       <div class="home-services__header" data-reveal="up">
         <h2 set:html={content.services.title} />
-        {hasText(content.services.copy) && <div class="home-richtext home-richtext--light" set:html={content.services.copy} />}
+        <div class="home-richtext home-richtext--light" set:html={content.services.copy} />
       </div>
 
       <div class="home-services__cards">
@@ -150,7 +145,7 @@ const showBooking = !content.hiddenBlocks?.includes("home-booking");
                 <a href={item.href}>
                   <h3 class="service-name" set:html={item.title} />
                 </a>
-                {hasText(item.copy) && <div class="mt-0 home-richtext" set:html={item.copy} />}
+                <div class="mt-0 home-richtext" set:html={item.copy} />
                 <div class="collection-link-wrapper" aria-hidden="true">
                   <span class="link-with-icon">
                     {item.label}
@@ -186,7 +181,7 @@ const showBooking = !content.hiddenBlocks?.includes("home-booking");
     <div class="home-reasons">
       <div class="home-reasons__intro" data-reveal="up">
         <h2 set:html={content.reasons.title} />
-        {hasText(content.reasons.copy) && <div class="home-richtext home-richtext--light" set:html={content.reasons.copy} />}
+        <div class="home-richtext home-richtext--light" set:html={content.reasons.copy} />
       </div>
 
       <div class="home-reasons__grid">
@@ -203,7 +198,7 @@ const showBooking = !content.hiddenBlocks?.includes("home-booking");
                   <div class="home-reason-panel__top">
                     <h3 set:html={item.title} />
                   </div>
-                  {hasText(item.copy) && <div class="home-richtext home-richtext--light" set:html={item.copy} />}
+                  <div class="home-richtext home-richtext--light" set:html={item.copy} />
                 </div>
               </article>
             ))
@@ -360,15 +355,7 @@ const showBooking = !content.hiddenBlocks?.includes("home-booking");
     <div class="home-booking">
       <div class="home-booking__intro" data-reveal="up">
         <h2 set:html={content.booking.title} />
-        {hasText(content.booking.copy) && <div class="home-richtext" set:html={content.booking.copy} />}
-        {/* Reassurance at the decision point: the free first call, the price, and what happens next. */}
-        <ul class="home-booking__notes">
-          {promoTitle && <li class="home-booking__note home-booking__note--lead">{promoTitle}</li>}
-          <li class="home-booking__note">
-            <a href="/cena/">{dictionary.homePage.bookingNotes.pricing}</a>
-          </li>
-          <li class="home-booking__note">{dictionary.homePage.bookingNotes.reply}</li>
-        </ul>
+        <div class="home-richtext" set:html={content.booking.copy} />
       </div>
 
       <div data-reveal="up" style="--reveal-delay: 90ms;">
@@ -389,7 +376,7 @@ const showBooking = !content.hiddenBlocks?.includes("home-booking");
     <div class="home-heading-row home-heading-row--blog">
       <div class="home-heading-copy" data-reveal="up">
         <h2 set:html={content.recent.title} />
-        {hasText(content.recent.copy) && <div class="home-richtext" set:html={content.recent.copy} />}
+        <div class="home-richtext" set:html={content.recent.copy} />
       </div>
       <a
         class="home-button"
@@ -458,31 +445,3 @@ const showBooking = !content.hiddenBlocks?.includes("home-booking");
   </div>
 </section>
 )}
-
-{/* Phones: the booking form sits deep in the page, so a thumb-reach button jumps to it.
-    Hidden while the hero, the form or the footer is on screen. */}
-{showBooking && (
-  <a class="home-sticky-cta" href="#home-booking" data-home-sticky-cta>
-    {dictionary.nav.bookCta}
-  </a>
-)}
-
-<script>
-  (() => {
-    const cta = document.querySelector("[data-home-sticky-cta]");
-    if (!(cta instanceof HTMLElement)) return;
-    const sections = ["#home-hero", "#home-booking", ".site-footer"]
-      .map((selector) => document.querySelector(selector))
-      .filter((section): section is Element => section !== null);
-
-    const onScreen = (section: Element) => {
-      const rect = section.getBoundingClientRect();
-      return rect.bottom > 0 && rect.top < window.innerHeight;
-    };
-    const update = () => cta.classList.toggle("is-hidden", sections.some(onScreen));
-
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update, { passive: true });
-  })();
-</script>

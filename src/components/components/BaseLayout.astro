@@ -4,7 +4,6 @@ import AdminAppBar from "@/components/components/AdminAppBar.astro";
 import PageMotion from "@/components/components/PageMotion.astro";
 import SiteFooter from "@/components/components/SiteFooter.astro";
 import SeoHead from "@/components/components/SeoHead.astro";
-import { getDictionary } from "@/features/i18n/translate";
 import "@/styles/global.css";
 
 type Props = {
@@ -36,7 +35,6 @@ const derivedAppBarTone =
     ? "dark"
     : "light";
 const initialAppBarTone = appBarTone ?? derivedAppBarTone;
-const skipLabel = getDictionary().a11y.skipToContent;
 ---
 
 <!doctype html>
@@ -54,7 +52,6 @@ const skipLabel = getDictionary().a11y.skipToContent;
   <body
     class:list={[bodyClass, { "home-route": isHome, "appbar-overlay-route": isAppBarOverlayRoute }]}
   >
-    <a class="skip-link" href="#main">{skipLabel}</a>
     <div class="site-shell">
       {
         appBarVariant === "admin" ? (
@@ -63,7 +60,7 @@ const skipLabel = getDictionary().a11y.skipToContent;
           <AppBar pathname={Astro.url.pathname} initialTone={initialAppBarTone} />
         )
       }
-      <main id="main" tabindex="-1">
+      <main>
         <slot />
       </main>
       <SiteFooter />

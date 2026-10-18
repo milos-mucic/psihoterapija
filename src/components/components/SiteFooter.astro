@@ -16,6 +16,7 @@ const allSocialLinks: SocialLink[] = (settings.footer.extraSocialLinks ?? []).fi
 
 const galleryImages = contactContent.officeGallery.slice(0, 3);
 const brandHeading = settings.footer.brandHeading || settings.brand.name || siteConfig.name;
+const contactEyebrow = settings.footer.contactEyebrow || dictionary.footer.contactEyebrow;
 // Footer currently has a dark background → pick the variant designed for dark
 // surfaces (logoLight). Falls back to the header's light-variant logo, then to
 // the legacy asset.
@@ -68,12 +69,12 @@ const footerSupportLinks = [
   <div class="footer-shell">
     <div class="container">
       <div class="footer-cta">
-        {/* The brand heading carries itself; the "Kontakt" eyebrow above it is dropped. */}
         <div class="footer-brand">
+          <p class="eyebrow footer-eyebrow" set:html={contactEyebrow} />
           <h2 set:html={brandHeading} />
         </div>
-        <a class="appbar__cta" href="/zakazivanje/">
-          {dictionary.nav.bookCta}
+        <a class="appbar__cta" href="/kontakt/">
+          {dictionary.nav.contact}
         </a>
       </div>
 
@@ -176,7 +177,9 @@ const footerSupportLinks = [
     width: 100%;
     padding: clamp(2rem, 4vw, 2.5rem) 0 0;
     color: rgba(255, 255, 255, 0.86);
-    background: linear-gradient(145deg, rgba(9, 31, 32, 0.98), rgba(22, 60, 61, 0.92));
+    background:
+      linear-gradient(145deg, rgba(9, 31, 32, 0.98), rgba(22, 60, 61, 0.92)),
+      url("/legacy/images/6_1-p-800.jpeg") center / cover no-repeat;
     border: none;
     border-radius: 0;
   }

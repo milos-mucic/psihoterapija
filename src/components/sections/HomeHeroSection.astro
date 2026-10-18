@@ -13,14 +13,12 @@ type Props = {
 };
 
 const { titleHtml, description, primaryAction, secondaryAction, blockStyle } = Astro.props;
-// A bare <br> joins words for screen readers ("centarIkar"); keep a real space before it.
-const safeTitleHtml = titleHtml.replace(/\s*<br\s*\/?>/gi, " <br />");
 ---
 
 <section id="home-hero" class="home-hero" style={blockStyle}>
   <div class="container home-hero__container">
     <div class="home-hero__content">
-      <h1 class="home-hero__title" data-reveal="up" set:html={safeTitleHtml} />
+      <h1 class="home-hero__title" data-reveal="up" set:html={titleHtml} />
       <div
         class="home-hero__description home-richtext home-richtext--hero"
         data-reveal="up"

@@ -2,9 +2,7 @@
   "a11y": {
     "appbarPrimaryNav": "Glavna navigacija",
     "toggleNavigation": "Otvori navigaciju",
-    "footerNav": "Navigacija u podnožju",
-    "closeNavigation": "Zatvori navigaciju",
-    "skipToContent": "Preskoči na sadržaj"
+    "footerNav": "Navigacija u podnožju"
   },
   "nav": {
     "home": "Početna",
@@ -26,8 +24,7 @@
       "pricing": "Cena",
       "appointment": "Zakazivanje",
       "faq": "Pitanja"
-    },
-    "bookCta": "Zakažite termin"
+    }
   },
   "meta": {
     "home": {
@@ -96,15 +93,12 @@
     "formatLabel": "Izaberite format rada",
     "chooseOption": "Izaberite",
     "submitContact": "Pošalji poruku",
-    "submitAppointment": "Pošaljite upit",
-    "success": "Hvala, upit je poslat. Javićemo Vam se na email adresu koju ste ostavili.",
-    "error": "Slanje nije uspelo. Pokušajte ponovo za minut ili nam se javite preko stranice Kontakt.",
-    "formatUnsure": "Nisam siguran/na",
-    "optional": "(opciono)",
-    "messagePlaceholder": "Ukratko, šta Vas dovodi ili kada Vam odgovara termin."
+    "submitAppointment": "Pošalji prijavu",
+    "success": "Poruka je uspešno poslata.",
+    "error": "Došlo je do greške. Pokušajte ponovo."
   },
   "api": {
-    "invalidSubmission": "Proverite ime i email adresu, pa pokušajte ponovo.",
+    "invalidSubmission": "Podaci nisu validni.",
     "submissionSaveFailed": "Neuspešno čuvanje prijave.",
     "adminAccessDenied": "Pristup nije odobren.",
     "adminWrongPassword": "Pogrešna šifra."
@@ -239,10 +233,6 @@
       "copy": "Budite u toku sa novim tekstovima iz oblasti psihologije i psihoterapije.",
       "label": "Sve objave",
       "empty": "Novi tekstovi stižu uskoro."
-    },
-    "bookingNotes": {
-      "pricing": "Cene i trajanje seansi",
-      "reply": "Odgovor stiže na email adresu koju ostavite."
     }
   },
   "pages": {

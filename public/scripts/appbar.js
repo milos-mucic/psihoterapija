@@ -86,7 +86,7 @@
       const summary = dropdown.querySelector("summary");
       if (!(summary instanceof HTMLElement)) return;
 
-      const isDesktop = () => window.matchMedia("(min-width: 1025px)").matches;
+      const isDesktop = () => window.matchMedia("(min-width: 1101px)").matches;
       let closeTimer;
 
       const openDropdown = () => {

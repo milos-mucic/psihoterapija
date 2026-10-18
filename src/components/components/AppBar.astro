@@ -17,9 +17,6 @@ const isActivePath = (href: string) =>
 
 const navigation = await navigationService.getNavigation();
 const navItems = navigation.items;
-// One booking action everywhere; on the homepage it jumps to the form on the page.
-const bookHref = pathname === "/" ? "#home-booking" : "/zakazivanje/";
-const hasContactItem = navItems.some((item) => item.href.startsWith("/kontakt"));
 
 const brand = (await siteSettingsService.get()).brand;
 const brandAriaLabel = brand.name || siteConfig.name;
@@ -95,16 +92,8 @@ const showText = Boolean(brand.name || brand.tagline);
         </nav>
 
         <div class="appbar__actions">
-          {!hasContactItem && (
-            <a
-              class:list={["appbar__link", isActivePath("/kontakt/") && "is-active"]}
-              href="/kontakt/"
-            >
-              {dictionary.nav.contact}
-            </a>
-          )}
-          <a class="appbar__cta" href={bookHref}>
-            {dictionary.nav.bookCta}
+          <a class="appbar__cta" href="/kontakt/">
+            {dictionary.nav.contact}
           </a>
         </div>
       </div>
@@ -114,7 +103,7 @@ const showText = Boolean(brand.name || brand.tagline);
           <img class="appbar__toggle-icon" src="/legacy/images/menu-btn.svg" alt="" />
         </summary>
 
-        <button class="appbar__backdrop" type="button" aria-label={dictionary.a11y.closeNavigation}
+        <button class="appbar__backdrop" type="button" aria-label={dictionary.a11y.toggleNavigation}
         ></button>
 
         <div class="appbar__drawer">
@@ -127,7 +116,7 @@ const showText = Boolean(brand.name || brand.tagline);
             <button
               class="appbar__drawer-close"
               type="button"
-              aria-label={dictionary.a11y.closeNavigation}
+              aria-label={dictionary.a11y.toggleNavigation}
             >
               <span></span>
               <span></span>
@@ -170,19 +159,11 @@ const showText = Boolean(brand.name || brand.tagline);
                 ),
               )
             }
-            {!hasContactItem && (
-              <a
-                class:list={["appbar__drawer-link", isActivePath("/kontakt/") && "is-active"]}
-                href="/kontakt/"
-              >
-                {dictionary.nav.contact}
-              </a>
-            )}
           </div>
 
           <div class="appbar__drawer-actions">
-            <a class="appbar__cta" href={bookHref}>
-              {dictionary.nav.bookCta}
+            <a class="appbar__cta" href="/zakazivanje/">
+              {dictionary.nav.appointment}
             </a>
           </div>
         </div>

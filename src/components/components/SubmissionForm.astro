@@ -8,9 +8,6 @@ type FormLabels = {
   message: string;
   formatLabel: string;
   chooseOption: string;
-  formatUnsure?: string;
-  optional?: string;
-  messagePlaceholder?: string;
   success: string;
   error: string;
 };
@@ -48,53 +45,34 @@ const {
       <input class="input-control" name="name" autocomplete="name" required />
     </label>
 
+    {
+      type === "appointment" ? (
+        <label class="stack-form__field">
+          <span class="stack-form__label">{labels.phone}</span>
+          <input class="input-control" name="phone" type="tel" autocomplete="tel" required />
+        </label>
+      ) : null
+    }
+
     <label class="stack-form__field">
       <span class="stack-form__label">{labels.email}</span>
-      <input class="input-control" name="email" type="email" autocomplete="email" inputmode="email" required />
+      <input class="input-control" name="email" type="email" autocomplete="email" required />
     </label>
 
     {
       type === "appointment" ? (
         <label class="stack-form__field">
-          <span class="stack-form__label">
-            {labels.phone} {labels.optional && <span class="stack-form__optional">{labels.optional}</span>}
-          </span>
-          <input class="input-control" name="phone" type="tel" autocomplete="tel" inputmode="tel" />
+          <span class="stack-form__label" set:html={formatLabel ?? labels.formatLabel} />
+          <select class="input-control" name="format" required>
+            <option value="" selected disabled>
+              {labels.chooseOption}
+            </option>
+            {appointmentFormats.map((format) => {
+              const plainFormat = stripHtmlTags(format);
+              return <option value={plainFormat}>{plainFormat}</option>;
+            })}
+          </select>
         </label>
-      ) : null
-    }
-
-    {
-      type === "appointment" ? (
-        <>
-          <label class="stack-form__field">
-            <span class="stack-form__label">
-              <span set:html={formatLabel ?? labels.formatLabel} />{" "}
-              {labels.optional && <span class="stack-form__optional">{labels.optional}</span>}
-            </span>
-            <select class="input-control" name="format">
-              <option value="" selected>
-                {labels.formatUnsure ?? labels.chooseOption}
-              </option>
-              {appointmentFormats.map((format) => {
-                const plainFormat = stripHtmlTags(format);
-                return <option value={plainFormat}>{plainFormat}</option>;
-              })}
-            </select>
-          </label>
-          <label class="stack-form__field stack-form__field--full stack-form__field--message">
-            <span class="stack-form__label">
-              <span set:html={labels.message} />{" "}
-              {labels.optional && <span class="stack-form__optional">{labels.optional}</span>}
-            </span>
-            <textarea
-              class="input-control input-control--textarea"
-              name="message"
-              rows={4}
-              placeholder={labels.messagePlaceholder}
-            />
-          </label>
-        </>
       ) : (
         <label class="stack-form__field stack-form__field--full stack-form__field--message">
           <span class="stack-form__label" set:html={labels.message} />
@@ -107,6 +85,8 @@ const {
         </label>
       )
     }
+
+    {type === "contact" ? null : <input name="message" type="hidden" value="" readOnly />}
   </div>
 
   <div class="stack-form__actions">
